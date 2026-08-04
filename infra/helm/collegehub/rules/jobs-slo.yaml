@@ -1,4 +1,4 @@
-﻿# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Background Jobs SLO (College Hub)
 # ------------------------------------------------------------------------------
 # Objective:   99% of background jobs complete successfully over a 30-day window.
@@ -10,7 +10,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: collegehub-slo-jobs
-  namespace: { { .Values.global.namespace | quote } }
+  namespace: {{ .Values.global.namespace | quote }}
   labels:
     app.kubernetes.io/name: collegehub
     app.kubernetes.io/part-of: collegehub-observability

@@ -1,4 +1,4 @@
-﻿# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # HTTP API SLO (College Hub)
 # ------------------------------------------------------------------------------
 # Objective:   99.5% of API requests return non-5xx over a 30-day rolling window.
@@ -15,7 +15,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: collegehub-slo-http-api
-  namespace: { { .Values.global.namespace | quote } }
+  namespace: {{ .Values.global.namespace | quote }}
   labels:
     app.kubernetes.io/name: collegehub
     app.kubernetes.io/part-of: collegehub-observability
