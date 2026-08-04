@@ -48,7 +48,7 @@ export function ListingCard({ listing }: { listing: ListingSummary }) {
 export function ListingGrid({ listings }: { listings: ListingSummary[] }) {
   return (
     <div className="mp-grid">
-      {listings.map(item => (
+      {listings.map((item) => (
         <ListingCard key={item.id} listing={item} />
       ))}
     </div>

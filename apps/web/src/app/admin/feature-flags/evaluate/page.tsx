@@ -30,17 +30,32 @@ export default function EvaluationPlaygroundPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div>
               <label style={{ fontSize: '12px', color: '#94A3B8' }}>Feature Flag Key:</label>
-              <input type="text" className="ff-input-field" value={flagKey} onChange={(e) => setFlagKey(e.target.value)} />
+              <input
+                type="text"
+                className="ff-input-field"
+                value={flagKey}
+                onChange={(e) => setFlagKey(e.target.value)}
+              />
             </div>
 
             <div>
               <label style={{ fontSize: '12px', color: '#94A3B8' }}>User ID Context:</label>
-              <input type="text" className="ff-input-field" value={userId} onChange={(e) => setUserId(e.target.value)} />
+              <input
+                type="text"
+                className="ff-input-field"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+              />
             </div>
 
             <div>
               <label style={{ fontSize: '12px', color: '#94A3B8' }}>College ID Context:</label>
-              <input type="text" className="ff-input-field" value={collegeId} onChange={(e) => setCollegeId(e.target.value)} />
+              <input
+                type="text"
+                className="ff-input-field"
+                value={collegeId}
+                onChange={(e) => setCollegeId(e.target.value)}
+              />
             </div>
 
             <button className="ff-btn-primary" onClick={handleEvaluate}>
@@ -59,12 +74,24 @@ export default function EvaluationPlaygroundPage() {
                 {result.enabled ? '🟢 ENABLED (TRUE)' : '🔴 DISABLED (FALSE)'}
               </div>
 
-              <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px' }}>
-                <div><strong>Reason:</strong> {result.reason}</div>
-                <div><strong>Matched Policy:</strong> <code>{result.matchedRule}</code></div>
-                <div><strong>Evaluation Time:</strong> {result.evaluationTimeMs} ms</div>
-                <div><strong>Cache Source:</strong> {result.cacheSource}</div>
-                <div><strong>Config Version:</strong> v{result.configurationVersion}</div>
+              <div
+                style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px' }}
+              >
+                <div>
+                  <strong>Reason:</strong> {result.reason}
+                </div>
+                <div>
+                  <strong>Matched Policy:</strong> <code>{result.matchedRule}</code>
+                </div>
+                <div>
+                  <strong>Evaluation Time:</strong> {result.evaluationTimeMs} ms
+                </div>
+                <div>
+                  <strong>Cache Source:</strong> {result.cacheSource}
+                </div>
+                <div>
+                  <strong>Config Version:</strong> v{result.configurationVersion}
+                </div>
               </div>
             </div>
           )}

@@ -15,9 +15,9 @@ export class MockAiModerationProvider implements AiModerationProvider {
     const isToxic = text.toLowerCase().includes('hate') || text.toLowerCase().includes('kill');
     return {
       toxicityScore: isToxic ? 0.95 : 0.05,
-      hateSpeechScore: isToxic ? 0.90 : 0.02,
+      hateSpeechScore: isToxic ? 0.9 : 0.02,
       spamScore: 0.01,
-      piiScore: 0.00,
+      piiScore: 0.0,
       recommendedAction: isToxic ? 'QUARANTINE' : 'ALLOW'
     };
   }

@@ -108,7 +108,11 @@ export class ConfessionUseCases {
       }
     }
 
-    const pseudonym = await this.identityService.getThreadPseudonym(params.confessionId, params.userId, params.collegeId);
+    const pseudonym = await this.identityService.getThreadPseudonym(
+      params.confessionId,
+      params.userId,
+      params.collegeId
+    );
 
     const comment = await this.commentRepo.save({
       collegeId: params.collegeId,
@@ -145,7 +149,11 @@ export class ConfessionUseCases {
   }): Promise<void> {
     assertNoSelfVote(params.authorUserId, params.voterUserId);
 
-    const existingVote = await this.voteRepo.getUserConfessionVote(params.confessionId, params.voterUserId, params.collegeId);
+    const existingVote = await this.voteRepo.getUserConfessionVote(
+      params.confessionId,
+      params.voterUserId,
+      params.collegeId
+    );
 
     if (params.voteType === 'REMOVE') {
       await this.voteRepo.removeConfessionVote(params.confessionId, params.voterUserId, params.collegeId);
@@ -176,11 +184,7 @@ export class ConfessionUseCases {
     });
   }
 
-  async bookmarkConfession(params: {
-    collegeId: string;
-    confessionId: string;
-    userId: string;
-  }): Promise<void> {
+  async bookmarkConfession(params: { collegeId: string; confessionId: string; userId: string }): Promise<void> {
     const isBookmarked = await this.bookmarkRepo.isBookmarked(params.confessionId, params.userId, params.collegeId);
     assertSingleBookmark(isBookmarked ? {} : null, params.confessionId);
 

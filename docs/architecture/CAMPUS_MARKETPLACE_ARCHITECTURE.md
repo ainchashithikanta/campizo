@@ -5,6 +5,7 @@
 This document specifies the technical architecture, package layout, asynchronous event pipelines, background worker topology, search indexing, caching layers, storage providers, and security controls for the **College Hub Campus Marketplace** (`@college-hub/mod-marketplace`).
 
 The technical blueprint is engineered for:
+
 - **Scalability**: Supporting 100+ colleges, millions of listings, and high-frequency student chat messaging.
 - **Asynchronous Decoupling**: Heavy tasks (virus scanning, image optimization, thumbnail generation, search indexing, statistics) offloaded to BullMQ background workers with parallel fan-out processing.
 - **High Performance SLAs**: Sub-10ms full-text search and sub-50ms listing detail page rendering.
@@ -125,6 +126,7 @@ modules/marketplace/
 ```
 
 ### 3.1 Pipeline Step Breakdown
+
 1. **Direct S3 Upload**: Client uploads binary to pre-signed S3 URL and emits `UploadCompleted`.
 2. **VirusScanWorker**: Performs malware & integrity checks. Upon clean scan, emits `VirusScanPassed`.
 3. **Parallel Fan-Out Execution**:
@@ -159,13 +161,13 @@ modules/marketplace/
 
 ## 5. Background Workers & Queue SLA Matrix
 
-| Worker Name | Trigger Event | Job Goal | Retry Policy & Backoff | Idempotency Key |
-| :--- | :--- | :--- | :--- | :--- |
-| **VirusScanWorker** | `UploadCompleted` | Scan binary for viruses | 3 retries, exponential backoff (2s, 4s, 8s) | `job-scan-{sha256Hash}` |
-| **ImageOptimizationWorker**| `VirusScanPassed` | Generate WebP variants (Parallel) | 3 retries, exponential backoff (2s, 4s, 8s) | `job-img-{fileId}` |
-| **SearchIndexerWorker** | `VirusScanPassed` | Index in search catalog (Parallel)| 5 retries, exponential backoff (1s, 2s, 4s) | `job-idx-{listingId}` |
-| **StatisticsWorker** | `ResourceVoteAdded` / `View` | Compute Bayesian score | 3 retries, linear backoff (5s) | `job-stat-{listingId}` |
-| **ReservationExpiryWorker**| `ReservationCreated` | Auto-expire after 24h | 5 retries, exponential backoff (10s, 30s) | `job-res-exp-{reservationId}` |
+| Worker Name                 | Trigger Event                | Job Goal                           | Retry Policy & Backoff                      | Idempotency Key               |
+| :-------------------------- | :--------------------------- | :--------------------------------- | :------------------------------------------ | :---------------------------- |
+| **VirusScanWorker**         | `UploadCompleted`            | Scan binary for viruses            | 3 retries, exponential backoff (2s, 4s, 8s) | `job-scan-{sha256Hash}`       |
+| **ImageOptimizationWorker** | `VirusScanPassed`            | Generate WebP variants (Parallel)  | 3 retries, exponential backoff (2s, 4s, 8s) | `job-img-{fileId}`            |
+| **SearchIndexerWorker**     | `VirusScanPassed`            | Index in search catalog (Parallel) | 5 retries, exponential backoff (1s, 2s, 4s) | `job-idx-{listingId}`         |
+| **StatisticsWorker**        | `ResourceVoteAdded` / `View` | Compute Bayesian score             | 3 retries, linear backoff (5s)              | `job-stat-{listingId}`        |
+| **ReservationExpiryWorker** | `ReservationCreated`         | Auto-expire after 24h              | 5 retries, exponential backoff (10s, 30s)   | `job-res-exp-{reservationId}` |
 
 ---
 
@@ -188,29 +190,30 @@ export interface StorageProvider {
   deleteFile(key: string): Promise<boolean>;
 }
 ```
+
 Supports **AWS S3**, **MinIO**, **Cloudflare R2**, and local filesystem drivers seamlessly via dependency injection.
 
 ---
 
 ## 8. Performance SLAs & Metrics
 
-| Operation | Target SLA (p95) | Degradation Fallback |
-| :--- | :---: | :--- |
-| **Keyword Search** | $< 10$ ms | Fallback to cached trending list |
-| **Listing Detail Render** | $< 50$ ms | Serve stale L2 Redis snapshot |
-| **Offer Submission** | $< 100$ ms | Queue offer event asynchronously |
-| **Chat Message Polling** | $< 50$ ms | Serve cached conversation summary |
-| **Pre-Signed Upload URL** | $< 100$ ms | Retry pre-signed token generation |
+| Operation                 | Target SLA (p95) | Degradation Fallback              |
+| :------------------------ | :--------------: | :-------------------------------- |
+| **Keyword Search**        |    $< 10$ ms     | Fallback to cached trending list  |
+| **Listing Detail Render** |    $< 50$ ms     | Serve stale L2 Redis snapshot     |
+| **Offer Submission**      |    $< 100$ ms    | Queue offer event asynchronously  |
+| **Chat Message Polling**  |    $< 50$ ms     | Serve cached conversation summary |
+| **Pre-Signed Upload URL** |    $< 100$ ms    | Retry pre-signed token generation |
 
 ---
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **Parallel Fan-Out Listing Pipeline**: `UploadCompleted` $\rightarrow$ `VirusScanWorker` $\rightarrow$ `VirusScanPassed` $\rightarrow$ Parallel execution of `ImageWorker`, `SearchIndexer`, `StatisticsInit`, `MetadataExtraction` $\rightarrow$ `Listing Ready`.
-* ✅ **Monorepo Package Layout**: Defined `@college-hub/mod-marketplace` structure.
-* ✅ **Multi-Level Caching**: L1 in-memory + L2 Redis key invalidation blueprint.
-* ✅ **Storage Provider Abstraction**: S3 / MinIO / R2 pre-signed direct upload flow.
-* ✅ **Zero Code Violation**: Pure technical architecture specification document.
+- ✅ **Parallel Fan-Out Listing Pipeline**: `UploadCompleted` $\rightarrow$ `VirusScanWorker` $\rightarrow$ `VirusScanPassed` $\rightarrow$ Parallel execution of `ImageWorker`, `SearchIndexer`, `StatisticsInit`, `MetadataExtraction` $\rightarrow$ `Listing Ready`.
+- ✅ **Monorepo Package Layout**: Defined `@college-hub/mod-marketplace` structure.
+- ✅ **Multi-Level Caching**: L1 in-memory + L2 Redis key invalidation blueprint.
+- ✅ **Storage Provider Abstraction**: S3 / MinIO / R2 pre-signed direct upload flow.
+- ✅ **Zero Code Violation**: Pure technical architecture specification document.
 
 > [!IMPORTANT]
 > **MS-20.6 Architecture Refinement Complete**. Ready for **MS-20.7 (Visual Design System & UI/UX Specification)**.

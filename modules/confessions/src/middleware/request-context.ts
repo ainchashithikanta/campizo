@@ -26,7 +26,11 @@ export async function tenantMiddleware(req: FastifyRequest, reply: FastifyReply)
     reply.status(403).send({
       success: false,
       error: { code: 'MISSING_TENANT_HEADER', message: 'Mandatory x-college-id header is missing.' },
-      metadata: { requestId: req.headers['x-request-id'] || 'req-unknown', collegeId: 'unknown', timestamp: new Date().toISOString() }
+      metadata: {
+        requestId: req.headers['x-request-id'] || 'req-unknown',
+        collegeId: 'unknown',
+        timestamp: new Date().toISOString()
+      }
     });
     return;
   }
@@ -45,7 +49,11 @@ export async function authMiddleware(req: FastifyRequest, reply: FastifyReply): 
       reply.status(401).send({
         success: false,
         error: { code: 'MALFORMED_JWT', message: 'Authorization header contains a malformed or invalid JWT token.' },
-        metadata: { requestId: req.headers['x-request-id'] || 'req-unknown', collegeId: (req.headers['x-college-id'] as string) || 'unknown', timestamp: new Date().toISOString() }
+        metadata: {
+          requestId: req.headers['x-request-id'] || 'req-unknown',
+          collegeId: (req.headers['x-college-id'] as string) || 'unknown',
+          timestamp: new Date().toISOString()
+        }
       });
       return;
     }
@@ -57,7 +65,7 @@ export async function authMiddleware(req: FastifyRequest, reply: FastifyReply): 
   const idempotencyKey = (req.headers['x-idempotency-key'] as string) || null;
 
   const roleHeader = req.headers['x-user-role'] as string | undefined;
-  const roles: string[] = roleHeader ? roleHeader.split(',').map(r => r.trim()) : ['STUDENT'];
+  const roles: string[] = roleHeader ? roleHeader.split(',').map((r) => r.trim()) : ['STUDENT'];
 
   req.ctx = {
     userId,

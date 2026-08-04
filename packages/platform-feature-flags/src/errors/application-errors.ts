@@ -55,7 +55,7 @@ export function mapDomainToApplicationError(error: unknown): ApplicationError {
   if (error instanceof ApplicationError) {
     return error;
   }
-  if (error && typeof error === 'object' && ('name' in error) && (error as any).name === 'ZodError') {
+  if (error && typeof error === 'object' && 'name' in error && (error as any).name === 'ZodError') {
     return new ApplicationError(
       (error as Error).message || 'Invalid request payload validation.',
       'INVALID_PAYLOAD',

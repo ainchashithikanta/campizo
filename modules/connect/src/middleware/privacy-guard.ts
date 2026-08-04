@@ -4,7 +4,11 @@
  */
 
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { PrivacyApplicationError, ForbiddenApplicationError, FeatureDisabledApplicationError } from '../errors/application-errors.js';
+import {
+  PrivacyApplicationError,
+  ForbiddenApplicationError,
+  FeatureDisabledApplicationError
+} from '../errors/application-errors.js';
 
 export async function privacyGuardMiddleware(request: FastifyRequest, _reply: FastifyReply): Promise<void> {
   const collegeId = request.context?.collegeId;

@@ -69,23 +69,27 @@ describe('Campus Connect — Production Application Layer & CQRS Suite (MS-23.8.
     });
 
     // Attempting update with wrong version
-    await expect(intentService.updateIntent({
-      id: 'int_102',
-      collegeId: 'college_stanford_001',
-      title: 'Updated Hackathon Title',
-      version: 99, // Wrong version!
-      updatedBy: 'usr_stanford_101'
-    })).rejects.toThrow();
+    await expect(
+      intentService.updateIntent({
+        id: 'int_102',
+        collegeId: 'college_stanford_001',
+        title: 'Updated Hackathon Title',
+        version: 99, // Wrong version!
+        updatedBy: 'usr_stanford_101'
+      })
+    ).rejects.toThrow();
   });
 
   it('3. Mandatory Context: createConversation should fail if contextType or contextId is missing', async () => {
-    await expect(useCases.createConversation({
-      id: 'conv_101',
-      collegeId: 'college_stanford_001',
-      contextType: '', // Empty context!
-      contextId: 'int_101',
-      createdBy: 'usr_stanford_101'
-    })).rejects.toThrow(InvalidConversationContextError);
+    await expect(
+      useCases.createConversation({
+        id: 'conv_101',
+        collegeId: 'college_stanford_001',
+        contextType: '', // Empty context!
+        contextId: 'int_101',
+        createdBy: 'usr_stanford_101'
+      })
+    ).rejects.toThrow(InvalidConversationContextError);
   });
 
   it('4. Mandatory Context: createConversation should succeed with valid context and emit ConversationCreated event', async () => {

@@ -40,12 +40,23 @@ export default function ModeratorReviewPage({ params }: { params: Promise<{ case
       </header>
 
       <div className="conf-card">
-        <div style={{ padding: '0.5rem', background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', borderRadius: 'var(--conf-radius-sm)', marginBottom: '1rem', fontSize: '0.85rem' }}>
+        <div
+          style={{
+            padding: '0.5rem',
+            background: 'rgba(239, 68, 68, 0.1)',
+            color: '#f87171',
+            borderRadius: 'var(--conf-radius-sm)',
+            marginBottom: '1rem',
+            fontSize: '0.85rem'
+          }}
+        >
           🔒 Blind Moderation: Author identity is 100% hidden.
         </div>
 
         <div className="conf-form-group">
-          <label className="conf-label" htmlFor="mod-note">Moderator Note / Rationale</label>
+          <label className="conf-label" htmlFor="mod-note">
+            Moderator Note / Rationale
+          </label>
           <textarea
             id="mod-note"
             className="conf-textarea"
@@ -60,7 +71,15 @@ export default function ModeratorReviewPage({ params }: { params: Promise<{ case
           <button
             onClick={() => handleDecision('RESTORE')}
             disabled={isSubmitting}
-            style={{ padding: '0.8rem', borderRadius: 'var(--conf-radius-sm)', background: 'var(--conf-accent-success)', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}
+            style={{
+              padding: '0.8rem',
+              borderRadius: 'var(--conf-radius-sm)',
+              background: 'var(--conf-accent-success)',
+              color: '#fff',
+              border: 'none',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
           >
             🟢 Restore
           </button>
@@ -68,7 +87,15 @@ export default function ModeratorReviewPage({ params }: { params: Promise<{ case
           <button
             onClick={() => handleDecision('HIDE')}
             disabled={isSubmitting}
-            style={{ padding: '0.8rem', borderRadius: 'var(--conf-radius-sm)', background: 'var(--conf-accent-warning)', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}
+            style={{
+              padding: '0.8rem',
+              borderRadius: 'var(--conf-radius-sm)',
+              background: 'var(--conf-accent-warning)',
+              color: '#fff',
+              border: 'none',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
           >
             🟡 Hide
           </button>
@@ -76,7 +103,15 @@ export default function ModeratorReviewPage({ params }: { params: Promise<{ case
           <button
             onClick={() => handleDecision('DELETE')}
             disabled={isSubmitting}
-            style={{ padding: '0.8rem', borderRadius: 'var(--conf-radius-sm)', background: 'var(--conf-accent-danger)', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}
+            style={{
+              padding: '0.8rem',
+              borderRadius: 'var(--conf-radius-sm)',
+              background: 'var(--conf-accent-danger)',
+              color: '#fff',
+              border: 'none',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
           >
             🔴 Delete
           </button>
@@ -84,7 +119,15 @@ export default function ModeratorReviewPage({ params }: { params: Promise<{ case
           <button
             onClick={() => handleDecision('ESCALATE')}
             disabled={isSubmitting}
-            style={{ padding: '0.8rem', borderRadius: 'var(--conf-radius-sm)', background: 'var(--conf-accent-primary)', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}
+            style={{
+              padding: '0.8rem',
+              borderRadius: 'var(--conf-radius-sm)',
+              background: 'var(--conf-accent-primary)',
+              color: '#fff',
+              border: 'none',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
           >
             🔵 Escalate
           </button>

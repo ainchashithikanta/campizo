@@ -33,15 +33,22 @@ export default function NotificationSettingsPage() {
     <main className="max-w-3xl mx-auto p-6 font-sans">
       <header className="mb-6">
         <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Notification Preferences</h1>
-        <p className="text-xs text-slate-500 mt-1">Manage delivery channels and event notifications across College Hub modules.</p>
+        <p className="text-xs text-slate-500 mt-1">
+          Manage delivery channels and event notifications across College Hub modules.
+        </p>
       </header>
 
-      <form onSubmit={handleSave} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-6">
+      <form
+        onSubmit={handleSave}
+        className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-6"
+      >
         <div className="space-y-4">
           <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">In-App Notifications</h3>
-              <p className="text-xs text-slate-500 mt-0.5">Receive realtime drawer alerts and unread badges on web desktop and mobile.</p>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Receive realtime drawer alerts and unread badges on web desktop and mobile.
+              </p>
             </div>
             <input
               type="checkbox"
@@ -53,7 +60,9 @@ export default function NotificationSettingsPage() {
 
           <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
             <div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Email Digest Notifications (Plug-in Ready)</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                Email Digest Notifications (Plug-in Ready)
+              </h3>
               <p className="text-xs text-slate-500 mt-0.5">Receive daily summary emails for important updates.</p>
             </div>
             <input

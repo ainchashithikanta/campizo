@@ -17,8 +17,8 @@ export function CompatibilityBadge({ percentage }: CompatibilityBadgeProps) {
   const colorClasses = isHighMatch
     ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400 dark:bg-emerald-500/20'
     : isMediumMatch
-    ? 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:text-indigo-400 dark:bg-indigo-500/20'
-    : 'bg-slate-500/10 text-slate-600 border-slate-500/20 dark:text-slate-400 dark:bg-slate-500/20';
+      ? 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:text-indigo-400 dark:bg-indigo-500/20'
+      : 'bg-slate-500/10 text-slate-600 border-slate-500/20 dark:text-slate-400 dark:bg-slate-500/20';
 
   return (
     <div
@@ -44,7 +44,13 @@ export function ReasonList({ reasons }: ReasonListProps) {
     <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300" aria-label="Compatibility Reasons">
       {reasons.map((r, i) => (
         <li key={i} className="flex items-center gap-2">
-          <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <svg
+            className="w-3.5 h-3.5 text-emerald-500 shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
           </svg>
           <span>{r.humanText}</span>

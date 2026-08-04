@@ -5,8 +5,8 @@
 
 .ff-container {
   min-height: 100vh;
-  background-color: var(--ch-color-background, #0F172A);
-  color: var(--ch-color-text, #F8FAFC);
+  background-color: var(--ch-color-background, #0f172a);
+  color: var(--ch-color-text, #f8fafc);
   font-family: var(--ch-font-sans, system-ui, sans-serif);
   padding: 24px;
 }
@@ -24,8 +24,8 @@
   min-height: 48px; /* 48px touch target */
   padding: 12px 18px;
   border-radius: var(--ch-radius-md, 8px);
-  background: var(--ch-color-surface, #1E293B);
-  color: var(--ch-color-text-muted, #94A3B8);
+  background: var(--ch-color-surface, #1e293b);
+  color: var(--ch-color-text-muted, #94a3b8);
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
@@ -37,18 +37,18 @@
 
 .ff-nav-link:hover,
 .ff-nav-link:focus-visible {
-  color: var(--ch-color-text-bright, #FFFFFF);
+  color: var(--ch-color-text-bright, #ffffff);
   background: var(--ch-color-surface-elevated, #334155);
-  outline: 2px solid var(--ch-color-primary, #6366F1);
+  outline: 2px solid var(--ch-color-primary, #6366f1);
 }
 
 .ff-nav-link.active {
-  background: var(--ch-color-primary, #6366F1);
-  color: #FFFFFF;
+  background: var(--ch-color-primary, #6366f1);
+  color: #ffffff;
 }
 
 .ff-card-panel {
-  background: var(--ch-color-surface, #1E293B);
+  background: var(--ch-color-surface, #1e293b);
   border: 1px solid var(--ch-color-border, #334155);
   border-radius: var(--ch-radius-lg, 12px);
   padding: 24px;
@@ -74,7 +74,7 @@
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  color: var(--ch-color-text-muted, #94A3B8);
+  color: var(--ch-color-text-muted, #94a3b8);
   letter-spacing: 0.05em;
 }
 
@@ -82,15 +82,15 @@
   font-size: 28px;
   font-weight: 700;
   font-family: var(--ch-font-mono, monospace);
-  color: var(--ch-color-text, #F8FAFC);
+  color: var(--ch-color-text, #f8fafc);
   margin-top: 6px;
 }
 
 .ff-btn-primary {
   min-height: 48px;
   padding: 12px 24px;
-  background: var(--ch-color-primary, #6366F1);
-  color: #FFFFFF;
+  background: var(--ch-color-primary, #6366f1);
+  color: #ffffff;
   border-radius: var(--ch-radius-md, 8px);
   font-size: 14px;
   font-weight: 700;
@@ -110,8 +110,8 @@
 .ff-btn-danger {
   min-height: 48px;
   padding: 12px 24px;
-  background: var(--ch-color-error, #EF4444);
-  color: #FFFFFF;
+  background: var(--ch-color-error, #ef4444);
+  color: #ffffff;
   border-radius: var(--ch-radius-md, 8px);
   font-size: 14px;
   font-weight: 700;
@@ -126,9 +126,9 @@
 .ff-hold-btn {
   min-height: 56px;
   width: 100%;
-  background: #7F1D1D;
-  color: #FFFFFF;
-  border: 2px solid #EF4444;
+  background: #7f1d1d;
+  color: #ffffff;
+  border: 2px solid #ef4444;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 700;
@@ -140,8 +140,10 @@
 
 .ff-hold-progress {
   position: absolute;
-  top: 0; left: 0; bottom: 0;
-  background: #EF4444;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: #ef4444;
   transition: width 0.1s linear;
   z-index: 1;
 }
@@ -156,18 +158,20 @@
   width: 100%;
   background: var(--ch-color-surface-elevated, #334155);
   border: 1px solid var(--ch-color-border, #475569);
-  color: var(--ch-color-text, #F8FAFC);
+  color: var(--ch-color-text, #f8fafc);
   padding: 12px 16px;
   border-radius: var(--ch-radius-md, 8px);
   font-size: 14px;
 }
 
 .ff-input-field:focus-visible {
-  outline: 2px solid var(--ch-color-primary, #6366F1);
+  outline: 2px solid var(--ch-color-primary, #6366f1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ff-nav-link, .ff-btn-primary, .ff-hold-progress {
+  .ff-nav-link,
+  .ff-btn-primary,
+  .ff-hold-progress {
     transition: none !important;
     animation: none !important;
   }

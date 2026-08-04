@@ -114,9 +114,7 @@ export class DlqManager {
       this.retryCount += 1;
     }
 
-    const existing = this.deadLetters.find(
-      d => d.eventId === params.eventId && d.workerName === params.workerName
-    );
+    const existing = this.deadLetters.find((d) => d.eventId === params.eventId && d.workerName === params.workerName);
 
     if (existing) {
       existing.attempt = params.attempt;
@@ -148,9 +146,7 @@ export class DlqManager {
    * Check if a message should be retried.
    */
   shouldRetry(eventId: string, workerName: string): boolean {
-    const entry = this.deadLetters.find(
-      d => d.eventId === eventId && d.workerName === workerName
-    );
+    const entry = this.deadLetters.find((d) => d.eventId === eventId && d.workerName === workerName);
     if (!entry) return true;
     return entry.attempt < this.maxAttempts && !entry.isPoisonMessage;
   }
@@ -183,7 +179,7 @@ export class DlqManager {
    * Get poison messages only.
    */
   getPoisonMessages(): DlqEntry[] {
-    return this.deadLetters.filter(d => d.isPoisonMessage);
+    return this.deadLetters.filter((d) => d.isPoisonMessage);
   }
 
   /**

@@ -14,7 +14,7 @@ const mockProf = {
   bayesianRating: 4.85,
   totalReviewsCount: 42,
   recommendationPercentage: 92.5,
-  topTags: ['Theoretical Pioneer', 'Tough Grader'],
+  topTags: ['Theoretical Pioneer', 'Tough Grader']
 };
 
 describe('ProfessorCard Component', () => {

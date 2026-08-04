@@ -13,7 +13,9 @@ export function StudyGroupCard({ group, onJoin }: { group: StudyGroupItem; onJoi
           <span className="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
             {group.courseCode}
           </span>
-          <span className="text-xs text-slate-500">{group.currentMembers} / {group.maxCapacity} members</span>
+          <span className="text-xs text-slate-500">
+            {group.currentMembers} / {group.maxCapacity} members
+          </span>
         </div>
         <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-base mb-1">{group.title}</h3>
       </div>
@@ -38,7 +40,9 @@ export function ProjectCard({ project, onJoin }: { project: ProjectTeamItem; onJ
           {project.status || 'OPEN'}
         </span>
         <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-base mt-2 mb-1">{project.title}</h3>
-        {project.description && <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">{project.description}</p>}
+        {project.description && (
+          <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">{project.description}</p>
+        )}
       </div>
       {onJoin && (
         <button
@@ -53,11 +57,19 @@ export function ProjectCard({ project, onJoin }: { project: ProjectTeamItem; onJ
   );
 }
 
-export function MentorshipCard({ mentorship, onRequest }: { mentorship: Partial<MentorshipItem>; onRequest?: (mentorId: string) => void }) {
+export function MentorshipCard({
+  mentorship,
+  onRequest
+}: {
+  mentorship: Partial<MentorshipItem>;
+  onRequest?: (mentorId: string) => void;
+}) {
   return (
     <article className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col justify-between">
       <div>
-        <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-base">Mentor ID: {mentorship.mentorId || 'Mentor'}</h3>
+        <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-base">
+          Mentor ID: {mentorship.mentorId || 'Mentor'}
+        </h3>
         <p className="text-xs text-slate-500 mt-1">Status: {mentorship.status || 'AVAILABLE'}</p>
       </div>
       {onRequest && (

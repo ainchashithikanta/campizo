@@ -170,13 +170,34 @@ export interface SalaryInsight {
 
 /* API Methods */
 
-export async function fetchPlacements(params: { companySlug?: string; jobType?: string; branch?: string; query?: string; page?: number; limit?: number } = {}): Promise<{ items: PlacementExperience[]; total: number; hasMore: boolean }> {
+export async function fetchPlacements(
+  params: {
+    companySlug?: string;
+    jobType?: string;
+    branch?: string;
+    query?: string;
+    page?: number;
+    limit?: number;
+  } = {}
+): Promise<{ items: PlacementExperience[]; total: number; hasMore: boolean }> {
   const qs = buildQueryString(params);
   return apiGet<{ items: PlacementExperience[]; total: number; hasMore: boolean }>(`/placements${qs}`);
 }
 
-export async function fetchCompanyBySlug(slug: string): Promise<{ company: Company; experiences: PlacementExperience[]; salaryInsights: SalaryInsight[]; aiSummary?: CompanyAISummary | null }> {
-  return apiGet<{ company: Company; experiences: PlacementExperience[]; salaryInsights: SalaryInsight[]; aiSummary?: CompanyAISummary | null }>(`/placements/company/${slug}`);
+export async function fetchCompanyBySlug(
+  slug: string
+): Promise<{
+  company: Company;
+  experiences: PlacementExperience[];
+  salaryInsights: SalaryInsight[];
+  aiSummary?: CompanyAISummary | null;
+}> {
+  return apiGet<{
+    company: Company;
+    experiences: PlacementExperience[];
+    salaryInsights: SalaryInsight[];
+    aiSummary?: CompanyAISummary | null;
+  }>(`/placements/company/${slug}`);
 }
 
 export async function fetchCompanyStatistics(slug: string): Promise<CompanyStatistics> {
@@ -192,7 +213,17 @@ export async function submitPlacementExperience(data: any): Promise<PlacementExp
 }
 
 /* Question Bank API Methods */
-export async function fetchQuestions(params: { companyName?: string; topic?: string; difficulty?: string; jobType?: string; query?: string; page?: number; limit?: number } = {}): Promise<{ items: QuestionBankItem[]; total: number; hasMore: boolean }> {
+export async function fetchQuestions(
+  params: {
+    companyName?: string;
+    topic?: string;
+    difficulty?: string;
+    jobType?: string;
+    query?: string;
+    page?: number;
+    limit?: number;
+  } = {}
+): Promise<{ items: QuestionBankItem[]; total: number; hasMore: boolean }> {
   const qs = buildQueryString(params);
   return apiGet<{ items: QuestionBankItem[]; total: number; hasMore: boolean }>(`/placements/questions${qs}`);
 }
@@ -201,7 +232,15 @@ export async function fetchQuestionById(id: string): Promise<QuestionBankItem> {
   return apiGet<QuestionBankItem>(`/placements/questions/${id}`);
 }
 
-export async function createQuestion(data: { companyName: string; roleTitle: string; questionText: string; topic: string; difficulty?: string; roundType?: string; jobType?: string }): Promise<QuestionBankItem> {
+export async function createQuestion(data: {
+  companyName: string;
+  roleTitle: string;
+  questionText: string;
+  topic: string;
+  difficulty?: string;
+  roundType?: string;
+  jobType?: string;
+}): Promise<QuestionBankItem> {
   return apiPost<QuestionBankItem>('/placements/questions', data);
 }
 
@@ -210,7 +249,9 @@ export async function markQuestionHelpful(id: string): Promise<QuestionBankItem>
 }
 
 /* Community Q&A API Methods */
-export async function fetchDiscussions(params: { topic?: string; companySlug?: string; query?: string } = {}): Promise<{ items: DiscussionThread[]; total: number; hasMore: boolean }> {
+export async function fetchDiscussions(
+  params: { topic?: string; companySlug?: string; query?: string } = {}
+): Promise<{ items: DiscussionThread[]; total: number; hasMore: boolean }> {
   const qs = buildQueryString(params);
   return apiGet<{ items: DiscussionThread[]; total: number; hasMore: boolean }>(`/placements/discussions${qs}`);
 }
@@ -219,7 +260,12 @@ export async function fetchDiscussionById(id: string): Promise<DiscussionThread>
   return apiGet<DiscussionThread>(`/placements/discussions/${id}`);
 }
 
-export async function createDiscussion(data: { title: string; content: string; topic: string; companySlug?: string }): Promise<DiscussionThread> {
+export async function createDiscussion(data: {
+  title: string;
+  content: string;
+  topic: string;
+  companySlug?: string;
+}): Promise<DiscussionThread> {
   return apiPost<DiscussionThread>('/placements/discussions', data);
 }
 
@@ -231,7 +277,11 @@ export async function voteDiscussion(id: string, direction: 'UPVOTE' | 'DOWNVOTE
   return apiPatch<DiscussionThread>(`/placements/discussions/${id}/vote`, { direction });
 }
 
-export async function voteReply(replyId: string, threadId: string, direction: 'UPVOTE' | 'DOWNVOTE'): Promise<DiscussionReply> {
+export async function voteReply(
+  replyId: string,
+  threadId: string,
+  direction: 'UPVOTE' | 'DOWNVOTE'
+): Promise<DiscussionReply> {
   return apiPatch<DiscussionReply>(`/placements/replies/${replyId}/vote`, { threadId, direction });
 }
 
@@ -240,11 +290,17 @@ export async function fetchAdminRoadmaps(): Promise<AdminRoadmap[]> {
   return apiGet<AdminRoadmap[]>('/placements/roadmaps');
 }
 
-export async function saveBookmark(targetType: 'COMPANY' | 'EXPERIENCE' | 'QUESTION' | 'THREAD', targetId: string): Promise<PlacementBookmark> {
+export async function saveBookmark(
+  targetType: 'COMPANY' | 'EXPERIENCE' | 'QUESTION' | 'THREAD',
+  targetId: string
+): Promise<PlacementBookmark> {
   return apiPost<PlacementBookmark>('/placements/bookmarks', { targetType, targetId });
 }
 
-export async function removeBookmark(targetType: 'COMPANY' | 'EXPERIENCE' | 'QUESTION' | 'THREAD', targetId: string): Promise<{ removed: boolean }> {
+export async function removeBookmark(
+  targetType: 'COMPANY' | 'EXPERIENCE' | 'QUESTION' | 'THREAD',
+  targetId: string
+): Promise<{ removed: boolean }> {
   return apiDelete<{ removed: boolean }>(`/placements/bookmarks/${targetType}/${targetId}`);
 }
 
@@ -252,8 +308,12 @@ export async function fetchUserBookmarks(): Promise<PlacementBookmark[]> {
   return apiGet<PlacementBookmark[]>('/placements/bookmarks');
 }
 
-export async function fetchTrendingCompanies(): Promise<Array<{ companyId: string; name: string; slug: string; activityCount: number }>> {
-  return apiGet<Array<{ companyId: string; name: string; slug: string; activityCount: number }>>('/placements/trending');
+export async function fetchTrendingCompanies(): Promise<
+  Array<{ companyId: string; name: string; slug: string; activityCount: number }>
+> {
+  return apiGet<Array<{ companyId: string; name: string; slug: string; activityCount: number }>>(
+    '/placements/trending'
+  );
 }
 
 export async function markExperienceHelpful(id: string): Promise<PlacementExperience> {

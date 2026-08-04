@@ -43,7 +43,9 @@ export default function SemesterDashboardPage({ params }: { params: { semesterId
   return (
     <div className="arh-container">
       <div style={{ marginBottom: '24px' }}>
-        <span className="arh-badge-clean" style={{ marginBottom: '8px', display: 'inline-block' }}>SEMESTER DASHBOARD</span>
+        <span className="arh-badge-clean" style={{ marginBottom: '8px', display: 'inline-block' }}>
+          SEMESTER DASHBOARD
+        </span>
         <h1 style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--ch-color-text)', marginBottom: '8px' }}>
           Semester {semNum} Exam Hub
         </h1>
@@ -53,16 +55,43 @@ export default function SemesterDashboardPage({ params }: { params: { semesterId
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
-        <div style={{ padding: '20px', border: '1px solid var(--ch-color-border)', borderRadius: 'var(--ch-radius-md)', backgroundColor: 'var(--ch-color-surface)' }}>
-          <h3 style={{ fontSize: '1rem', color: 'var(--ch-color-text-muted)', marginBottom: '4px' }}>Enrolled Subjects</h3>
+        <div
+          style={{
+            padding: '20px',
+            border: '1px solid var(--ch-color-border)',
+            borderRadius: 'var(--ch-radius-md)',
+            backgroundColor: 'var(--ch-color-surface)'
+          }}
+        >
+          <h3 style={{ fontSize: '1rem', color: 'var(--ch-color-text-muted)', marginBottom: '4px' }}>
+            Enrolled Subjects
+          </h3>
           <p style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--ch-color-primary)' }}>6 Subjects</p>
         </div>
-        <div style={{ padding: '20px', border: '1px solid var(--ch-color-border)', borderRadius: 'var(--ch-radius-md)', backgroundColor: 'var(--ch-color-surface)' }}>
-          <h3 style={{ fontSize: '1rem', color: 'var(--ch-color-text-muted)', marginBottom: '4px' }}>Available Materials</h3>
+        <div
+          style={{
+            padding: '20px',
+            border: '1px solid var(--ch-color-border)',
+            borderRadius: 'var(--ch-radius-md)',
+            backgroundColor: 'var(--ch-color-surface)'
+          }}
+        >
+          <h3 style={{ fontSize: '1rem', color: 'var(--ch-color-text-muted)', marginBottom: '4px' }}>
+            Available Materials
+          </h3>
           <p style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--ch-color-success)' }}>28 Files</p>
         </div>
-        <div style={{ padding: '20px', border: '1px solid var(--ch-color-border)', borderRadius: 'var(--ch-radius-md)', backgroundColor: 'var(--ch-color-surface)' }}>
-          <h3 style={{ fontSize: '1rem', color: 'var(--ch-color-text-muted)', marginBottom: '4px' }}>Exam Kit Status</h3>
+        <div
+          style={{
+            padding: '20px',
+            border: '1px solid var(--ch-color-border)',
+            borderRadius: 'var(--ch-radius-md)',
+            backgroundColor: 'var(--ch-color-surface)'
+          }}
+        >
+          <h3 style={{ fontSize: '1rem', color: 'var(--ch-color-text-muted)', marginBottom: '4px' }}>
+            Exam Kit Status
+          </h3>
           <p style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--ch-color-warning)' }}>Ready</p>
         </div>
       </div>

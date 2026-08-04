@@ -9,7 +9,9 @@ import { WorkerMetrics } from '../metrics/worker-metrics.js';
 export class SearchIndexWorker {
   private indexedDocuments: Map<string, any> = new Map();
 
-  async processSearchIndexUpdate(event: ConnectEventEnvelope<{ docId: string; docType: string; content: Record<string, any> }>): Promise<void> {
+  async processSearchIndexUpdate(
+    event: ConnectEventEnvelope<{ docId: string; docType: string; content: Record<string, any> }>
+  ): Promise<void> {
     const startTime = Date.now();
     try {
       const { docId, docType, content } = event.payload;

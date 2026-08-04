@@ -10,7 +10,9 @@ import { WorkerMetrics } from '../metrics/worker-metrics.js';
 export class RelationshipWorker {
   private relationshipStrengths: Map<string, number> = new Map();
 
-  async processRelationshipActivity(event: ConnectEventEnvelope<{ studentAId: string; studentBId: string; activityType: string; scoreDelta: number }>): Promise<void> {
+  async processRelationshipActivity(
+    event: ConnectEventEnvelope<{ studentAId: string; studentBId: string; activityType: string; scoreDelta: number }>
+  ): Promise<void> {
     const startTime = Date.now();
     try {
       const { studentAId, studentBId, scoreDelta } = event.payload;

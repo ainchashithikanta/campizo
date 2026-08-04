@@ -6,7 +6,15 @@
 import React from 'react';
 import type { ConversationItem, MessageItem } from '../../lib/api-campus-connect';
 
-export function ConversationList({ conversations, activeId, onSelect }: { conversations: ConversationItem[]; activeId?: string; onSelect: (id: string) => void }) {
+export function ConversationList({
+  conversations,
+  activeId,
+  onSelect
+}: {
+  conversations: ConversationItem[];
+  activeId?: string;
+  onSelect: (id: string) => void;
+}) {
   if (!conversations || conversations.length === 0) {
     return <p className="text-xs text-slate-500 p-4">No active conversations.</p>;
   }
@@ -21,11 +29,15 @@ export function ConversationList({ conversations, activeId, onSelect }: { conver
               type="button"
               onClick={() => onSelect(c.id)}
               className={`w-full text-left p-4 min-h-[48px] flex flex-col gap-1 transition-colors ${
-                isActive ? 'bg-indigo-500/10 border-l-4 border-indigo-600' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                isActive
+                  ? 'bg-indigo-500/10 border-l-4 border-indigo-600'
+                  : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">{c.title || `Conversation ${c.id.slice(0, 8)}`}</span>
+                <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                  {c.title || `Conversation ${c.id.slice(0, 8)}`}
+                </span>
                 <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                   {c.contextType}
                 </span>

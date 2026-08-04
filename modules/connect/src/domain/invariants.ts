@@ -10,7 +10,10 @@ import {
   OptimisticLockingError
 } from '../errors/domain-errors.js';
 
-export function assertMandatoryConversationContext(contextType: string | null | undefined, contextId: string | null | undefined): void {
+export function assertMandatoryConversationContext(
+  contextType: string | null | undefined,
+  contextId: string | null | undefined
+): void {
   if (!contextType || !contextType.trim() || !contextId || !contextId.trim()) {
     throw new InvalidConversationContextError();
   }

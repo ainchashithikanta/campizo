@@ -11,7 +11,9 @@ import { WorkerMetrics } from '../metrics/worker-metrics.js';
 export class ModerationWorker {
   constructor(private readonly useCases: ConnectUseCases) {}
 
-  async processReportCreated(event: ConnectEventEnvelope<{ caseId: string; reportedUserId: string; reporterUserId: string; reason: string }>): Promise<void> {
+  async processReportCreated(
+    event: ConnectEventEnvelope<{ caseId: string; reportedUserId: string; reporterUserId: string; reason: string }>
+  ): Promise<void> {
     const startTime = Date.now();
     try {
       const { caseId, reportedUserId, reporterUserId, reason } = event.payload;

@@ -43,14 +43,24 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
 
     it('should detect poison messages at configured threshold', () => {
       const entry1 = dlqManager.recordFailure({
-        eventId: 'evt-poison', eventType: 'VoteAdded', workerName: 'RankingWorker',
-        payload: {}, attempt: 1, error: 'Timeout', requestId: 'req-1'
+        eventId: 'evt-poison',
+        eventType: 'VoteAdded',
+        workerName: 'RankingWorker',
+        payload: {},
+        attempt: 1,
+        error: 'Timeout',
+        requestId: 'req-1'
       });
       expect(entry1.isPoisonMessage).toBe(false);
 
       const entry3 = dlqManager.recordFailure({
-        eventId: 'evt-poison', eventType: 'VoteAdded', workerName: 'RankingWorker',
-        payload: {}, attempt: 3, error: 'Still failing', requestId: 'req-1'
+        eventId: 'evt-poison',
+        eventType: 'VoteAdded',
+        workerName: 'RankingWorker',
+        payload: {},
+        attempt: 3,
+        error: 'Still failing',
+        requestId: 'req-1'
       });
       expect(entry3.isPoisonMessage).toBe(true);
       expect(dlqManager.getPoisonMessages().length).toBe(1);
@@ -60,8 +70,13 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
       expect(dlqManager.shouldRetry('evt-new', 'RankingWorker')).toBe(true);
 
       dlqManager.recordFailure({
-        eventId: 'evt-exhaust', eventType: 'VoteAdded', workerName: 'RankingWorker',
-        payload: {}, attempt: 5, error: 'Done', requestId: 'req-1'
+        eventId: 'evt-exhaust',
+        eventType: 'VoteAdded',
+        workerName: 'RankingWorker',
+        payload: {},
+        attempt: 5,
+        error: 'Done',
+        requestId: 'req-1'
       });
       expect(dlqManager.shouldRetry('evt-exhaust', 'RankingWorker')).toBe(false);
     });
@@ -93,20 +108,26 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
       const router = new EventRouter({ dlqManager });
       const processed: string[] = [];
 
-      router.registerWorker('StatisticsWorker', async (p) => { processed.push('stats-' + p['targetId']); });
-      router.registerWorker('RankingWorker', async (p) => { processed.push('rank-' + p['targetId']); });
+      router.registerWorker('StatisticsWorker', async (p) => {
+        processed.push('stats-' + p['targetId']);
+      });
+      router.registerWorker('RankingWorker', async (p) => {
+        processed.push('rank-' + p['targetId']);
+      });
 
       await router.publish('VoteAdded', { eventId: 'evt-1', targetId: 'conf-1', collegeId: COLLEGE });
 
       expect(processed).toContain('stats-conf-1');
       expect(processed).toContain('rank-conf-1');
       expect(router.dispatchLog.length).toBe(2);
-      expect(router.dispatchLog.every(l => l.success)).toBe(true);
+      expect(router.dispatchLog.every((l) => l.success)).toBe(true);
     });
 
     it('should send failed worker dispatches to DLQ', async () => {
       const router = new EventRouter({ dlqManager });
-      router.registerWorker('StatisticsWorker', async () => { throw new Error('DB_TIMEOUT'); });
+      router.registerWorker('StatisticsWorker', async () => {
+        throw new Error('DB_TIMEOUT');
+      });
 
       await router.publish('VoteAdded', { eventId: 'evt-fail', targetId: 'conf-1', collegeId: COLLEGE });
 
@@ -119,8 +140,12 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
     it('should enforce event-level idempotency — skip already-processed events', async () => {
       const router = new EventRouter({ dlqManager });
       let callCount = 0;
-      router.registerWorker('StatisticsWorker', async () => { callCount++; });
-      router.registerWorker('RankingWorker', async () => { callCount++; });
+      router.registerWorker('StatisticsWorker', async () => {
+        callCount++;
+      });
+      router.registerWorker('RankingWorker', async () => {
+        callCount++;
+      });
 
       await router.publish('VoteAdded', { eventId: 'evt-idem', targetId: 'conf-1', collegeId: COLLEGE });
       expect(callCount).toBe(2);
@@ -170,8 +195,12 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
       const result = await piiScanWorkerHandler(
         { confessionId: 'conf-1', collegeId: COLLEGE, title: 'Contact', content: 'Call 9876543210' },
         {
-          quarantineConfession: async () => { quarantined = true; },
-          openModerationCase: async () => { caseOpened = true; }
+          quarantineConfession: async () => {
+            quarantined = true;
+          },
+          openModerationCase: async () => {
+            caseOpened = true;
+          }
         }
       );
 
@@ -208,7 +237,9 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
           recalculateScores: async (id, college, metrics) => {
             await statsRepo.recalculateScores(id, college, { ...metrics, hotScore: metrics.hotScore });
           },
-          saveSnapshot: async (snap) => { await rankingRepo.saveSnapshot(snap); }
+          saveSnapshot: async (snap) => {
+            await rankingRepo.saveSnapshot(snap);
+          }
         }
       );
 
@@ -225,7 +256,12 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
       const statsRepo = new InMemoryStatisticsRepository();
       const result = await statisticsWorkerHandler(
         { eventType: 'VoteAdded', confessionId: 'conf-1', collegeId: COLLEGE },
-        { incrementViews: async (id, c) => { await statsRepo.incrementViews(id, c); }, recalculateScores: async () => {} }
+        {
+          incrementViews: async (id, c) => {
+            await statsRepo.incrementViews(id, c);
+          },
+          recalculateScores: async () => {}
+        }
       );
       expect(result.metric).toBe('VOTE');
       expect(result.delta).toBe(1);
@@ -235,7 +271,12 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
       const statsRepo = new InMemoryStatisticsRepository();
       const result = await statisticsWorkerHandler(
         { eventType: 'VoteRemoved', confessionId: 'conf-1', collegeId: COLLEGE },
-        { incrementViews: async (id, c) => { await statsRepo.incrementViews(id, c); }, recalculateScores: async () => {} }
+        {
+          incrementViews: async (id, c) => {
+            await statsRepo.incrementViews(id, c);
+          },
+          recalculateScores: async () => {}
+        }
       );
       expect(result.metric).toBe('VOTE');
       expect(result.delta).toBe(-1);
@@ -265,7 +306,12 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
       let indexed = false;
       const result = await searchIndexerWorkerHandler(
         { eventType: 'ConfessionPublished', confessionId: 'conf-1', collegeId: COLLEGE },
-        { indexConfession: async () => { indexed = true; }, removeFromIndex: async () => {} }
+        {
+          indexConfession: async () => {
+            indexed = true;
+          },
+          removeFromIndex: async () => {}
+        }
       );
       expect(result.action).toBe('INDEX');
       expect(indexed).toBe(true);
@@ -275,7 +321,12 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
       let removed = false;
       const result = await searchIndexerWorkerHandler(
         { eventType: 'ConfessionDeleted', confessionId: 'conf-1', collegeId: COLLEGE },
-        { indexConfession: async () => {}, removeFromIndex: async () => { removed = true; } }
+        {
+          indexConfession: async () => {},
+          removeFromIndex: async () => {
+            removed = true;
+          }
+        }
       );
       expect(result.action).toBe('REMOVE');
       expect(removed).toBe(true);
@@ -289,7 +340,11 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
       const notifRepo = new InMemoryNotificationRepository();
       const result = await notificationWorkerHandler(
         { eventType: 'ConfessionPublished', confessionId: 'conf-1', collegeId: COLLEGE },
-        { queueNotification: async (n) => { await notifRepo.queueNotification(n); } }
+        {
+          queueNotification: async (n) => {
+            await notifRepo.queueNotification(n);
+          }
+        }
       );
       expect(result.notificationType).toBe('NEW_CONFESSION');
       expect(notifRepo.notifications.length).toBe(1);
@@ -299,7 +354,11 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
       const notifRepo = new InMemoryNotificationRepository();
       const result = await notificationWorkerHandler(
         { eventType: 'ModerationCaseOpened', confessionId: 'conf-1', collegeId: COLLEGE },
-        { queueNotification: async (n) => { await notifRepo.queueNotification(n); } }
+        {
+          queueNotification: async (n) => {
+            await notifRepo.queueNotification(n);
+          }
+        }
       );
       expect(result.recipientUserId).toBe('MODERATORS');
       expect(result.notificationType).toBe('MODERATION_ALERT');
@@ -329,8 +388,12 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
         { confessionId: 'conf-1', collegeId: COLLEGE, reasonCode: 'HARASSMENT' },
         {
           getReportCount: async () => 3,
-          quarantineConfession: async () => { quarantined = true; },
-          openModerationCase: async () => { caseOpened = true; }
+          quarantineConfession: async () => {
+            quarantined = true;
+          },
+          openModerationCase: async () => {
+            caseOpened = true;
+          }
         }
       );
       expect(result.action).toBe('CASE_OPENED');
@@ -371,12 +434,22 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
         pipelineLog.push(`pii-scan:${result.hasPii ? 'FAIL' : 'PASS'}`);
         if (!result.hasPii) {
           // Clean — publish ConfessionPublished to continue pipeline
-          await router.publish('ConfessionPublished', { ...p, eventId: `evt-pub-${Date.now()}`, eventType: 'ConfessionPublished' });
+          await router.publish('ConfessionPublished', {
+            ...p,
+            eventId: `evt-pub-${Date.now()}`,
+            eventType: 'ConfessionPublished'
+          });
         }
       });
-      router.registerWorker('SearchIndexerWorker', async () => { pipelineLog.push('search-indexed'); });
-      router.registerWorker('RankingWorker', async () => { pipelineLog.push('ranking-updated'); });
-      router.registerWorker('NotificationWorker', async () => { pipelineLog.push('notification-queued'); });
+      router.registerWorker('SearchIndexerWorker', async () => {
+        pipelineLog.push('search-indexed');
+      });
+      router.registerWorker('RankingWorker', async () => {
+        pipelineLog.push('ranking-updated');
+      });
+      router.registerWorker('NotificationWorker', async () => {
+        pipelineLog.push('notification-queued');
+      });
 
       await router.publish('ConfessionCreated', {
         eventId: 'evt-create-1',
@@ -401,7 +474,9 @@ describe('Campus Confessions Worker Pipeline & Event Router', () => {
         pipelineLog.push(`pii-scan:${result.hasPii ? 'FAIL' : 'PASS'}`);
         // PII found — do NOT publish ConfessionPublished
       });
-      router.registerWorker('SearchIndexerWorker', async () => { pipelineLog.push('search-indexed'); });
+      router.registerWorker('SearchIndexerWorker', async () => {
+        pipelineLog.push('search-indexed');
+      });
 
       await router.publish('ConfessionCreated', {
         eventId: 'evt-create-pii',

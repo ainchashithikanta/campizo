@@ -3,10 +3,7 @@
  * Implements repository contracts with transactions, optimistic locking, and append-only history.
  */
 
-import {
-  FeatureFlagEntity,
-  FeatureFlagRepository
-} from '../domain/repository.interface.js';
+import { FeatureFlagEntity, FeatureFlagRepository } from '../domain/repository.interface.js';
 import { featureFlags } from '../schema/feature-flags.schema.js';
 import { eq, and } from 'drizzle-orm';
 import { ConflictApplicationError } from '../errors/application-errors.js';
@@ -81,7 +78,9 @@ export class DrizzleFeatureFlagRepository implements FeatureFlagRepository {
         .returning();
 
       if (updatedRows.length === 0) {
-        throw new ConflictApplicationError(`Concurrent modification detected for flag '${flag.flagKey}'. Update aborted.`);
+        throw new ConflictApplicationError(
+          `Concurrent modification detected for flag '${flag.flagKey}'. Update aborted.`
+        );
       }
 
       const updated = updatedRows[0];

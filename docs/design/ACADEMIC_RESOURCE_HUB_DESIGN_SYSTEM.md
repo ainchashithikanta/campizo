@@ -44,7 +44,7 @@ The **Academic Resource Hub** visual design language is governed by five core pr
 
 ### 2.2 Typography Scale
 
-- **Font Families**: 
+- **Font Families**:
   - Sans-Serif Body & UI: `Inter`, system-ui, sans-serif
   - Monospace (Subject Codes, Hashes, Tags): `JetBrains Mono`, monospace
 - **Font Sizes**:
@@ -125,7 +125,7 @@ graph TD
 13. **Bookmarked Resources Screen**: Grid of saved study materials stored locally or synced to user account.
 14. **Recent Downloads Screen**: Chronological feed of downloaded PDFs for quick re-opening.
 15. **Student Moderator Queue Screen**: Moderation queue displaying reported files, reason tags, PDF inspector preview, and `Approve` / `Quarantine` decision CTAs.
-16. **Empty Search Screen**: Friendly illustration + *"No study materials match your search. Be the first student to upload!"* + `Upload Material` CTA button.
+16. **Empty Search Screen**: Friendly illustration + _"No study materials match your search. Be the first student to upload!"_ + `Upload Material` CTA button.
 17. **Offline Mode Cache Screen**: Banner indicating offline state + list of locally cached PDFs stored in PWA Cache Storage.
 18. **404 Not Found Page**: Friendly academic error screen with link back to Subject Directory.
 19. **Error Fallback Screen**: Non-blocking toast/banner with `Try Again` retry trigger.
@@ -154,7 +154,7 @@ graph TD
 Information on the Subject Dashboard is ordered strategically based on student exam preparation intent:
 
 1. **Subject Header**: Full Name (`CS501: Operating Systems`), Course Code Pill, Credits (`4 Credits`), Department (`CSE`).
-2. **Exam Survival Kit Banner**: Prominent gradient banner for active exam kits (*"Mid-Sem 2024 Exam Kit: Notes + 3-Year PYQs + Formula Sheet"*).
+2. **Exam Survival Kit Banner**: Prominent gradient banner for active exam kits (_"Mid-Sem 2024 Exam Kit: Notes + 3-Year PYQs + Formula Sheet"_).
 3. **Material Category Filter Pills**: `All Materials (25)`, `PYQs (12)`, `Lecture Notes (8)`, `Lab Manuals (3)`, `Formula Sheets (2)`.
 4. **Active Material Grid**: 2-column or 3-column card grid sorted by Bayesian Quality Score.
 5. **Top Student Contributors Section**: Avatar row of top peer uploaders for this subject.
@@ -177,6 +177,7 @@ Information on the Subject Dashboard is ordered strategically based on student e
 ```
 
 ### Visual Priority Levels:
+
 - **Level 1 (Highest)**: Category Badge (`[PYQ]`), Course Code (`CS501`), Resource Title.
 - **Level 2 (Trust Signals)**: Gold Rating Badge (`4.85 ★`), Verified Solution Key Shield.
 - **Level 3 (Context)**: Scheme Tag (`#2021Scheme`), Page Count, File Size, Author Name.
@@ -214,7 +215,7 @@ Item 4: 📄 1-Page Formula Cheat Sheet .............................. [ 📖 Pr
 ## 9. Upload Experience & Validation UI/UX
 
 1. **Step 1 (Drag & Drop)**: Dropzone accepting PDF, PNG, JPG, DOCX files.
-2. **Step 2 (Instant SHA-256 Duplicate Check Alert)**: If hash exists, displays amber toast: *"Duplicate File Detected: This file already exists as 'OS_Notes_Unit1.pdf'. [View Existing File]"*.
+2. **Step 2 (Instant SHA-256 Duplicate Check Alert)**: If hash exists, displays amber toast: _"Duplicate File Detected: This file already exists as 'OS_Notes_Unit1.pdf'. [View Existing File]"_.
 3. **Step 3 (Metadata Selection)**: Subject select, Category dropdown, Scheme tagger, Exam Type selector.
 4. **Step 4 (Progress & Validation)**: Circular progress spinner ($0\% \rightarrow 100\%$) with cancel button.
 5. **Step 5 (Success Confirmation)**: Modal displaying "+10 Contributor Points" animation and instant shareable deep link.
@@ -226,7 +227,7 @@ Item 4: 📄 1-Page Formula Cheat Sheet .............................. [ 📖 Pr
 - **Trigger**: Tapping top search bar opens persistent full-screen search overlay.
 - **Debounced Input**: Searches as student types (200ms delay).
 - **Filter Chips Row**: `[PYQs Only]`, `[Notes Only]`, `[2021 Scheme]`, `[Min Rating 4.0+]`.
-- **Course Code Auto-Jump**: Typing `CS501` displays top suggestion: *"Jump directly to CS501: Operating Systems Hub"*.
+- **Course Code Auto-Jump**: Typing `CS501` displays top suggestion: _"Jump directly to CS501: Operating Systems Hub"_.
 
 ---
 
@@ -268,27 +269,29 @@ Item 4: 📄 1-Page Formula Cheat Sheet .............................. [ 📖 Pr
 
 ## 14. Responsive Breakpoint Layout Matrix
 
-| Breakpoint | Devices | Layout Strategy |
-| :--- | :--- | :--- |
-| **`320px`** | Small Mobile | 1-Column, compact padding, hidden tags |
-| **`375px`** | Standard Mobile | 1-Column, full card details, sticky bottom action bar |
-| **`480px`** | Large Mobile / Phablet | 1-Column, expanded filter chips |
-| **`768px`** | Tablet Portrait | 2-Column grid, bottom sheet drawers |
-| **`1024px`**| Tablet Landscape / Small Laptop | 2-Column layout (Main feed + Sticky right sidebar) |
-| **`1280px`**| Desktop | 3-Column layout (Left Nav Tree + Center Feed + Right Meta Bar) |
-| **`1600px+`**| Ultra-Wide Display | 3-Column centered max-width container (`max-width: 1440px`) |
+| Breakpoint    | Devices                         | Layout Strategy                                                |
+| :------------ | :------------------------------ | :------------------------------------------------------------- |
+| **`320px`**   | Small Mobile                    | 1-Column, compact padding, hidden tags                         |
+| **`375px`**   | Standard Mobile                 | 1-Column, full card details, sticky bottom action bar          |
+| **`480px`**   | Large Mobile / Phablet          | 1-Column, expanded filter chips                                |
+| **`768px`**   | Tablet Portrait                 | 2-Column grid, bottom sheet drawers                            |
+| **`1024px`**  | Tablet Landscape / Small Laptop | 2-Column layout (Main feed + Sticky right sidebar)             |
+| **`1280px`**  | Desktop                         | 3-Column layout (Left Nav Tree + Center Feed + Right Meta Bar) |
+| **`1600px+`** | Ultra-Wide Display              | 3-Column centered max-width container (`max-width: 1440px`)    |
 
 ---
 
 ## 15. College Hub Visual Design Decisions Log
 
 ### Decision 1: Sticky Bottom Action Bar on Mobile
+
 - **Inspired By**: E-Commerce & Reading Apps (Amazon, Kindle)
 - **Why Chosen**: Ensures the primary CTA (`Download PDF`) is always reachable within the single-thumb reach zone without requiring scrolling past long PDF previews.
 - **Why Alternatives Were Rejected**: Top action headers require two-handed phone operation on modern large mobile screens.
 - **Adaptation for Indian Colleges**: Optimized for quick single-handed phone usage on crowded student buses/trains during commute to college exams.
 
 ### Decision 2: Distinct Verification Badges (Gold, Emerald, Blue)
+
 - **Inspired By**: GitHub Verified Commit & Twitter Blue Checkmarks
 - **Why Chosen**: Instantly communicates trust signals (Solution Key vs Verified Notes vs Faculty PPT) to anxious students searching for study material 10 minutes before an exam.
 - **Why Alternatives Were Rejected**: Monochrome text labels blend into card bodies and get missed.
@@ -298,13 +301,13 @@ Item 4: 📄 1-Page Formula Cheat Sheet .............................. [ 📖 Pr
 
 ## 16. Visual Definition of Done Verification
 
-| Design Requirement | Verification Status | Rationale / Reference |
-| :--- | :--- | :--- |
-| **Design Token System** | ✅ Verified | Complete HSL/Hex color tokens, typography scale, spacing, and shadows. |
-| **Screen Inventory (21 Screens)**| ✅ Verified | Layout specifications for all 21 core screens and edge cases. |
-| **Resource Card Anatomy** | ✅ Verified | Visual hierarchy and priority levels defined. |
-| **WCAG 2.1 AA Compliance** | ✅ Verified | Minimum 48px touch targets, focus rings, contrast ratios, and ARIA labels. |
-| **No Code Implementation** | ✅ Verified | Pure visual design system & UI/UX specification. |
+| Design Requirement                | Verification Status | Rationale / Reference                                                      |
+| :-------------------------------- | :------------------ | :------------------------------------------------------------------------- |
+| **Design Token System**           | ✅ Verified         | Complete HSL/Hex color tokens, typography scale, spacing, and shadows.     |
+| **Screen Inventory (21 Screens)** | ✅ Verified         | Layout specifications for all 21 core screens and edge cases.              |
+| **Resource Card Anatomy**         | ✅ Verified         | Visual hierarchy and priority levels defined.                              |
+| **WCAG 2.1 AA Compliance**        | ✅ Verified         | Minimum 48px touch targets, focus rings, contrast ratios, and ARIA labels. |
+| **No Code Implementation**        | ✅ Verified         | Pure visual design system & UI/UX specification.                           |
 
 ---
 

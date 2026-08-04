@@ -1,7 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import type { AcademicResourceDTO, ResourceStatisticsDTO, StudyCollectionDTO, ContributorDTO } from '../../lib/api-academic-resource-hub';
+import type {
+  AcademicResourceDTO,
+  ResourceStatisticsDTO,
+  StudyCollectionDTO,
+  ContributorDTO
+} from '../../lib/api-academic-resource-hub';
 
 export interface ResourceCardProps {
   resource: AcademicResourceDTO;
@@ -21,19 +26,40 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onBookmark
   return (
     <div className="arh-card" data-testid={`resource-card-${resource.id}`}>
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--ch-color-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <div
+          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}
+        >
+          <span
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'var(--ch-color-primary)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}
+          >
             {resource.resourceTypeId.replace('type-', '')}
           </span>
           <button
             onClick={handleBookmark}
             aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark resource'}
-            style={{ color: isBookmarked ? 'var(--ch-color-primary)' : 'var(--ch-color-text-muted)', fontSize: '1.25rem' }}
+            style={{
+              color: isBookmarked ? 'var(--ch-color-primary)' : 'var(--ch-color-text-muted)',
+              fontSize: '1.25rem'
+            }}
           >
             {isBookmarked ? '★' : '☆'}
           </button>
         </div>
-        <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--ch-color-text)', marginBottom: '8px', lineHeight: 1.3 }}>
+        <h3
+          style={{
+            fontSize: '1.125rem',
+            fontWeight: 600,
+            color: 'var(--ch-color-text)',
+            marginBottom: '8px',
+            lineHeight: 1.3
+          }}
+        >
           {resource.title}
         </h3>
         <p style={{ fontSize: '0.875rem', color: 'var(--ch-color-text-muted)', marginBottom: '16px' }}>
@@ -41,7 +67,15 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onBookmark
         </p>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid var(--ch-color-border)' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingTop: '12px',
+          borderTop: '1px solid var(--ch-color-border)'
+        }}
+      >
         <span className="arh-badge-clean">CLEAN</span>
         <button
           onClick={() => onDownload && onDownload(resource.id)}
@@ -61,12 +95,27 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onBookmark
   );
 };
 
-export const ResourceGrid: React.FC<{ resources: AcademicResourceDTO[]; onDownload?: (id: string) => void }> = ({ resources, onDownload }) => {
+export const ResourceGrid: React.FC<{ resources: AcademicResourceDTO[]; onDownload?: (id: string) => void }> = ({
+  resources,
+  onDownload
+}) => {
   if (resources.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '48px 16px', background: 'var(--ch-color-surface)', borderRadius: 'var(--ch-radius-md)', border: '1px solid var(--ch-color-border)' }}>
-        <h3 style={{ fontSize: '1.25rem', color: 'var(--ch-color-text)', marginBottom: '8px' }}>No Academic Resources Found</h3>
-        <p style={{ color: 'var(--ch-color-text-muted)' }}>Try searching for a different subject, semester, or keyword.</p>
+      <div
+        style={{
+          textAlign: 'center',
+          padding: '48px 16px',
+          background: 'var(--ch-color-surface)',
+          borderRadius: 'var(--ch-radius-md)',
+          border: '1px solid var(--ch-color-border)'
+        }}
+      >
+        <h3 style={{ fontSize: '1.25rem', color: 'var(--ch-color-text)', marginBottom: '8px' }}>
+          No Academic Resources Found
+        </h3>
+        <p style={{ color: 'var(--ch-color-text-muted)' }}>
+          Try searching for a different subject, semester, or keyword.
+        </p>
       </div>
     );
   }
@@ -80,12 +129,12 @@ export const ResourceGrid: React.FC<{ resources: AcademicResourceDTO[]; onDownlo
   );
 };
 
-export const ResourceHero: React.FC<{ title: string; subtitle: string; searchPlaceholder?: string; onSearch?: (q: string) => void }> = ({
-  title,
-  subtitle,
-  searchPlaceholder = 'Search notes, PYQs, lab manuals...',
-  onSearch
-}) => {
+export const ResourceHero: React.FC<{
+  title: string;
+  subtitle: string;
+  searchPlaceholder?: string;
+  onSearch?: (q: string) => void;
+}> = ({ title, subtitle, searchPlaceholder = 'Search notes, PYQs, lab manuals...', onSearch }) => {
   const [query, setQuery] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -131,7 +180,10 @@ export const ResourceHero: React.FC<{ title: string; subtitle: string; searchPla
   );
 };
 
-export const HelpfulVote: React.FC<{ resourceId: string; onVote: (isHelpful: boolean) => void }> = ({ resourceId, onVote }) => {
+export const HelpfulVote: React.FC<{ resourceId: string; onVote: (isHelpful: boolean) => void }> = ({
+  resourceId,
+  onVote
+}) => {
   const [voted, setVoted] = useState<'HELPFUL' | 'UNHELPFUL' | null>(null);
 
   const handleVote = (isHelpful: boolean) => {
@@ -141,7 +193,9 @@ export const HelpfulVote: React.FC<{ resourceId: string; onVote: (isHelpful: boo
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-      <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--ch-color-text-muted)' }}>Was this resource helpful?</span>
+      <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--ch-color-text-muted)' }}>
+        Was this resource helpful?
+      </span>
       <button
         onClick={() => handleVote(true)}
         aria-label="Vote Helpful"
@@ -176,7 +230,14 @@ export const HelpfulVote: React.FC<{ resourceId: string; onVote: (isHelpful: boo
 
 export const ResourcePreview: React.FC<{ title: string; pageCount?: number }> = ({ title, pageCount = 12 }) => {
   return (
-    <div style={{ border: '1px solid var(--ch-color-border)', borderRadius: 'var(--ch-radius-md)', padding: '24px', backgroundColor: 'var(--ch-color-surface)' }}>
+    <div
+      style={{
+        border: '1px solid var(--ch-color-border)',
+        borderRadius: 'var(--ch-radius-md)',
+        padding: '24px',
+        backgroundColor: 'var(--ch-color-surface)'
+      }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <h4 style={{ fontWeight: 600, color: 'var(--ch-color-text)' }}>PDF Document Preview ({pageCount} Pages)</h4>
         <span className="arh-badge-clean">VIRUS SCANNED CLEAN</span>
@@ -205,14 +266,46 @@ export const ResourcePreview: React.FC<{ title: string; pageCount?: number }> = 
 
 export const ContributorCard: React.FC<{ contributor: ContributorDTO }> = ({ contributor }) => {
   return (
-    <div style={{ border: '1px solid var(--ch-color-border)', borderRadius: 'var(--ch-radius-md)', padding: '16px', backgroundColor: 'var(--ch-color-surface)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-      <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--ch-color-primary)', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.25rem' }}>
+    <div
+      style={{
+        border: '1px solid var(--ch-color-border)',
+        borderRadius: 'var(--ch-radius-md)',
+        padding: '16px',
+        backgroundColor: 'var(--ch-color-surface)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px'
+      }}
+    >
+      <div
+        style={{
+          width: '48px',
+          height: '48px',
+          borderRadius: '50%',
+          backgroundColor: 'var(--ch-color-primary)',
+          color: '#FFF',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontWeight: 700,
+          fontSize: '1.25rem'
+        }}
+      >
         {contributor.userId.substring(0, 2).toUpperCase()}
       </div>
       <div>
         <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--ch-color-text)' }}>{contributor.userId}</h4>
         <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--ch-color-primary)', backgroundColor: 'var(--ch-color-primary-light)', padding: '2px 8px', borderRadius: '999px' }}>
+          <span
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'var(--ch-color-primary)',
+              backgroundColor: 'var(--ch-color-primary-light)',
+              padding: '2px 8px',
+              borderRadius: '999px'
+            }}
+          >
             {contributor.badgeLevel}
           </span>
           <span style={{ fontSize: '0.75rem', color: 'var(--ch-color-text-muted)' }}>
@@ -228,8 +321,14 @@ export const StudyCollectionCard: React.FC<{ collection: StudyCollectionDTO }> =
   return (
     <div className="arh-card">
       <div>
-        <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--ch-color-text)', marginBottom: '8px' }}>{collection.title}</h3>
-        {collection.description && <p style={{ fontSize: '0.875rem', color: 'var(--ch-color-text-muted)', marginBottom: '12px' }}>{collection.description}</p>}
+        <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--ch-color-text)', marginBottom: '8px' }}>
+          {collection.title}
+        </h3>
+        {collection.description && (
+          <p style={{ fontSize: '0.875rem', color: 'var(--ch-color-text-muted)', marginBottom: '12px' }}>
+            {collection.description}
+          </p>
+        )}
       </div>
       <div style={{ fontSize: '0.75rem', color: 'var(--ch-color-primary)', fontWeight: 600 }}>
         {collection.isPublic ? 'Public Collection' : 'Private Collection'}
@@ -238,9 +337,20 @@ export const StudyCollectionCard: React.FC<{ collection: StudyCollectionDTO }> =
   );
 };
 
-export const UploadProgressCard: React.FC<{ step: number; fileName?: string; virusScanStatus?: string }> = ({ step, fileName, virusScanStatus = 'CLEAN' }) => {
+export const UploadProgressCard: React.FC<{ step: number; fileName?: string; virusScanStatus?: string }> = ({
+  step,
+  fileName,
+  virusScanStatus = 'CLEAN'
+}) => {
   return (
-    <div style={{ border: '1px solid var(--ch-color-border)', borderRadius: 'var(--ch-radius-md)', padding: '24px', backgroundColor: 'var(--ch-color-surface)' }}>
+    <div
+      style={{
+        border: '1px solid var(--ch-color-border)',
+        borderRadius: 'var(--ch-radius-md)',
+        padding: '24px',
+        backgroundColor: 'var(--ch-color-surface)'
+      }}
+    >
       <div className="arh-step-indicator">
         <div className={`arh-step ${step >= 1 ? 'arh-step-active' : ''}`}>
           <span className="arh-step-num">1</span> Metadata
@@ -259,7 +369,9 @@ export const UploadProgressCard: React.FC<{ step: number; fileName?: string; vir
       {fileName && (
         <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--ch-color-text)' }}>{fileName}</span>
-          <span className={virusScanStatus === 'CLEAN' ? 'arh-badge-clean' : 'arh-badge-pending'}>{virusScanStatus}</span>
+          <span className={virusScanStatus === 'CLEAN' ? 'arh-badge-clean' : 'arh-badge-pending'}>
+            {virusScanStatus}
+          </span>
         </div>
       )}
     </div>

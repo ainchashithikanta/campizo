@@ -3,12 +3,13 @@
 **Module Name**: `Campus Connect` (`@college-hub/campus-connect`)  
 **Document Type**: Domain-Driven Design (DDD) & Business Rules Blueprint  
 **Status**: 🟢 **FINAL DOMAIN MODEL SPECIFICATION**  
-**Target Platform**: College Hub Monorepo Architecture  
+**Target Platform**: College Hub Monorepo Architecture
 
 ---
 
 > [!IMPORTANT]
 > **Mandatory Domain Invariants**:
+>
 > 1. **Intent as a First-Class Aggregate**: `StudentIntent` is an independent Aggregate Root. Students can maintain multiple concurrent active intents.
 > 2. **Context-Mandated Messaging**: Messaging is impossible without an active, non-null `ConversationContext`. Cold or context-free messaging is forbidden.
 > 3. **Immutable Recommendations**: `RecommendationSnapshot` instances are append-only and cannot be mutated in place.
@@ -77,71 +78,85 @@ The domain model contains 14 Aggregate Roots, each managing its own transactiona
 ### 2.1 Complete Aggregate Root Catalog
 
 #### Aggregate 1: `StudentIntent` (First-Class Aggregate Root)
-- **Responsibilities**: Manages student collaboration goals (*Study Partner*, *Project Team*, *Hackathon*, *Mentorship*, *Co-founder*, *Gym*, *Music*, *Travel*).
+
+- **Responsibilities**: Manages student collaboration goals (_Study Partner_, _Project Team_, _Hackathon_, _Mentorship_, _Co-founder_, _Gym_, _Music_, _Travel_).
 - **Consistency Boundary**: Enforces intent priority, expiration dates, availability windows, and target skills.
 - **Lifecycle**: `DRAFT` $\rightarrow$ `ACTIVE` $\rightarrow$ `PAUSED` $\rightarrow$ `FULFILLED` $\rightarrow$ `ARCHIVED`.
 
 #### Aggregate 2: `StudentProfile`
+
 - **Responsibilities**: Manages academic credentials, verified skills, and interest tags.
 - **Consistency Boundary**: Validates major, class year, and student verification status.
 - **Lifecycle**: `ACTIVE` $\rightarrow$ `SUSPENDED` $\rightarrow$ `DEACTIVATED`.
 
 #### Aggregate 3: `Connection`
+
 - **Responsibilities**: Represents a verified 1-on-1 peer relationship.
 - **Consistency Boundary**: Enforces the maximum 50 active connections limit and computes derived `RelationshipStrength`.
 - **Lifecycle**: `ACTIVE` $\rightarrow$ `BLOCKED` $\rightarrow$ `REMOVED`.
 
 #### Aggregate 4: `ConnectionRequest`
+
 - **Responsibilities**: Manages outreach tickets between peers.
 - **Consistency Boundary**: Enforces daily request caps (5/day) and requires an originating intent context.
 - **Lifecycle**: `PENDING` $\rightarrow$ `ACCEPTED` $\rightarrow$ `REJECTED` $\rightarrow$ `EXPIRED`.
 
 #### Aggregate 5: `Conversation`
+
 - **Responsibilities**: Manages 1-on-1 or group chat thread headers.
 - **Consistency Boundary**: Enforces **non-null `ConversationContext`** and member participation.
 - **Lifecycle**: `ACTIVE` $\rightarrow$ `ARCHIVED` $\rightarrow$ `LOCKED` $\rightarrow$ `DELETED`.
 
 #### Aggregate 6: `Message`
+
 - **Responsibilities**: Manages individual messages within a conversation.
 - **Consistency Boundary**: Enforces non-empty message payloads, attachment limits, and soft-deletion.
 - **Lifecycle**: `SENT` $\rightarrow$ `DELIVERED` $\rightarrow$ `READ` $\rightarrow$ `SOFT_DELETED`.
 
 #### Aggregate 7: `StudyGroup`
+
 - **Responsibilities**: Coordinates peer exam prep pods for shared courses.
 - **Consistency Boundary**: Validates identical course code registration among participants.
 - **Lifecycle**: `OPEN` $\rightarrow$ `FULL` $\rightarrow$ `COMPLETED` $\rightarrow$ `DISBANDED`.
 
 #### Aggregate 8: `ProjectTeam`
+
 - **Responsibilities**: Assembles cross-functional project or hackathon teams.
 - **Consistency Boundary**: Validates required skill role assignments (e.g. Developer, Designer).
 - **Lifecycle**: `OPEN` $\rightarrow$ `FORMING` $\rightarrow$ `ACTIVE` $\rightarrow$ `COMPLETED` $\rightarrow$ `ARCHIVED`.
 
 #### Aggregate 9: `Mentorship`
+
 - **Responsibilities**: Governs upperclassman-to-underclassman mentorship pairings.
 - **Consistency Boundary**: Enforces 1-way junior-to-senior request direction and milestone logging.
 - **Lifecycle**: `REQUESTED` $\rightarrow$ `ACTIVE` $\rightarrow$ `COMPLETED` $\rightarrow$ `ENDED`.
 
 #### Aggregate 10: `RecommendationSnapshot`
+
 - **Responsibilities**: Holds immutable similarity vectors and human-readable match explanations.
 - **Consistency Boundary**: Immutable append-only record; cannot be modified once generated.
 - **Lifecycle**: `CREATED` $\rightarrow$ `ARCHIVED`.
 
 #### Aggregate 11: `PrivacySettings`
+
 - **Responsibilities**: Controls discovery visibility, Incognito mode, Ghost mode, and active status presence.
 - **Consistency Boundary**: Decoupled from profile; overrides all search and discovery queries.
 - **Lifecycle**: `ACTIVE`.
 
 #### Aggregate 12: `ModerationCase`
+
 - **Responsibilities**: Tracks user safety reports, risk score escalations, and moderator actions.
 - **Consistency Boundary**: Manages evidence payloads, reviewer audit notes, and appeal tickets.
 - **Lifecycle**: `OPEN` $\rightarrow$ `UNDER_REVIEW` $\rightarrow$ `RESOLVED` $\rightarrow$ `DISMISSED`.
 
 #### Aggregate 13: `Notification`
+
 - **Responsibilities**: Coordinates push, email, and in-app notifications.
 - **Consistency Boundary**: Enforces delivery preferences and unread status.
 - **Lifecycle**: `QUEUED` $\rightarrow$ `DELIVERED` $\rightarrow$ `READ`.
 
 #### Aggregate 14: `Activity`
+
 - **Responsibilities**: Records real-time campus activity events for home feed ticker displays.
 - **Consistency Boundary**: Read-optimized activity event stream.
 - **Lifecycle**: `RECORDED` $\rightarrow$ `EXPIRED`.
@@ -176,6 +191,7 @@ All domain value objects are immutable and self-validating:
 Illegal state transitions throw typed domain errors:
 
 ### 4.1 Student Intent Lifecycle State Machine
+
 ```
    ┌────────┐
    │ DRAFT  │
@@ -192,9 +208,11 @@ Illegal state transitions throw typed domain errors:
  │ FULFILLED ├─────────────────►│ ARCHIVED │
  └───────────┘                  └──────────┘
 ```
+
 - **Illegal Transitions**: `ARCHIVED` $\rightarrow$ `ACTIVE` throws `IllegalStateTransitionError`.
 
 ### 4.2 Connection Request State Machine
+
 ```
  ┌─────────┐  AcceptRequest() ┌──────────┐  BlockPeer()  ┌─────────┐
  │ PENDING ├─────────────────►│ ACCEPTED ├─────────────►│ BLOCKED │
@@ -205,9 +223,11 @@ Illegal state transitions throw typed domain errors:
  │ REJECTED │                 │ REMOVED │
  └──────────┘                 └─────────┘
 ```
+
 - **Illegal Transitions**: `REJECTED` $\rightarrow$ `ACCEPTED` throws `IllegalStateTransitionError`. `BLOCKED` $\rightarrow$ `PENDING` throws `ConnectionBlockedError`.
 
 ### 4.3 Conversation State Machine
+
 ```
  ┌────────┐  ArchiveChat() ┌──────────┐  LockChat()  ┌────────┐
  │ ACTIVE ├───────────────►│ ARCHIVED ├────────────►│ LOCKED │
@@ -271,42 +291,61 @@ All business rule violations throw explicit typed domain errors:
 
 ```ts
 export class DomainError extends Error {
-  constructor(message: string, public readonly code: string) {
+  constructor(
+    message: string,
+    public readonly code: string
+  ) {
     super(message);
     this.name = this.constructor.name;
   }
 }
 
 export class DuplicateIntentError extends DomainError {
-  constructor(intentType: string) { super(`Active intent of type '${intentType}' already exists.`, 'DUPLICATE_INTENT'); }
+  constructor(intentType: string) {
+    super(`Active intent of type '${intentType}' already exists.`, 'DUPLICATE_INTENT');
+  }
 }
 
 export class IntentExpiredError extends DomainError {
-  constructor(intentId: string) { super(`Intent '${intentId}' has expired.`, 'INTENT_EXPIRED'); }
+  constructor(intentId: string) {
+    super(`Intent '${intentId}' has expired.`, 'INTENT_EXPIRED');
+  }
 }
 
 export class PrivacyViolationError extends DomainError {
-  constructor(msg: string) { super(msg, 'PRIVACY_VIOLATION'); }
+  constructor(msg: string) {
+    super(msg, 'PRIVACY_VIOLATION');
+  }
 }
 
 export class ConnectionBlockedError extends DomainError {
-  constructor() { super('Cannot connect or message a blocked peer.', 'CONNECTION_BLOCKED'); }
+  constructor() {
+    super('Cannot connect or message a blocked peer.', 'CONNECTION_BLOCKED');
+  }
 }
 
 export class AlreadyConnectedError extends DomainError {
-  constructor() { super('Students are already connected.', 'ALREADY_CONNECTED'); }
+  constructor() {
+    super('Students are already connected.', 'ALREADY_CONNECTED');
+  }
 }
 
 export class InvalidConversationContextError extends DomainError {
-  constructor() { super('Conversation context cannot be null or empty.', 'INVALID_CONVERSATION_CONTEXT'); }
+  constructor() {
+    super('Conversation context cannot be null or empty.', 'INVALID_CONVERSATION_CONTEXT');
+  }
 }
 
 export class FeatureDisabledError extends DomainError {
-  constructor(flagKey: string) { super(`Capability '${flagKey}' is currently disabled.`, 'FEATURE_DISABLED'); }
+  constructor(flagKey: string) {
+    super(`Capability '${flagKey}' is currently disabled.`, 'FEATURE_DISABLED');
+  }
 }
 
 export class IllegalStateTransitionError extends DomainError {
-  constructor(from: string, to: string) { super(`Illegal state transition from '${from}' to '${to}'.`, 'ILLEGAL_STATE_TRANSITION'); }
+  constructor(from: string, to: string) {
+    super(`Illegal state transition from '${from}' to '${to}'.`, 'ILLEGAL_STATE_TRANSITION');
+  }
 }
 ```
 

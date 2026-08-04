@@ -22,20 +22,13 @@ const mockProfile: ProfessorProfileDto = {
     ratingConfidenceScore: 0.9,
     ratingDimensions: { teachingClarity: 5, gradingFairness: 5, punctuality: 5, approachability: 5 },
     starDistribution: { star5: 8, star4: 2, star3: 0, star2: 0, star1: 0 },
-    lastCalculatedAt: new Date().toISOString(),
-  },
+    lastCalculatedAt: new Date().toISOString()
+  }
 };
 
 describe('WriteReviewModal Component', () => {
   it('displays modal title and form controls when open', () => {
-    render(
-      <WriteReviewModal
-        isOpen={true}
-        onClose={vi.fn()}
-        profile={mockProfile}
-        onSubmit={vi.fn()}
-      />
-    );
+    render(<WriteReviewModal isOpen={true} onClose={vi.fn()} profile={mockProfile} onSubmit={vi.fn()} />);
 
     expect(screen.getByText('Rate Dr. Alan Turing')).toBeInTheDocument();
     expect(screen.getByText('Select Course Taken')).toBeInTheDocument();
@@ -43,14 +36,7 @@ describe('WriteReviewModal Component', () => {
   });
 
   it('shows error validation when review text is less than 20 characters', async () => {
-    render(
-      <WriteReviewModal
-        isOpen={true}
-        onClose={vi.fn()}
-        profile={mockProfile}
-        onSubmit={vi.fn()}
-      />
-    );
+    render(<WriteReviewModal isOpen={true} onClose={vi.fn()} profile={mockProfile} onSubmit={vi.fn()} />);
 
     const submitBtn = screen.getByRole('button', { name: /Submit Verified Review/i });
     fireEvent.click(submitBtn);
@@ -62,18 +48,11 @@ describe('WriteReviewModal Component', () => {
 
   it('submits form successfully when review text is valid', async () => {
     const handleSubmit = vi.fn().mockResolvedValue(undefined);
-    render(
-      <WriteReviewModal
-        isOpen={true}
-        onClose={vi.fn()}
-        profile={mockProfile}
-        onSubmit={handleSubmit}
-      />
-    );
+    render(<WriteReviewModal isOpen={true} onClose={vi.fn()} profile={mockProfile} onSubmit={handleSubmit} />);
 
     const textarea = screen.getByPlaceholderText(/Describe teaching style/i);
     fireEvent.change(textarea, {
-      target: { value: 'This is a great professor who explains algorithms clearly and thoroughly.' },
+      target: { value: 'This is a great professor who explains algorithms clearly and thoroughly.' }
     });
 
     const submitBtn = screen.getByRole('button', { name: /Submit Verified Review/i });

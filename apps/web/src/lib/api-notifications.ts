@@ -10,7 +10,15 @@ export interface NotificationItem {
   recipientId: string;
   actorId: string;
   eventType: string;
-  category: 'MARKETPLACE' | 'PLACEMENT' | 'ACADEMIC' | 'SECURITY' | 'CAMPUS_CONNECT' | 'RATE_MY_PROFESSOR' | 'SYSTEM' | 'GENERAL';
+  category:
+    | 'MARKETPLACE'
+    | 'PLACEMENT'
+    | 'ACADEMIC'
+    | 'SECURITY'
+    | 'CAMPUS_CONNECT'
+    | 'RATE_MY_PROFESSOR'
+    | 'SYSTEM'
+    | 'GENERAL';
   deduplicationKey?: string | null;
   aggregationCount: number;
   title: string;
@@ -68,9 +76,13 @@ export interface NotificationCategoryInfo {
 
 /* API Methods */
 
-export async function fetchNotifications(params: { category?: string; isRead?: boolean; eventType?: string; page?: number; limit?: number } = {}): Promise<{ items: NotificationItem[]; total: number; unreadCount: number; hasMore: boolean }> {
+export async function fetchNotifications(
+  params: { category?: string; isRead?: boolean; eventType?: string; page?: number; limit?: number } = {}
+): Promise<{ items: NotificationItem[]; total: number; unreadCount: number; hasMore: boolean }> {
   const qs = buildQueryString(params);
-  return apiGet<{ items: NotificationItem[]; total: number; unreadCount: number; hasMore: boolean }>(`/notifications${qs}`);
+  return apiGet<{ items: NotificationItem[]; total: number; unreadCount: number; hasMore: boolean }>(
+    `/notifications${qs}`
+  );
 }
 
 export async function fetchUnreadCount(): Promise<number> {
@@ -94,7 +106,11 @@ export async function fetchNotificationPreferences(): Promise<NotificationPrefer
   return apiGet<NotificationPreference[]>('/notifications/preferences');
 }
 
-export async function updateNotificationPreferences(data: { channel: 'IN_APP' | 'EMAIL' | 'PUSH' | 'SMS'; enabledEventTypes?: string[]; isMuted?: boolean }): Promise<NotificationPreference> {
+export async function updateNotificationPreferences(data: {
+  channel: 'IN_APP' | 'EMAIL' | 'PUSH' | 'SMS';
+  enabledEventTypes?: string[];
+  isMuted?: boolean;
+}): Promise<NotificationPreference> {
   return apiPatch<NotificationPreference>('/notifications/preferences', data);
 }
 
@@ -114,6 +130,8 @@ export async function fetchNotificationDigests(): Promise<NotificationDigestJob[
   return apiGet<NotificationDigestJob[]>('/notifications/digests');
 }
 
-export async function generateNotificationDigest(digestType: 'DAILY' | 'WEEKLY' = 'DAILY'): Promise<NotificationDigestJob> {
+export async function generateNotificationDigest(
+  digestType: 'DAILY' | 'WEEKLY' = 'DAILY'
+): Promise<NotificationDigestJob> {
   return apiPost<NotificationDigestJob>('/notifications/digests/generate', { digestType });
 }

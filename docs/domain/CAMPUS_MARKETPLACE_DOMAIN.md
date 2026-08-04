@@ -42,17 +42,17 @@ The domain logic is strictly deterministic, technology-agnostic, and independent
 
 ## 2. Entities vs Value Objects
 
-| Symbol Name | Classification | Equality Identifier | Mutability | Domain Responsibility |
-| :--- | :--- | :--- | :--- | :--- |
-| `MarketplaceListing` | **Aggregate Root** | `id` (ListingId) | Mutable | Governs item pricing, status lifecycle, media items, and reservation pointers. |
-| `MarketplaceConversation` | **Aggregate Root** | `id` (ConversationId) | Mutable | Coordinates buyer-seller chat history and immutable offer card embedding. |
-| `SellerProfile` | **Aggregate Root** | `userId` + `collegeId` | Mutable | Tracks completed sales count, response rate, and trust badge progression. |
-| `MarketplaceReservation` | **Aggregate Root** | `id` (ReservationId) | Mutable | Manages 24-hour temporary item lock window created via an accepted offer. |
-| `ListingMedia` | Entity | `id` (MediaId) | Mutable | Represents individual item photos with display sequence ordering. |
-| `ListingPrice` | **Value Object** | Value equality (INR) | Immutable | Encapsulates currency amount (≥ ₹0.00) and negotiability flag. |
-| `ListingLocation` | **Value Object** | Value equality | Immutable | Hostel Block / Campus Gate location description. |
-| `Offer` | Entity | `id` (OfferId) | Mutable | Price negotiation state (`CREATED`, `COUNTERED`, `ACCEPTED`, `REJECTED`). |
-| `TrustBadge` | **Value Object** | Code equality | Immutable | Deterministic badge level (`VERIFIED_STUDENT`, `SENIOR_SELLER`). |
+| Symbol Name               | Classification     | Equality Identifier    | Mutability | Domain Responsibility                                                          |
+| :------------------------ | :----------------- | :--------------------- | :--------- | :----------------------------------------------------------------------------- |
+| `MarketplaceListing`      | **Aggregate Root** | `id` (ListingId)       | Mutable    | Governs item pricing, status lifecycle, media items, and reservation pointers. |
+| `MarketplaceConversation` | **Aggregate Root** | `id` (ConversationId)  | Mutable    | Coordinates buyer-seller chat history and immutable offer card embedding.      |
+| `SellerProfile`           | **Aggregate Root** | `userId` + `collegeId` | Mutable    | Tracks completed sales count, response rate, and trust badge progression.      |
+| `MarketplaceReservation`  | **Aggregate Root** | `id` (ReservationId)   | Mutable    | Manages 24-hour temporary item lock window created via an accepted offer.      |
+| `ListingMedia`            | Entity             | `id` (MediaId)         | Mutable    | Represents individual item photos with display sequence ordering.              |
+| `ListingPrice`            | **Value Object**   | Value equality (INR)   | Immutable  | Encapsulates currency amount (≥ ₹0.00) and negotiability flag.                 |
+| `ListingLocation`         | **Value Object**   | Value equality         | Immutable  | Hostel Block / Campus Gate location description.                               |
+| `Offer`                   | Entity             | `id` (OfferId)         | Mutable    | Price negotiation state (`CREATED`, `COUNTERED`, `ACCEPTED`, `REJECTED`).      |
+| `TrustBadge`              | **Value Object**   | Code equality          | Immutable  | Deterministic badge level (`VERIFIED_STUDENT`, `SENIOR_SELLER`).               |
 
 ---
 
@@ -80,6 +80,7 @@ The domain logic is strictly deterministic, technology-agnostic, and independent
 ```
 
 ### 3.1 Legal State Transitions
+
 - `DRAFT` $\rightarrow$ `PUBLISHED`
 - `PUBLISHED` $\rightarrow$ `RESERVED` (Triggered ONLY by an accepted offer)
 - `PUBLISHED` $\rightarrow$ `ARCHIVED` (By Seller)
@@ -99,7 +100,7 @@ The domain logic is strictly deterministic, technology-agnostic, and independent
 - `CREATED` $\rightarrow$ `WITHDRAWN` (Buyer cancels pending offer)
 - `CREATED` $\rightarrow$ `EXPIRED` (Auto-expires after 48 hours)
 
-*Note*: Offer cards in chat are **100% immutable**. Original offer cards never change; counter offers and state transitions append new domain events into the conversation log.
+_Note_: Offer cards in chat are **100% immutable**. Original offer cards never change; counter offers and state transitions append new domain events into the conversation log.
 
 ---
 
@@ -138,25 +139,25 @@ The domain logic is strictly deterministic, technology-agnostic, and independent
 
 ## 7. Typed Domain Errors
 
-| Error Name | HTTP Status | Business Rationale |
-| :--- | :---: | :--- |
-| `SelfPurchaseNotAllowedError` | 403 Forbidden | Sellers cannot buy or vote on their own listings. |
-| `CrossCollegeOperationError` | 403 Forbidden | Operations across different `college_id` boundaries are forbidden. |
-| `ListingAlreadySoldError` | 409 Conflict | Item has already been sold to another buyer. |
-| `ReservationExpiredError` | 409 Conflict | The 24-hour reservation window has lapsed. |
-| `DuplicateOfferError` | 409 Conflict | An active pending offer already exists for this buyer/listing. |
+| Error Name                    |   HTTP Status   | Business Rationale                                                           |
+| :---------------------------- | :-------------: | :--------------------------------------------------------------------------- |
+| `SelfPurchaseNotAllowedError` |  403 Forbidden  | Sellers cannot buy or vote on their own listings.                            |
+| `CrossCollegeOperationError`  |  403 Forbidden  | Operations across different `college_id` boundaries are forbidden.           |
+| `ListingAlreadySoldError`     |  409 Conflict   | Item has already been sold to another buyer.                                 |
+| `ReservationExpiredError`     |  409 Conflict   | The 24-hour reservation window has lapsed.                                   |
+| `DuplicateOfferError`         |  409 Conflict   | An active pending offer already exists for this buyer/listing.               |
 | `InvalidStateTransitionError` | 400 Bad Request | Attempted illegal status transition (e.g. `SOLD` $\rightarrow$ `PUBLISHED`). |
-| `ResourceNotFoundError` | 404 Not Found | Listing or conversation does not exist. |
+| `ResourceNotFoundError`       |  404 Not Found  | Listing or conversation does not exist.                                      |
 
 ---
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **Flexible Offer Rule**: Removed hard 50% offer floor; converted to UX advisory.
-* ✅ **Offer-Driven Reservation**: Guaranteed `Accepted Offer` $\rightarrow$ `Reservation Created` invariant.
-* ✅ **Immutable Offer Cards**: Verified append-only chat conversation log.
-* ✅ **Explicit Listing Transitions**: Fully documented `PUBLISHED` $\rightarrow$ `ARCHIVED` / `QUARANTINED` / `EXPIRED` / `RESERVED`.
-* ✅ **Expanded Event Catalog**: Added `ReservationCreated`, `ReservationCancelled`, `ReservationExpired`, `ConversationCreated`.
+- ✅ **Flexible Offer Rule**: Removed hard 50% offer floor; converted to UX advisory.
+- ✅ **Offer-Driven Reservation**: Guaranteed `Accepted Offer` $\rightarrow$ `Reservation Created` invariant.
+- ✅ **Immutable Offer Cards**: Verified append-only chat conversation log.
+- ✅ **Explicit Listing Transitions**: Fully documented `PUBLISHED` $\rightarrow$ `ARCHIVED` / `QUARANTINED` / `EXPIRED` / `RESERVED`.
+- ✅ **Expanded Event Catalog**: Added `ReservationCreated`, `ReservationCancelled`, `ReservationExpired`, `ConversationCreated`.
 
 > [!IMPORTANT]
 > **MS-20.4 Approved with Refinements**. Ready for **MS-20.5 (API Contracts & DTO Specification)**.

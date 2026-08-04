@@ -42,7 +42,9 @@ export default function SubjectDashboardPage({ params }: { params: { subjectCode
   return (
     <div className="arh-container">
       <div style={{ marginBottom: '24px' }}>
-        <span className="arh-badge-clean" style={{ marginBottom: '8px', display: 'inline-block' }}>SUBJECT DASHBOARD</span>
+        <span className="arh-badge-clean" style={{ marginBottom: '8px', display: 'inline-block' }}>
+          SUBJECT DASHBOARD
+        </span>
         <h1 style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--ch-color-text)', marginBottom: '8px' }}>
           {params.subjectCode.toUpperCase()} — Operating Systems
         </h1>
@@ -52,20 +54,56 @@ export default function SubjectDashboardPage({ params }: { params: { subjectCode
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
-        <div style={{ padding: '16px', border: '1px solid var(--ch-color-border)', borderRadius: 'var(--ch-radius-md)', backgroundColor: 'var(--ch-color-surface)' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--ch-color-text-muted)', fontWeight: 600 }}>TOTAL MATERIALS</span>
+        <div
+          style={{
+            padding: '16px',
+            border: '1px solid var(--ch-color-border)',
+            borderRadius: 'var(--ch-radius-md)',
+            backgroundColor: 'var(--ch-color-surface)'
+          }}
+        >
+          <span style={{ fontSize: '0.75rem', color: 'var(--ch-color-text-muted)', fontWeight: 600 }}>
+            TOTAL MATERIALS
+          </span>
           <p style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--ch-color-primary)' }}>{resources.length}</p>
         </div>
-        <div style={{ padding: '16px', border: '1px solid var(--ch-color-border)', borderRadius: 'var(--ch-radius-md)', backgroundColor: 'var(--ch-color-surface)' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--ch-color-text-muted)', fontWeight: 600 }}>TOTAL DOWNLOADS</span>
+        <div
+          style={{
+            padding: '16px',
+            border: '1px solid var(--ch-color-border)',
+            borderRadius: 'var(--ch-radius-md)',
+            backgroundColor: 'var(--ch-color-surface)'
+          }}
+        >
+          <span style={{ fontSize: '0.75rem', color: 'var(--ch-color-text-muted)', fontWeight: 600 }}>
+            TOTAL DOWNLOADS
+          </span>
           <p style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--ch-color-success)' }}>1,482</p>
         </div>
-        <div style={{ padding: '16px', border: '1px solid var(--ch-color-border)', borderRadius: 'var(--ch-radius-md)', backgroundColor: 'var(--ch-color-surface)' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--ch-color-text-muted)', fontWeight: 600 }}>AVG QUALITY SCORE</span>
+        <div
+          style={{
+            padding: '16px',
+            border: '1px solid var(--ch-color-border)',
+            borderRadius: 'var(--ch-radius-md)',
+            backgroundColor: 'var(--ch-color-surface)'
+          }}
+        >
+          <span style={{ fontSize: '0.75rem', color: 'var(--ch-color-text-muted)', fontWeight: 600 }}>
+            AVG QUALITY SCORE
+          </span>
           <p style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--ch-color-warning)' }}>⭐ 4.9</p>
         </div>
-        <div style={{ padding: '16px', border: '1px solid var(--ch-color-border)', borderRadius: 'var(--ch-radius-md)', backgroundColor: 'var(--ch-color-surface)' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--ch-color-text-muted)', fontWeight: 600 }}>TOP CONTRIBUTOR</span>
+        <div
+          style={{
+            padding: '16px',
+            border: '1px solid var(--ch-color-border)',
+            borderRadius: 'var(--ch-radius-md)',
+            backgroundColor: 'var(--ch-color-surface)'
+          }}
+        >
+          <span style={{ fontSize: '0.75rem', color: 'var(--ch-color-text-muted)', fontWeight: 600 }}>
+            TOP CONTRIBUTOR
+          </span>
           <p style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--ch-color-text)' }}>Class Representative</p>
         </div>
       </div>

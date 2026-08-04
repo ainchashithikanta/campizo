@@ -49,7 +49,12 @@ export default function DiscussionsPage() {
   };
 
   const filtered = threads.filter((t) => {
-    return !searchQuery || t.title.toLowerCase().includes(searchQuery.toLowerCase()) || t.content.toLowerCase().includes(searchQuery.toLowerCase()) || t.topic.toLowerCase().includes(searchQuery.toLowerCase());
+    return (
+      !searchQuery ||
+      t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.topic.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   });
 
   return (
@@ -57,7 +62,9 @@ export default function DiscussionsPage() {
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Placement Community Q&A</h1>
-          <p className="text-sm text-slate-500 mt-1">Stack Overflow style peer discussions, interview strategy, and answer reviews.</p>
+          <p className="text-sm text-slate-500 mt-1">
+            Stack Overflow style peer discussions, interview strategy, and answer reviews.
+          </p>
         </div>
         <button
           type="button"
@@ -69,7 +76,11 @@ export default function DiscussionsPage() {
       </header>
 
       <div className="mb-6">
-        <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Search discussion topics or questions..." />
+        <SearchBar
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search discussion topics or questions..."
+        />
       </div>
 
       {loading && <LoadingSkeleton count={3} />}
@@ -82,7 +93,10 @@ export default function DiscussionsPage() {
       {!loading && !error && filtered.length > 0 && (
         <div className="space-y-4">
           {filtered.map((t) => (
-            <article key={t.id} className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex gap-4">
+            <article
+              key={t.id}
+              className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex gap-4"
+            >
               <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center min-w-[70px]">
                 <span className="text-base font-extrabold text-indigo-600 dark:text-indigo-400">{t.upvotesCount}</span>
                 <span className="text-[10px] text-slate-400 uppercase font-mono">Votes</span>
@@ -90,12 +104,16 @@ export default function DiscussionsPage() {
 
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">#{t.topic}</span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                    #{t.topic}
+                  </span>
                   <span className="text-[11px] text-slate-400">Asked by {t.authorName}</span>
                 </div>
 
                 <Link href={`/placements/discussions/${t.id}`} className="group">
-                  <h3 className="font-bold text-base text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 transition-colors mb-1">{t.title}</h3>
+                  <h3 className="font-bold text-base text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 transition-colors mb-1">
+                    {t.title}
+                  </h3>
                 </Link>
                 <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">{t.content}</p>
 
@@ -138,7 +156,9 @@ export default function DiscussionsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Question Details</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Question Details
+                </label>
                 <textarea
                   value={newContent}
                   onChange={(e) => setNewContent(e.target.value)}

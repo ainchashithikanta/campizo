@@ -19,10 +19,24 @@ export default function ActivityFeedPage() {
   useEffect(() => {
     fetchActivityFeed()
       .then((res) => {
-        setActivities(res || [
-          { activityId: 'act_1', actorId: 'usr_me', actionType: 'INTENT_CREATED', metadata: {}, recordedAt: new Date(Date.now() - 3600000).toISOString() },
-          { activityId: 'act_2', actorId: 'usr_me', actionType: 'STUDY_GROUP_JOINED', metadata: {}, recordedAt: new Date(Date.now() - 7200000).toISOString() }
-        ]);
+        setActivities(
+          res || [
+            {
+              activityId: 'act_1',
+              actorId: 'usr_me',
+              actionType: 'INTENT_CREATED',
+              metadata: {},
+              recordedAt: new Date(Date.now() - 3600000).toISOString()
+            },
+            {
+              activityId: 'act_2',
+              actorId: 'usr_me',
+              actionType: 'STUDY_GROUP_JOINED',
+              metadata: {},
+              recordedAt: new Date(Date.now() - 7200000).toISOString()
+            }
+          ]
+        );
         setLoading(false);
       })
       .catch((err) => {
@@ -42,7 +56,10 @@ export default function ActivityFeedPage() {
       {error && <ErrorState message={error} />}
 
       {!loading && !error && activities.length === 0 && (
-        <EmptyState title="No Activity Logged" description="Your activity timeline will populate as you interact on Campus Connect." />
+        <EmptyState
+          title="No Activity Logged"
+          description="Your activity timeline will populate as you interact on Campus Connect."
+        />
       )}
 
       {!loading && !error && activities.length > 0 && (

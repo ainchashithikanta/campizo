@@ -8,9 +8,9 @@ export type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
 
 export interface CircuitBreakerConfig {
   name: string;
-  failureThreshold: number;   // Consecutive failures before opening
-  recoveryTimeoutMs: number;  // Cooldown duration in OPEN state before transitioning to HALF_OPEN
-  successThreshold: number;   // Consecutive successes in HALF_OPEN to close circuit
+  failureThreshold: number; // Consecutive failures before opening
+  recoveryTimeoutMs: number; // Cooldown duration in OPEN state before transitioning to HALF_OPEN
+  successThreshold: number; // Consecutive successes in HALF_OPEN to close circuit
 }
 
 export const DEFAULT_CIRCUIT_CONFIGS: Record<string, CircuitBreakerConfig> = {
@@ -18,7 +18,12 @@ export const DEFAULT_CIRCUIT_CONFIGS: Record<string, CircuitBreakerConfig> = {
   Redis: { name: 'Redis', failureThreshold: 3, recoveryTimeoutMs: 500, successThreshold: 2 },
   SearchIndex: { name: 'SearchIndex', failureThreshold: 3, recoveryTimeoutMs: 500, successThreshold: 2 },
   NotificationQueue: { name: 'NotificationQueue', failureThreshold: 3, recoveryTimeoutMs: 500, successThreshold: 2 },
-  RecommendationEngine: { name: 'RecommendationEngine', failureThreshold: 3, recoveryTimeoutMs: 1000, successThreshold: 2 }
+  RecommendationEngine: {
+    name: 'RecommendationEngine',
+    failureThreshold: 3,
+    recoveryTimeoutMs: 1000,
+    successThreshold: 2
+  }
 };
 
 export class CircuitBreaker {

@@ -57,7 +57,9 @@ export default function NotificationHistoryPage() {
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Notifications Inbox</h1>
-          <p className="text-sm text-slate-500 mt-1">Platform-wide updates across Marketplace, Placements, Q&A, and Campus Connect.</p>
+          <p className="text-sm text-slate-500 mt-1">
+            Platform-wide updates across Marketplace, Placements, Q&A, and Campus Connect.
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <Link

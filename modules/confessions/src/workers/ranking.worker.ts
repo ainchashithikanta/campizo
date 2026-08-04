@@ -22,7 +22,11 @@ export interface RankingScores {
 }
 
 export interface RankingWorkerDeps {
-  recalculateScores: (confessionId: string, collegeId: string, scores: { trendingScore: string; hotScore: string }) => Promise<void>;
+  recalculateScores: (
+    confessionId: string,
+    collegeId: string,
+    scores: { trendingScore: string; hotScore: string }
+  ) => Promise<void>;
   saveSnapshot: (snapshot: { collegeId: string; snapshotType: string; topConfessionIdsJson: string }) => Promise<void>;
 }
 
@@ -47,9 +51,8 @@ export function calculateRankingScores(metrics: {
 
   // Controversial: high engagement with high report ratio
   const totalEngagement = upvotes + comments;
-  const controversialScore = totalEngagement > 0
-    ? ((reports / totalEngagement) * Math.log2(totalEngagement + 1)).toFixed(4)
-    : '0.0000';
+  const controversialScore =
+    totalEngagement > 0 ? ((reports / totalEngagement) * Math.log2(totalEngagement + 1)).toFixed(4) : '0.0000';
 
   return { trendingScore, hotScore, controversialScore };
 }
@@ -58,7 +61,7 @@ export async function rankingWorkerHandler(
   payload: Record<string, unknown>,
   deps: RankingWorkerDeps
 ): Promise<RankingScores> {
-  const confessionId = payload['confessionId'] as string || payload['targetId'] as string;
+  const confessionId = (payload['confessionId'] as string) || (payload['targetId'] as string);
   const collegeId = payload['collegeId'] as string;
 
   // In production these come from confession_statistics

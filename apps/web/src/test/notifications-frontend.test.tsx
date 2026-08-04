@@ -7,7 +7,11 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { UnreadBadge, NotificationBell, NotificationItemCard } from '../components/notifications/notification-components';
+import {
+  UnreadBadge,
+  NotificationBell,
+  NotificationItemCard
+} from '../components/notifications/notification-components';
 import NotificationHistoryPage from '../app/notifications/page';
 import NotificationPreferencesPage from '../app/notifications/preferences/page';
 import NotificationDigestsPage from '../app/notifications/digests/page';

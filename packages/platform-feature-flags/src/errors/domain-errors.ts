@@ -21,13 +21,19 @@ export class DuplicateFeatureKeyError extends DomainError {
 
 export class CircularDependencyError extends DomainError {
   constructor(parentKey: string, childKey: string) {
-    super(`Circular dependency loop detected between '${parentKey}' and '${childKey}'. Action aborted.`, 'CIRCULAR_DEPENDENCY');
+    super(
+      `Circular dependency loop detected between '${parentKey}' and '${childKey}'. Action aborted.`,
+      'CIRCULAR_DEPENDENCY'
+    );
   }
 }
 
 export class DependencyNotSatisfiedError extends DomainError {
   constructor(flagKey: string, missingParentKey: string) {
-    super(`Prerequisite dependency '${missingParentKey}' is disabled for feature '${flagKey}'.`, 'DEPENDENCY_NOT_SATISFIED');
+    super(
+      `Prerequisite dependency '${missingParentKey}' is disabled for feature '${flagKey}'.`,
+      'DEPENDENCY_NOT_SATISFIED'
+    );
   }
 }
 
@@ -57,7 +63,10 @@ export class SnapshotImmutableError extends DomainError {
 
 export class ApprovalRequiredError extends DomainError {
   constructor(flagKey: string, policyName: string) {
-    super(`Production change for '${flagKey}' requires approval under policy template '${policyName}'.`, 'APPROVAL_REQUIRED');
+    super(
+      `Production change for '${flagKey}' requires approval under policy template '${policyName}'.`,
+      'APPROVAL_REQUIRED'
+    );
   }
 }
 
@@ -87,7 +96,10 @@ export class InvalidRolloutError extends DomainError {
 
 export class PackConflictError extends DomainError {
   constructor(packA: string, packB: string, flagKey: string) {
-    super(`Conflicting rules detected between feature pack '${packA}' and '${packB}' for flag '${flagKey}'.`, 'PACK_CONFLICT');
+    super(
+      `Conflicting rules detected between feature pack '${packA}' and '${packB}' for flag '${flagKey}'.`,
+      'PACK_CONFLICT'
+    );
   }
 }
 
@@ -117,7 +129,10 @@ export class EvaluationFailedError extends DomainError {
 
 export class SnapshotIntegrityError extends DomainError {
   constructor(snapshotId: string) {
-    super(`Snapshot cryptographic HMAC signature verification failed for '${snapshotId}'.`, 'SNAPSHOT_INTEGRITY_FAILED');
+    super(
+      `Snapshot cryptographic HMAC signature verification failed for '${snapshotId}'.`,
+      'SNAPSHOT_INTEGRITY_FAILED'
+    );
   }
 }
 

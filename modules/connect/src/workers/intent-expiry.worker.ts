@@ -10,11 +10,13 @@ import { WorkerMetrics } from '../metrics/worker-metrics.js';
 export class IntentExpiryWorker {
   constructor(private readonly useCases: ConnectUseCases) {}
 
-  async processIntentExpiryCheck(event: ConnectEventEnvelope<{ intentId?: string; expiredBefore?: string }>): Promise<void> {
+  async processIntentExpiryCheck(
+    event: ConnectEventEnvelope<{ intentId?: string; expiredBefore?: string }>
+  ): Promise<void> {
     const startTime = Date.now();
     try {
       const intentId = event.payload.intentId || `int_expired_${Date.now()}`;
-      
+
       // Execute Intent Archive Use Case
       await this.useCases.intentService.archiveIntent(intentId, event.collegeId, 1);
 

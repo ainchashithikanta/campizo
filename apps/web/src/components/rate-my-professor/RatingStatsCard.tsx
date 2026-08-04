@@ -16,7 +16,7 @@ export function RatingStatsCard({ stats }: RatingStatsCardProps) {
     { label: 'Lecture Clarity', val: stats.ratingDimensions?.teachingClarity ?? 4.8 },
     { label: 'Grading Fairness', val: stats.ratingDimensions?.gradingFairness ?? 4.7 },
     { label: 'Punctuality', val: stats.ratingDimensions?.punctuality ?? 4.9 },
-    { label: 'Approachability', val: stats.ratingDimensions?.approachability ?? 4.8 },
+    { label: 'Approachability', val: stats.ratingDimensions?.approachability ?? 4.8 }
   ];
 
   const stars = [
@@ -24,7 +24,7 @@ export function RatingStatsCard({ stats }: RatingStatsCardProps) {
     { label: '4 Stars', count: dist.star4, color: 'var(--ch-color-rating-good)' },
     { label: '3 Stars', count: dist.star3, color: 'var(--ch-color-rating-average)' },
     { label: '2 Stars', count: dist.star2, color: 'var(--ch-color-rating-below)' },
-    { label: '1 Star', count: dist.star1, color: 'var(--ch-color-rating-poor)' },
+    { label: '1 Star', count: dist.star1, color: 'var(--ch-color-rating-poor)' }
   ];
 
   return (
@@ -47,7 +47,13 @@ export function RatingStatsCard({ stats }: RatingStatsCardProps) {
         </div>
 
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 'var(--ch-font-size-2xl)', fontWeight: 'var(--ch-font-weight-bold)', color: 'var(--ch-color-primary)' }}>
+          <div
+            style={{
+              fontSize: 'var(--ch-font-size-2xl)',
+              fontWeight: 'var(--ch-font-weight-bold)',
+              color: 'var(--ch-color-primary)'
+            }}
+          >
             {stats.recommendationPercentage.toFixed(0)}%
           </div>
           <div style={{ fontSize: 'var(--ch-font-size-xs)', color: 'var(--ch-color-text-muted)' }}>

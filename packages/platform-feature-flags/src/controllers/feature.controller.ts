@@ -26,7 +26,10 @@ export class FeatureController {
   }
 
   /** POST /api/v1/feature-flags */
-  async createFlag(body: { flagKey: string; ownerTeam: string; defaultState?: boolean | undefined }, ctx: RequestContext) {
+  async createFlag(
+    body: { flagKey: string; ownerTeam: string; defaultState?: boolean | undefined },
+    ctx: RequestContext
+  ) {
     const created = await this.useCases.createFeature({
       flagKey: body.flagKey,
       environment: ctx.environment,

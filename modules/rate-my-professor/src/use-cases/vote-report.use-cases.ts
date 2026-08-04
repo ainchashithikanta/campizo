@@ -53,11 +53,7 @@ export class RemoveVoteUseCase {
     private readonly eventBus: EventBus
   ) {}
 
-  public async execute(params: {
-    reviewId: string;
-    voterUserId: string;
-    collegeId: string;
-  }): Promise<void> {
+  public async execute(params: { reviewId: string; voterUserId: string; collegeId: string }): Promise<void> {
     const review = await this.reviewRepo.findById(params.reviewId, params.collegeId);
     if (!review) {
       throw new EntityNotFoundError('Review', params.reviewId);
@@ -82,7 +78,6 @@ export class RemoveVoteUseCase {
     });
   }
 }
-
 
 export class ReportReviewUseCase {
   constructor(

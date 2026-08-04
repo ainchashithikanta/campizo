@@ -21,7 +21,7 @@ const mockReview: ReviewDto = {
     teachingClarity: 5.0,
     gradingFairness: 4.5,
     punctuality: 5.0,
-    approachability: 4.8,
+    approachability: 4.8
   },
   tags: ['Clear Lectures', 'Lab Focused'],
   helpfulCount: 15,
@@ -30,21 +30,15 @@ const mockReview: ReviewDto = {
   facultyResponse: {
     id: 'f-1',
     responseText: 'Thank you for your feedback.',
-    respondedAt: new Date().toISOString(),
+    respondedAt: new Date().toISOString()
   },
   createdAt: new Date().toISOString(),
-  isEditable: false,
+  isEditable: false
 };
 
 describe('ReviewCard Component', () => {
   it('renders review content, author status, and course info', () => {
-    render(
-      <ReviewCard
-        review={mockReview}
-        onVote={vi.fn()}
-        onReport={vi.fn()}
-      />
-    );
+    render(<ReviewCard review={mockReview} onVote={vi.fn()} onReport={vi.fn()} />);
 
     expect(screen.getByText(/Anonymous Student/i)).toBeInTheDocument();
     expect(screen.getByText('Verified .edu')).toBeInTheDocument();
@@ -54,13 +48,7 @@ describe('ReviewCard Component', () => {
   });
 
   it('renders verified faculty response when present', () => {
-    render(
-      <ReviewCard
-        review={mockReview}
-        onVote={vi.fn()}
-        onReport={vi.fn()}
-      />
-    );
+    render(<ReviewCard review={mockReview} onVote={vi.fn()} onReport={vi.fn()} />);
 
     expect(screen.getByText('Verified Faculty Response')).toBeInTheDocument();
     expect(screen.getByText('Thank you for your feedback.')).toBeInTheDocument();
@@ -68,13 +56,7 @@ describe('ReviewCard Component', () => {
 
   it('triggers helpful vote callback when clicked', async () => {
     const handleVote = vi.fn().mockResolvedValue(undefined);
-    render(
-      <ReviewCard
-        review={mockReview}
-        onVote={handleVote}
-        onReport={vi.fn()}
-      />
-    );
+    render(<ReviewCard review={mockReview} onVote={handleVote} onReport={vi.fn()} />);
 
     const helpfulBtn = screen.getByRole('button', { name: /Vote helpful \(15\)/i });
     fireEvent.click(helpfulBtn);

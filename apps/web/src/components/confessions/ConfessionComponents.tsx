@@ -49,13 +49,7 @@ export function VoteBar({
   );
 }
 
-export function BookmarkButton({
-  isBookmarked,
-  onToggle
-}: {
-  isBookmarked: boolean;
-  onToggle: () => void;
-}) {
+export function BookmarkButton({ isBookmarked, onToggle }: { isBookmarked: boolean; onToggle: () => void }) {
   return (
     <button
       className="conf-action-btn"
@@ -95,10 +89,7 @@ export function ConfessionCard({ confession }: { confession: ConfessionDTO }) {
       </h3>
       <p className="conf-card-content">{confession.content}</p>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <VoteBar
-          upvotesCount={confession.upvotesCount}
-          onVote={(v) => console.log('Vote:', v)}
-        />
+        <VoteBar upvotesCount={confession.upvotesCount} onVote={(v) => console.log('Vote:', v)} />
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <Link href={`/confessions/${confession.id}`} className="conf-action-btn">
             💬 {confession.commentsCount}
@@ -140,7 +131,8 @@ export function PiiWarning({ detected }: { detected: boolean }) {
   if (!detected) return null;
   return (
     <div className="conf-pii-warning" role="alert">
-      ⚠️ <strong>PII Warning:</strong> Phone numbers, email addresses, or social handles detected. Posting PII will trigger automated quarantine.
+      ⚠️ <strong>PII Warning:</strong> Phone numbers, email addresses, or social handles detected. Posting PII will
+      trigger automated quarantine.
     </div>
   );
 }
@@ -176,11 +168,21 @@ export function CreateWizard({
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: 'var(--conf-card-bg)', padding: '1.5rem', borderRadius: 'var(--conf-radius-md)', border: '1px solid var(--conf-border)' }}>
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        background: 'var(--conf-card-bg)',
+        padding: '1.5rem',
+        borderRadius: 'var(--conf-radius-md)',
+        border: '1px solid var(--conf-border)'
+      }}
+    >
       <h2 style={{ margin: '0 0 1rem 0', fontSize: '1.3rem' }}>Create Campus Confession</h2>
 
       <div className="conf-form-group">
-        <label className="conf-label" htmlFor="conf-category">Category</label>
+        <label className="conf-label" htmlFor="conf-category">
+          Category
+        </label>
         <select
           id="conf-category"
           className="conf-select"
@@ -196,7 +198,9 @@ export function CreateWizard({
       </div>
 
       <div className="conf-form-group">
-        <label className="conf-label" htmlFor="conf-title">Title</label>
+        <label className="conf-label" htmlFor="conf-title">
+          Title
+        </label>
         <input
           id="conf-title"
           className="conf-input"
@@ -210,7 +214,9 @@ export function CreateWizard({
       </div>
 
       <div className="conf-form-group">
-        <label className="conf-label" htmlFor="conf-content">Confession Content</label>
+        <label className="conf-label" htmlFor="conf-content">
+          Confession Content
+        </label>
         <textarea
           id="conf-content"
           className="conf-textarea"
@@ -264,7 +270,9 @@ export function CommentItem({ comment }: { comment: CommentDTO }) {
 
 export function CommentTree({ comments }: { comments: CommentDTO[] }) {
   if (comments.length === 0) {
-    return <div style={{ color: 'var(--conf-text-muted)', fontSize: '0.9rem' }}>No replies yet. Be the first to reply!</div>;
+    return (
+      <div style={{ color: 'var(--conf-text-muted)', fontSize: '0.9rem' }}>No replies yet. Be the first to reply!</div>
+    );
   }
 
   return (
@@ -301,7 +309,9 @@ export function NotificationCard({ title, body, date }: { title: string; body: s
     <div className="conf-card">
       <h4 style={{ margin: '0 0 0.3rem 0', color: 'var(--conf-accent-primary)' }}>{title}</h4>
       <p style={{ margin: 0, color: 'var(--conf-text-secondary)', fontSize: '0.9rem' }}>{body}</p>
-      <span style={{ fontSize: '0.75rem', color: 'var(--conf-text-muted)', marginTop: '0.5rem', display: 'block' }}>{date}</span>
+      <span style={{ fontSize: '0.75rem', color: 'var(--conf-text-muted)', marginTop: '0.5rem', display: 'block' }}>
+        {date}
+      </span>
     </div>
   );
 }
@@ -327,7 +337,10 @@ export function EmptyState({ message }: { message: string }) {
 
 export function ErrorState({ message }: { message: string }) {
   return (
-    <div className="conf-pii-warning" style={{ background: 'rgba(239, 68, 68, 0.1)', borderColor: 'var(--conf-accent-danger)', color: '#f87171' }}>
+    <div
+      className="conf-pii-warning"
+      style={{ background: 'rgba(239, 68, 68, 0.1)', borderColor: 'var(--conf-accent-danger)', color: '#f87171' }}
+    >
       🚨 <strong>Error:</strong> {message}
     </div>
   );
@@ -335,7 +348,14 @@ export function ErrorState({ message }: { message: string }) {
 
 export function OfflineState() {
   return (
-    <div className="conf-pii-warning" style={{ background: 'rgba(100, 116, 139, 0.2)', borderColor: 'var(--conf-text-muted)', color: 'var(--conf-text-secondary)' }}>
+    <div
+      className="conf-pii-warning"
+      style={{
+        background: 'rgba(100, 116, 139, 0.2)',
+        borderColor: 'var(--conf-text-muted)',
+        color: 'var(--conf-text-secondary)'
+      }}
+    >
       📡 <strong>Offline Mode:</strong> Showing cached campus confessions.
     </div>
   );

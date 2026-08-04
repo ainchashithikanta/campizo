@@ -1,13 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  FailureSimulator,
-  ChaosRunner,
-  CircuitBreaker,
-  HealthMonitor
-} from '../src/index.js';
+import { FailureSimulator, ChaosRunner, CircuitBreaker, HealthMonitor } from '../src/index.js';
 
 describe('Platform Feature Flags — Production Chaos & Circuit Breaker Verification', () => {
-
   let simulator: FailureSimulator;
   let runner: ChaosRunner;
 
@@ -22,8 +16,18 @@ describe('Platform Feature Flags — Production Chaos & Circuit Breaker Verifica
     expect(cb.getState()).toBe('CLOSED');
 
     // Trigger 2 failures
-    await cb.execute(async () => { throw new Error('Redis connection dropped'); }, () => 'fallback');
-    await cb.execute(async () => { throw new Error('Redis connection dropped'); }, () => 'fallback');
+    await cb.execute(
+      async () => {
+        throw new Error('Redis connection dropped');
+      },
+      () => 'fallback'
+    );
+    await cb.execute(
+      async () => {
+        throw new Error('Redis connection dropped');
+      },
+      () => 'fallback'
+    );
 
     expect(cb.getState()).toBe('OPEN');
 
@@ -32,7 +36,10 @@ describe('Platform Feature Flags — Production Chaos & Circuit Breaker Verifica
     expect(cb.getState()).toBe('HALF_OPEN');
 
     // Successful attempt resets to CLOSED
-    const val = await cb.execute(async () => 'success', () => 'fallback');
+    const val = await cb.execute(
+      async () => 'success',
+      () => 'fallback'
+    );
     expect(val).toBe('success');
     expect(cb.getState()).toBe('CLOSED');
   });
@@ -50,7 +57,7 @@ describe('Platform Feature Flags — Production Chaos & Circuit Breaker Verifica
 
   it('3. Health Monitor: should report DEGRADED when Redis is unavailable', () => {
     const monitor = new HealthMonitor();
-    const report = monitor.getSystemHealthReport(false, true, 0.20);
+    const report = monitor.getSystemHealthReport(false, true, 0.2);
     expect(report.status).toBe('DEGRADED');
     expect(report.redisConnected).toBe(false);
   });

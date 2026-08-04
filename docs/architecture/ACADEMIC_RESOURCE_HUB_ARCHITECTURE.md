@@ -16,13 +16,13 @@ The **Academic Resource Hub Technical Architecture** is designed to provide hori
 
 ### System Performance SLA Targets
 
-| Performance Metric | Target SLA | Strategy / Architectural Mechanism |
-| :--- | :--- | :--- |
-| **Search Query Latency** | $< 300\text{ ms}$ | Redis query cache + PostgreSQL `tsvector` indexed search |
-| **Resource Page Load Time** | $< 500\text{ ms}$ | Composite read-model payload + ETag HTTP caching |
-| **Upload Session Initialization**| $< 1\text{ s}$ | SHA-256 pre-flight check + Direct-to-S3 pre-signed URLs |
-| **PDF Preview Generation** | $< 3\text{ s}$ | Asynchronous BullMQ `PreviewGeneratorWorker` |
-| **System Availability** | $99.95\%$ Uptime | Decoupled worker queues + Graceful degradation fallbacks |
+| Performance Metric                | Target SLA        | Strategy / Architectural Mechanism                       |
+| :-------------------------------- | :---------------- | :------------------------------------------------------- |
+| **Search Query Latency**          | $< 300\text{ ms}$ | Redis query cache + PostgreSQL `tsvector` indexed search |
+| **Resource Page Load Time**       | $< 500\text{ ms}$ | Composite read-model payload + ETag HTTP caching         |
+| **Upload Session Initialization** | $< 1\text{ s}$    | SHA-256 pre-flight check + Direct-to-S3 pre-signed URLs  |
+| **PDF Preview Generation**        | $< 3\text{ s}$    | Asynchronous BullMQ `PreviewGeneratorWorker`             |
+| **System Availability**           | $99.95\%$ Uptime  | Decoupled worker queues + Graceful degradation fallbacks |
 
 ---
 
@@ -180,7 +180,7 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     EventBus[Domain Event Bus] -->|Emit Event| Router[Event Router]
-    
+
     Router -->|ResourceDownloaded| Q1[BullMQ Queue: stats-queue]
     Router -->|ResourceVoteAdded| Q1
     Router -->|ResourceReported| Q2[BullMQ Queue: moderation-queue]
@@ -241,15 +241,19 @@ modules/academic-resource-hub/
 ## 4. Component Design & Specifications
 
 ### 4.1 `ResourceController`
+
 - **Responsibility**: Inspects Fastify request envelopes, verifies `x-college-id` tenant headers, parses Zod request schemas, and delegates to application use-cases.
 
 ### 4.2 `CreateUploadSessionUseCase`
+
 - **Responsibility**: Performs client-side SHA-256 duplicate validation against `resource_files`, calculates file bounds, and generates pre-signed S3 upload locators.
 
 ### 4.3 `DrizzleResourceRepository`
+
 - **Responsibility**: Encapsulates Drizzle ORM queries, enforcing PostgreSQL Row-Level Security (`app.current_college_id`) across multi-tenant database operations.
 
 ### 4.4 `BullMQBackgroundWorkers`
+
 - **Responsibility**: Manages decoupled background processing queues backed by Redis 7, implementing automatic exponential backoff retries and Dead Letter Queue (DLQ) routing.
 
 ---
@@ -292,13 +296,13 @@ flowchart LR
 
 ### Worker Specifications Matrix
 
-| Worker Name | Queue Name | Trigger Event | Retry Policy | Idempotency Key |
-| :--- | :--- | :--- | :--- | :--- |
-| `VirusScanWorker` | `virus-scan-queue` | File Upload Completed | 3 Retries (2s backoff) | `fileId + sha256` |
-| `PreviewGeneratorWorker` | `preview-gen-queue` | Version Published | 3 Retries (5s backoff) | `versionId` |
-| `SearchIndexerWorker` | `search-index-queue` | Resource Published/Updated | 5 Retries (2s backoff) | `resourceId + updatedAt` |
-| `StatsEngineWorker` | `stats-engine-queue` | Download/Vote Event | 3 Retries (1s backoff) | `resourceId + dateBucket` |
-| `ModerationQueueWorker` | `moderation-queue` | Resource Reported | 3 Retries (2s backoff) | `reportId` |
+| Worker Name              | Queue Name           | Trigger Event              | Retry Policy           | Idempotency Key           |
+| :----------------------- | :------------------- | :------------------------- | :--------------------- | :------------------------ |
+| `VirusScanWorker`        | `virus-scan-queue`   | File Upload Completed      | 3 Retries (2s backoff) | `fileId + sha256`         |
+| `PreviewGeneratorWorker` | `preview-gen-queue`  | Version Published          | 3 Retries (5s backoff) | `versionId`               |
+| `SearchIndexerWorker`    | `search-index-queue` | Resource Published/Updated | 5 Retries (2s backoff) | `resourceId + updatedAt`  |
+| `StatsEngineWorker`      | `stats-engine-queue` | Download/Vote Event        | 3 Retries (1s backoff) | `resourceId + dateBucket` |
+| `ModerationQueueWorker`  | `moderation-queue`   | Resource Reported          | 3 Retries (2s backoff) | `reportId`                |
 
 ---
 
@@ -368,13 +372,13 @@ The technical architecture reserves non-breaking extension hooks for future phas
 
 ## 12. Technical Definition of Done Verification
 
-| Architecture Requirement | Verification Status | Rationale / Reference |
-| :--- | :--- | :--- |
-| **Layered Monorepo Package** | ✅ Verified | Package boundary `@college-hub/mod-academic-resource-hub`. |
-| **Upload Pipeline & SHA-256** | ✅ Verified | Complete sequence diagram with pre-signed S3 URLs & deduplication. |
-| **Worker Queue Specs** | ✅ Verified | BullMQ worker matrix, retry policies, and DLQ handling defined. |
-| **Caching & Invalidation** | ✅ Verified | L1/L2 Redis caching taxonomy & domain event invalidation triggers. |
-| **No Code Implementation** | ✅ Verified | Pure technical architecture blueprint. |
+| Architecture Requirement      | Verification Status | Rationale / Reference                                              |
+| :---------------------------- | :------------------ | :----------------------------------------------------------------- |
+| **Layered Monorepo Package**  | ✅ Verified         | Package boundary `@college-hub/mod-academic-resource-hub`.         |
+| **Upload Pipeline & SHA-256** | ✅ Verified         | Complete sequence diagram with pre-signed S3 URLs & deduplication. |
+| **Worker Queue Specs**        | ✅ Verified         | BullMQ worker matrix, retry policies, and DLQ handling defined.    |
+| **Caching & Invalidation**    | ✅ Verified         | L1/L2 Redis caching taxonomy & domain event invalidation triggers. |
+| **No Code Implementation**    | ✅ Verified         | Pure technical architecture blueprint.                             |
 
 ---
 

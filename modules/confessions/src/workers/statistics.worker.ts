@@ -19,7 +19,11 @@ export interface StatisticsUpdate {
 
 export interface StatisticsWorkerDeps {
   incrementViews: (confessionId: string, collegeId: string) => Promise<void>;
-  recalculateScores: (confessionId: string, collegeId: string, metrics: { trendingScore: string; hotScore: string }) => Promise<void>;
+  recalculateScores: (
+    confessionId: string,
+    collegeId: string,
+    metrics: { trendingScore: string; hotScore: string }
+  ) => Promise<void>;
 }
 
 export async function statisticsWorkerHandler(
@@ -27,7 +31,7 @@ export async function statisticsWorkerHandler(
   deps: StatisticsWorkerDeps
 ): Promise<StatisticsUpdate> {
   const eventType = payload['eventType'] as string;
-  const confessionId = payload['confessionId'] as string || payload['targetId'] as string;
+  const confessionId = (payload['confessionId'] as string) || (payload['targetId'] as string);
   const collegeId = payload['collegeId'] as string;
 
   let metric: StatisticsUpdate['metric'] = 'VIEW';

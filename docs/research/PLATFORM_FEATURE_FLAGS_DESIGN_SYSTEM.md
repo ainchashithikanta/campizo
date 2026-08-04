@@ -2,7 +2,7 @@
 
 **Document Type**: Product Design & Visual Specification  
 **Status**: APPROVED BY CTO / DESIGN SYSTEM SPECIFICATION  
-**Target Application**: Platform Admin Console (`@college-hub/platform-feature-flags`)  
+**Target Application**: Platform Admin Console (`@college-hub/platform-feature-flags`)
 
 ---
 
@@ -18,21 +18,22 @@ Combining the dense operational clarity of **Linear**, **Vercel**, **LaunchDarkl
 
 ### 1.1 Color Palette & Tokens (Dark & Light Mode)
 
-| Token Name | Dark Mode Value | Light Mode Value | Functional Purpose |
-|------------|-----------------|------------------|--------------------|
-| `--flag-bg-base` | `#0f172a` (Slate 900) | `#f8fafc` (Slate 50) | Main background canvas |
-| `--flag-card-bg` | `#1e293b` (Slate 800) | `#ffffff` (White) | Component card background |
-| `--flag-border` | `#334155` (Slate 700) | `#e2e8f0` (Slate 200) | Structural dividing borders |
-| `--flag-text-primary` | `#f8fafc` (Slate 50) | `#0f172a` (Slate 900) | High-contrast headings |
-| `--flag-text-secondary` | `#94a3b8` (Slate 400) | `#475569` (Slate 600) | Body text and descriptions |
-| `--flag-text-muted` | `#64748b` (Slate 500) | `#94a3b8` (Slate 400) | Metadata and timestamps |
-| `--flag-accent-primary` | `#6366f1` (Indigo 500) | `#4f46e5` (Indigo 600) | Primary actions & buttons |
-| `--flag-status-success` | `#10b981` (Emerald 500) | `#059669` (Emerald 600) | Production Active / Enabled |
-| `--flag-status-warning` | `#f59e0b` (Amber 500) | `#d97706` (Amber 600) | Maintenance / Stale / Beta |
-| `--flag-status-danger` | `#ef4444` (Red 500) | `#dc2626` (Red 600) | Kill Switch / Error / Removed |
-| `--flag-status-info` | `#06b6d4` (Cyan 500) | `#0891b2` (Cyan 600) | Internal / Info / Canary |
+| Token Name              | Dark Mode Value         | Light Mode Value        | Functional Purpose            |
+| ----------------------- | ----------------------- | ----------------------- | ----------------------------- |
+| `--flag-bg-base`        | `#0f172a` (Slate 900)   | `#f8fafc` (Slate 50)    | Main background canvas        |
+| `--flag-card-bg`        | `#1e293b` (Slate 800)   | `#ffffff` (White)       | Component card background     |
+| `--flag-border`         | `#334155` (Slate 700)   | `#e2e8f0` (Slate 200)   | Structural dividing borders   |
+| `--flag-text-primary`   | `#f8fafc` (Slate 50)    | `#0f172a` (Slate 900)   | High-contrast headings        |
+| `--flag-text-secondary` | `#94a3b8` (Slate 400)   | `#475569` (Slate 600)   | Body text and descriptions    |
+| `--flag-text-muted`     | `#64748b` (Slate 500)   | `#94a3b8` (Slate 400)   | Metadata and timestamps       |
+| `--flag-accent-primary` | `#6366f1` (Indigo 500)  | `#4f46e5` (Indigo 600)  | Primary actions & buttons     |
+| `--flag-status-success` | `#10b981` (Emerald 500) | `#059669` (Emerald 600) | Production Active / Enabled   |
+| `--flag-status-warning` | `#f59e0b` (Amber 500)   | `#d97706` (Amber 600)   | Maintenance / Stale / Beta    |
+| `--flag-status-danger`  | `#ef4444` (Red 500)     | `#dc2626` (Red 600)     | Kill Switch / Error / Removed |
+| `--flag-status-info`    | `#06b6d4` (Cyan 500)    | `#0891b2` (Cyan 600)    | Internal / Info / Canary      |
 
 ### 1.2 Typography & Monospace Code Styles
+
 - **Primary Body**: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif.
 - **Monospace Tokens**: `JetBrains Mono`, SFMono-Regular, Consolas, monospace.
 
@@ -69,7 +70,7 @@ Combining the dense operational clarity of **Linear**, **Vercel**, **LaunchDarkl
 ## Section 3 — Feature Directory, Saved Views & Bulk Operations
 
 - **Global Command Palette (`Ctrl/Cmd + K`)**: Instant access overlay to search flags, trigger emergency kill switches, jump to environments, or run admin shortcuts.
-- **Saved Administrator Views**: Allows admins to save custom filter combinations (e.g. *"Stale Beta Flags - Stanford"*, *"High Error Canary Flags"*) for 1-click access.
+- **Saved Administrator Views**: Allows admins to save custom filter combinations (e.g. _"Stale Beta Flags - Stanford"_, _"High Error Canary Flags"_) for 1-click access.
 - **Bulk Operations Engine**: Checkbox multi-select in directory table enabling bulk actions (Bulk Toggle, Bulk Copy to Staging, Bulk Deprecation, Bulk Tagging).
 
 ---

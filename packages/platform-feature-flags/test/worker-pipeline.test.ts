@@ -17,7 +17,6 @@ import {
 } from '../src/index.js';
 
 describe('Platform Feature Flags — Asynchronous Worker Pipeline Suite', () => {
-
   let dlqManager: DLQManager;
   let eventRouter: EventRouter;
   let configWorker: ConfigurationWorker;

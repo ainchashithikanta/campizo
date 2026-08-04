@@ -6,7 +6,12 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { NotificationItem } from '../../lib/api-notifications';
-import { fetchUnreadCount, fetchNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '../../lib/api-notifications';
+import {
+  fetchUnreadCount,
+  fetchNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead
+} from '../../lib/api-notifications';
 
 export function UnreadBadge({ count }: { count: number }) {
   if (count <= 0) return null;
@@ -39,14 +44,18 @@ export function NotificationBell() {
         <UnreadBadge count={unreadCount} />
       </button>
 
-      {drawerOpen && (
-        <NotificationDrawer onClose={() => setDrawerOpen(false)} onCountChange={setUnreadCount} />
-      )}
+      {drawerOpen && <NotificationDrawer onClose={() => setDrawerOpen(false)} onCountChange={setUnreadCount} />}
     </div>
   );
 }
 
-export function NotificationItemCard({ notification, onRead }: { notification: NotificationItem; onRead?: () => void }) {
+export function NotificationItemCard({
+  notification,
+  onRead
+}: {
+  notification: NotificationItem;
+  onRead?: () => void;
+}) {
   const [read, setRead] = useState(notification.isRead);
 
   const handleRead = async () => {
@@ -103,7 +112,13 @@ export function NotificationItemCard({ notification, onRead }: { notification: N
   );
 }
 
-export function NotificationDrawer({ onClose, onCountChange }: { onClose: () => void; onCountChange?: (count: number) => void }) {
+export function NotificationDrawer({
+  onClose,
+  onCountChange
+}: {
+  onClose: () => void;
+  onCountChange?: (count: number) => void;
+}) {
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(true);
 

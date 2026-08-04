@@ -102,11 +102,11 @@ The domain logic is strictly deterministic, technology-agnostic, and independent
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **Immutable Anonymous Identity**: Enforced `1 User + 1 Thread ➔ 1 Immutable Pseudonym`.
-* ✅ **Non-Terminal Quarantine State**: `QUARANTINED` $\rightarrow$ (`RESTORED`, `HIDDEN`, `DELETED`, `ESCALATED`).
-* ✅ **Voting Mechanics**: Support for vote removal and vote switching (max 1 active vote).
-* ✅ **Comment Depth Bounding**: Configurable max nesting depth (8–10 levels) with ancestor fallback.
-* ✅ **Expanded Domain Events Catalog**: Added `ReplyReceived`, `ConfessionTrending`, `ModerationDecisionDelivered`, `MediaAttached`.
+- ✅ **Immutable Anonymous Identity**: Enforced `1 User + 1 Thread ➔ 1 Immutable Pseudonym`.
+- ✅ **Non-Terminal Quarantine State**: `QUARANTINED` $\rightarrow$ (`RESTORED`, `HIDDEN`, `DELETED`, `ESCALATED`).
+- ✅ **Voting Mechanics**: Support for vote removal and vote switching (max 1 active vote).
+- ✅ **Comment Depth Bounding**: Configurable max nesting depth (8–10 levels) with ancestor fallback.
+- ✅ **Expanded Domain Events Catalog**: Added `ReplyReceived`, `ConfessionTrending`, `ModerationDecisionDelivered`, `MediaAttached`.
 
 > [!IMPORTANT]
 > **MS-21.4 Approved with Refinements**. Ready for **MS-21.5 (API Contracts & DTO Specification)**.

@@ -43,7 +43,7 @@ export const confessions = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
     deletedAt: timestamp('deleted_at', { withTimezone: true })
   },
-  table => [
+  (table) => [
     index('idx_confessions_tenant_status_rank').on(table.collegeId, table.status, table.rankScore),
     index('idx_confessions_tenant_category').on(table.collegeId, table.categoryCode),
     uniqueIndex('idx_confessions_tenant_slug').on(table.collegeId, table.slug)
@@ -69,7 +69,7 @@ export const confessionComments = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
   },
-  table => [
+  (table) => [
     index('idx_comments_confession_root').on(table.confessionId, table.rootCommentId),
     index('idx_comments_tenant_confession').on(table.collegeId, table.confessionId),
     index('idx_comments_tree_flat').on(table.confessionId, table.rootCommentId, table.depth)
@@ -89,9 +89,7 @@ export const confessionVotes = pgTable(
     voteType: varchar('vote_type', { length: 16 }).notNull(), // UPVOTE, DOWNVOTE
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
   },
-  table => [
-    uniqueIndex('idx_confession_votes_user_unique').on(table.confessionId, table.voterUserId)
-  ]
+  (table) => [uniqueIndex('idx_confession_votes_user_unique').on(table.confessionId, table.voterUserId)]
 );
 
 // 5. comment_votes
@@ -107,9 +105,7 @@ export const commentVotes = pgTable(
     voteType: varchar('vote_type', { length: 16 }).notNull(), // UPVOTE
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
   },
-  table => [
-    uniqueIndex('idx_comment_votes_user_unique').on(table.commentId, table.voterUserId)
-  ]
+  (table) => [uniqueIndex('idx_comment_votes_user_unique').on(table.commentId, table.voterUserId)]
 );
 
 // 6. confession_bookmarks
@@ -124,9 +120,7 @@ export const confessionBookmarks = pgTable(
     userId: varchar('user_id', { length: 64 }).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
   },
-  table => [
-    uniqueIndex('idx_bookmarks_user_confession_unique').on(table.userId, table.confessionId)
-  ]
+  (table) => [uniqueIndex('idx_bookmarks_user_confession_unique').on(table.userId, table.confessionId)]
 );
 
 // 7. confession_reports
@@ -144,9 +138,7 @@ export const confessionReports = pgTable(
     status: varchar('status', { length: 32 }).notNull().default('PENDING'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
   },
-  table => [
-    uniqueIndex('idx_reports_user_confession_unique').on(table.reporterUserId, table.confessionId)
-  ]
+  (table) => [uniqueIndex('idx_reports_user_confession_unique').on(table.reporterUserId, table.confessionId)]
 );
 
 // 8. anonymous_thread_identities (Security Boundary)
@@ -163,9 +155,7 @@ export const anonymousThreadIdentities = pgTable(
     isOp: boolean('is_op').notNull().default(false),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
   },
-  table => [
-    uniqueIndex('idx_anon_identity_thread_user').on(table.confessionId, table.userIdHash)
-  ]
+  (table) => [uniqueIndex('idx_anon_identity_thread_user').on(table.confessionId, table.userIdHash)]
 );
 
 // 9. moderation_cases
@@ -183,9 +173,7 @@ export const moderationCases = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
   },
-  table => [
-    index('idx_mod_cases_severity_status').on(table.severityLevel, table.status)
-  ]
+  (table) => [index('idx_mod_cases_severity_status').on(table.severityLevel, table.status)]
 );
 
 // 10. moderation_actions

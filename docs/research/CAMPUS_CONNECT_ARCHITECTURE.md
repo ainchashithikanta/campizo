@@ -4,12 +4,13 @@
 **Output Location**: `modules/connect/`  
 **Document Type**: Technical Architecture & Infrastructure Blueprint  
 **Status**: 🟢 **FINAL PRODUCTION ARCHITECTURE SPECIFICATION**  
-**Target Platform**: College Hub Monorepo Modular Kernel Architecture  
+**Target Platform**: College Hub Monorepo Modular Kernel Architecture
 
 ---
 
 > [!IMPORTANT]
 > **Mandatory CTO Architectural Invariants**:
+>
 > 1. **Sole Intent Authority**: `StudentIntentService` is the sole authority over student intent lifecycles, availability, and expiration.
 > 2. **Asynchronous Recommendations**: Recommendation generation executes out-of-band via background BullMQ workers.
 > 3. **Immutable Messaging Context**: Every conversation and message thread MUST reference a non-null, immutable `ConversationContext`.
@@ -202,38 +203,39 @@ All background workers are stateless, idempotent, and horizontally scalable:
 ## 8. Event Routing Architecture & Event Envelope
 
 ### 8.1 Unified Event Envelope
+
 Every domain event dispatched across the system adheres to a strict envelope structure:
 
 ```ts
 export interface EventEnvelope<T = unknown> {
-  eventId: string;        // UUIDv4
-  requestId: string;      // Originating HTTP Request ID
-  traceId: string;        // Distributed Tracing ID
-  collegeId: string;      // Tenant Isolation Identifier
-  eventType: string;      // Domain Event Type Name
-  timestamp: string;      // ISO 8601 UTC Timestamp
-  payload: T;             // Event Specific Payload Data
+  eventId: string; // UUIDv4
+  requestId: string; // Originating HTTP Request ID
+  traceId: string; // Distributed Tracing ID
+  collegeId: string; // Tenant Isolation Identifier
+  eventType: string; // Domain Event Type Name
+  timestamp: string; // ISO 8601 UTC Timestamp
+  payload: T; // Event Specific Payload Data
 }
 ```
 
 ### 8.2 Event Routing Table
 
-| Event Type | Source Component | Target Worker Queues | Description |
-| :--- | :--- | :--- | :--- |
-| `IntentCreated` | `StudentIntentService` | `connect:search`, `connect:recs` | Triggers search indexing & match generation |
-| `IntentActivated` | `StudentIntentService` | `connect:recs`, `connect:activity` | Triggers background recommendation pipeline |
-| `IntentExpired` | `IntentExpiryWorker` | `connect:search`, `connect:notifications` | Updates search index & notifies student |
-| `ConnectionRequested`| `NetworkGraphService` | `connect:notifications` | Dispatches connection request notification |
-| `ConnectionAccepted` | `NetworkGraphService` | `connect:chat`, `connect:relationship` | Unlocks messaging & computes relationship score |
-| `ConversationCreated`| `ConversationService` | `connect:chat`, `connect:audit` | Creates context-bound message thread |
-| `MessageSent` | `MessageService` | `connect:notifications`, `connect:relationship`| Triggers push alert & updates interaction strength |
-| `RecommendationGenerated`| `RecommendationWorker`| `connect:notifications` | Delivers explainable match alert |
-| `RecommendationArchived` | `RecommendationWorker`| `connect:audit` | Archives stale recommendation snapshot |
-| `PrivacyUpdated` | `ProfilePrivacyService`| `connect:search`, `connect:recs` | Invalidates cached discovery read models |
-| `ModerationCaseOpened` | `ModerationSafetyService`| `connect:safety` | Triggers safety review & auto-quarantine |
-| `ActivityRecorded` | `ActivityWorker` | `connect:activity` | Appends event to live campus ticker |
-| `FeatureDisabled` | `FeatureFlagGuard` | `connect:search` | Removes disabled feature items from discovery |
-| `FeatureEnabled` | `FeatureFlagGuard` | `connect:search` | Re-indexes feature items into discovery |
+| Event Type                | Source Component          | Target Worker Queues                            | Description                                        |
+| :------------------------ | :------------------------ | :---------------------------------------------- | :------------------------------------------------- |
+| `IntentCreated`           | `StudentIntentService`    | `connect:search`, `connect:recs`                | Triggers search indexing & match generation        |
+| `IntentActivated`         | `StudentIntentService`    | `connect:recs`, `connect:activity`              | Triggers background recommendation pipeline        |
+| `IntentExpired`           | `IntentExpiryWorker`      | `connect:search`, `connect:notifications`       | Updates search index & notifies student            |
+| `ConnectionRequested`     | `NetworkGraphService`     | `connect:notifications`                         | Dispatches connection request notification         |
+| `ConnectionAccepted`      | `NetworkGraphService`     | `connect:chat`, `connect:relationship`          | Unlocks messaging & computes relationship score    |
+| `ConversationCreated`     | `ConversationService`     | `connect:chat`, `connect:audit`                 | Creates context-bound message thread               |
+| `MessageSent`             | `MessageService`          | `connect:notifications`, `connect:relationship` | Triggers push alert & updates interaction strength |
+| `RecommendationGenerated` | `RecommendationWorker`    | `connect:notifications`                         | Delivers explainable match alert                   |
+| `RecommendationArchived`  | `RecommendationWorker`    | `connect:audit`                                 | Archives stale recommendation snapshot             |
+| `PrivacyUpdated`          | `ProfilePrivacyService`   | `connect:search`, `connect:recs`                | Invalidates cached discovery read models           |
+| `ModerationCaseOpened`    | `ModerationSafetyService` | `connect:safety`                                | Triggers safety review & auto-quarantine           |
+| `ActivityRecorded`        | `ActivityWorker`          | `connect:activity`                              | Appends event to live campus ticker                |
+| `FeatureDisabled`         | `FeatureFlagGuard`        | `connect:search`                                | Removes disabled feature items from discovery      |
+| `FeatureEnabled`          | `FeatureFlagGuard`        | `connect:search`                                | Re-indexes feature items into discovery            |
 
 ---
 
@@ -266,15 +268,15 @@ export interface EventEnvelope<T = unknown> {
 
 ## 10. Performance Targets & SLA Guarantees
 
-| Operations / Query Pipeline | SLA Target | Optimization Strategy |
-| :--- | :--- | :--- |
-| **Intent Evaluation** | $< 20\text{ ms}$ | L1 In-Memory Feature Flag & Policy Guard Evaluation |
-| **Profile Load** | $< 50\text{ ms}$ | L2 Redis Cache with composite primary key lookup |
-| **Search Query** | $< 80\text{ ms}$ | GIN & Partial Indexing on `student_discovery_search_read_model` |
-| **Recommendation Retrieval** | $< 100\text{ ms}$ | Precomputed immutable `compatibility_snapshots` |
-| **Recommendation Generation** | $< 150\text{ ms}$ | Asynchronous BullMQ background worker execution |
-| **Messaging Lookup** | $< 30\text{ ms}$ | Partitioned message table with composite index `(conversation_id, created_at)` |
-| **Notification Preparation** | $< 30\text{ ms}$ | Pre-formatted notification templates & Redis queue dispatch |
+| Operations / Query Pipeline   | SLA Target        | Optimization Strategy                                                          |
+| :---------------------------- | :---------------- | :----------------------------------------------------------------------------- |
+| **Intent Evaluation**         | $< 20\text{ ms}$  | L1 In-Memory Feature Flag & Policy Guard Evaluation                            |
+| **Profile Load**              | $< 50\text{ ms}$  | L2 Redis Cache with composite primary key lookup                               |
+| **Search Query**              | $< 80\text{ ms}$  | GIN & Partial Indexing on `student_discovery_search_read_model`                |
+| **Recommendation Retrieval**  | $< 100\text{ ms}$ | Precomputed immutable `compatibility_snapshots`                                |
+| **Recommendation Generation** | $< 150\text{ ms}$ | Asynchronous BullMQ background worker execution                                |
+| **Messaging Lookup**          | $< 30\text{ ms}$  | Partitioned message table with composite index `(conversation_id, created_at)` |
+| **Notification Preparation**  | $< 30\text{ ms}$  | Pre-formatted notification templates & Redis queue dispatch                    |
 
 ---
 

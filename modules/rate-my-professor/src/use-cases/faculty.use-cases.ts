@@ -66,4 +66,3 @@ export class UpdateFacultyResponseUseCase {
     return { responseId: params.responseId };
   }
 }
-

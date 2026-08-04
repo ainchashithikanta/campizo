@@ -33,11 +33,11 @@ This research document analyzes 14 global and domestic benchmark platforms acros
 - **Search & Filters**: Search operates primarily on course names and user-provided document titles. Lacks fine-grained filtering for specific semester exam years.
 - **Preview & Metadata**: High-speed canvas-based PDF renderer. Metadata displays university name, course, academic year, and vote count.
 - **Feature Evaluation Matrix**:
-  1. *What is excellent?*: Ultra-fast document previewer with instant page thumbnail rendering and keyword search within PDFs.
-  2. *What is poor?*: Aggressive paywalling and forced upload quotas that lead to spam file submissions.
-  3. *Why does it work?*: High SEO domain authority captures students searching Google for specific assignment answers.
-  4. *What do users complain about?*: Paywalls during exam nights, low-quality duplicate uploads, and recurring subscription charges.
-  5. *How College Hub can improve it*: Provide **100% free, un-paywalled access** for verified college students while using community reputation badges rather than paywalls to incentivize uploads.
+  1. _What is excellent?_: Ultra-fast document previewer with instant page thumbnail rendering and keyword search within PDFs.
+  2. _What is poor?_: Aggressive paywalling and forced upload quotas that lead to spam file submissions.
+  3. _Why does it work?_: High SEO domain authority captures students searching Google for specific assignment answers.
+  4. _What do users complain about?_: Paywalls during exam nights, low-quality duplicate uploads, and recurring subscription charges.
+  5. _How College Hub can improve it_: Provide **100% free, un-paywalled access** for verified college students while using community reputation badges rather than paywalls to incentivize uploads.
 
 #### 2.1.2 Course Hero
 
@@ -47,11 +47,11 @@ This research document analyzes 14 global and domestic benchmark platforms acros
 - **Upload & Download Experience**: Credit-based unlock system (upload 10 documents = 5 unlocks). Users frequently upload public domain or dummy files to get credits.
 - **Search & Filters**: Specialized text-matching algorithm targeting specific assignment questions.
 - **Feature Evaluation Matrix**:
-  1. *What is excellent?*: Exact text matching for specific homework and exam questions.
-  2. *What is poor?*: Blurred text paywalls create hostile UX; pervasive copyright infringement complaints from professors.
-  3. *Why does it work?*: Monetizes extreme student urgency when solving specific homework problems.
-  4. *What do users complain about*: Misleading preview text, expensive monthly fees, and copyright takedowns.
-  5. *How College Hub can improve it*: Focus on **syllabus-structured exam preparation** (PYQs, lecture notes, lab manuals) rather than single-question unlocking, with strict uploader attribution.
+  1. _What is excellent?_: Exact text matching for specific homework and exam questions.
+  2. _What is poor?_: Blurred text paywalls create hostile UX; pervasive copyright infringement complaints from professors.
+  3. _Why does it work?_: Monetizes extreme student urgency when solving specific homework problems.
+  4. _What do users complain about_: Misleading preview text, expensive monthly fees, and copyright takedowns.
+  5. _How College Hub can improve it_: Focus on **syllabus-structured exam preparation** (PYQs, lecture notes, lab manuals) rather than single-question unlocking, with strict uploader attribution.
 
 #### 2.1.3 Moodle / Canvas LMS / Blackboard (Institutional LMS)
 
@@ -61,11 +61,11 @@ This research document analyzes 14 global and domestic benchmark platforms acros
 - **Upload Experience**: Restricted strictly to professors and teaching assistants. Students cannot upload or share peer-created study guides, handwritten notes, or previous year question papers.
 - **Search Experience**: Extremely poor or non-existent cross-course search. A student cannot search for "Data Structures Question Paper 2023" across the entire college database.
 - **Feature Evaluation Matrix**:
-  1. *What is excellent*: Official, authoritative source for official syllabus, assignment briefs, and slide decks.
-  2. *What is poor*: One-way communication (faculty $\rightarrow$ student); zero peer-to-peer sharing; dismal search and dated UI.
-  3. *Why does it work*: Mandatory adoption enforced by university administration.
-  4. *What do users complain about*: Clunky navigation, slow download speeds, missing previous years' materials, and inability to upload student-made notes.
-  5. *How College Hub can improve it*: Combine official course structures with **crowdsourced peer student uploads**, modern UI/UX, and instant cross-subject search.
+  1. _What is excellent_: Official, authoritative source for official syllabus, assignment briefs, and slide decks.
+  2. _What is poor_: One-way communication (faculty $\rightarrow$ student); zero peer-to-peer sharing; dismal search and dated UI.
+  3. _Why does it work_: Mandatory adoption enforced by university administration.
+  4. _What do users complain about_: Clunky navigation, slow download speeds, missing previous years' materials, and inability to upload student-made notes.
+  5. _How College Hub can improve it_: Combine official course structures with **crowdsourced peer student uploads**, modern UI/UX, and instant cross-subject search.
 
 ---
 
@@ -78,11 +78,11 @@ This research document analyzes 14 global and domestic benchmark platforms acros
 - **Mobile vs. Desktop UX**: Desktop app is powerful and highly productive; mobile app suffers from slow cold-start times and awkward multi-column layout rendering.
 - **Search Experience**: Quick switcher (`Cmd+K`) provides instant title and content matching across pages.
 - **Feature Evaluation Matrix**:
-  1. *What is excellent*: Flexible database properties (tags, multi-select, relations, formulas) allowing rich metadata customization.
-  2. *What is poor*: Slow mobile load times; lacks native multi-page binary PDF rendering and annotation features.
-  3. *Why does it work*: Customizability allows power users to build personal study dashboards.
-  4. *What do users complain about*: Overwhelming setup complexity for casual users; poor offline performance on mobile.
-  5. *How College Hub can improve it*: Provide Notion-like rich metadata tagging (Semester, Exam Type, Subject Code) out-of-the-box **without requiring students to configure databases manually**.
+  1. _What is excellent_: Flexible database properties (tags, multi-select, relations, formulas) allowing rich metadata customization.
+  2. _What is poor_: Slow mobile load times; lacks native multi-page binary PDF rendering and annotation features.
+  3. _Why does it work_: Customizability allows power users to build personal study dashboards.
+  4. _What do users complain about_: Overwhelming setup complexity for casual users; poor offline performance on mobile.
+  5. _How College Hub can improve it_: Provide Notion-like rich metadata tagging (Semester, Exam Type, Subject Code) out-of-the-box **without requiring students to configure databases manually**.
 
 #### 2.2.2 Obsidian
 
@@ -90,21 +90,21 @@ This research document analyzes 14 global and domestic benchmark platforms acros
 - **Information Architecture & Navigation**: Graph-based network of interconnected notes and local folder hierarchies.
 - **Mobile vs. Desktop UX**: Blazing fast performance on both desktop and mobile due to local plain-text file storage.
 - **Feature Evaluation Matrix**:
-  1. *What is excellent*: Zero latency, offline-first performance, and powerful tag/link navigation.
-  2. *What is poor*: Steep learning curve; non-trivial setup for sharing files with a group of 100+ classmates.
-  3. *Why does it work*: Loved by power users for personal knowledge management (PKM).
-  4. *What do users complain about*: Lack of frictionless cloud collaboration for non-technical users.
-  5. *How College Hub can improve it*: Adopt Obsidian's **instant search speed and tag linking mental model** while providing seamless multi-tenant cloud storage.
+  1. _What is excellent_: Zero latency, offline-first performance, and powerful tag/link navigation.
+  2. _What is poor_: Steep learning curve; non-trivial setup for sharing files with a group of 100+ classmates.
+  3. _Why does it work_: Loved by power users for personal knowledge management (PKM).
+  4. _What do users complain about_: Lack of frictionless cloud collaboration for non-technical users.
+  5. _How College Hub can improve it_: Adopt Obsidian's **instant search speed and tag linking mental model** while providing seamless multi-tenant cloud storage.
 
 #### 2.2.3 GitBook
 
 - **User Journey**: Open documentation URL $\rightarrow$ Left sidebar navigation by chapter/topic $\rightarrow$ Read clean, typography-focused content $\rightarrow$ Search via persistent header bar.
 - **Information Architecture & Navigation**: Two-level sidebar hierarchy (Categories $\rightarrow$ Pages) designed for sequential reading.
 - **Feature Evaluation Matrix**:
-  1. *What is excellent*: World-class reading typography, clean visual hierarchy, and fast static page loading.
-  2. *What is poor*: Optimized for structured text/markdown, not for PDF lecture slides or scanned handwritten exam papers.
-  3. *Why does it work*: Provides the gold standard in technical documentation navigation.
-  4. *How College Hub can improve it*: Adopt GitBook's **clean sidebar subject navigation and reading layout** for viewing digital study materials.
+  1. _What is excellent_: World-class reading typography, clean visual hierarchy, and fast static page loading.
+  2. _What is poor_: Optimized for structured text/markdown, not for PDF lecture slides or scanned handwritten exam papers.
+  3. _Why does it work_: Provides the gold standard in technical documentation navigation.
+  4. _How College Hub can improve it_: Adopt GitBook's **clean sidebar subject navigation and reading layout** for viewing digital study materials.
 
 ---
 
@@ -117,11 +117,11 @@ This research document analyzes 14 global and domestic benchmark platforms acros
 - **Mobile vs. Desktop UX**: Good mobile app performance, but deep folder navigation requires repeated back-and-forth taps.
 - **Search Experience**: Powerful text search, but returns uncontextualized results from across the entire personal drive without academic filters (e.g. searching "Math" returns personal bills, old photos, and unrelated PDFs).
 - **Feature Evaluation Matrix**:
-  1. *What is excellent*: Ubiquitous availability, instant PDF previewing, and seamless Google account integration.
-  2. *What is poor*: Complete lack of academic metadata (cannot filter by "Mid-Sem 2023" or "3rd Semester"); links break when creators delete files or revoke access; folder chaos.
-  3. *Why does it work*: Free 15GB storage makes it the default fallback for Class Representatives (CRs).
-  4. *What do users complain about*: Broken links, duplicate files, unorganized "junk drawer" folders, and permission denied errors (`Access Requested`).
-  5. *How College Hub can improve it*: Replace arbitrary folder trees with **structured, auto-curated subject channels** backed by strict academic metadata.
+  1. _What is excellent_: Ubiquitous availability, instant PDF previewing, and seamless Google account integration.
+  2. _What is poor_: Complete lack of academic metadata (cannot filter by "Mid-Sem 2023" or "3rd Semester"); links break when creators delete files or revoke access; folder chaos.
+  3. _Why does it work_: Free 15GB storage makes it the default fallback for Class Representatives (CRs).
+  4. _What do users complain about_: Broken links, duplicate files, unorganized "junk drawer" folders, and permission denied errors (`Access Requested`).
+  5. _How College Hub can improve it_: Replace arbitrary folder trees with **structured, auto-curated subject channels** backed by strict academic metadata.
 
 ---
 
@@ -132,35 +132,35 @@ This research document analyzes 14 global and domestic benchmark platforms acros
 - **User Journey**: Search repository $\rightarrow$ Inspect folder structure & README $\rightarrow$ View release tags $\rightarrow$ Clone/Download ZIP $\rightarrow$ Star/Fork or open Issue.
 - **Information Architecture & Navigation**: Branch/Tag selection, file tree viewer, integrated markdown README preview, and issue tracking.
 - **Feature Evaluation Matrix**:
-  1. *What is excellent*: Version control, clear file attribution, repository stars/forks as quality metrics, and issue reporting for broken content.
-  2. *What is poor*: Intimidating interface for non-engineering students (e.g., Arts, Medical, Management).
-  3. *Why does it work*: Establishes definitive single-source-of-truth repositories for code and open-source projects.
-  4. *How College Hub can improve it*: Adapt GitHub's **versioning, issue/broken-file reporting, and star/upvote signals** into a simple, non-technical student UI.
+  1. _What is excellent_: Version control, clear file attribution, repository stars/forks as quality metrics, and issue reporting for broken content.
+  2. _What is poor_: Intimidating interface for non-engineering students (e.g., Arts, Medical, Management).
+  3. _Why does it work_: Establishes definitive single-source-of-truth repositories for code and open-source projects.
+  4. _How College Hub can improve it_: Adapt GitHub's **versioning, issue/broken-file reporting, and star/upvote signals** into a simple, non-technical student UI.
 
 #### 2.4.2 Stack Overflow
 
 - **User Journey**: Search problem $\rightarrow$ View question page $\rightarrow$ Inspect accepted answer badge $\rightarrow$ Upvote/Downvote answers $\rightarrow$ Flag duplicates.
 - **Feature Evaluation Matrix**:
-  1. *What is excellent*: Strict community moderation, accepted answer badges, duplicate question closing, and reputation points.
-  2. *What is poor*: Toxic moderation culture intimidating new users from asking questions.
-  3. *Why does it work*: High trust signal; users instantly spot the verified correct solution.
-  4. *How College Hub can improve it*: Implement **"Verified Solution Key" badges for PYQs** and community duplicate flagging without toxic elitism.
+  1. _What is excellent_: Strict community moderation, accepted answer badges, duplicate question closing, and reputation points.
+  2. _What is poor_: Toxic moderation culture intimidating new users from asking questions.
+  3. _Why does it work_: High trust signal; users instantly spot the verified correct solution.
+  4. _How College Hub can improve it_: Implement **"Verified Solution Key" badges for PYQs** and community duplicate flagging without toxic elitism.
 
 ---
 
 ## 3. Product Comparison Matrix
 
-| Feature / Dimension | Studocu | Course Hero | Moodle / Canvas | Google Drive | GitHub | **College Hub Target** |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Primary Access Model** | Paywall / Upload Wall | Credit Paywall | Institutional Login | Open / Link Share | Open Source | **100% Free Verified Student Access** |
-| **Academic Hierarchy** | Univ $\rightarrow$ Course | Univ $\rightarrow$ Course | Dept $\rightarrow$ Course | Manual Folder Tree | Repo $\rightarrow$ Folder | **College $\rightarrow$ Dept $\rightarrow$ Sem $\rightarrow$ Subject** |
-| **Search Capabilities** | Document Title | Question Matching | Basic Title Match | Full-Text (Unfiltered) | Code / File Search | **Parametric Academic + PDF Text Search** |
-| **Peer Upload Support** | Yes (Encouraged) | Yes (Encouraged) | ❌ No (Faculty Only) | Yes | Yes | **✅ Yes (Student + Faculty Verified)** |
-| **Quality Control** | Low (Spam Uploads) | Low (Spam Uploads) | High (Official Only) | None | High (PR Review) | **Pre-Flight Checks + Community Voting** |
-| **Mobile Experience** | Poor (Aggressive Ads) | Moderate | Poor (Outdated UI) | Good | Moderate | **Mobile-First, Zero-Ad Responsive UI** |
-| **Offline Access** | App-only download | None | Basic Mobile Cache | Offline Sync | Git Clone | **PWA Cached PDF Reading** |
-| **Material Tagging** | Basic Category | Question Tags | None | None | Topic Badges | **Rich Tags (PYQ, Notes, Lab, Year, Scheme)** |
-| **Version History** | ❌ No | ❌ No | ❌ No | Basic File History | Git Commits | **File Lineage & Updated Syllabus Versioning** |
+| Feature / Dimension      | Studocu                   | Course Hero               | Moodle / Canvas           | Google Drive           | GitHub                    | **College Hub Target**                                                 |
+| :----------------------- | :------------------------ | :------------------------ | :------------------------ | :--------------------- | :------------------------ | :--------------------------------------------------------------------- |
+| **Primary Access Model** | Paywall / Upload Wall     | Credit Paywall            | Institutional Login       | Open / Link Share      | Open Source               | **100% Free Verified Student Access**                                  |
+| **Academic Hierarchy**   | Univ $\rightarrow$ Course | Univ $\rightarrow$ Course | Dept $\rightarrow$ Course | Manual Folder Tree     | Repo $\rightarrow$ Folder | **College $\rightarrow$ Dept $\rightarrow$ Sem $\rightarrow$ Subject** |
+| **Search Capabilities**  | Document Title            | Question Matching         | Basic Title Match         | Full-Text (Unfiltered) | Code / File Search        | **Parametric Academic + PDF Text Search**                              |
+| **Peer Upload Support**  | Yes (Encouraged)          | Yes (Encouraged)          | ❌ No (Faculty Only)      | Yes                    | Yes                       | **✅ Yes (Student + Faculty Verified)**                                |
+| **Quality Control**      | Low (Spam Uploads)        | Low (Spam Uploads)        | High (Official Only)      | None                   | High (PR Review)          | **Pre-Flight Checks + Community Voting**                               |
+| **Mobile Experience**    | Poor (Aggressive Ads)     | Moderate                  | Poor (Outdated UI)        | Good                   | Moderate                  | **Mobile-First, Zero-Ad Responsive UI**                                |
+| **Offline Access**       | App-only download         | None                      | Basic Mobile Cache        | Offline Sync           | Git Clone                 | **PWA Cached PDF Reading**                                             |
+| **Material Tagging**     | Basic Category            | Question Tags             | None                      | None                   | Topic Badges              | **Rich Tags (PYQ, Notes, Lab, Year, Scheme)**                          |
+| **Version History**      | ❌ No                     | ❌ No                     | ❌ No                     | Basic File History     | Git Commits               | **File Lineage & Updated Syllabus Versioning**                         |
 
 ---
 
@@ -193,18 +193,23 @@ In Indian engineering, medical, degree, and autonomous colleges, academic materi
 ```
 
 #### Pain Point 1: Exam Night Search Friction & Media Loss
+
 On the night before a Mid-Sem or End-Sem exam, students waste 30 to 60 minutes scrolling through thousands of WhatsApp messages or searching Telegram channels trying to locate a specific PDF dropped 3 months prior.
 
 #### Pain Point 2: Broken Access & Ownership Single Points of Failure
+
 When a Class Representative graduates, changes their Google account, or revokes Drive permissions, entire semesters of curated notes become inaccessible overnight.
 
 #### Pain Point 3: Syllabus Drift & Regulation Mismatch
+
 Indian universities (e.g. AKTU, VTU, GTU, Anna University, Mumbai University, Autonomous Colleges) update their academic regulations every 3 to 4 years (e.g. 2018 Scheme vs 2021 Scheme vs 2024 NEP Scheme). Students frequently study from outdated notes containing obsolete topics or missing newly added modules.
 
 #### Pain Point 4: Unreadable, Poorly Scanned PDFs
+
 Handwritten notes scanned via phone apps are frequently blurry, poorly lit, cropped incorrectly, or missing crucial odd-numbered pages.
 
 #### Pain Point 5: PYQs Without Verified Solutions
+
 While question papers are easily found, verified step-by-step solution keys (especially for numerical subjects like Mathematics, Thermodynamics, Electrical Circuits, and Algorithms) are missing, forcing students to cross-check unverified answers across multiple sources.
 
 ---
@@ -226,17 +231,23 @@ While question papers are easily found, verified step-by-step solution keys (esp
 We evaluated three architectural hierarchy models for organizing academic materials:
 
 #### Model A: Traditional Deep Tree
+
 `College → Department → Semester → Subject → Material Type → File`
+
 - **Pros**: Perfectly mirrors university administrative structures. Highly intuitive for browsing.
 - **Cons**: Deep navigation path ( requires 5 to 6 clicks to reach a file).
 
 #### Model B: Course-Code Centric Flat Model
+
 `Course Code (e.g. CS501) → All Filterable Materials`
+
 - **Pros**: Fast for students who memorize their course codes (`CS501`, `KCS-501`). Excellent for direct search.
 - **Cons**: Fails for first-year students or non-engineering departments where course codes are non-standard or inconsistent across electives.
 
 #### Model C: Professor-Centric Model
+
 `Professor → Subject → Materials`
+
 - **Pros**: Useful when specific professors set custom exam papers or require specific lecture slide notes.
 - **Cons**: In Indian colleges, multiple professors teach the same subject across different class sections, and syllabus papers are frequently set by external university boards.
 
@@ -257,6 +268,7 @@ College Hub adopts a **Hybrid Contextual Model** combining the intuitive structu
 ```
 
 #### Why This Model Wins:
+
 1. **Zero-Click Onboarding**: A 5th-semester CSE student at Stanford/NIT Trichy doesn't need to select College $\rightarrow$ Dept $\rightarrow$ Semester every time. The app defaults to their current active subjects.
 2. **Unified Course Code Alias**: Supports university-specific subject code aliases (`CS302`, `KCS-501`, `PCC-CS501`) pointing to the same canonical subject hub.
 
@@ -323,14 +335,18 @@ graph TD
 ```
 
 ### 1. Contextual Exam Dashboard (Highest Priority)
+
 When the academic calendar indicates an upcoming exam week, the home screen dynamically morphs into an **Exam Survival Mode**, grouping PYQs and quick-revision formula sheets for the student's registered subjects at the very top.
 
 ### 2. Unified Instant Search
+
 - **Debounced 200ms Search**: Matches subject names (`Operating Systems`), course codes (`CS501`), topic keywords (`Page Replacement Algorithms`), and uploader names.
 - **In-Document Full-Text Search**: Queries OCR text indexed from stored PDF documents.
 
 ### 3. Parametric Filter Engine
+
 Allows granular filtering across:
+
 - `Department`: CSE, ECE, ME, EE, Civil, Basic Sciences
 - `Semester`: Semester 1 through 8
 - `Material Category`: PYQ, Lecture Notes, Lab Manual, Formula Sheet
@@ -338,6 +354,7 @@ Allows granular filtering across:
 - `Verification Status`: Faculty Approved, High Helpfulness Rating
 
 ### 4. Trending & Download Velocity Feed
+
 Displays "Top Downloaded Notes in your College this week", surfacing high-quality peer notes during peak exam preparation cycles.
 
 ---
@@ -359,15 +376,18 @@ To ensure absolute reliability without relying on unpredictable AI models, Colle
 ```
 
 ### 8.1 Duplicate File Prevention Engine
+
 - **SHA-256 Hash Verification**: During pre-upload, the client computes the binary SHA-256 checksum of the file. If the hash already exists in the tenant's database, the upload is halted instantly, and the user is redirected to the existing file.
 
 ### 8.2 File Pre-Flight Validation Rules
+
 1. **File Size Bounds**: Minimum 50KB (prevents blank/corrupted files); Maximum 50MB (prevents video/raw binary dumps).
 2. **MIME & Header Verification**: Enforces strict PDF/image magic bytes (`%PDF-`, `\xFF\xD8\xFF`).
 3. **Password Protection Inspection**: Attempts reading PDF catalog; rejects encrypted/password-locked PDFs immediately.
 4. **Minimum Page Count Check**: Reject 0-page or un-parseable document structures.
 
 ### 8.3 Community Moderation & Quarantine Circuit Breaker
+
 - **Multi-Reason Reporting**: Students can flag files for:
   - `Wrong Subject / Semester`
   - `Outdated Syllabus / Scheme`
@@ -387,6 +407,7 @@ To rank search results and material feeds, College Hub combines helpfulness vote
 $$QS = \frac{(H \times 3.0) + (D_{val} \times 1.0) - (R \times 5.0)}{1.0 + \lambda \cdot \Delta t}$$
 
 Where:
+
 - $H$: Net Helpful votes ($\text{Upvotes} - \text{Downvotes}$)
 - $D_{val}$: Verified unique student downloads (1 download per authenticated student session)
 - $R$: Active community reports
@@ -431,6 +452,7 @@ User Input Query (e.g., "cs301 mid sem 2023 pyq")
 ```
 
 ### 10.2 Supported Search Filters
+
 - Exact Subject Code match (`CS501`, `MAT201`)
 - Keyword match in title/description (`Fourier Transform`, `Concurrency`)
 - Professor name tag (`Prof. Raman Notes`)
@@ -440,30 +462,33 @@ User Input Query (e.g., "cs301 mid sem 2023 pyq")
 
 ## 11. Risks & Mitigation Strategies
 
-| Identified Risk | Severity | Mitigation Strategy |
-| :--- | :--- | :--- |
-| **Copyright Takedown Notices (Textbook Publishers)** | High | Restrict uploads to handwritten student notes, PYQs, and faculty slides. Proactively block pirated commercial textbook uploads via filename & hash filters. |
-| **Outdated Notes Skewing Exam Preparation** | Medium | Require mandatory `Regulation/Scheme Year` metadata tag. Display warning banner on files older than 3 years. |
-| **Spam File Dumping During Exam Week** | Medium | Limit uploads to maximum 5 files per student per day unless uploader has "Verified Contributor" status. |
-| **Storage Abuse (Large Video / Binary Files)** | Low | Strict MIME-type checking permitting only PDF, PNG, JPG, and DOCX files under 50MB. |
+| Identified Risk                                      | Severity | Mitigation Strategy                                                                                                                                         |
+| :--------------------------------------------------- | :------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Copyright Takedown Notices (Textbook Publishers)** | High     | Restrict uploads to handwritten student notes, PYQs, and faculty slides. Proactively block pirated commercial textbook uploads via filename & hash filters. |
+| **Outdated Notes Skewing Exam Preparation**          | Medium   | Require mandatory `Regulation/Scheme Year` metadata tag. Display warning banner on files older than 3 years.                                                |
+| **Spam File Dumping During Exam Week**               | Medium   | Limit uploads to maximum 5 files per student per day unless uploader has "Verified Contributor" status.                                                     |
+| **Storage Abuse (Large Video / Binary Files)**       | Low      | Strict MIME-type checking permitting only PDF, PNG, JPG, and DOCX files under 50MB.                                                                         |
 
 ---
 
 ## 12. College Hub Architectural Design Decisions Log
 
 ### Decision 1: 100% Free Unlocked Access for Verified Students
+
 - **Inspired By**: Wikipedia & Open-Source Software (vs. Studocu / Course Hero)
 - **Why Chosen**: Paywalls during exam nights create intense anger and encourage junk uploads. Requiring verified `.edu` / institutional logins guarantees a trusted student community without needing paywalls.
 - **Why Alternatives Were Rejected**: Paywall models destroy student trust and degrade material quality.
 - **Adaptation for Indian Colleges**: Authenticates via `.ac.in` email or College ERP Student ID.
 
 ### Decision 2: Hybrid Contextual Subject Grid Navigation
+
 - **Inspired By**: GitBook (Navigation) + Notion (Database Tagging)
 - **Why Chosen**: Reduces the time needed to locate study material from 45 minutes on WhatsApp to under 10 seconds on College Hub.
 - **Why Alternatives Were Rejected**: Pure folder trees (Google Drive) become chaotic; pure search (Course Hero) fails when students don't know exact search keywords.
 - **Adaptation for Indian Colleges**: Tailored to Indian University semester schemes (Semesters 1 through 8, Mid-Sem vs End-Sem PYQ patterns).
 
 ### Decision 3: Deterministic SHA-256 + Rule-Based Quality Control
+
 - **Inspired By**: GitHub (SHA Checksums) & Stack Overflow (Community Moderation)
 - **Why Chosen**: Non-AI deterministic validation provides 100% predictable, zero-latency quality control without LLM API costs or hallucination errors.
 - **Why Alternatives Were Rejected**: AI content moderation is expensive, slow, and prone to false positives on handwritten math/circuit diagrams.

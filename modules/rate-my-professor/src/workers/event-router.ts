@@ -48,7 +48,11 @@ export class RateMyProfessorEventRouter {
           if (event.payload?.professorId) {
             await this.statsWorker.recalculateForProfessor(event.payload.professorId, event.collegeId);
             await this.searchWorker.indexProfessor(event.payload.professorId, event.collegeId);
-            this.cacheWorker.invalidateProfessorCache(event.collegeId, event.payload.professorId, event.payload.professorId);
+            this.cacheWorker.invalidateProfessorCache(
+              event.collegeId,
+              event.payload.professorId,
+              event.payload.professorId
+            );
           }
         }
       );
@@ -65,7 +69,11 @@ export class RateMyProfessorEventRouter {
           logger.info({ eventId: event.eventId, collegeId: event.collegeId }, 'Handling ReviewUpdated event');
           if (event.payload?.professorId) {
             await this.statsWorker.recalculateForProfessor(event.payload.professorId, event.collegeId);
-            this.cacheWorker.invalidateProfessorCache(event.collegeId, event.payload.professorId, event.payload.professorId);
+            this.cacheWorker.invalidateProfessorCache(
+              event.collegeId,
+              event.payload.professorId,
+              event.payload.professorId
+            );
           }
         }
       );
@@ -82,7 +90,11 @@ export class RateMyProfessorEventRouter {
           logger.info({ eventId: event.eventId, collegeId: event.collegeId }, 'Handling ReviewDeleted event');
           if (event.payload?.professorId) {
             await this.statsWorker.recalculateForProfessor(event.payload.professorId, event.collegeId);
-            this.cacheWorker.invalidateProfessorCache(event.collegeId, event.payload.professorId, event.payload.professorId);
+            this.cacheWorker.invalidateProfessorCache(
+              event.collegeId,
+              event.payload.professorId,
+              event.payload.professorId
+            );
           }
         }
       );
@@ -99,7 +111,11 @@ export class RateMyProfessorEventRouter {
           logger.info({ eventId: event.eventId, collegeId: event.collegeId }, 'Handling ReviewHidden event');
           if (event.payload?.professorId) {
             await this.statsWorker.recalculateForProfessor(event.payload.professorId, event.collegeId);
-            this.cacheWorker.invalidateProfessorCache(event.collegeId, event.payload.professorId, event.payload.professorId);
+            this.cacheWorker.invalidateProfessorCache(
+              event.collegeId,
+              event.payload.professorId,
+              event.payload.professorId
+            );
           }
         }
       );

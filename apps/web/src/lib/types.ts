@@ -200,7 +200,7 @@ export function getRatingLabel(quality: RatingQuality): string {
     good: 'Good',
     average: 'Average',
     below: 'Below Average',
-    poor: 'Poor',
+    poor: 'Poor'
   };
   return labels[quality];
 }

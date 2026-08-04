@@ -180,9 +180,14 @@ describe('Platform Feature Flags — Fastify HTTP API Integration Suite', () => 
     });
     expect(actRes.statusCode).toBe(200);
 
-    const deactRes = await router.handleRequest('POST', '/api/v1/feature-flags/kill-switches/deactivate', adminHeaders, {
-      flagKey: 'marketplace.payment'
-    });
+    const deactRes = await router.handleRequest(
+      'POST',
+      '/api/v1/feature-flags/kill-switches/deactivate',
+      adminHeaders,
+      {
+        flagKey: 'marketplace.payment'
+      }
+    );
     expect(deactRes.statusCode).toBe(200);
   });
 

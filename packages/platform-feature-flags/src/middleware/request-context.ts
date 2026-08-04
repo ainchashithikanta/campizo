@@ -31,7 +31,9 @@ export function buildRequestContext(reqHeaders: Record<string, string | string[]
   const envRaw = getHeader('x-client-environment') || 'PRODUCTION';
 
   const validEnvs = ['DEVELOPMENT', 'TESTING', 'STAGING', 'PRODUCTION'];
-  const environment = (validEnvs.includes(envRaw.toUpperCase()) ? envRaw.toUpperCase() : 'PRODUCTION') as RequestContext['environment'];
+  const environment = (
+    validEnvs.includes(envRaw.toUpperCase()) ? envRaw.toUpperCase() : 'PRODUCTION'
+  ) as RequestContext['environment'];
 
   return {
     requestId,

@@ -1,10 +1,19 @@
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .shimmer {
-  background: linear-gradient(90deg, var(--ch-color-surface) 25%, var(--ch-color-border) 50%, var(--ch-color-surface) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--ch-color-surface) 25%,
+    var(--ch-color-border) 50%,
+    var(--ch-color-surface) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
   border-radius: var(--ch-radius-md);

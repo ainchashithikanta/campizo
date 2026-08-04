@@ -2,7 +2,7 @@
 
 **Document Type**: Domain-Driven Design (DDD) Specification  
 **Status**: APPROVED BY CTO / DOMAIN SPECIFICATION  
-**Target Module**: `@college-hub/platform-feature-flags` (Shared Platform Core Service)  
+**Target Module**: `@college-hub/platform-feature-flags` (Shared Platform Core Service)
 
 ---
 
@@ -40,6 +40,7 @@ As a core platform capability, the domain enforces **strict immutability**, **de
 ```
 
 ### Non-Functional Performance Goals
+
 - **Evaluation Latency**: $< 1\text{ ms}$ for local in-memory evaluations.
 - **Zero DB Reads**: Zero database I/O calls on the evaluation hot path.
 - **Deterministic Order**: Identical evaluation result given identical context and rules.
@@ -50,38 +51,48 @@ As a core platform capability, the domain enforces **strict immutability**, **de
 ## Section 2 — Aggregate Roots Catalog
 
 ### 1. `FeatureFlag` (Aggregate Root)
+
 - **Responsibilities**: Represents a single feature toggle, its default state, targeting rules, metadata, and current lifecycle stage.
 - **Ownership**: Owns `FeatureMetadata`, `RolloutPercentage`, `CollegeTarget`, `RoleTarget`, `UserTarget`.
 - **Invariants**: `FeatureKey` must be globally unique. Cannot be evaluated if `lifecycleStage == REMOVED`.
 
 ### 2. `FeatureGroup` (Aggregate Root)
+
 - **Responsibilities**: Container grouping related features into a cohesive module unit (e.g. `Marketplace`).
 - **Ownership**: Owns parent-child group member mappings.
 - **Invariants**: Cannot contain itself or form circular group nesting loops.
 
 ### 3. `FeaturePack` (Aggregate Root)
-- **Responsibilities**: Multi-module deployable release bundle (e.g. *Freshers Week Pack*).
+
+- **Responsibilities**: Multi-module deployable release bundle (e.g. _Freshers Week Pack_).
 - **Ownership**: Owns pack membership rules and pack-level override behaviors.
 
 ### 4. `FeatureEnvironment` (Aggregate Root)
+
 - **Responsibilities**: Defines environment boundary rules (`Development`, `Testing`, `Staging`, `Production`).
 
 ### 5. `FeatureTemplate` (Aggregate Root)
+
 - **Responsibilities**: Governance configuration presets (`Beta`, `Internal`, `Experimental`, `Production`, `Emergency`).
 
 ### 6. `ApprovalRequest` (Aggregate Root)
+
 - **Responsibilities**: Manages formal change requests requiring peer review before activation.
 
 ### 7. `FeatureSnapshot` (Aggregate Root)
+
 - **Responsibilities**: Point-in-time immutable backup of feature flag state configurations across an environment.
 
 ### 8. `MaintenanceWindow` (Aggregate Root)
+
 - **Responsibilities**: Controls read-only and operational maintenance periods for target modules or campuses.
 
 ### 9. `KillSwitch` (Aggregate Root)
+
 - **Responsibilities**: High-priority emergency circuit breaker for instant feature disabling.
 
 ### 10. `RolloutPolicy` (Aggregate Root)
+
 - **Responsibilities**: Governs gradual release strategies (`Canary`, `Stepped`, `Blue-Green`).
 
 ---
@@ -140,6 +151,7 @@ The **`FeatureEvaluationService`** is a dedicated, stateless domain service exec
 ```
 
 ### Pluggable Policy Components
+
 1. **`KillSwitchPolicy`**: Evaluates emergency kill switch records. If active $\rightarrow$ Returns `enabled: false, reason: 'KILL_SWITCH_ACTIVE'`.
 2. **`MaintenancePolicy`**: Evaluates module maintenance schedules. If active $\rightarrow$ Returns `enabled: false, reason: 'MAINTENANCE_WINDOW_ACTIVE'`.
 3. **`DependencyPolicy`**: Evaluates DAG prerequisite rules. If prerequisite missing $\rightarrow$ Returns `enabled: false, reason: 'UNMET_PREREQUISITE_DEPENDENCY'`.

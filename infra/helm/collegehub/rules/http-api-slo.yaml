@@ -15,7 +15,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: collegehub-slo-http-api
-  namespace: {{ .Values.global.namespace | quote }}
+  namespace: { { .Values.global.namespace | quote } }
   labels:
     app.kubernetes.io/name: collegehub
     app.kubernetes.io/part-of: collegehub-observability
@@ -71,8 +71,8 @@ spec:
             severity: page
             team: platform
           annotations:
-            summary: "College Hub HTTP SLO burning fast (short window)"
-            description: "HTTP 5xx error budget burn rate is {{ $value }}x over 5m (limit 14.4x)."
+            summary: 'College Hub HTTP SLO burning fast (short window)'
+            description: 'HTTP 5xx error budget burn rate is {{ $value }}x over 5m (limit 14.4x).'
 
         # Burn rate >= 6 over 30 minutes => ~2% of monthly budget consumed in
         # 30 minutes. Page.
@@ -84,8 +84,8 @@ spec:
             severity: page
             team: platform
           annotations:
-            summary: "College Hub HTTP SLO burning (medium window)"
-            description: "HTTP 5xx error budget burn rate is {{ $value }}x over 30m (limit 6x)."
+            summary: 'College Hub HTTP SLO burning (medium window)'
+            description: 'HTTP 5xx error budget burn rate is {{ $value }}x over 30m (limit 6x).'
 
         # Burn rate >= 1 over 1 hour => steady state consumption. Ticket.
         - alert: CollegeHubHTTPErrorBudgetBurnLongWindow
@@ -96,8 +96,8 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "College Hub HTTP SLO burning (long window)"
-            description: "HTTP 5xx error budget burn rate is {{ $value }}x over 1h (limit 1x)."
+            summary: 'College Hub HTTP SLO burning (long window)'
+            description: 'HTTP 5xx error budget burn rate is {{ $value }}x over 1h (limit 1x).'
 
         # Budget nearly exhausted => ticket.
         - alert: CollegeHubHTTPErrorBudgetExhausted
@@ -108,5 +108,5 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "College Hub HTTP error budget below 25%"
-            description: "{{ $value | humanizePercentage }} of the HTTP error budget remains; the service will miss its 99.5% SLO at this rate."
+            summary: 'College Hub HTTP error budget below 25%'
+            description: '{{ $value | humanizePercentage }} of the HTTP error budget remains; the service will miss its 99.5% SLO at this rate.'

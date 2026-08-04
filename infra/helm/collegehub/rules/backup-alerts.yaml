@@ -1,0 +1,57 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-backup
+  namespace: { { .Values.global.namespace | quote } }
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-backup
+      rules:
+        - alert: CollegeHubBackupJobFailed
+          expr: |
+            kube_job_status_failed{namespace=~"collegehub.*", job_name=~".*backup.*"} > 0
+          for: 5m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: 'College Hub backup job failed'
+            description: 'Backup job {{ $labels.job_name }} in namespace {{ $labels.namespace }} has failed. Restore coverage is at risk; inspect logs: kubectl logs job/{{ $labels.job_name }} -n {{ $labels.namespace }}.'
+
+        - alert: CollegeHubBackupStale
+          expr: |
+            time() - max by (namespace, job_name) (kube_job_status_start_time{namespace=~"collegehub.*", job_name=~".*backup.*"}) > 180000
+          for: 15m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: 'College Hub backup has not run in 50 hours'
+            description: 'The most recent {{ $labels.job_name }} run started {{ $value | humanizeDuration }} ago. RPO cannot be met if backups are not being produced.'
+
+        - alert: CollegeHubWalArchiverDown
+          expr: |
+            up{job=~".*backup-wal.*"} == 0
+          for: 10m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: 'College Hub WAL archiver is down'
+            description: 'The PostgreSQL WAL archiver ({{ $labels.instance }}) is unreachable. Point-in-time recovery will stop at the last archived segment.'
+
+        - alert: CollegeHubWalSegmentsStalled
+          expr: |
+            (max by (instance) (collegehub_backup_last_success_timestamp_seconds{type="wal"})) < time() - 3600
+          for: 15m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: 'No WAL segments archived in the last hour'
+            description: 'The last WAL archive success was {{ $value }}. If the primary is idle this is expected (archive_timeout bounds the gap); otherwise the archiver is stuck.'

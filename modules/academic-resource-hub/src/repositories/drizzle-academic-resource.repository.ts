@@ -31,7 +31,13 @@ export class DrizzleAcademicResourceRepository implements AcademicResourceReposi
     const rows = await this.db
       .select()
       .from(academicResources)
-      .where(and(eq(academicResources.id, id), eq(academicResources.collegeId, collegeId), isNull(academicResources.deletedAt)))
+      .where(
+        and(
+          eq(academicResources.id, id),
+          eq(academicResources.collegeId, collegeId),
+          isNull(academicResources.deletedAt)
+        )
+      )
       .limit(1);
 
     return (rows[0] as AcademicResourceEntity) || null;
@@ -41,7 +47,13 @@ export class DrizzleAcademicResourceRepository implements AcademicResourceReposi
     const rows = await this.db
       .select()
       .from(academicResources)
-      .where(and(eq(academicResources.slug, slug), eq(academicResources.collegeId, collegeId), isNull(academicResources.deletedAt)))
+      .where(
+        and(
+          eq(academicResources.slug, slug),
+          eq(academicResources.collegeId, collegeId),
+          isNull(academicResources.deletedAt)
+        )
+      )
       .limit(1);
 
     return (rows[0] as AcademicResourceEntity) || null;
@@ -168,7 +180,9 @@ export class DrizzleStudyCollectionRepository implements StudyCollectionReposito
     const rows = await this.db
       .select()
       .from(studyCollections)
-      .where(and(eq(studyCollections.id, id), eq(studyCollections.collegeId, collegeId), isNull(studyCollections.deletedAt)))
+      .where(
+        and(eq(studyCollections.id, id), eq(studyCollections.collegeId, collegeId), isNull(studyCollections.deletedAt))
+      )
       .limit(1);
 
     return (rows[0] as StudyCollectionEntity) || null;
@@ -178,7 +192,13 @@ export class DrizzleStudyCollectionRepository implements StudyCollectionReposito
     const rows = await this.db
       .select()
       .from(studyCollections)
-      .where(and(eq(studyCollections.ownerUserId, ownerUserId), eq(studyCollections.collegeId, collegeId), isNull(studyCollections.deletedAt)))
+      .where(
+        and(
+          eq(studyCollections.ownerUserId, ownerUserId),
+          eq(studyCollections.collegeId, collegeId),
+          isNull(studyCollections.deletedAt)
+        )
+      )
       .orderBy(desc(studyCollections.createdAt));
 
     return rows as StudyCollectionEntity[];
@@ -218,7 +238,10 @@ export class DrizzleStudyCollectionRepository implements StudyCollectionReposito
   }
 
   public async countCollectionResources(collectionId: string): Promise<number> {
-    const rows = await this.db.select().from(collectionResources).where(eq(collectionResources.collectionId, collectionId));
+    const rows = await this.db
+      .select()
+      .from(collectionResources)
+      .where(eq(collectionResources.collectionId, collectionId));
     return rows.length;
   }
 }

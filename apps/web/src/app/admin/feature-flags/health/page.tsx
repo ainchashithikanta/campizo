@@ -42,8 +42,16 @@ export default function HealthDashboardPage() {
         {health && (
           <div className="ff-grid-metrics">
             <MetricCard title="System Status" value={health.status} subtitle="All nodes operational" />
-            <MetricCard title="Redis Cluster" value={health.redisConnected ? 'CONNECTED' : 'DISCONNECTED'} subtitle="Pub/Sub: 4 channels" />
-            <MetricCard title="Database Storage" value={health.databaseConnected ? 'HEALTHY' : 'DEGRADED'} subtitle="PostgreSQL pool active" />
+            <MetricCard
+              title="Redis Cluster"
+              value={health.redisConnected ? 'CONNECTED' : 'DISCONNECTED'}
+              subtitle="Pub/Sub: 4 channels"
+            />
+            <MetricCard
+              title="Database Storage"
+              value={health.databaseConnected ? 'HEALTHY' : 'DEGRADED'}
+              subtitle="PostgreSQL pool active"
+            />
             <MetricCard title="Worker Queue Depth" value={health.workerQueueDepth} subtitle="0 pending jobs" />
           </div>
         )}

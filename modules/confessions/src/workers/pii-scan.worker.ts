@@ -70,11 +70,7 @@ export async function piiScanWorkerHandler(
 
   if (scanResult.hasPii) {
     await deps.quarantineConfession(confessionId, collegeId);
-    await deps.openModerationCase(
-      confessionId,
-      collegeId,
-      `PII detected: ${scanResult.detectedTypes.join(', ')}`
-    );
+    await deps.openModerationCase(confessionId, collegeId, `PII detected: ${scanResult.detectedTypes.join(', ')}`);
   }
 
   return scanResult;

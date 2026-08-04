@@ -49,7 +49,10 @@ export default function DiscoverPage() {
   };
 
   const filtered = recommendations.filter((r) => {
-    const matchesSearch = !searchQuery || r.targetStudentName.toLowerCase().includes(searchQuery.toLowerCase()) || r.major?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      !searchQuery ||
+      r.targetStudentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.major?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
   });
 
@@ -57,7 +60,9 @@ export default function DiscoverPage() {
     <main className="max-w-6xl mx-auto p-6 font-sans">
       <header className="mb-6">
         <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Discover Campus Peers</h1>
-        <p className="text-xs text-slate-500 mt-1">Grid view of compatible students based on shared courses, interests, and complementary skills.</p>
+        <p className="text-xs text-slate-500 mt-1">
+          Grid view of compatible students based on shared courses, interests, and complementary skills.
+        </p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -66,13 +71,20 @@ export default function DiscoverPage() {
         </div>
 
         <div className="md:col-span-3">
-          <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Search peers by name, major, or skills..." />
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search peers by name, major, or skills..."
+          />
 
           {loading && <LoadingSkeleton count={4} />}
           {error && <ErrorState message={error} />}
 
           {!loading && !error && filtered.length === 0 && (
-            <EmptyState title="No Discoverable Peers Found" description="Try broadening your search query or intent filter." />
+            <EmptyState
+              title="No Discoverable Peers Found"
+              description="Try broadening your search query or intent filter."
+            />
           )}
 
           {!loading && !error && filtered.length > 0 && (

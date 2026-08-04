@@ -70,7 +70,9 @@ export const featureGroups = pgTable(
 export const featureGroupMembers = pgTable(
   'feature_group_members',
   {
-    groupId: varchar('group_id', { length: 64 }).notNull().references(() => featureGroups.id, { onDelete: 'cascade' }),
+    groupId: varchar('group_id', { length: 64 })
+      .notNull()
+      .references(() => featureGroups.id, { onDelete: 'cascade' }),
     flagKey: varchar('flag_key', { length: 128 }).notNull(),
     addedBy: varchar('added_by', { length: 128 }).notNull().default('system'),
     addedAt: timestamp('added_at').notNull().defaultNow()
@@ -187,7 +189,9 @@ export const rolloutTargets = pgTable(
   'rollout_targets',
   {
     id: varchar('id', { length: 64 }).primaryKey(),
-    policyId: varchar('policy_id', { length: 64 }).notNull().references(() => rolloutPolicies.id, { onDelete: 'cascade' }),
+    policyId: varchar('policy_id', { length: 64 })
+      .notNull()
+      .references(() => rolloutPolicies.id, { onDelete: 'cascade' }),
     targetAttribute: varchar('target_attribute', { length: 64 }).notNull(),
     targetValue: varchar('target_value', { length: 256 }).notNull()
   },
@@ -287,9 +291,7 @@ export const killSwitches = pgTable(
     trippedAt: timestamp('tripped_at').notNull().defaultNow(),
     releasedAt: timestamp('released_at')
   },
-  (table: any) => [
-    index('idx_kill_switches_flag_active').on(table.flagKey, table.isActive)
-  ]
+  (table: any) => [index('idx_kill_switches_flag_active').on(table.flagKey, table.isActive)]
 );
 
 /**
@@ -361,7 +363,9 @@ export const approvalActions = pgTable(
   'approval_actions',
   {
     id: varchar('id', { length: 64 }).primaryKey(),
-    requestId: varchar('request_id', { length: 64 }).notNull().references(() => approvalRequests.id, { onDelete: 'cascade' }),
+    requestId: varchar('request_id', { length: 64 })
+      .notNull()
+      .references(() => approvalRequests.id, { onDelete: 'cascade' }),
     reviewerUserId: varchar('reviewer_user_id', { length: 128 }).notNull(),
     decision: varchar('decision', { length: 32 }).notNull(),
     reasonNote: text('reason_note'),
@@ -425,7 +429,9 @@ export const featureUsageStatistics = pgTable(
     cacheMissCount: integer('cache_miss_count').notNull().default(0),
     lastEvaluatedAt: timestamp('last_evaluated_at').notNull().defaultNow()
   },
-  (table: any) => [uniqueIndex('idx_usage_stats_key_college_bucket').on(table.flagKey, table.collegeId, table.timeBucket)]
+  (table: any) => [
+    uniqueIndex('idx_usage_stats_key_college_bucket').on(table.flagKey, table.collegeId, table.timeBucket)
+  ]
 );
 
 /**

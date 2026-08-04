@@ -64,7 +64,9 @@ export const studentIntents = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    studentProfileId: varchar('student_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    studentProfileId: varchar('student_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     intentType: varchar('intent_type', { length: 64 }).notNull(),
     title: varchar('title', { length: 120 }).notNull(),
     description: text('description'),
@@ -97,7 +99,9 @@ export const intentHistory = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    intentId: varchar('intent_id', { length: 64 }).notNull().references(() => studentIntents.id, { onDelete: 'cascade' }),
+    intentId: varchar('intent_id', { length: 64 })
+      .notNull()
+      .references(() => studentIntents.id, { onDelete: 'cascade' }),
     previousStatus: varchar('previous_status', { length: 32 }).notNull(),
     newStatus: varchar('new_status', { length: 32 }).notNull(),
     transitionReason: text('transition_reason'),
@@ -122,9 +126,7 @@ export const skills = pgTable(
     category: varchar('category', { length: 64 }).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
   },
-  (table: any) => [
-    index('idx_connect_skills_name').on(table.name)
-  ]
+  (table: any) => [index('idx_connect_skills_name').on(table.name)]
 );
 
 /**
@@ -136,8 +138,12 @@ export const studentSkills = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    studentProfileId: varchar('student_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    skillId: varchar('skill_id', { length: 64 }).notNull().references(() => skills.id, { onDelete: 'restrict' }),
+    studentProfileId: varchar('student_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    skillId: varchar('skill_id', { length: 64 })
+      .notNull()
+      .references(() => skills.id, { onDelete: 'restrict' }),
     proficiencyLevel: varchar('proficiency_level', { length: 32 }).default('INTERMEDIATE').notNull(),
     endorsementCount: integer('endorsement_count').default(0).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -164,9 +170,7 @@ export const interests = pgTable(
     category: varchar('category', { length: 64 }).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
   },
-  (table: any) => [
-    index('idx_connect_interests_name').on(table.name)
-  ]
+  (table: any) => [index('idx_connect_interests_name').on(table.name)]
 );
 
 /**
@@ -178,8 +182,12 @@ export const studentInterests = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    studentProfileId: varchar('student_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    interestId: varchar('interest_id', { length: 64 }).notNull().references(() => interests.id, { onDelete: 'restrict' }),
+    studentProfileId: varchar('student_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    interestId: varchar('interest_id', { length: 64 })
+      .notNull()
+      .references(() => interests.id, { onDelete: 'restrict' }),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
     createdBy: varchar('created_by', { length: 64 }).notNull(),
@@ -188,7 +196,11 @@ export const studentInterests = pgTable(
   },
   (table: any) => [
     index('idx_connect_student_interests_college_id').on(table.collegeId),
-    uniqueIndex('idx_connect_student_interests_profile_interest').on(table.collegeId, table.studentProfileId, table.interestId)
+    uniqueIndex('idx_connect_student_interests_profile_interest').on(
+      table.collegeId,
+      table.studentProfileId,
+      table.interestId
+    )
   ]
 );
 
@@ -210,9 +222,7 @@ export const clubs = pgTable(
     updatedBy: varchar('updated_by', { length: 64 }).notNull(),
     version: integer('version').default(1).notNull()
   },
-  (table: any) => [
-    index('idx_connect_clubs_college_id').on(table.collegeId)
-  ]
+  (table: any) => [index('idx_connect_clubs_college_id').on(table.collegeId)]
 );
 
 /**
@@ -224,8 +234,12 @@ export const studentClubs = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    studentProfileId: varchar('student_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    clubId: varchar('club_id', { length: 64 }).notNull().references(() => clubs.id, { onDelete: 'cascade' }),
+    studentProfileId: varchar('student_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    clubId: varchar('club_id', { length: 64 })
+      .notNull()
+      .references(() => clubs.id, { onDelete: 'cascade' }),
     role: varchar('role', { length: 32 }).default('MEMBER').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -272,8 +286,12 @@ export const studentCourses = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    studentProfileId: varchar('student_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    courseId: varchar('course_id', { length: 64 }).notNull().references(() => courses.id, { onDelete: 'cascade' }),
+    studentProfileId: varchar('student_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    courseId: varchar('course_id', { length: 64 })
+      .notNull()
+      .references(() => courses.id, { onDelete: 'cascade' }),
     academicTerm: varchar('academic_term', { length: 32 }).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -283,7 +301,11 @@ export const studentCourses = pgTable(
   },
   (table: any) => [
     index('idx_connect_student_courses_college_id').on(table.collegeId),
-    uniqueIndex('idx_connect_student_courses_profile_course').on(table.collegeId, table.studentProfileId, table.courseId)
+    uniqueIndex('idx_connect_student_courses_profile_course').on(
+      table.collegeId,
+      table.studentProfileId,
+      table.courseId
+    )
   ]
 );
 
@@ -296,9 +318,15 @@ export const connectionRequests = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    senderProfileId: varchar('sender_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    receiverProfileId: varchar('receiver_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    originatingIntentId: varchar('originating_intent_id', { length: 64 }).notNull().references(() => studentIntents.id, { onDelete: 'cascade' }),
+    senderProfileId: varchar('sender_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    receiverProfileId: varchar('receiver_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    originatingIntentId: varchar('originating_intent_id', { length: 64 })
+      .notNull()
+      .references(() => studentIntents.id, { onDelete: 'cascade' }),
     note: text('note'),
     status: varchar('status', { length: 32 }).default('PENDING').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -322,8 +350,12 @@ export const connections = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    studentAId: varchar('student_a_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    studentBId: varchar('student_b_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    studentAId: varchar('student_a_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    studentBId: varchar('student_b_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     status: varchar('status', { length: 32 }).default('CONNECTED').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -349,7 +381,7 @@ export const conversations = pgTable(
     collegeId: varchar('college_id', { length: 64 }).notNull(),
     conversationType: varchar('conversation_type', { length: 32 }).default('DIRECT').notNull(),
     contextType: varchar('context_type', { length: 64 }).notNull(), // MANDATORY NON-NULL
-    contextId: varchar('context_id', { length: 64 }).notNull(),   // MANDATORY NON-NULL
+    contextId: varchar('context_id', { length: 64 }).notNull(), // MANDATORY NON-NULL
     title: varchar('title', { length: 120 }),
     lifecycleState: varchar('lifecycle_state', { length: 32 }).default('ACTIVE').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -373,8 +405,12 @@ export const conversationMembers = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    conversationId: varchar('conversation_id', { length: 64 }).notNull().references(() => conversations.id, { onDelete: 'cascade' }),
-    studentProfileId: varchar('student_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    conversationId: varchar('conversation_id', { length: 64 })
+      .notNull()
+      .references(() => conversations.id, { onDelete: 'cascade' }),
+    studentProfileId: varchar('student_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     lastReadAt: timestamp('last_read_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -384,7 +420,11 @@ export const conversationMembers = pgTable(
   },
   (table: any) => [
     index('idx_connect_conv_members_college_id').on(table.collegeId),
-    uniqueIndex('idx_connect_conv_members_conv_student').on(table.collegeId, table.conversationId, table.studentProfileId)
+    uniqueIndex('idx_connect_conv_members_conv_student').on(
+      table.collegeId,
+      table.conversationId,
+      table.studentProfileId
+    )
   ]
 );
 
@@ -397,8 +437,12 @@ export const messages = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    conversationId: varchar('conversation_id', { length: 64 }).notNull().references(() => conversations.id, { onDelete: 'cascade' }),
-    senderProfileId: varchar('sender_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    conversationId: varchar('conversation_id', { length: 64 })
+      .notNull()
+      .references(() => conversations.id, { onDelete: 'cascade' }),
+    senderProfileId: varchar('sender_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     content: text('content').notNull(),
     isSoftDeleted: boolean('is_soft_deleted').default(false).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -422,7 +466,9 @@ export const messageAttachments = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    messageId: varchar('message_id', { length: 64 }).notNull().references(() => messages.id, { onDelete: 'cascade' }),
+    messageId: varchar('message_id', { length: 64 })
+      .notNull()
+      .references(() => messages.id, { onDelete: 'cascade' }),
     attachmentType: varchar('attachment_type', { length: 32 }).notNull(),
     url: text('url').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -481,9 +527,7 @@ export const projectTeams = pgTable(
     updatedBy: varchar('updated_by', { length: 64 }).notNull(),
     version: integer('version').default(1).notNull()
   },
-  (table: any) => [
-    index('idx_connect_project_teams_college_id').on(table.collegeId)
-  ]
+  (table: any) => [index('idx_connect_project_teams_college_id').on(table.collegeId)]
 );
 
 /**
@@ -495,8 +539,12 @@ export const projectMembers = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    projectTeamId: varchar('project_team_id', { length: 64 }).notNull().references(() => projectTeams.id, { onDelete: 'cascade' }),
-    studentProfileId: varchar('student_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    projectTeamId: varchar('project_team_id', { length: 64 })
+      .notNull()
+      .references(() => projectTeams.id, { onDelete: 'cascade' }),
+    studentProfileId: varchar('student_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     role: varchar('role', { length: 64 }).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -506,7 +554,11 @@ export const projectMembers = pgTable(
   },
   (table: any) => [
     index('idx_connect_proj_members_college_id').on(table.collegeId),
-    uniqueIndex('idx_connect_proj_members_team_student').on(table.collegeId, table.projectTeamId, table.studentProfileId)
+    uniqueIndex('idx_connect_proj_members_team_student').on(
+      table.collegeId,
+      table.projectTeamId,
+      table.studentProfileId
+    )
   ]
 );
 
@@ -519,8 +571,12 @@ export const mentorships = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    mentorProfileId: varchar('mentor_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    menteeProfileId: varchar('mentee_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    mentorProfileId: varchar('mentor_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    menteeProfileId: varchar('mentee_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     status: varchar('status', { length: 32 }).default('REQUESTED').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -543,8 +599,12 @@ export const recommendationSnapshots = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    sourceStudentId: varchar('source_student_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    targetStudentId: varchar('target_student_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    sourceStudentId: varchar('source_student_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    targetStudentId: varchar('target_student_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     overallCompatibilityPct: numeric('overall_compatibility_pct', { precision: 5, scale: 2 }).notNull(),
     algorithmVersion: varchar('algorithm_version', { length: 32 }).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -553,7 +613,10 @@ export const recommendationSnapshots = pgTable(
   (table: any) => [
     index('idx_connect_rec_snapshots_college_id').on(table.collegeId),
     index('idx_connect_rec_snapshots_source').on(table.collegeId, table.sourceStudentId),
-    check('chk_connect_rec_pct', sql`${table.overallCompatibilityPct} >= 0.00 AND ${table.overallCompatibilityPct} <= 100.00`)
+    check(
+      'chk_connect_rec_pct',
+      sql`${table.overallCompatibilityPct} >= 0.00 AND ${table.overallCompatibilityPct} <= 100.00`
+    )
   ]
 );
 
@@ -566,7 +629,9 @@ export const recommendationReasons = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    snapshotId: varchar('snapshot_id', { length: 64 }).notNull().references(() => recommendationSnapshots.id, { onDelete: 'cascade' }),
+    snapshotId: varchar('snapshot_id', { length: 64 })
+      .notNull()
+      .references(() => recommendationSnapshots.id, { onDelete: 'cascade' }),
     reasonCode: varchar('reason_code', { length: 64 }).notNull(),
     weight: numeric('weight', { precision: 3, scale: 2 }).notNull(),
     humanText: text('human_text').notNull(),
@@ -587,7 +652,9 @@ export const recommendationReasons = pgTable(
 export const privacySettings = pgTable(
   'connect_privacy_settings',
   {
-    studentProfileId: varchar('student_profile_id', { length: 64 }).primaryKey().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    studentProfileId: varchar('student_profile_id', { length: 64 })
+      .primaryKey()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
     isGhostMode: boolean('is_ghost_mode').default(false).notNull(),
     isIncognitoMode: boolean('is_incognito_mode').default(false).notNull(),
@@ -613,7 +680,9 @@ export const privacySettings = pgTable(
 export const visibilityPreferences = pgTable(
   'connect_visibility_preferences',
   {
-    studentProfileId: varchar('student_profile_id', { length: 64 }).primaryKey().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    studentProfileId: varchar('student_profile_id', { length: 64 })
+      .primaryKey()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
     visibilityScope: varchar('visibility_scope', { length: 32 }).default('VISIBLE_ALL').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -622,9 +691,7 @@ export const visibilityPreferences = pgTable(
     updatedBy: varchar('updated_by', { length: 64 }).notNull(),
     version: integer('version').default(1).notNull()
   },
-  (table: any) => [
-    index('idx_connect_visibility_prefs_college_id').on(table.collegeId)
-  ]
+  (table: any) => [index('idx_connect_visibility_prefs_college_id').on(table.collegeId)]
 );
 
 /**
@@ -636,7 +703,9 @@ export const notifications = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    recipientProfileId: varchar('recipient_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    recipientProfileId: varchar('recipient_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     category: varchar('category', { length: 64 }).notNull(),
     title: varchar('title', { length: 120 }).notNull(),
     body: text('body').notNull(),
@@ -662,15 +731,15 @@ export const activityFeed = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    actorProfileId: varchar('actor_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    actorProfileId: varchar('actor_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     actionType: varchar('action_type', { length: 64 }).notNull(),
     displayText: text('display_text').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     createdBy: varchar('created_by', { length: 64 }).notNull()
   },
-  (table: any) => [
-    index('idx_connect_activity_feed_college_id').on(table.collegeId)
-  ]
+  (table: any) => [index('idx_connect_activity_feed_college_id').on(table.collegeId)]
 );
 
 /**
@@ -682,8 +751,12 @@ export const moderationCases = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    reportedProfileId: varchar('reported_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    reporterProfileId: varchar('reporter_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    reportedProfileId: varchar('reported_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    reporterProfileId: varchar('reporter_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     reason: text('reason').notNull(),
     status: varchar('status', { length: 32 }).default('OPEN').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -692,9 +765,7 @@ export const moderationCases = pgTable(
     updatedBy: varchar('updated_by', { length: 64 }).notNull(),
     version: integer('version').default(1).notNull()
   },
-  (table: any) => [
-    index('idx_connect_mod_cases_college_id').on(table.collegeId)
-  ]
+  (table: any) => [index('idx_connect_mod_cases_college_id').on(table.collegeId)]
 );
 
 /**
@@ -706,15 +777,15 @@ export const moderationActions = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    caseId: varchar('case_id', { length: 64 }).notNull().references(() => moderationCases.id, { onDelete: 'cascade' }),
+    caseId: varchar('case_id', { length: 64 })
+      .notNull()
+      .references(() => moderationCases.id, { onDelete: 'cascade' }),
     actionTaken: varchar('action_taken', { length: 64 }).notNull(),
     moderatorId: varchar('moderator_id', { length: 64 }).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     createdBy: varchar('created_by', { length: 64 }).notNull()
   },
-  (table: any) => [
-    index('idx_connect_mod_actions_college_id').on(table.collegeId)
-  ]
+  (table: any) => [index('idx_connect_mod_actions_college_id').on(table.collegeId)]
 );
 
 /**
@@ -726,16 +797,18 @@ export const reports = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     collegeId: varchar('college_id', { length: 64 }).notNull(),
-    reporterProfileId: varchar('reporter_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
-    targetProfileId: varchar('target_profile_id', { length: 64 }).notNull().references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    reporterProfileId: varchar('reporter_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
+    targetProfileId: varchar('target_profile_id', { length: 64 })
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'cascade' }),
     reasonCategory: varchar('reason_category', { length: 64 }).notNull(),
     evidenceText: text('evidence_text'),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     createdBy: varchar('created_by', { length: 64 }).notNull()
   },
-  (table: any) => [
-    index('idx_connect_reports_college_id').on(table.collegeId)
-  ]
+  (table: any) => [index('idx_connect_reports_college_id').on(table.collegeId)]
 );
 
 /**
@@ -755,9 +828,7 @@ export const auditLogs = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     createdBy: varchar('created_by', { length: 64 }).notNull()
   },
-  (table: any) => [
-    index('idx_connect_audit_logs_college_id').on(table.collegeId)
-  ]
+  (table: any) => [index('idx_connect_audit_logs_college_id').on(table.collegeId)]
 );
 
 /**
@@ -778,9 +849,7 @@ export const featureUsageStatistics = pgTable(
     updatedBy: varchar('updated_by', { length: 64 }).notNull(),
     version: integer('version').default(1).notNull()
   },
-  (table: any) => [
-    index('idx_connect_feature_stats_college_id').on(table.collegeId)
-  ]
+  (table: any) => [index('idx_connect_feature_stats_college_id').on(table.collegeId)]
 );
 
 /**
@@ -800,7 +869,5 @@ export const futureIntercollegeLinks = pgTable(
     updatedBy: varchar('updated_by', { length: 64 }).notNull(),
     version: integer('version').default(1).notNull()
   },
-  (table: any) => [
-    index('idx_connect_intercollege_home').on(table.homeCollegeId)
-  ]
+  (table: any) => [index('idx_connect_intercollege_home').on(table.homeCollegeId)]
 );

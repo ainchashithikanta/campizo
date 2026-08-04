@@ -49,9 +49,14 @@ export default function MentorshipPage() {
       {!loading && !error && (
         <div className="space-y-6">
           <section>
-            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-3">Active & Requested Mentorships</h2>
+            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-3">
+              Active & Requested Mentorships
+            </h2>
             {mentorships.length === 0 ? (
-              <EmptyState title="No Mentorships Active" description="Request a mentor or offer mentorship to campus peers!" />
+              <EmptyState
+                title="No Mentorships Active"
+                description="Request a mentor or offer mentorship to campus peers!"
+              />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {mentorships.map((m) => (

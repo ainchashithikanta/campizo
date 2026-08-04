@@ -87,9 +87,12 @@ export async function confessionRoutes(fastify: FastifyInstance, opts: Confessio
   fastify.get('/api/v1/confessions/moderation/queue', async (req: FastifyRequest, reply: FastifyReply) => {
     return modCtrl.getQueue(req, reply);
   });
-  fastify.post<{ Params: { caseId: string } }>('/api/v1/confessions/moderation/:caseId/decision', async (req, reply) => {
-    return modCtrl.recordDecision(req, reply);
-  });
+  fastify.post<{ Params: { caseId: string } }>(
+    '/api/v1/confessions/moderation/:caseId/decision',
+    async (req, reply) => {
+      return modCtrl.recordDecision(req, reply);
+    }
+  );
 
   // ── Bookmarks, Notifications & Uploads ─────────────────────────────
   fastify.get('/api/v1/confessions/feed/saved', async (req: FastifyRequest, reply: FastifyReply) => {

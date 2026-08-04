@@ -96,7 +96,11 @@ export async function fetchMarketplaceHome(collegeId: string = DEFAULT_COLLEGE) 
   };
 }
 
-export async function getListingDetail(listingId: string, collegeId: string = DEFAULT_COLLEGE, currentUserId: string = DEFAULT_USER): Promise<ListingDetailResponse> {
+export async function getListingDetail(
+  listingId: string,
+  collegeId: string = DEFAULT_COLLEGE,
+  currentUserId: string = DEFAULT_USER
+): Promise<ListingDetailResponse> {
   return {
     listing: {
       id: listingId,

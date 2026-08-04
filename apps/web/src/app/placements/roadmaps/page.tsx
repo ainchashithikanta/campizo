@@ -26,8 +26,18 @@ export default function RoadmapsPage() {
       });
   }, []);
 
-  if (loading) return <main className="max-w-4xl mx-auto p-6"><LoadingSkeleton count={3} /></main>;
-  if (error) return <main className="max-w-4xl mx-auto p-6"><ErrorState message={error} /></main>;
+  if (loading)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <LoadingSkeleton count={3} />
+      </main>
+    );
+  if (error)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <ErrorState message={error} />
+      </main>
+    );
 
   const currentRoadmap = roadmaps[0];
 
@@ -35,13 +45,17 @@ export default function RoadmapsPage() {
     <main className="max-w-4xl mx-auto p-6 font-sans">
       <header className="mb-6">
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Preparation Roadmaps</h1>
-        <p className="text-sm text-slate-500 mt-1">Structured learning sequence curated by campus placement cell and senior engineering alumni.</p>
+        <p className="text-sm text-slate-500 mt-1">
+          Structured learning sequence curated by campus placement cell and senior engineering alumni.
+        </p>
       </header>
 
       {currentRoadmap && (
         <section className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
           <div className="mb-6">
-            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Master Roadmap</span>
+            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+              Master Roadmap
+            </span>
             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">{currentRoadmap.title}</h2>
             <p className="text-xs text-slate-500 mt-1">{currentRoadmap.description}</p>
           </div>

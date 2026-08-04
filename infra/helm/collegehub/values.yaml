@@ -307,6 +307,101 @@ errorTracking:
     endpoint: ''
 
 # ------------------------------------------------------------------------------
+# Backup & Disaster Recovery (MS-57)
+# Scheduled snapshots (PostgreSQL logical, Redis RDB, MinIO mirror), continuous
+# WAL archiving with point-in-time recovery, retention, verification and an
+# on-demand restore Job. Backups are written to any S3-compatible object store
+# (bundled MinIO, R2, GCS interop, AWS S3) — no commercial SaaS dependency.
+#
+# Object key layout (BACKUP_PREFIX/<kind>/...):
+#   postgres/full/<id>/, postgres/wal/<segment>, redis/rdb/<id>/, minio/mirror/<id>/
+# ------------------------------------------------------------------------------
+backup:
+  enabled: true
+  image:
+    repository: college-hub/collegehub-backup
+    tag: ''
+  # Runtime provider of the backup CLI. `s3` is the only provider (S3-compatible
+  # object store). Backups never live on the same volume as the source data.
+  provider: s3
+  s3:
+    # Overridden per environment; when MinIO is bundled this defaults to its
+    # ClusterIP service, otherwise point at your S3-compatible endpoint.
+    endpoint: http://collegehub-minio:9000
+    region: us-east-1
+    bucket: collegehub-backups
+  # Key prefix inside the bucket (use a distinct prefix per environment).
+  prefix: ''
+  # Enforce retention immediately after a successful run-all (default policy
+  # below). WAL segments older than retention.walHours are purged.
+  verifyAfterCreate: true
+  retention:
+    fullBackups: 7
+    walHours: 72
+    redisSnapshots: 3
+    minioMirrors: 7
+  restartPolicy: OnFailure
+  backoffLimit: 4
+  activeDeadlineSeconds: 3600
+  ttlSecondsAfterFinished: 600
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  postgres:
+    # Nightly full logical snapshot (pg_dump). Verified + retention cleanup are
+    # handled by run-all; see backup.runAll.schedule.
+    schedule: '0 2 * * *'
+    # WAL archiving. Only applied to the bundled StatefulSet (postgresql.enabled);
+    # externally managed PostgreSQL (RDS etc.) ships its own archive_command —
+    # point it at the backup CLI archive-wal/fetch-wal commands (see runbooks).
+    wal:
+      enabled: true
+      archiveTimeoutSeconds: 60
+      # Local WAL staging directory shared with the archiver sidecar. Segments
+      # are uploaded immediately and deleted; on pod crash up to one segment
+      # (archive_timeout) can be lost, which the nightly full snapshot bounds.
+      dir: /wal-archive
+      metricsPort: 9101
+  redis:
+    # Optional extra RDB cadence on top of the nightly run-all. Empty string
+    # disables the extra CronJob. Pair with a larger retention.redisSnapshots.
+    schedule: ''
+  minio:
+    # Optional extra mirror cadence on top of the nightly run-all.
+    schedule: ''
+    # Source bucket mirrored into the backup bucket.
+    sourceBucket: collegehub-media
+  runAll:
+    schedule: '0 2 * * *'
+    # Historical CronJobs kept after success (used for auditing + the backup
+    # Grafana dashboard). Set 0 to disable.
+    successfulJobsHistoryLimit: 5
+    failedJobsHistoryLimit: 3
+  # On-demand restore Job. Set restore.enabled=true (plus targetUrl/id) and run
+  # `helm upgrade` to render a one-shot Job that restores a snapshot into a new
+  # database (e.g. a freshly provisioned cluster). Set restore.enabled=false to
+  # remove it. Id empty = latest snapshot.
+  restore:
+    enabled: false
+    targetUrl: ''
+    id: ''
+  # Velero (or equivalent CNCF backup tooling) is orthogonal to the in-cluster
+  # backups above: it captures cluster-scoped resources (namespaces, PVCs, CRDs)
+  # while this chart covers application data. Enable to document/trigger a
+  # Velero backup schedule via annotations below (requires Velero installed).
+  velero:
+    enabled: false
+    schedule: '@daily'
+    ttl: '720h'
+
+# ------------------------------------------------------------------------------
 # Application secrets (Secret data)
 # NOTE: placeholder values only. Override per environment, ideally via external
 # secret management (SealedSecrets, External Secrets Operator, cloud KMS).
@@ -318,6 +413,11 @@ secrets:
   ENCRYPTION_KEY_32_BYTES: '12345678901234567890123456789012'
   S3_ACCESS_KEY_ID: ''
   S3_SECRET_ACCESS_KEY: ''
+  # Backup object store credentials (defaults to the S3 keys above when empty;
+  # a dedicated backup user is recommended so media and backup access can be
+  # revoked independently).
+  BACKUP_S3_ACCESS_KEY_ID: ''
+  BACKUP_S3_SECRET_ACCESS_KEY: ''
   FIREBASE_CREDENTIALS_JSON: ''
   TYPESENSE_API_KEY: ''
   OPENAI_API_KEY: ''

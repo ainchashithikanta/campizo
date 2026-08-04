@@ -1,10 +1,17 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { ConfessionUseCases } from '../use-cases/confession.use-cases.js';
 import { ConfessionQueries } from '../queries/confession.queries.js';
-import { createConfessionSchema, voteConfessionSchema, reportConfessionSchema } from '../validators/confession.validators.js';
+import {
+  createConfessionSchema,
+  voteConfessionSchema,
+  reportConfessionSchema
+} from '../validators/confession.validators.js';
 
 export class ConfessionController {
-  constructor(private useCases: ConfessionUseCases, private queries: ConfessionQueries) {}
+  constructor(
+    private useCases: ConfessionUseCases,
+    private queries: ConfessionQueries
+  ) {}
 
   async createConfession(req: FastifyRequest, reply: FastifyReply): Promise<void> {
     const { collegeId, userId, requestId } = req.ctx;

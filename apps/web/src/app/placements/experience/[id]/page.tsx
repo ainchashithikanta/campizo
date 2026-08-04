@@ -7,9 +7,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { DifficultyBadge, CompensationBadge, RoundAccordion } from '../../../../components/placements/placement-components';
+import {
+  DifficultyBadge,
+  CompensationBadge,
+  RoundAccordion
+} from '../../../../components/placements/placement-components';
 import { LoadingSkeleton, ErrorState } from '../../../../components/connect/state-components';
-import { fetchExperienceById, markExperienceHelpful, reportExperience, type PlacementExperience } from '../../../../lib/api-placement-guidance';
+import {
+  fetchExperienceById,
+  markExperienceHelpful,
+  reportExperience,
+  type PlacementExperience
+} from '../../../../lib/api-placement-guidance';
 
 export default function ExperienceDetailPage() {
   const params = useParams();
@@ -51,8 +60,18 @@ export default function ExperienceDetailPage() {
     }
   };
 
-  if (loading) return <main className="max-w-4xl mx-auto p-6"><LoadingSkeleton count={3} /></main>;
-  if (error) return <main className="max-w-4xl mx-auto p-6"><ErrorState message={error} /></main>;
+  if (loading)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <LoadingSkeleton count={3} />
+      </main>
+    );
+  if (error)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <ErrorState message={error} />
+      </main>
+    );
   if (!experience) return null;
 
   return (
@@ -64,7 +83,9 @@ export default function ExperienceDetailPage() {
               {experience.companyName} • {experience.jobType}
             </span>
             <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mt-1">{experience.roleTitle}</h1>
-            <p className="text-xs text-slate-500 mt-1">Branch: {experience.branch} (CGPA: {experience.cgpa})</p>
+            <p className="text-xs text-slate-500 mt-1">
+              Branch: {experience.branch} (CGPA: {experience.cgpa})
+            </p>
           </div>
           <CompensationBadge ctcLpa={experience.ctcOfferedLpa} stipendMonthly={experience.stipendMonthly} />
         </div>
@@ -77,7 +98,9 @@ export default function ExperienceDetailPage() {
 
       <section className="mb-6 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
         <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-2">Executive Summary</h2>
-        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{experience.summary}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+          {experience.summary}
+        </p>
 
         {experience.preparationTips && (
           <div className="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300">

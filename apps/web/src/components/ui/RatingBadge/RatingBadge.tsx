@@ -13,7 +13,10 @@ export function RatingBadge({ rating, size = 'md', showLabel = true }: RatingBad
 
   return (
     <div className={`${styles.container} ${styles[size]}`}>
-      <div className={`${styles.badge} ${styles[quality]}`} aria-label={`Rating ${rating.toFixed(1)} out of 5 - ${label}`}>
+      <div
+        className={`${styles.badge} ${styles[quality]}`}
+        aria-label={`Rating ${rating.toFixed(1)} out of 5 - ${label}`}
+      >
         <span className={styles.value}>{rating.toFixed(1)}</span>
         <span className={styles.max}>/5</span>
       </div>

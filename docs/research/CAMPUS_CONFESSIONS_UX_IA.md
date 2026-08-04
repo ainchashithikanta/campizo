@@ -21,18 +21,22 @@ The primary goal is to enable any verified student to anonymously post or discov
 ## 2. Target User Personas & Journeys
 
 ### 2.1 First-Year Student (Rohan, 18)
+
 - **Goal**: Ask sensitive questions about GPA requirements, professor grading styles, or hostel rules without fear of senior judgment.
 - **Journey**: Open App $\rightarrow$ Tap "+ Confess" $\rightarrow$ Select Category `🤔 Advice` $\rightarrow$ Write post $\rightarrow$ System verifies no PII $\rightarrow$ Acknowledge moderation policy $\rightarrow$ Post published live as `Curious Panda #402`.
 
 ### 2.2 Senior Student (Ananya, 21)
+
 - **Goal**: Share placement interview experiences, campus career advice, and nostalgia before graduating.
 - **Journey**: Browse `🎓 Academic` feed $\rightarrow$ Read junior's advice question $\rightarrow$ Reply as `Witty Owl #108` $\rightarrow$ Receive upvotes & thank-you reactions.
 
 ### 2.3 Hostel Resident (Vikram, 20)
+
 - **Goal**: Express frustration about mess food quality or hostel night curfew rules anonymously.
 - **Journey**: Post under `😤 Rant` $\rightarrow$ Hostel peers upvote and comment $\rightarrow$ Topic trends on campus feed.
 
 ### 2.4 Blind Student Moderator (Arjun, 21)
+
 - **Goal**: Clean up severity-prioritized flagged posts in real time without knowing who submitted them.
 - **Journey**: Open Moderation Queue $\rightarrow$ Inspect highest-severity flags (Threats / Doxxing) $\rightarrow$ Tap "Approve" or "Quarantine" (Author name completely hidden).
 
@@ -72,6 +76,7 @@ College Hub Main App
 ```
 
 ### Configurable Feed Ranking Policy (Decoupled Weights)
+
 $$\text{Score} = (\text{RecencyWeight} \times \text{HoursOld}^{-\alpha}) + (\text{Upvotes} \times w_1) + (\text{Comments} \times w_2) - (\text{Reports} \times w_3)$$
 
 ---
@@ -141,12 +146,12 @@ $$\text{Score} = (\text{RecencyWeight} \times \text{HoursOld}^{-\alpha}) + (\tex
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **V1 Feed Tabs**: Streamlined to 🔥 `Trending`, 🕒 `Latest`, 📂 `Categories`.
-* ✅ **Permanent Privacy Banner**: Top warning banner on confession detail pages.
-* ✅ **Posting Flow Acknowledgment**: PII Scan $\rightarrow$ Moderation Checkbox $\rightarrow$ Publish.
-* ✅ **Severity-Prioritized Moderation Queue**: Highest-severity flags (Threats/Doxxing) prioritized over raw chronology.
-* ✅ **Soft Deletion for Comments**: Moderated comments render placeholder `[Comment removed by moderation]`.
-* ✅ **Configurable Ranking Policy**: Decoupled formula weights.
+- ✅ **V1 Feed Tabs**: Streamlined to 🔥 `Trending`, 🕒 `Latest`, 📂 `Categories`.
+- ✅ **Permanent Privacy Banner**: Top warning banner on confession detail pages.
+- ✅ **Posting Flow Acknowledgment**: PII Scan $\rightarrow$ Moderation Checkbox $\rightarrow$ Publish.
+- ✅ **Severity-Prioritized Moderation Queue**: Highest-severity flags (Threats/Doxxing) prioritized over raw chronology.
+- ✅ **Soft Deletion for Comments**: Moderated comments render placeholder `[Comment removed by moderation]`.
+- ✅ **Configurable Ranking Policy**: Decoupled formula weights.
 
 > [!IMPORTANT]
 > **MS-21.2 Approved with Refinements**. Ready for **MS-21.3 (Production Database Architecture & Data Model)**.

@@ -16,12 +16,23 @@ export default function TemplatesPage() {
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
-          {['BETA Preset', 'INTERNAL Preset', 'EXPERIMENTAL Preset', 'PRODUCTION Standard', 'EMERGENCY Override'].map((t) => (
-            <div key={t} style={{ background: '#0F172A', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
-              <div style={{ fontWeight: 700, fontSize: '14px' }}>{t}</div>
-              <button className="ff-btn-primary" style={{ marginTop: '12px', width: '100%' }} onClick={() => alert(`Applied template ${t}`)}>Apply Template</button>
-            </div>
-          ))}
+          {['BETA Preset', 'INTERNAL Preset', 'EXPERIMENTAL Preset', 'PRODUCTION Standard', 'EMERGENCY Override'].map(
+            (t) => (
+              <div
+                key={t}
+                style={{ background: '#0F172A', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}
+              >
+                <div style={{ fontWeight: 700, fontSize: '14px' }}>{t}</div>
+                <button
+                  className="ff-btn-primary"
+                  style={{ marginTop: '12px', width: '100%' }}
+                  onClick={() => alert(`Applied template ${t}`)}
+                >
+                  Apply Template
+                </button>
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>

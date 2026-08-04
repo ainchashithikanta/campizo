@@ -1,0 +1,37 @@
+{
+  "format": "CycloneDX-Light",
+  "version": "1.0.0",
+  "timestamp": "2026-08-04T14:29:30.723Z",
+  "component": {
+    "name": "college-hub-monorepo",
+    "version": "1.0.0",
+    "type": "application"
+  },
+  "dependencies": [
+    {
+      "name": "fastify",
+      "version": "^5.0.0",
+      "license": "MIT"
+    },
+    {
+      "name": "next",
+      "version": "^14.2.0",
+      "license": "MIT"
+    },
+    {
+      "name": "drizzle-orm",
+      "version": "^0.30.0",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "zod",
+      "version": "^3.23.0",
+      "license": "MIT"
+    },
+    {
+      "name": "vitest",
+      "version": "^1.6.0",
+      "license": "MIT"
+    }
+  ]
+}

@@ -23,14 +23,14 @@ Design goals:
 
 ## 2. Core Principles
 
-| Principle | Implementation |
-| :--- | :--- |
-| Instrumentation only | No domain/use-case behaviour changes; all edits are observability boundary code |
-| Defaults on, tracing opt-in | Metrics/logging/health always on; traces require `OTEL_TRACES_ENABLED=true` |
-| No-op safety | Every helper degrades to a lightweight no-op when disabled, so call sites are unconditional |
-| Process-wide default instance | `observability.configure(...)` applies `service`/`environment` labels to every sample |
-| Correlation first | `traceId`/`spanId` flow from spans into pino logs via `AsyncLocalStorage` |
-| Provider-neutral infra | Rules/dashboards are rendered by the existing provider-neutral Helm chart |
+| Principle                     | Implementation                                                                              |
+| :---------------------------- | :------------------------------------------------------------------------------------------ |
+| Instrumentation only          | No domain/use-case behaviour changes; all edits are observability boundary code             |
+| Defaults on, tracing opt-in   | Metrics/logging/health always on; traces require `OTEL_TRACES_ENABLED=true`                 |
+| No-op safety                  | Every helper degrades to a lightweight no-op when disabled, so call sites are unconditional |
+| Process-wide default instance | `observability.configure(...)` applies `service`/`environment` labels to every sample       |
+| Correlation first             | `traceId`/`spanId` flow from spans into pino logs via `AsyncLocalStorage`                   |
+| Provider-neutral infra        | Rules/dashboards are rendered by the existing provider-neutral Helm chart                   |
 
 ---
 
@@ -88,51 +88,51 @@ Every metric is prefixed `collegehub_` and carries Prometheus default labels
 
 ### HTTP (`apps/api` /metrics, from the observability plugin)
 
-| Metric | Type | Labels | Notes |
-| :--- | :--- | :--- | :--- |
-| `collegehub_http_requests_total` | counter | method, route, status | every response |
-| `collegehub_http_request_duration_seconds` | histogram | method, route | buckets 5ms–10s |
-| `collegehub_http_requests_in_flight` | gauge | method, route | incremented onRequest/decremented onResponse |
-| `collegehub_http_response_size_bytes` | histogram | method, route | payload byte count |
+| Metric                                     | Type      | Labels                | Notes                                        |
+| :----------------------------------------- | :-------- | :-------------------- | :------------------------------------------- |
+| `collegehub_http_requests_total`           | counter   | method, route, status | every response                               |
+| `collegehub_http_request_duration_seconds` | histogram | method, route         | buckets 5ms–10s                              |
+| `collegehub_http_requests_in_flight`       | gauge     | method, route         | incremented onRequest/decremented onResponse |
+| `collegehub_http_response_size_bytes`      | histogram | method, route         | payload byte count                           |
 
 ### Database (PostgreSQL) — instrumented query client
 
-| Metric | Type | Labels |
-| :--- | :--- | :--- |
-| `collegehub_db_query_duration_seconds` | histogram | result (success/error) |
-| `collegehub_db_query_errors_total` | counter | — |
-| `collegehub_db_slow_queries_total` | counter | query_hash, query_prefix |
-| `collegehub_db_slow_query_duration_seconds` | histogram | — |
-| `collegehub_db_pool` | gauge | state (total/idle/waiting) |
+| Metric                                      | Type      | Labels                     |
+| :------------------------------------------ | :-------- | :------------------------- |
+| `collegehub_db_query_duration_seconds`      | histogram | result (success/error)     |
+| `collegehub_db_query_errors_total`          | counter   | —                          |
+| `collegehub_db_slow_queries_total`          | counter   | query_hash, query_prefix   |
+| `collegehub_db_slow_query_duration_seconds` | histogram | —                          |
+| `collegehub_db_pool`                        | gauge     | state (total/idle/waiting) |
 
 ### Cache (Redis) — instrumented client
 
-| Metric | Type | Labels |
-| :--- | :--- | :--- |
-| `collegehub_redis_commands_total` | counter | command |
-| `collegehub_redis_command_duration_seconds` | histogram | — |
-| `collegehub_redis_errors_total` | counter | — |
-| `collegehub_cache_connected` | gauge | — |
+| Metric                                      | Type      | Labels  |
+| :------------------------------------------ | :-------- | :------ |
+| `collegehub_redis_commands_total`           | counter   | command |
+| `collegehub_redis_command_duration_seconds` | histogram | —       |
+| `collegehub_redis_errors_total`             | counter   | —       |
+| `collegehub_cache_connected`                | gauge     | —       |
 
 ### Background jobs (worker runtime + event router)
 
-| Metric | Type | Labels |
-| :--- | :--- | :--- |
-| `collegehub_jobs_total` | counter | job, result (success/failure) |
-| `collegehub_job_duration_seconds` | histogram | job |
-| `collegehub_jobs_in_flight` | gauge | job |
+| Metric                            | Type      | Labels                        |
+| :-------------------------------- | :-------- | :---------------------------- |
+| `collegehub_jobs_total`           | counter   | job, result (success/failure) |
+| `collegehub_job_duration_seconds` | histogram | job                           |
+| `collegehub_jobs_in_flight`       | gauge     | job                           |
 
 ### Business KPIs
 
-| Metric | Type | Labels | Incremented by |
-| :--- | :--- | :--- | :--- |
-| `collegehub_auth_logins_total` | counter | result | identity-kernel login success/failure |
-| `collegehub_auth_registrations_total` | counter | result | registration success/failure |
-| `collegehub_marketplace_listings_total` | counter | action | created/published/sold |
-| `collegehub_marketplace_offers_total` | counter | action | created/accepted |
-| `collegehub_notifications_total` | counter | action | published/dropped/failed |
-| `collegehub_placement_queries_total` | counter | kind | company/experience/question |
-| `collegehub_interview_submissions_total` | counter | result | interview submissions |
+| Metric                                   | Type    | Labels | Incremented by                        |
+| :--------------------------------------- | :------ | :----- | :------------------------------------ |
+| `collegehub_auth_logins_total`           | counter | result | identity-kernel login success/failure |
+| `collegehub_auth_registrations_total`    | counter | result | registration success/failure          |
+| `collegehub_marketplace_listings_total`  | counter | action | created/published/sold                |
+| `collegehub_marketplace_offers_total`    | counter | action | created/accepted                      |
+| `collegehub_notifications_total`         | counter | action | published/dropped/failed              |
+| `collegehub_placement_queries_total`     | counter | kind   | company/experience/question           |
+| `collegehub_interview_submissions_total` | counter | result | interview submissions                 |
 
 ### Process (prom-client `collectDefaultMetrics`)
 
@@ -176,11 +176,11 @@ active handles/requests gauges via `instrumentQueryClient`-adjacent hooks.
 
 `apps/api/src/health.ts` (also mirrored by the worker health server):
 
-| Endpoint | Semantics |
-| :--- | :--- |
-| `/health/live` | 200 OK — process alive (liveness) |
-| `/health/ready` | 200 OK / 503 DEGRADED — dependency checks (Postgres) |
-| `/health/startup` | 200 OK / 503 STARTING — migration/startup gate |
+| Endpoint          | Semantics                                            |
+| :---------------- | :--------------------------------------------------- |
+| `/health/live`    | 200 OK — process alive (liveness)                    |
+| `/health/ready`   | 200 OK / 503 DEGRADED — dependency checks (Postgres) |
+| `/health/startup` | 200 OK / 503 STARTING — migration/startup gate       |
 
 The Helm chart wires these into `livenessProbe`/`readinessProbe` on the API and
 worker deployments.
@@ -193,15 +193,15 @@ Rendered by the chart as `ConfigMap`s labelled `grafana_dashboard: "1"`
 (consumed by the kube-prometheus-stack sidecar) and provisioned locally via
 `infra/observability/compose`. All target datasource UID `prometheus`.
 
-| UID | Title | Panels |
-| :--- | :--- | :--- |
-| `collegehub-api-http` | API (HTTP) | rate by route, p50/p99, status, in-flight, payload p95 |
-| `collegehub-database` | Database | query p50/p99, throughput & errors, slow top10, pool |
-| `collegehub-cache` | Cache (Redis) | command rate, latency, errors, connectivity |
-| `collegehub-jobs` | Background Jobs | success/failure rate, p99 duration, in-flight |
-| `collegehub-business` | Business KPIs | auth, marketplace, notifications, placement |
-| `collegehub-process` | Process (Node.js) | CPU, memory, event-loop lag, handles/fds |
-| `collegehub-kubernetes` | Kubernetes | pod CPU/mem vs requests, restarts, pods/node |
+| UID                     | Title             | Panels                                                 |
+| :---------------------- | :---------------- | :----------------------------------------------------- |
+| `collegehub-api-http`   | API (HTTP)        | rate by route, p50/p99, status, in-flight, payload p95 |
+| `collegehub-database`   | Database          | query p50/p99, throughput & errors, slow top10, pool   |
+| `collegehub-cache`      | Cache (Redis)     | command rate, latency, errors, connectivity            |
+| `collegehub-jobs`       | Background Jobs   | success/failure rate, p99 duration, in-flight          |
+| `collegehub-business`   | Business KPIs     | auth, marketplace, notifications, placement            |
+| `collegehub-process`    | Process (Node.js) | CPU, memory, event-loop lag, handles/fds               |
+| `collegehub-kubernetes` | Kubernetes        | pod CPU/mem vs requests, restarts, pods/node           |
 
 ---
 
@@ -217,11 +217,11 @@ crash loops.
 
 **SLOs (Google SRE multi-window burn rate):**
 
-| SLO | Objective | Budget | Page alerts |
-| :--- | :--- | :--- | :--- |
-| HTTP 5xx | 99.5% | 0.5% | burn ≥ 14.4 over 5m, ≥ 6 over 30m; warn ≥ 1 over 1h |
-| Background jobs | 99% | 1% | same windows |
-| DB query success | 99% | 1% | same windows |
+| SLO              | Objective | Budget | Page alerts                                         |
+| :--------------- | :-------- | :----- | :-------------------------------------------------- |
+| HTTP 5xx         | 99.5%     | 0.5%   | burn ≥ 14.4 over 5m, ≥ 6 over 30m; warn ≥ 1 over 1h |
+| Background jobs  | 99%       | 1%     | same windows                                        |
+| DB query success | 99%       | 1%     | same windows                                        |
 
 Recording rules:
 `collegehub:slo:<target>:errors_ratio:rate5m|30m|1h`,
@@ -236,14 +236,14 @@ Recording rules:
 ```yaml
 observability:
   enabled: true
-  metricsEnabled: true          # METRICS_ENABLED in the shared ConfigMap
-  tracesEnabled: true           # OTEL_TRACES_ENABLED (false in dev, true in staging/prod)
+  metricsEnabled: true # METRICS_ENABLED in the shared ConfigMap
+  tracesEnabled: true # OTEL_TRACES_ENABLED (false in dev, true in staging/prod)
   otlpEndpoint: http://collegehub-otlp-collector:4317
   serviceNameApi: college-hub
   serviceNameWorker: college-hub-worker
   serviceMonitor: { enabled: true, labels: { release: prometheus } }
-  podMonitor:     { enabled: true, labels: { release: prometheus } }
-  prometheusRules:   { enabled: true }
+  podMonitor: { enabled: true, labels: { release: prometheus } }
+  prometheusRules: { enabled: true }
   grafanaDashboards: { enabled: true }
 ```
 

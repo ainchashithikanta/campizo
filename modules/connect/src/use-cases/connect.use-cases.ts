@@ -73,7 +73,13 @@ export class StudentIntentService {
     return intent;
   }
 
-  async updateIntent(input: { id: string; collegeId: string; title: string; version: number; updatedBy: string }): Promise<any> {
+  async updateIntent(input: {
+    id: string;
+    collegeId: string;
+    title: string;
+    version: number;
+    updatedBy: string;
+  }): Promise<any> {
     const existing = await this.repoProvider.intentRepo.findById(input.id, input.collegeId);
     if (!existing) throw new Error(`Intent ${input.id} not found.`);
 
@@ -313,7 +319,13 @@ export class ConnectUseCases {
     // Read receipt marker
   }
 
-  async createStudyGroup(input: { id: string; collegeId: string; courseCode: string; title: string; createdBy: string }): Promise<any> {
+  async createStudyGroup(input: {
+    id: string;
+    collegeId: string;
+    courseCode: string;
+    title: string;
+    createdBy: string;
+  }): Promise<any> {
     this.eventPublisher.publish({
       eventId: `evt_${Date.now()}`,
       requestId: `req_${Date.now()}`,
@@ -339,7 +351,13 @@ export class ConnectUseCases {
     return input;
   }
 
-  async createMentorship(input: { id: string; collegeId: string; mentorId: string; menteeId: string; createdBy: string }): Promise<any> {
+  async createMentorship(input: {
+    id: string;
+    collegeId: string;
+    mentorId: string;
+    menteeId: string;
+    createdBy: string;
+  }): Promise<any> {
     this.eventPublisher.publish({
       eventId: `evt_${Date.now()}`,
       requestId: `req_${Date.now()}`,
@@ -352,7 +370,14 @@ export class ConnectUseCases {
     return input;
   }
 
-  async updatePrivacy(input: { studentProfileId: string; collegeId: string; isGhostMode: boolean; isIncognitoMode: boolean; version: number; updatedBy: string }): Promise<any> {
+  async updatePrivacy(input: {
+    studentProfileId: string;
+    collegeId: string;
+    isGhostMode: boolean;
+    isIncognitoMode: boolean;
+    version: number;
+    updatedBy: string;
+  }): Promise<any> {
     const settings = {
       ...input,
       showOnlineIndicator: true,
@@ -369,7 +394,11 @@ export class ConnectUseCases {
       collegeId: input.collegeId,
       timestamp: new Date().toISOString(),
       eventType: 'PrivacyUpdated',
-      payload: { studentProfileId: input.studentProfileId, visibilityScope: 'VISIBLE_ALL', isGhostMode: input.isGhostMode }
+      payload: {
+        studentProfileId: input.studentProfileId,
+        visibilityScope: 'VISIBLE_ALL',
+        isGhostMode: input.isGhostMode
+      }
     });
 
     return settings;
@@ -417,7 +446,13 @@ export class ConnectUseCases {
     });
   }
 
-  async reportUser(input: { caseId: string; collegeId: string; reportedUserId: string; reporterUserId: string; reason: string }): Promise<void> {
+  async reportUser(input: {
+    caseId: string;
+    collegeId: string;
+    reportedUserId: string;
+    reporterUserId: string;
+    reason: string;
+  }): Promise<void> {
     this.eventPublisher.publish({
       eventId: `evt_${Date.now()}`,
       requestId: `req_${Date.now()}`,
@@ -429,7 +464,12 @@ export class ConnectUseCases {
     });
   }
 
-  async recordModerationDecision(input: { caseId: string; collegeId: string; actionTaken: string; moderatorId: string }): Promise<void> {
+  async recordModerationDecision(input: {
+    caseId: string;
+    collegeId: string;
+    actionTaken: string;
+    moderatorId: string;
+  }): Promise<void> {
     this.eventPublisher.publish({
       eventId: `evt_${Date.now()}`,
       requestId: `req_${Date.now()}`,

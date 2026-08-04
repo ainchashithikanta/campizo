@@ -1,0 +1,47 @@
+# =============================================================================
+# College Hub - Backup & Disaster Recovery Runner Image (MS-57)
+#
+# Used by:
+#   - Helm backup CronJobs / restore Jobs (registry: ghcr.io/college-hub/collegehub-backup)
+#   - Local automated DR drills (tag: collegehub-backup:local)
+#
+# Contains the backup CLI plus the PostgreSQL and Redis client tooling
+# (pg_dump / pg_restore / pg_basebackup / redis-cli / redis-check-rdb).
+# =============================================================================
+
+# Stage 1: Build Workspace
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+RUN npm install -g pnpm@9.1.0
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.json ./
+COPY apps/ ./apps/
+COPY modules/ ./modules/
+COPY packages/ ./packages/
+
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @college-hub/backup... build
+
+# Stage 2: Production Backup Runner
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+# PostgreSQL + Redis client tooling used by the backup CLI.
+RUN apk add --no-cache postgresql16-client redis
+
+RUN addgroup --system --gid 1001 backupuser && \
+    adduser --system --uid 1001 backupuser
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY --from=builder --chown=backupuser:backupuser /app/packages ./packages
+COPY --from=builder --chown=backupuser:backupuser /app/node_modules ./node_modules
+
+USER backupuser
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD node packages/backup/dist/cli.js --help || exit 1
+
+ENTRYPOINT ["node", "packages/backup/dist/cli.js"]

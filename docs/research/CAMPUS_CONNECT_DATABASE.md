@@ -3,12 +3,13 @@
 **Module Name**: `Campus Connect` (`@college-hub/campus-connect`)  
 **Document Type**: Database Architecture & Entity Specification  
 **Status**: 🟢 **FINAL DATABASE ARCHITECTURE SPECIFICATION (WITH REFINEMENTS)**  
-**Target Database**: PostgreSQL 16+ with Drizzle ORM Mapping Layer  
+**Target Database**: PostgreSQL 16+ with Drizzle ORM Mapping Layer
 
 ---
 
 > [!IMPORTANT]
 > **Mandatory Architectural Invariants**:
+>
 > 1. **First-Class Intent Model**: Intent is a primary aggregate entity supporting simultaneous active collaboration goals.
 > 2. **Non-Nullable Messaging Context**: Every conversation and message thread MUST reference a non-null `context_type` and `context_id`.
 > 3. **Immutable Recommendation Snapshots**: Compatibility snapshots and recommendation scores are append-only and immutable.
@@ -38,13 +39,16 @@ Campus Connect utilizes a **Shared Database, Separate Schema / Tenant Discrimina
 ```
 
 ### 1.1 Global vs. Tenant Tables
+
 - **Global Tables** (Shared Across Monorepo):
   - `skills`, `interests`, `courses` (Global catalog with tenant override mappings).
 - **Tenant Tables** (Strict `college_id` Isolation via RLS):
   - `student_profiles`, `student_intents`, `intent_lifecycle_history`, `student_skills`, `student_interests`, `student_clubs`, `student_courses`, `study_partner_requests`, `project_teams`, `project_members`, `mentorship_requests`, `mentor_relationships`, `connection_requests`, `connections`, `connection_relationship_strength`, `conversations`, `conversation_members`, `messages`, `message_attachments`, `events`, `event_participants`, `compatibility_snapshots`, `recommendations`, `ai_recommendation_metadata`, `visibility_preferences`, `privacy_settings`, `blocking`, `reports`, `moderation_cases`, `moderation_actions`, `notifications`, `activity_feed`, `audit_logs`, `feature_usage_statistics`, `future_intercollege_links`, `student_discovery_search_read_model`.
 
 ### 1.2 Future Cross-College Federation Model
+
 When feature flag `connect.interCollege` is active, RLS policies expand dynamically using array containment:
+
 ```sql
 CREATE POLICY intercollege_federation_policy ON student_intents
   USING (
@@ -194,6 +198,7 @@ Compatibility snapshots and AI match scores are append-only to support model ver
 High-performance indexing strategy to guarantee sub-100ms discovery and sub-30ms messaging:
 
 ### 7.1 Primary Index Catalog
+
 - **Discovery Indexes**:
   - `idx_intents_discovery`: B-Tree `(college_id, status, intent_type, expires_at DESC)` WHERE `status = 'ACTIVE'`.
   - `idx_intents_courses`: B-Tree `(college_id, course_id, status)` WHERE `status = 'ACTIVE'`.
@@ -211,11 +216,13 @@ High-performance indexing strategy to guarantee sub-100ms discovery and sub-30ms
 ## 8. Scalability, Partitioning & Performance Budgets
 
 ### 8.1 Partitioning Strategy
+
 - **`messages`**: Range partitioned by `created_at` (Monthly partitions: `messages_y2026m08`).
 - **`audit_logs`**: Range partitioned by `created_at` (Monthly partitions: `audit_logs_y2026m08`).
 - **`compatibility_snapshots`**: Range partitioned by `created_at` (Quarterly partitions).
 
 ### 8.2 Performance Budget SLAs
+
 - **Discovery Feed Query**: $\le 100\text{ ms}$ (Target: $<45\text{ ms}$ via B-Tree partial index).
 - **Recommendation Calculation**: $\le 150\text{ ms}$ (Target: $<80\text{ ms}$ via precomputed snapshots).
 - **Messaging Lookup**: $\le 30\text{ ms}$ (Target: $<12\text{ ms}$ via composite index).
@@ -230,7 +237,9 @@ High-performance indexing strategy to guarantee sub-100ms discovery and sub-30ms
 The following 6 architectural refinements have been incorporated to refine recommendation storage, intent auditing, relationship metrics, conversation lifecycles, AI data decoupling, and discovery read models:
 
 ### 9.1 Structured Weighted Recommendation Explanations
+
 In `compatibility_snapshots`, match reasons are stored in JSONB arrays containing explicit weight values and human-readable explanation strings:
+
 ```json
 [
   {
@@ -245,23 +254,29 @@ In `compatibility_snapshots`, match reasons are stored in JSONB arrays containin
   },
   {
     "reasonCode": "SHARED_INTEREST",
-    "weight": 0.20,
+    "weight": 0.2,
     "humanText": "Mutual interest in Hackathons & NLP Research"
   }
 ]
 ```
 
 ### 9.2 Append-Only Intent Lifecycle History (`intent_lifecycle_history`)
+
 To preserve historical state transitions (`DRAFT` $\rightarrow$ `ACTIVE` $\rightarrow$ `PAUSED` $\rightarrow$ `FULFILLED` $\rightarrow$ `EXPIRED`), state changes are recorded in an append-only audit log:
+
 - **`intent_lifecycle_history`**: Records `intent_id`, `previous_status`, `new_status`, `transition_reason`, `operator_id`, and `created_at`.
 
 ### 9.3 Internal Interaction-Derived Relationship Strength Model
+
 `connection_relationship_strength` computes an internal interaction metric ($0.00$ to $100.00$) based on objective interaction events without public exposure:
+
 - **Metrics Evaluated**: Total messages exchanged, verified study sessions completed together, course projects delivered, and mutual events attended.
 - **Privacy Rule**: Used strictly for recommendation sorting; **never exposed as a public score**.
 
 ### 9.4 Explicit Conversation Lifecycle States
+
 `conversations` enforces a strict 5-state lifecycle state machine:
+
 - `INITIATED`: Request sent; waiting for initial response.
 - `ACTIVE`: Active 1-on-1 or group discussion thread.
 - `MUTED`: Conversation notifications silenced for user.
@@ -269,10 +284,13 @@ To preserve historical state transitions (`DRAFT` $\rightarrow$ `ACTIVE` $\right
 - `CLOSED`: Conversation closed upon intent fulfillment or project completion.
 
 ### 9.5 Decoupled AI Recommendation Metadata (`ai_recommendation_metadata`)
+
 AI vector embeddings (e.g. 1536-dimensional OpenAI/pgvector embeddings), similarity clusters, and model weights are isolated in `ai_recommendation_metadata` separate from core `student_profiles` to prevent table bloat and lock contention during profile updates.
 
 ### 9.6 Dedicated Discovery Search Read Model (`student_discovery_search_read_model`)
+
 To guarantee sub-45ms discovery latency at scale, a materialized search read model combines active intents, skills, courses, and visibility scopes into a high-performance query structure:
+
 - **Refresh Strategy**: Refreshed asynchronously via background worker upon `IntentCreated`, `IntentUpdated`, or `PrivacyUpdated` events.
 
 ---

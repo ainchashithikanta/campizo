@@ -13,12 +13,7 @@ export function Badge({ variant = 'default', onClick, children, className = '' }
 
   return (
     <span
-      className={[
-        styles.badge,
-        styles[variant],
-        isInteractive ? styles.interactive : '',
-        className,
-      ]
+      className={[styles.badge, styles[variant], isInteractive ? styles.interactive : '', className]
         .filter(Boolean)
         .join(' ')}
       onClick={onClick}

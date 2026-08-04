@@ -42,14 +42,19 @@ export default function RecommendationsPage() {
     <main className="max-w-4xl mx-auto p-6 font-sans">
       <header className="mb-6">
         <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">AI Campus Recommendations</h1>
-        <p className="text-xs text-slate-500 mt-1">Explainable student compatibility recommendations based on shared courses and study goals.</p>
+        <p className="text-xs text-slate-500 mt-1">
+          Explainable student compatibility recommendations based on shared courses and study goals.
+        </p>
       </header>
 
       {loading && <LoadingSkeleton count={3} />}
       {error && <ErrorState message={error} />}
 
       {!loading && !error && recommendations.length === 0 && (
-        <EmptyState title="No Recommendations Available" description="Recommendations will refresh as more study intents and course enrollments are active." />
+        <EmptyState
+          title="No Recommendations Available"
+          description="Recommendations will refresh as more study intents and course enrollments are active."
+        />
       )}
 
       {!loading && !error && recommendations.length > 0 && (

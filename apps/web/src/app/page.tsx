@@ -22,7 +22,7 @@ const FALLBACK_PROFESSORS: ProfessorSummaryDto[] = [
     bayesianRating: 4.85,
     totalReviewsCount: 42,
     recommendationPercentage: 92.5,
-    topTags: ['Theoretical Pioneer', 'Tough Grader', 'Pop Quizzes'],
+    topTags: ['Theoretical Pioneer', 'Tough Grader', 'Pop Quizzes']
   },
   {
     id: 'prof-102',
@@ -35,7 +35,7 @@ const FALLBACK_PROFESSORS: ProfessorSummaryDto[] = [
     bayesianRating: 4.92,
     totalReviewsCount: 58,
     recommendationPercentage: 96.0,
-    topTags: ['Algorithm Genius', 'Clear Lectures', 'Accessible'],
+    topTags: ['Algorithm Genius', 'Clear Lectures', 'Accessible']
   },
   {
     id: 'prof-103',
@@ -48,8 +48,8 @@ const FALLBACK_PROFESSORS: ProfessorSummaryDto[] = [
     bayesianRating: 4.78,
     totalReviewsCount: 89,
     recommendationPercentage: 91.0,
-    topTags: ['Engaging Demonstrations', 'Inspiring', 'Fair Exams'],
-  },
+    topTags: ['Engaging Demonstrations', 'Inspiring', 'Fair Exams']
+  }
 ];
 
 export default function ProfessorDirectoryPage() {
@@ -59,14 +59,14 @@ export default function ProfessorDirectoryPage() {
     minRating: undefined,
     sortBy: 'HIGHEST_RATED',
     page: 1,
-    limit: 20,
+    limit: 20
   });
 
   const debouncedQuery = useDebounce(params.query, 250);
 
   const queryParams: SearchParams = {
     ...params,
-    query: debouncedQuery,
+    query: debouncedQuery
   };
 
   const { data: apiData, loading, error, refetch } = useProfessors(queryParams);
@@ -90,7 +90,7 @@ export default function ProfessorDirectoryPage() {
       minRating: undefined,
       sortBy: 'HIGHEST_RATED',
       page: 1,
-      limit: 20,
+      limit: 20
     });
   };
 
@@ -113,14 +113,28 @@ export default function ProfessorDirectoryPage() {
         }}
       >
         <div>
-          <div style={{ display: 'inline-block', background: 'rgba(99, 102, 241, 0.2)', color: '#818CF8', border: '1px solid rgba(99, 102, 241, 0.4)', fontSize: '11px', fontWeight: 700, padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', marginBottom: '8px' }}>
+          <div
+            style={{
+              display: 'inline-block',
+              background: 'rgba(99, 102, 241, 0.2)',
+              color: '#818CF8',
+              border: '1px solid rgba(99, 102, 241, 0.4)',
+              fontSize: '11px',
+              fontWeight: 700,
+              padding: '4px 8px',
+              borderRadius: '6px',
+              textTransform: 'uppercase',
+              marginBottom: '8px'
+            }}
+          >
             ENTERPRISE PLATFORM SYSTEM
           </div>
           <h2 style={{ color: '#F8FAFC', fontSize: '20px', fontWeight: 700, margin: 0 }}>
             ⚡ Platform Feature Management Operations Console
           </h2>
           <p style={{ color: '#94A3B8', fontSize: '14px', marginTop: '4px', margin: 0 }}>
-            Real-time operational visibility, canary rollouts, dependency graph visualization, 4-eye approvals, and emergency kill switches.
+            Real-time operational visibility, canary rollouts, dependency graph visualization, 4-eye approvals, and
+            emergency kill switches.
           </p>
         </div>
 
@@ -147,7 +161,8 @@ export default function ProfessorDirectoryPage() {
           Academic Evaluations & Professor Directory
         </h1>
         <p style={{ color: 'var(--ch-color-text-muted)', fontSize: 'var(--ch-font-size-base)', marginTop: '4px' }}>
-          Discover verified student reviews, Bayesian quality ratings, and academic dimension scores across Stanford University.
+          Discover verified student reviews, Bayesian quality ratings, and academic dimension scores across Stanford
+          University.
         </p>
       </div>
 
@@ -165,7 +180,14 @@ export default function ProfessorDirectoryPage() {
           <Skeleton variant="card" />
         </div>
       ) : error && !filteredProfessors.length ? (
-        <div style={{ textAlign: 'center', padding: 'var(--ch-spacing-10)', backgroundColor: 'var(--ch-color-surface-elevated)', borderRadius: 'var(--ch-radius-lg)' }}>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: 'var(--ch-spacing-10)',
+            backgroundColor: 'var(--ch-color-surface-elevated)',
+            borderRadius: 'var(--ch-radius-lg)'
+          }}
+        >
           <h3 style={{ fontSize: 'var(--ch-font-size-lg)', fontWeight: 'bold', color: 'var(--ch-color-error)' }}>
             Failed to Load Directory
           </h3>
@@ -175,7 +197,15 @@ export default function ProfessorDirectoryPage() {
           </Button>
         </div>
       ) : filteredProfessors.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: 'var(--ch-spacing-10)', backgroundColor: 'var(--ch-color-surface-elevated)', borderRadius: 'var(--ch-radius-lg)', border: '1px dashed var(--ch-color-border)' }}>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: 'var(--ch-spacing-10)',
+            backgroundColor: 'var(--ch-color-surface-elevated)',
+            borderRadius: 'var(--ch-radius-lg)',
+            border: '1px dashed var(--ch-color-border)'
+          }}
+        >
           <div style={{ fontSize: '48px', marginBottom: '12px' }}>🔍</div>
           <h3 style={{ fontSize: 'var(--ch-font-size-lg)', fontWeight: 'bold' }}>No Professors Found</h3>
           <p style={{ color: 'var(--ch-color-text-muted)', marginTop: '4px', marginBottom: '16px' }}>

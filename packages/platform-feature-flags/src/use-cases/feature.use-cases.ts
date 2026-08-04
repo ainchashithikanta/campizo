@@ -9,14 +9,8 @@ import {
   KillSwitchRepository,
   FeatureAuditLogRepository
 } from '../domain/repository.interface.js';
-import {
-  FeatureKey,
-  EnvironmentType
-} from '../domain/value-objects.js';
-import {
-  assertValidLifecycleTransition,
-  assertUniqueFeatureKey
-} from '../domain/invariants.js';
+import { FeatureKey, EnvironmentType } from '../domain/value-objects.js';
+import { assertValidLifecycleTransition, assertUniqueFeatureKey } from '../domain/invariants.js';
 import {
   mapDomainToApplicationError,
   NotFoundApplicationError,
@@ -124,7 +118,11 @@ export class FeatureUseCases {
   /**
    * Enables a feature flag in an environment.
    */
-  async enableFeature(flagKey: string, environment: EnvironmentType = 'PRODUCTION', _operatorUserId: string = 'system') {
+  async enableFeature(
+    flagKey: string,
+    environment: EnvironmentType = 'PRODUCTION',
+    _operatorUserId: string = 'system'
+  ) {
     try {
       const flag = await this.flagRepo.findByKey(flagKey, environment);
       if (!flag) {
@@ -152,7 +150,11 @@ export class FeatureUseCases {
   /**
    * Disables a feature flag in an environment.
    */
-  async disableFeature(flagKey: string, environment: EnvironmentType = 'PRODUCTION', _operatorUserId: string = 'system') {
+  async disableFeature(
+    flagKey: string,
+    environment: EnvironmentType = 'PRODUCTION',
+    _operatorUserId: string = 'system'
+  ) {
     try {
       const flag = await this.flagRepo.findByKey(flagKey, environment);
       if (!flag) {

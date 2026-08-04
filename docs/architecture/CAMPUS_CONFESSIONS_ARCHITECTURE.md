@@ -11,6 +11,7 @@ The system is engineered for **100% multi-tenant isolation**, **high read throug
 ## 1. Package Structure & Architectural Boundaries
 
 ### 1.1 Package Location & Workspace Identification
+
 - **Package Name**: `@college-hub/mod-confessions`
 - **Module Location**: `modules/confessions`
 
@@ -68,6 +69,7 @@ modules/confessions/
 │ Detail Model:  `confessions:{college}:detail:{confessionId}`                    │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
+
 - **Targeted Invalidation**: Updating a single confession invalidates only `confessions:{college}:detail:{id}`. Global feed keys are never invalidated in bulk.
 
 ---
@@ -98,12 +100,12 @@ modules/confessions/
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **Two-Stage PII Scanner**: Client UX check $\rightarrow$ Server validation $\rightarrow$ `PiiScanWorker` source of truth.
-* ✅ **Independent Feed Caching**: Granular Redis keys (`confessions:{college}:feed:trending`) without blanket invalidation.
-* ✅ **Incremental Ranking Worker**: Recalculates single confession score on vote events.
-* ✅ **Abstract SearchProvider Interface**: PostgreSQL FTS abstraction ready for future Meilisearch migration.
-* ✅ **Decoupled Notification Delivery**: `NotificationWorker` prepares payloads for platform service.
-* ✅ **Distributed Redis Rate Limiting**: Distributed rate limiter across multiple API nodes.
+- ✅ **Two-Stage PII Scanner**: Client UX check $\rightarrow$ Server validation $\rightarrow$ `PiiScanWorker` source of truth.
+- ✅ **Independent Feed Caching**: Granular Redis keys (`confessions:{college}:feed:trending`) without blanket invalidation.
+- ✅ **Incremental Ranking Worker**: Recalculates single confession score on vote events.
+- ✅ **Abstract SearchProvider Interface**: PostgreSQL FTS abstraction ready for future Meilisearch migration.
+- ✅ **Decoupled Notification Delivery**: `NotificationWorker` prepares payloads for platform service.
+- ✅ **Distributed Redis Rate Limiting**: Distributed rate limiter across multiple API nodes.
 
 > [!IMPORTANT]
 > **MS-21.6 Approved with Refinements**. Ready for **MS-21.7 (Visual Design System & UI/UX Specification)**.

@@ -58,7 +58,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform var(--ch-motion-fast) var(--ch-motion-easing), box-shadow var(--ch-motion-fast) var(--ch-motion-easing);
+  transition:
+    transform var(--ch-motion-fast) var(--ch-motion-easing),
+    box-shadow var(--ch-motion-fast) var(--ch-motion-easing);
 }
 
 .arh-card:hover {

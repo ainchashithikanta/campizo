@@ -2,7 +2,7 @@
 kind: PrometheusRule
 metadata:
   name: collegehub-business
-  namespace: {{ .Values.global.namespace | quote }}
+  namespace: { { .Values.global.namespace | quote } }
   labels:
     app.kubernetes.io/name: collegehub
     app.kubernetes.io/part-of: collegehub-observability
@@ -22,8 +22,8 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "College Hub login failure ratio above 20%"
-            description: "{{ $value | humanizePercentage }} of login attempts on {{ $labels.service }} are failing. Possible credential-stuffing attack or broken identity provider."
+            summary: 'College Hub login failure ratio above 20%'
+            description: '{{ $value | humanizePercentage }} of login attempts on {{ $labels.service }} are failing. Possible credential-stuffing attack or broken identity provider.'
 
         - alert: CollegeHubAuthRegistrationFailureSpike
           expr: |
@@ -35,8 +35,8 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "College Hub registration failure ratio above 50%"
-            description: "{{ $value | humanizePercentage }} of registration attempts on {{ $labels.service }} are failing."
+            summary: 'College Hub registration failure ratio above 50%'
+            description: '{{ $value | humanizePercentage }} of registration attempts on {{ $labels.service }} are failing.'
 
         - alert: CollegeHubNotificationFailedRateHigh
           expr: |
@@ -46,8 +46,8 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "College Hub notification failures climbing"
-            description: "Service {{ $labels.service }} is failing more than 5 notifications per second; check the email/push provider."
+            summary: 'College Hub notification failures climbing'
+            description: 'Service {{ $labels.service }} is failing more than 5 notifications per second; check the email/push provider.'
 
         - alert: CollegeHubMarketplaceActivityPlunged
           expr: |
@@ -57,5 +57,5 @@ spec:
             severity: info
             team: platform
           annotations:
-            summary: "No marketplace listing activity detected"
-            description: "No `collegehub_marketplace_listings_total` samples for 30 minutes. The marketplace module may be misconfigured."
+            summary: 'No marketplace listing activity detected'
+            description: 'No `collegehub_marketplace_listings_total` samples for 30 minutes. The marketplace module may be misconfigured.'

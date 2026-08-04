@@ -18,7 +18,7 @@ const REPORT_REASONS = [
   { value: 'SPAM', label: 'Spam or Bot Submission' },
   { value: 'HARASSMENT', label: 'Personal Attack / Harassment' },
   { value: 'PROFANITY', label: 'Profanity or Offensive Content' },
-  { value: 'RETALIATION', label: 'Exam Retaliation / False Information' },
+  { value: 'RETALIATION', label: 'Exam Retaliation / False Information' }
 ];
 
 export function ReportReviewModal({ isOpen, onClose, review, onSubmit }: ReportReviewModalProps) {
@@ -75,9 +75,7 @@ export function ReportReviewModal({ isOpen, onClose, review, onSubmit }: ReportR
         </div>
       ) : (
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ch-spacing-4)' }}>
-          {error && (
-            <div style={{ color: 'var(--ch-color-error)', fontSize: 'var(--ch-font-size-xs)' }}>{error}</div>
-          )}
+          {error && <div style={{ color: 'var(--ch-color-error)', fontSize: 'var(--ch-font-size-xs)' }}>{error}</div>}
 
           <Select
             label="Reason for Reporting"

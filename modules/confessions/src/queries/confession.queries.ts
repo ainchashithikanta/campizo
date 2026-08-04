@@ -56,7 +56,7 @@ export class ConfessionQueries {
       this.confessionRepo.listFeed(collegeId, { limit: 5 })
     ]);
 
-    const relatedConfessions = feed.filter(f => f.id !== confessionId).slice(0, 3);
+    const relatedConfessions = feed.filter((f) => f.id !== confessionId).slice(0, 3);
 
     return {
       confession,

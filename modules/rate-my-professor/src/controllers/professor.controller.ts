@@ -102,156 +102,168 @@ export function registerProfessorRoutes(
   });
 
   // 2. Get Professor Profile
-  app.get('/api/v1/professors/:slug', async (request: FastifyRequest<{ Params: { slug: string } }>, reply: FastifyReply) => {
-    const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
-    try {
-      const profile = await useCases.getProfile.execute({
-        slug: request.params.slug,
-        collegeId: tenantContext.collegeId
-      });
-
-      return reply.send({
-        success: true,
-        data: profile,
-        meta: {
-          requestId: request.headers['x-request-id'] || 'unknown',
-          timestamp: new Date().toISOString()
-        }
-      });
-    } catch (err: any) {
-      if (err instanceof EntityNotFoundError) {
-        return reply.status(404).send({
-          success: false,
-          error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
+  app.get(
+    '/api/v1/professors/:slug',
+    async (request: FastifyRequest<{ Params: { slug: string } }>, reply: FastifyReply) => {
+      const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+      try {
+        const profile = await useCases.getProfile.execute({
+          slug: request.params.slug,
+          collegeId: tenantContext.collegeId
         });
+
+        return reply.send({
+          success: true,
+          data: profile,
+          meta: {
+            requestId: request.headers['x-request-id'] || 'unknown',
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (err: any) {
+        if (err instanceof EntityNotFoundError) {
+          return reply.status(404).send({
+            success: false,
+            error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
+          });
+        }
+        throw err;
       }
-      throw err;
     }
-  });
+  );
 
   // 3. Get Professor Statistics
-  app.get('/api/v1/professors/:slug/statistics', async (request: FastifyRequest<{ Params: { slug: string } }>, reply: FastifyReply) => {
-    const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
-    try {
-      const profile = await useCases.getProfile.execute({
-        slug: request.params.slug,
-        collegeId: tenantContext.collegeId
-      });
-
-      const stats = await useCases.getStats.execute({
-        professorId: profile.id,
-        collegeId: tenantContext.collegeId
-      });
-
-      return reply.send({
-        success: true,
-        data: stats,
-        meta: {
-          requestId: request.headers['x-request-id'] || 'unknown',
-          timestamp: new Date().toISOString()
-        }
-      });
-    } catch (err: any) {
-      if (err instanceof EntityNotFoundError) {
-        return reply.status(404).send({
-          success: false,
-          error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
+  app.get(
+    '/api/v1/professors/:slug/statistics',
+    async (request: FastifyRequest<{ Params: { slug: string } }>, reply: FastifyReply) => {
+      const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+      try {
+        const profile = await useCases.getProfile.execute({
+          slug: request.params.slug,
+          collegeId: tenantContext.collegeId
         });
+
+        const stats = await useCases.getStats.execute({
+          professorId: profile.id,
+          collegeId: tenantContext.collegeId
+        });
+
+        return reply.send({
+          success: true,
+          data: stats,
+          meta: {
+            requestId: request.headers['x-request-id'] || 'unknown',
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (err: any) {
+        if (err instanceof EntityNotFoundError) {
+          return reply.status(404).send({
+            success: false,
+            error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
+          });
+        }
+        throw err;
       }
-      throw err;
     }
-  });
+  );
 
   // 4. Get Student Reviews List
-  app.get('/api/v1/professors/:slug/reviews', async (request: FastifyRequest<{ Params: { slug: string } }>, reply: FastifyReply) => {
-    const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
-    try {
-      const profile = await useCases.getProfile.execute({
-        slug: request.params.slug,
-        collegeId: tenantContext.collegeId
-      });
-
-      const reviewsList = await useCases.getReviews.execute({
-        professorId: profile.id,
-        collegeId: tenantContext.collegeId
-      });
-
-      return reply.send({
-        success: true,
-        data: reviewsList,
-        meta: {
-          requestId: request.headers['x-request-id'] || 'unknown',
-          timestamp: new Date().toISOString()
-        }
-      });
-    } catch (err: any) {
-      if (err instanceof EntityNotFoundError) {
-        return reply.status(404).send({
-          success: false,
-          error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
+  app.get(
+    '/api/v1/professors/:slug/reviews',
+    async (request: FastifyRequest<{ Params: { slug: string } }>, reply: FastifyReply) => {
+      const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+      try {
+        const profile = await useCases.getProfile.execute({
+          slug: request.params.slug,
+          collegeId: tenantContext.collegeId
         });
+
+        const reviewsList = await useCases.getReviews.execute({
+          professorId: profile.id,
+          collegeId: tenantContext.collegeId
+        });
+
+        return reply.send({
+          success: true,
+          data: reviewsList,
+          meta: {
+            requestId: request.headers['x-request-id'] || 'unknown',
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (err: any) {
+        if (err instanceof EntityNotFoundError) {
+          return reply.status(404).send({
+            success: false,
+            error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
+          });
+        }
+        throw err;
       }
-      throw err;
     }
-  });
+  );
 
   // 5. Submit Student Review (409 for duplicate review / inactive professor)
-  app.post('/api/v1/professors/:slug/reviews', async (request: FastifyRequest<{ Params: { slug: string } }>, reply: FastifyReply) => {
-    const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
-    const bodyResult = ReviewCreateSchema.safeParse(request.body);
+  app.post(
+    '/api/v1/professors/:slug/reviews',
+    async (request: FastifyRequest<{ Params: { slug: string } }>, reply: FastifyReply) => {
+      const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+      const bodyResult = ReviewCreateSchema.safeParse(request.body);
 
-    if (!bodyResult.success) {
-      return reply.status(400).send({
-        success: false,
-        error: { code: 'INVALID_INPUT', message: bodyResult.error.message }
-      });
-    }
+      if (!bodyResult.success) {
+        return reply.status(400).send({
+          success: false,
+          error: { code: 'INVALID_INPUT', message: bodyResult.error.message }
+        });
+      }
 
-    try {
-      const profile = await useCases.getProfile.execute({
-        slug: request.params.slug,
-        collegeId: tenantContext.collegeId
-      });
+      try {
+        const profile = await useCases.getProfile.execute({
+          slug: request.params.slug,
+          collegeId: tenantContext.collegeId
+        });
 
-      const authorUserId = (request.headers['x-user-id'] as string) || 'guest-user-101';
-      const authorAnonymousToken = (request.headers['x-anon-token'] as string) || `anon-${authorUserId}`;
+        const authorUserId = (request.headers['x-user-id'] as string) || 'guest-user-101';
+        const authorAnonymousToken = (request.headers['x-anon-token'] as string) || `anon-${authorUserId}`;
 
-      const review = await useCases.submitReview.execute({
-        collegeId: tenantContext.collegeId,
-        professorId: profile.id,
-        courseAssignmentId: bodyResult.data.courseAssignmentId,
-        authorUserId,
-        authorAnonymousToken,
-        isAnonymous: bodyResult.data.isAnonymous,
-        ...(bodyResult.data.gradeReceived !== undefined ? { gradeReceived: bodyResult.data.gradeReceived } : {}),
-        reviewText: bodyResult.data.reviewText,
-        overallRating: bodyResult.data.overallRating
-      });
+        const review = await useCases.submitReview.execute({
+          collegeId: tenantContext.collegeId,
+          professorId: profile.id,
+          courseAssignmentId: bodyResult.data.courseAssignmentId,
+          authorUserId,
+          authorAnonymousToken,
+          isAnonymous: bodyResult.data.isAnonymous,
+          ...(bodyResult.data.gradeReceived !== undefined ? { gradeReceived: bodyResult.data.gradeReceived } : {}),
+          reviewText: bodyResult.data.reviewText,
+          overallRating: bodyResult.data.overallRating
+        });
 
-      return reply.status(201).send({
-        success: true,
-        data: review,
-        meta: {
-          requestId: request.headers['x-request-id'] || 'unknown',
-          timestamp: new Date().toISOString()
+        return reply.status(201).send({
+          success: true,
+          data: review,
+          meta: {
+            requestId: request.headers['x-request-id'] || 'unknown',
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (err: any) {
+        if (err instanceof DuplicateReviewError || err instanceof ProfessorInactiveError) {
+          return reply.status(409).send({
+            success: false,
+            error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
+          });
         }
-      });
-    } catch (err: any) {
-      if (err instanceof DuplicateReviewError || err instanceof ProfessorInactiveError) {
-        return reply.status(409).send({
-          success: false,
-          error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
-        });
+        if (err instanceof EntityNotFoundError) {
+          return reply.status(404).send({
+            success: false,
+            error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
+          });
+        }
+        throw err;
       }
-      if (err instanceof EntityNotFoundError) {
-        return reply.status(404).send({
-          success: false,
-          error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
-        });
-      }
-      throw err;
     }
-  });
+  );
 
   // 6. Edit Student Review (24-hour window)
   app.put(
@@ -574,4 +586,3 @@ export function registerProfessorRoutes(
     }
   );
 }
-

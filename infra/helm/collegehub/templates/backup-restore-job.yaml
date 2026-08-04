@@ -1,0 +1,50 @@
+{{- if and .Values.backup.enabled .Values.backup.restore.enabled }}
+---
+# On-demand disaster recovery restore Job.
+#
+# Rendered when `backup.restore.enabled=true`. Restores the snapshot identified
+# by `backup.restore.id` (empty = latest) into the database at
+# `backup.restore.targetUrl` (e.g. a freshly provisioned cluster). The Job runs
+# once and then remains for inspection; delete the release or set
+# `backup.restore.enabled=false` to remove it.
+#
+# Restore target must be reachable from the cluster and network policy must
+# allow egress to it (see backup-networkpolicy.yaml for the 5432 allowance).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "collegehub.fullname" . }}-backup-restore
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.componentLabels" (dict "context" . "component" "backup") | nindent 4 }}
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: {{ .Values.backup.activeDeadlineSeconds }}
+  template:
+    metadata:
+      labels:
+        {{- include "collegehub.componentSelectorLabels" (dict "context" . "component" "backup") | nindent 8 }}
+    spec:
+      restartPolicy: {{ .Values.backup.restartPolicy }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+      containers:
+        - name: backup-restore
+          image: {{ include "collegehub.backup.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - restore-postgres
+            - --target
+            - {{ .Values.backup.restore.targetUrl | quote }}
+            {{- if .Values.backup.restore.id }}
+            - --id
+            - {{ .Values.backup.restore.id | quote }}
+            {{- end }}
+          env:
+            {{- include "collegehub.backup.envVars" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.backup.resources | nindent 12 }}
+{{- end }}

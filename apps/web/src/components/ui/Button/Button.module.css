@@ -50,7 +50,7 @@
 
 .secondary {
   background-color: var(--ch-color-secondary);
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .secondary:hover:not(:disabled) {
@@ -79,7 +79,7 @@
 
 .danger {
   background-color: var(--ch-color-error);
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .danger:hover:not(:disabled) {

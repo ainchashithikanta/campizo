@@ -11,7 +11,11 @@ export class DistributedTracer {
   private activeSpans = new Map<string, TraceSpan>();
   public completedSpans: TraceSpan[] = [];
 
-  startSpan(name: string, traceId: string = `trace-${Date.now()}`, attributes: Record<string, unknown> = {}): TraceSpan {
+  startSpan(
+    name: string,
+    traceId: string = `trace-${Date.now()}`,
+    attributes: Record<string, unknown> = {}
+  ): TraceSpan {
     const spanId = `span-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
     const span: TraceSpan = {
       spanId,

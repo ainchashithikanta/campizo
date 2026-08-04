@@ -12,7 +12,9 @@ export class CacheRefreshWorker {
    * Triggers L1 cache invalidation and Pub/Sub notifications AFTER successful commit.
    * Expected complexity: O(1).
    */
-  async triggerCacheInvalidation(envelope: EnvelopeDomainEvent): Promise<{ channelPublished: boolean; latencyMs: number }> {
+  async triggerCacheInvalidation(
+    envelope: EnvelopeDomainEvent
+  ): Promise<{ channelPublished: boolean; latencyMs: number }> {
     const start = performance.now();
     const { event } = envelope;
 

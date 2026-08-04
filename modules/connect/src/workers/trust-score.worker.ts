@@ -11,7 +11,9 @@ export class TrustScoreWorker {
   // Private internal score store (NEVER EXPOSED TO PUBLIC API)
   private privateTrustScores: Map<string, number> = new Map();
 
-  async processTrustScoreRecalculation(event: ConnectEventEnvelope<{ studentProfileId: string; factor: string; delta: number }>): Promise<void> {
+  async processTrustScoreRecalculation(
+    event: ConnectEventEnvelope<{ studentProfileId: string; factor: string; delta: number }>
+  ): Promise<void> {
     const startTime = Date.now();
     try {
       const { studentProfileId, delta } = event.payload;

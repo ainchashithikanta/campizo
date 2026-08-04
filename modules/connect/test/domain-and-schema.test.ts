@@ -14,7 +14,6 @@ import {
 } from '../src/domain/invariants.js';
 
 describe('Campus Connect — Domain & Database Schema Suite (MS-23.8.1)', () => {
-
   it('1. Schema: Should export all 33 aggregate entities', () => {
     expect(schema.studentProfiles).toBeDefined();
     expect(schema.studentIntents).toBeDefined();
@@ -86,7 +85,9 @@ describe('Campus Connect — Domain & Database Schema Suite (MS-23.8.1)', () => 
     };
 
     expect(() => assertValidStateTransition('StudentIntent', 'ACTIVE', 'PAUSED', intentTransitions)).not.toThrow();
-    expect(() => assertValidStateTransition('StudentIntent', 'DRAFT', 'FULFILLED', intentTransitions)).toThrow(IllegalStateTransitionError);
+    expect(() => assertValidStateTransition('StudentIntent', 'DRAFT', 'FULFILLED', intentTransitions)).toThrow(
+      IllegalStateTransitionError
+    );
   });
 
   it('7. Invariants: assertOptimisticLockingVersion should detect version conflicts', () => {

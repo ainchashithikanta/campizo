@@ -26,7 +26,7 @@ export class ApiRequestError extends Error {
 function buildHeaders(custom?: Record<string, string>): HeadersInit {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json'
   };
 
   // Inject tenant context
@@ -42,17 +42,12 @@ function buildHeaders(custom?: Record<string, string>): HeadersInit {
 }
 
 /** Core request function with typed response handling */
-async function request<T>(
-  method: string,
-  path: string,
-  body?: unknown,
-  signal?: AbortSignal
-): Promise<T> {
+async function request<T>(method: string, path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
   const url = `${API_BASE_URL}${path}`;
   const options: RequestInit = {
     method,
     headers: buildHeaders(),
-    signal,
+    signal
   };
 
   if (body && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
@@ -64,7 +59,7 @@ async function request<T>(
   if (!res.ok) {
     let errorPayload: ApiErrorResponse | null = null;
     try {
-      errorPayload = await res.json() as ApiErrorResponse;
+      errorPayload = (await res.json()) as ApiErrorResponse;
     } catch {
       // Non-JSON error response
     }

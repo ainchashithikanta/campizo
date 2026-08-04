@@ -24,7 +24,11 @@ describe('Event Router & Dead Letter Queue Pipeline', () => {
       receivedPayload = event.payload;
     });
 
-    const event = buildEventEnvelope('IntentActivated', { intentId: 'int_001', studentProfileId: 'usr_101', intentType: 'STUDY' }, { collegeId: 'college_stanford_001' });
+    const event = buildEventEnvelope(
+      'IntentActivated',
+      { intentId: 'int_001', studentProfileId: 'usr_101', intentType: 'STUDY' },
+      { collegeId: 'college_stanford_001' }
+    );
 
     const result = await router.dispatch(event);
     expect(result).toBe(true);

@@ -5,14 +5,7 @@
 export type EnvironmentType = 'DEVELOPMENT' | 'TESTING' | 'STAGING' | 'PRODUCTION';
 
 export type LifecycleStageType =
-  | 'DRAFT'
-  | 'DEVELOPMENT'
-  | 'BETA'
-  | 'INTERNAL'
-  | 'PRODUCTION'
-  | 'DEPRECATED'
-  | 'SCHEDULED_REMOVAL'
-  | 'REMOVED';
+  'DRAFT' | 'DEVELOPMENT' | 'BETA' | 'INTERNAL' | 'PRODUCTION' | 'DEPRECATED' | 'SCHEDULED_REMOVAL' | 'REMOVED';
 
 export type DependencyType = 'REQUIRED' | 'OPTIONAL' | 'BLOCKING' | 'SOFT';
 

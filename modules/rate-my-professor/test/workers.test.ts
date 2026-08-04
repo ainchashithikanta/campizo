@@ -58,9 +58,7 @@ class MockReviewRepo {
   }
 
   async findByProfessorId(professorId: string, collegeId: string) {
-    return Array.from(this.reviews.values()).filter(
-      (r) => r.professorId === professorId && r.collegeId === collegeId
-    );
+    return Array.from(this.reviews.values()).filter((r) => r.professorId === professorId && r.collegeId === collegeId);
   }
 
   async save(review: any) {
@@ -105,13 +103,7 @@ describe('MS-18.8.4 — Background Workers, Statistics Engine, Search Indexing &
     cacheWorker = new CacheInvalidationWorker();
     modWorker = new ModerationQueueWorker(reviewRepo as any, eventBus);
 
-    eventRouter = new RateMyProfessorEventRouter(
-      eventBus,
-      statsWorker,
-      searchWorker,
-      cacheWorker,
-      modWorker
-    );
+    eventRouter = new RateMyProfessorEventRouter(eventBus, statsWorker, searchWorker, cacheWorker, modWorker);
     eventRouter.registerSubscriptions();
   });
 

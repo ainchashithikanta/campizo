@@ -27,37 +27,37 @@ section for the toggles.
 
 ## Dashboards (7)
 
-| UID                    | Title                        | Panels |
-|------------------------|------------------------------|--------|
-| collegehub-api-http    | API (HTTP)                   | 5      |
-| collegehub-database    | Database (PostgreSQL)        | 4      |
-| collegehub-cache       | Cache (Redis)                | 4      |
-| collegehub-jobs        | Background Jobs              | 4      |
-| collegehub-business    | Business KPIs                | 4      |
-| collegehub-process     | Process (Node.js)            | 4      |
-| collegehub-kubernetes  | Kubernetes                   | 4      |
+| UID                   | Title                 | Panels |
+| --------------------- | --------------------- | ------ |
+| collegehub-api-http   | API (HTTP)            | 5      |
+| collegehub-database   | Database (PostgreSQL) | 4      |
+| collegehub-cache      | Cache (Redis)         | 4      |
+| collegehub-jobs       | Background Jobs       | 4      |
+| collegehub-business   | Business KPIs         | 4      |
+| collegehub-process    | Process (Node.js)     | 4      |
+| collegehub-kubernetes | Kubernetes            | 4      |
 
 All dashboards target a Prometheus datasource with UID `prometheus`
 (schemaVersion 39, refresh 30s).
 
 ## Alerting rules (infra/helm/collegehub/rules)
 
-- `api-alerts.yaml`       — availability, 5xx rate, p99 latency, in-flight, payload size
-- `database-alerts.yaml`  — query error rate, latency, slow-query spike, pool exhaustion
-- `cache-alerts.yaml`     — cache down, Redis error rate, command latency
-- `worker-alerts.yaml`    — job failure rate, duration, stuck in-flight
-- `business-alerts.yaml`  — auth failure spikes, notification failures, marketplace silence
-- `process-alerts.yaml`   — event-loop lag, heap usage, crash-loop detection
+- `api-alerts.yaml` — availability, 5xx rate, p99 latency, in-flight, payload size
+- `database-alerts.yaml` — query error rate, latency, slow-query spike, pool exhaustion
+- `cache-alerts.yaml` — cache down, Redis error rate, command latency
+- `worker-alerts.yaml` — job failure rate, duration, stuck in-flight
+- `business-alerts.yaml` — auth failure spikes, notification failures, marketplace silence
+- `process-alerts.yaml` — event-loop lag, heap usage, crash-loop detection
 
 ## SLOs (infra/helm/collegehub/rules/*-slo.yaml)
 
 Google SRE multi-window burn-rate alerting.
 
-| SLO                          | Objective | Budget | Pages        |
-|------------------------------|-----------|--------|--------------|
-| HTTP 5xx (http-api-slo)      | 99.5%     | 0.5%   | burn >= 14.4/5m, >= 6/30m |
-| Background jobs (jobs-slo)   | 99%       | 1%     | burn >= 14.4/5m, >= 6/30m |
-| DB query success (database-slo) | 99%    | 1%     | burn >= 14.4/5m, >= 6/30m |
+| SLO                             | Objective | Budget | Pages                     |
+| ------------------------------- | --------- | ------ | ------------------------- |
+| HTTP 5xx (http-api-slo)         | 99.5%     | 0.5%   | burn >= 14.4/5m, >= 6/30m |
+| Background jobs (jobs-slo)      | 99%       | 1%     | burn >= 14.4/5m, >= 6/30m |
+| DB query success (database-slo) | 99%       | 1%     | burn >= 14.4/5m, >= 6/30m |
 
 ## Local observability stack
 
@@ -65,9 +65,9 @@ Google SRE multi-window burn-rate alerting.
 docker compose --profile observability up -d
 ```
 
-- Prometheus  http://localhost:9090
-- Grafana     http://localhost:3001 (admin/admin) — dashboards auto-provisioned
-- OTLP        http://localhost:4318/v1/traces (set `OTEL_TRACES_ENABLED=true`)
+- Prometheus http://localhost:9090
+- Grafana http://localhost:3001 (admin/admin) — dashboards auto-provisioned
+- OTLP http://localhost:4318/v1/traces (set `OTEL_TRACES_ENABLED=true`)
 
 ## Provisioning in a cluster
 

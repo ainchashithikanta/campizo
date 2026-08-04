@@ -99,7 +99,9 @@
   border-radius: var(--mp-radius-md);
   overflow: hidden;
   box-shadow: var(--mp-shadow-sm);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
 }

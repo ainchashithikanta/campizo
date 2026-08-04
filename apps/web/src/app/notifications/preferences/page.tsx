@@ -7,7 +7,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { fetchNotificationRules, updateNotificationRules, type NotificationUserRule } from '../../../lib/api-notifications';
+import {
+  fetchNotificationRules,
+  updateNotificationRules,
+  type NotificationUserRule
+} from '../../../lib/api-notifications';
 
 export default function NotificationPreferencesPage() {
   const [rules, setRules] = useState<NotificationUserRule | null>(null);
@@ -44,7 +48,9 @@ export default function NotificationPreferencesPage() {
     <main className="max-w-4xl mx-auto p-6 font-sans">
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Notification Preferences & Rules</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+            Notification Preferences & Rules
+          </h1>
           <p className="text-sm text-slate-500 mt-1">Configure Quiet Hours, Digest Frequencies, and Category Muting.</p>
         </div>
         <Link
@@ -70,7 +76,9 @@ export default function NotificationPreferencesPage() {
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-4">
               <div>
                 <h3 className="font-extrabold text-base text-slate-900 dark:text-slate-100">🌙 Quiet Hours Schedule</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Suppress non-urgent notifications during sleep or study hours.</p>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Suppress non-urgent notifications during sleep or study hours.
+                </p>
               </div>
               <input
                 type="checkbox"

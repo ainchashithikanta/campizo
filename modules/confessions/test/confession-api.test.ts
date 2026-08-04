@@ -43,13 +43,17 @@ describe('Campus Confessions Fastify REST API Integration Suite', () => {
     };
 
     const useCases = new ConfessionUseCases(
-      confessionRepo, commentRepo, voteRepo, bookmarkRepo,
-      modRepo, identityRepo, notifRepo, eventPublisher
+      confessionRepo,
+      commentRepo,
+      voteRepo,
+      bookmarkRepo,
+      modRepo,
+      identityRepo,
+      notifRepo,
+      eventPublisher
     );
 
-    const queries = new ConfessionQueries(
-      confessionRepo, commentRepo, bookmarkRepo, voteRepo, modRepo
-    );
+    const queries = new ConfessionQueries(confessionRepo, commentRepo, bookmarkRepo, voteRepo, modRepo);
 
     idempotencyStore = new InMemoryIdempotencyStore(5000); // 5s TTL for tests
 
@@ -118,7 +122,11 @@ describe('Campus Confessions Fastify REST API Integration Suite', () => {
       method: 'POST',
       url: '/api/v1/confessions',
       headers: { ...HEADERS, 'x-idempotency-key': 'idem-create-1' },
-      payload: { categoryCode: 'academic', title: 'CASIO FX-991ES+ Memory Clear', content: 'Remember to press Shift + 9 + 3 before entering lab!' }
+      payload: {
+        categoryCode: 'academic',
+        title: 'CASIO FX-991ES+ Memory Clear',
+        content: 'Remember to press Shift + 9 + 3 before entering lab!'
+      }
     });
     expect(res.statusCode).toBe(201);
     expect(publishedEvents.length).toBe(1);
@@ -140,17 +148,23 @@ describe('Campus Confessions Fastify REST API Integration Suite', () => {
 
   it('should return cached response for duplicate idempotency key', async () => {
     const idemKey = 'idem-duplicate-test-1';
-    const payload = { categoryCode: 'rant', title: 'Duplicate Test Confession', content: 'This should only be created once.' };
+    const payload = {
+      categoryCode: 'rant',
+      title: 'Duplicate Test Confession',
+      content: 'This should only be created once.'
+    };
 
     const res1 = await app.inject({
-      method: 'POST', url: '/api/v1/confessions',
+      method: 'POST',
+      url: '/api/v1/confessions',
       headers: { ...HEADERS, 'x-idempotency-key': idemKey },
       payload
     });
     expect(res1.statusCode).toBe(201);
 
     const res2 = await app.inject({
-      method: 'POST', url: '/api/v1/confessions',
+      method: 'POST',
+      url: '/api/v1/confessions',
       headers: { ...HEADERS, 'x-idempotency-key': idemKey },
       payload
     });
@@ -161,13 +175,19 @@ describe('Campus Confessions Fastify REST API Integration Suite', () => {
 
   it('should process concurrent reports and preserve event ordering', async () => {
     const createRes = await app.inject({
-      method: 'POST', url: '/api/v1/confessions', headers: HEADERS,
-      payload: { categoryCode: 'rant', title: 'Concurrent Report Test', content: 'Test confession for concurrent reporting.' }
+      method: 'POST',
+      url: '/api/v1/confessions',
+      headers: HEADERS,
+      payload: {
+        categoryCode: 'rant',
+        title: 'Concurrent Report Test',
+        content: 'Test confession for concurrent reporting.'
+      }
     });
     const confessionId = JSON.parse(createRes.body).data.id;
 
     // Simulate 3 concurrent reports
-    const reportPromises = [1, 2, 3].map(i =>
+    const reportPromises = [1, 2, 3].map((i) =>
       app.inject({
         method: 'POST',
         url: `/api/v1/confessions/${confessionId}/report`,
@@ -177,11 +197,11 @@ describe('Campus Confessions Fastify REST API Integration Suite', () => {
     );
 
     const results = await Promise.all(reportPromises);
-    expect(results.every(r => r.statusCode === 200)).toBe(true);
+    expect(results.every((r) => r.statusCode === 200)).toBe(true);
 
     // Event ordering check: ConfessionPublished must precede ReportSubmitted events
-    const eventTypes = publishedEvents.map(e => e.eventType);
+    const eventTypes = publishedEvents.map((e) => e.eventType);
     expect(eventTypes[0]).toBe('ConfessionPublished');
-    expect(eventTypes.filter(t => t === 'ReportSubmitted').length).toBe(3);
+    expect(eventTypes.filter((t) => t === 'ReportSubmitted').length).toBe(3);
   });
 });

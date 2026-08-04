@@ -12,11 +12,7 @@ import { FacultyResponseModal } from '@web/components/rate-my-professor/FacultyR
 import { Skeleton } from '@web/components/ui/Skeleton/Skeleton';
 import { Button } from '@web/components/ui/Button/Button';
 import { Badge } from '@web/components/ui/Badge/Badge';
-import {
-  useProfessorProfile,
-  useProfessorStats,
-  useProfessorReviews,
-} from '@web/hooks/use-api';
+import { useProfessorProfile, useProfessorStats, useProfessorReviews } from '@web/hooks/use-api';
 import * as api from '@web/lib/api';
 import type {
   ReviewDto,
@@ -24,7 +20,7 @@ import type {
   ReportRequest,
   FacultyResponseRequest,
   ProfessorProfileDto,
-  ProfessorStatisticsDto,
+  ProfessorStatisticsDto
 } from '@web/lib/types';
 
 // Fallback profile for Dr. Alan Turing
@@ -37,14 +33,15 @@ const FALLBACK_PROFILE: ProfessorProfileDto = {
   department: {
     id: 'dept-cs-001',
     name: 'Computer Science & Engineering',
-    code: 'CSE',
+    code: 'CSE'
   },
-  biography: 'Pioneer of theoretical computer science and artificial intelligence. Taught algorithms and cryptography for over 15 years.',
+  biography:
+    'Pioneer of theoretical computer science and artificial intelligence. Taught algorithms and cryptography for over 15 years.',
   photoUrl: null,
   coursesTaught: [
     { courseId: 'c-1', code: 'CS101', name: 'Introduction to Computer Science' },
     { courseId: 'c-2', code: 'CS201', name: 'Data Structures & Algorithms' },
-    { courseId: 'c-3', code: 'CS401', name: 'Theory of Computation' },
+    { courseId: 'c-3', code: 'CS401', name: 'Theory of Computation' }
   ],
   statistics: {
     bayesianRating: 4.85,
@@ -56,17 +53,17 @@ const FALLBACK_PROFILE: ProfessorProfileDto = {
       teachingClarity: 4.8,
       gradingFairness: 4.7,
       punctuality: 4.9,
-      approachability: 4.8,
+      approachability: 4.8
     },
     starDistribution: {
       star5: 35,
       star4: 5,
       star3: 2,
       star2: 0,
-      star1: 0,
+      star1: 0
     },
-    lastCalculatedAt: new Date().toISOString(),
-  },
+    lastCalculatedAt: new Date().toISOString()
+  }
 };
 
 const FALLBACK_STATS: ProfessorStatisticsDto = FALLBACK_PROFILE.statistics;
@@ -90,7 +87,7 @@ const FALLBACK_REVIEWS: ReviewDto[] = [
       teachingClarity: 5.0,
       gradingFairness: 4.5,
       punctuality: 5.0,
-      approachability: 4.8,
+      approachability: 4.8
     },
     tags: ['Legendary Lectures', 'Tough Viva', 'Fair Grading'],
     helpfulCount: 24,
@@ -100,10 +97,10 @@ const FALLBACK_REVIEWS: ReviewDto[] = [
       id: 'resp-1',
       responseText:
         'Thank you for the thoughtful feedback! I aim to make complexity theory intuitive for all students.',
-      respondedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+      respondedAt: new Date(Date.now() - 86400000 * 3).toISOString()
     },
     createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-    isEditable: false,
+    isEditable: false
   },
   {
     id: 'rev-102',
@@ -123,7 +120,7 @@ const FALLBACK_REVIEWS: ReviewDto[] = [
       teachingClarity: 4.8,
       gradingFairness: 4.8,
       punctuality: 4.9,
-      approachability: 4.7,
+      approachability: 4.7
     },
     tags: ['Lab Focused', 'Pop Quizzes'],
     helpfulCount: 12,
@@ -131,8 +128,8 @@ const FALLBACK_REVIEWS: ReviewDto[] = [
     userVote: null,
     facultyResponse: null,
     createdAt: new Date(Date.now() - 86400000 * 12).toISOString(),
-    isEditable: true,
-  },
+    isEditable: true
+  }
 ];
 
 export default function ProfessorProfilePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -203,7 +200,7 @@ export default function ProfessorProfilePage({ params }: { params: Promise<{ slu
             gap: '6px',
             fontSize: 'var(--ch-font-size-sm)',
             color: 'var(--ch-color-primary)',
-            fontWeight: 'var(--ch-font-weight-medium)',
+            fontWeight: 'var(--ch-font-weight-medium)'
           }}
         >
           ← Back to Directory
@@ -221,7 +218,7 @@ export default function ProfessorProfilePage({ params }: { params: Promise<{ slu
             border: '1px solid var(--ch-color-border)',
             borderRadius: 'var(--ch-radius-lg)',
             padding: 'var(--ch-spacing-5)',
-            marginBottom: 'var(--ch-spacing-6)',
+            marginBottom: 'var(--ch-spacing-6)'
           }}
         >
           <h3
@@ -230,7 +227,7 @@ export default function ProfessorProfilePage({ params }: { params: Promise<{ slu
               fontWeight: 'var(--ch-font-weight-semibold)',
               color: 'var(--ch-color-text-muted)',
               marginBottom: 'var(--ch-spacing-3)',
-              textTransform: 'uppercase',
+              textTransform: 'uppercase'
             }}
           >
             Courses Taught
@@ -254,7 +251,7 @@ export default function ProfessorProfilePage({ params }: { params: Promise<{ slu
               justifyContent: 'space-between',
               marginBottom: 'var(--ch-spacing-4)',
               flexWrap: 'wrap',
-              gap: 'var(--ch-spacing-3)',
+              gap: 'var(--ch-spacing-3)'
             }}
           >
             <h2 style={{ fontSize: 'var(--ch-font-size-xl)', fontWeight: 'bold' }}>
@@ -307,7 +304,7 @@ export default function ProfessorProfilePage({ params }: { params: Promise<{ slu
               padding: 'var(--ch-spacing-5)',
               display: 'flex',
               flexDirection: 'column',
-              gap: 'var(--ch-spacing-4)',
+              gap: 'var(--ch-spacing-4)'
             }}
           >
             <h3 style={{ fontSize: 'var(--ch-font-size-base)', fontWeight: 'bold' }}>
@@ -326,7 +323,7 @@ export default function ProfessorProfilePage({ params }: { params: Promise<{ slu
                 bayesianRating: 4.92,
                 totalReviewsCount: 58,
                 recommendationPercentage: 96.0,
-                topTags: ['Algorithm Genius', 'Clear Lectures'],
+                topTags: ['Algorithm Genius', 'Clear Lectures']
               }}
             />
           </div>

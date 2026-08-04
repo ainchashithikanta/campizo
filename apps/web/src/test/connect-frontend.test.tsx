@@ -117,7 +117,14 @@ describe('Campus Connect Next.js Frontend Component Suite (MS-23.9)', () => {
   });
 
   it('5. should render StudyGroupCard, ProjectCard, and MentorshipCard', () => {
-    const mockGroup = { id: 'sg_1', courseCode: 'CS224N', title: 'NLP Pod', maxCapacity: 5, currentMembers: 3, status: 'OPEN' };
+    const mockGroup = {
+      id: 'sg_1',
+      courseCode: 'CS224N',
+      title: 'NLP Pod',
+      maxCapacity: 5,
+      currentMembers: 3,
+      status: 'OPEN'
+    };
     const mockProject = { id: 'p_1', title: 'AI Assistant', description: 'Hackathon project', status: 'OPEN' };
     const mockMentorship = { id: 'm_1', mentorId: 'usr_mentor_david', menteeId: 'usr_me', status: 'ACTIVE' };
 
@@ -136,9 +143,23 @@ describe('Campus Connect Next.js Frontend Component Suite (MS-23.9)', () => {
 
   it('6. should render ConversationList and MessageBubble with originating context badges and read receipts', () => {
     const mockConversations = [
-      { id: 'conv_1', conversationType: 'STUDY_GROUP' as const, contextType: 'STUDY_POD', contextId: 'pod_cs224n', title: 'CS224N Pod', participantIds: ['usr_1'] }
+      {
+        id: 'conv_1',
+        conversationType: 'STUDY_GROUP' as const,
+        contextType: 'STUDY_POD',
+        contextId: 'pod_cs224n',
+        title: 'CS224N Pod',
+        participantIds: ['usr_1']
+      }
     ];
-    const mockMessage = { id: 'msg_1', conversationId: 'conv_1', senderProfileId: 'usr_1', content: 'Hello pod!', createdAt: new Date().toISOString(), isRead: true };
+    const mockMessage = {
+      id: 'msg_1',
+      conversationId: 'conv_1',
+      senderProfileId: 'usr_1',
+      content: 'Hello pod!',
+      createdAt: new Date().toISOString(),
+      isRead: true
+    };
 
     render(
       <div>
@@ -168,7 +189,15 @@ describe('Campus Connect Next.js Frontend Component Suite (MS-23.9)', () => {
   });
 
   it('8. should render ActivityTimeline, EmptyState, LoadingSkeleton, ErrorState, and Pagination', () => {
-    const mockActivities = [{ activityId: 'a1', actorId: 'usr_1', actionType: 'INTENT_CREATED', metadata: {}, recordedAt: new Date().toISOString() }];
+    const mockActivities = [
+      {
+        activityId: 'a1',
+        actorId: 'usr_1',
+        actionType: 'INTENT_CREATED',
+        metadata: {},
+        recordedAt: new Date().toISOString()
+      }
+    ];
 
     render(
       <div>

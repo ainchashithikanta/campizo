@@ -9,7 +9,6 @@ import {
 } from '../src/index.js';
 
 describe('Platform Feature Flags — Chaos Engineering & Resilience Suite', () => {
-
   let dlqManager: DLQManager;
   let eventRouter: EventRouter;
   let replayManager: EventReplayManager;
@@ -144,7 +143,9 @@ describe('Platform Feature Flags — Chaos Engineering & Resilience Suite', () =
       jobId: 'j_low',
       workerName: 'CleanupWorker',
       priority: 'LOW_PRIORITY',
-      task: async () => { executionOrder.push('LOW'); },
+      task: async () => {
+        executionOrder.push('LOW');
+      },
       enqueuedAt: Date.now()
     });
 
@@ -152,7 +153,9 @@ describe('Platform Feature Flags — Chaos Engineering & Resilience Suite', () =
       jobId: 'j_high',
       workerName: 'KillSwitchWorker',
       priority: 'HIGH_PRIORITY',
-      task: async () => { executionOrder.push('HIGH'); },
+      task: async () => {
+        executionOrder.push('HIGH');
+      },
       enqueuedAt: Date.now()
     });
 

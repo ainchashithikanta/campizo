@@ -66,7 +66,13 @@ describe('Academic Resource Hub API Integration Suite', () => {
     storageRepo = new InMemoryStorageMetadataRepository();
     eventBus = new MockEventBus();
 
-    const createResourceUC = new CreateAcademicResourceUseCase(resourceRepo, versionRepo, storageRepo, statsRepo, eventBus);
+    const createResourceUC = new CreateAcademicResourceUseCase(
+      resourceRepo,
+      versionRepo,
+      storageRepo,
+      statsRepo,
+      eventBus
+    );
     const publishResourceUC = new PublishAcademicResourceUseCase(resourceRepo, eventBus);
     const archiveResourceUC = new ArchiveAcademicResourceUseCase(resourceRepo, eventBus);
     const replaceResourceUC = new ReplaceAcademicResourceUseCase(resourceRepo, eventBus);

@@ -72,16 +72,10 @@ export default function ConfessionsFeedPage() {
       </header>
 
       <nav className="conf-nav">
-        <button
-          className={`conf-nav-link ${tab === 'trending' ? 'active' : ''}`}
-          onClick={() => setTab('trending')}
-        >
+        <button className={`conf-nav-link ${tab === 'trending' ? 'active' : ''}`} onClick={() => setTab('trending')}>
           🔥 Trending
         </button>
-        <button
-          className={`conf-nav-link ${tab === 'latest' ? 'active' : ''}`}
-          onClick={() => setTab('latest')}
-        >
+        <button className={`conf-nav-link ${tab === 'latest' ? 'active' : ''}`} onClick={() => setTab('latest')}>
           ✨ Latest
         </button>
         <Link href="/confessions/bookmarks" className="conf-nav-link">

@@ -4,14 +4,17 @@ import { ConfessionQueries } from '../queries/confession.queries.js';
 import { moderationDecisionSchema } from '../validators/confession.validators.js';
 
 export class ModerationController {
-  constructor(private useCases: ConfessionUseCases, private queries: ConfessionQueries) {}
+  constructor(
+    private useCases: ConfessionUseCases,
+    private queries: ConfessionQueries
+  ) {}
 
   async getQueue(req: FastifyRequest, reply: FastifyReply): Promise<void> {
     const { collegeId, requestId } = req.ctx;
     const cases = await this.queries.getModerationQueue(collegeId);
 
     // Enforce 100% blind identity for moderators — strip all identity fields
-    const blindCases = cases.map(c => ({
+    const blindCases = cases.map((c) => ({
       id: c.id,
       collegeId: c.collegeId,
       confessionId: c.confessionId,

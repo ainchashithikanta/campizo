@@ -7,9 +7,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { CompanyHeader, PlacementCard, CompanyAISummaryCard } from '../../../../components/placements/placement-components';
+import {
+  CompanyHeader,
+  PlacementCard,
+  CompanyAISummaryCard
+} from '../../../../components/placements/placement-components';
 import { LoadingSkeleton, EmptyState, ErrorState } from '../../../../components/connect/state-components';
-import { fetchCompanyBySlug, type Company, type PlacementExperience, type SalaryInsight, type CompanyAISummary } from '../../../../lib/api-placement-guidance';
+import {
+  fetchCompanyBySlug,
+  type Company,
+  type PlacementExperience,
+  type SalaryInsight,
+  type CompanyAISummary
+} from '../../../../lib/api-placement-guidance';
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -37,8 +47,18 @@ export default function CompanyDetailPage() {
       });
   }, [slug]);
 
-  if (loading) return <main className="max-w-4xl mx-auto p-6"><LoadingSkeleton count={2} /></main>;
-  if (error) return <main className="max-w-4xl mx-auto p-6"><ErrorState message={error} /></main>;
+  if (loading)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <LoadingSkeleton count={2} />
+      </main>
+    );
+  if (error)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <ErrorState message={error} />
+      </main>
+    );
   if (!company) return null;
 
   return (
@@ -53,7 +73,10 @@ export default function CompanyDetailPage() {
         </h2>
 
         {experiences.length === 0 ? (
-          <EmptyState title="No Experiences Posted Yet" description={`Be the first student to share an interview experience for ${company.name}!`} />
+          <EmptyState
+            title="No Experiences Posted Yet"
+            description={`Be the first student to share an interview experience for ${company.name}!`}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {experiences.map((exp) => (

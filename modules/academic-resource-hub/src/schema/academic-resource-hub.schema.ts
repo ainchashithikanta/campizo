@@ -88,7 +88,9 @@ export const departments = pgTable(
   'departments',
   {
     ...baseColumns,
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
     code: varchar('code', { length: 32 }).notNull(),
     name: varchar('name', { length: 128 }).notNull(),
     ...auditColumns
@@ -105,8 +107,12 @@ export const subjects = pgTable(
   'subjects',
   {
     ...baseColumns,
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
-    departmentId: uuid('department_id').notNull().references(() => departments.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
+    departmentId: uuid('department_id')
+      .notNull()
+      .references(() => departments.id, { onDelete: 'cascade' }),
     code: varchar('code', { length: 32 }).notNull(),
     name: varchar('name', { length: 256 }).notNull(),
     semesterNumber: integer('semester_number').notNull(),
@@ -125,8 +131,12 @@ export const courses = pgTable(
   'courses',
   {
     ...baseColumns,
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
-    departmentId: uuid('department_id').notNull().references(() => departments.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
+    departmentId: uuid('department_id')
+      .notNull()
+      .references(() => departments.id, { onDelete: 'cascade' }),
     code: varchar('code', { length: 32 }).notNull(),
     title: varchar('title', { length: 256 }).notNull(),
     ...auditColumns
@@ -143,13 +153,21 @@ export const academicResources = pgTable(
   'academic_resources',
   {
     ...baseColumns,
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
-    departmentId: uuid('department_id').notNull().references(() => departments.id, { onDelete: 'cascade' }),
-    subjectId: uuid('subject_id').notNull().references(() => subjects.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
+    departmentId: uuid('department_id')
+      .notNull()
+      .references(() => departments.id, { onDelete: 'cascade' }),
+    subjectId: uuid('subject_id')
+      .notNull()
+      .references(() => subjects.id, { onDelete: 'cascade' }),
     courseId: uuid('course_id').references(() => courses.id, { onDelete: 'set null' }),
     schemeId: uuid('scheme_id').references(() => academicSchemes.id, { onDelete: 'set null' }),
     examTypeId: uuid('exam_type_id').references(() => examTypes.id, { onDelete: 'set null' }),
-    resourceTypeId: uuid('resource_type_id').notNull().references(() => resourceTypes.id, { onDelete: 'restrict' }),
+    resourceTypeId: uuid('resource_type_id')
+      .notNull()
+      .references(() => resourceTypes.id, { onDelete: 'restrict' }),
     uploaderUserId: uuid('uploader_user_id').notNull(),
     title: varchar('title', { length: 256 }).notNull(),
     slug: varchar('slug', { length: 300 }).notNull(),
@@ -180,7 +198,9 @@ export const resourceVersions = pgTable(
   'resource_versions',
   {
     ...baseColumns,
-    resourceId: uuid('resource_id').notNull().references(() => academicResources.id, { onDelete: 'cascade' }),
+    resourceId: uuid('resource_id')
+      .notNull()
+      .references(() => academicResources.id, { onDelete: 'cascade' }),
     versionNumber: integer('version_number').notNull(),
     changelogNotes: text('changelog_notes'),
     createdByUserId: uuid('created_by_user_id').notNull(),
@@ -198,7 +218,9 @@ export const resourceFiles = pgTable(
   'resource_files',
   {
     ...baseColumns,
-    versionId: uuid('version_id').notNull().references(() => resourceVersions.id, { onDelete: 'cascade' }),
+    versionId: uuid('version_id')
+      .notNull()
+      .references(() => resourceVersions.id, { onDelete: 'cascade' }),
     storageProvider: varchar('storage_provider', { length: 32 }).default('S3').notNull(),
     storageKey: varchar('storage_key', { length: 512 }).notNull(),
     fileName: varchar('file_name', { length: 256 }).notNull(),
@@ -223,7 +245,9 @@ export const studyCollections = pgTable(
   'study_collections',
   {
     ...baseColumns,
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
     ownerUserId: uuid('owner_user_id').notNull(),
     title: varchar('title', { length: 256 }).notNull(),
     description: text('description'),
@@ -241,8 +265,12 @@ export const studyCollections = pgTable(
 export const collectionResources = pgTable(
   'collection_resources',
   {
-    collectionId: uuid('collection_id').notNull().references(() => studyCollections.id, { onDelete: 'cascade' }),
-    resourceId: uuid('resource_id').notNull().references(() => academicResources.id, { onDelete: 'cascade' }),
+    collectionId: uuid('collection_id')
+      .notNull()
+      .references(() => studyCollections.id, { onDelete: 'cascade' }),
+    resourceId: uuid('resource_id')
+      .notNull()
+      .references(() => academicResources.id, { onDelete: 'cascade' }),
     positionOrder: integer('position_order').default(0).notNull(),
     sectionHeader: varchar('section_header', { length: 128 }),
     createdAt: timestamp('created_at', { mode: 'date', precision: 3 }).defaultNow().notNull()
@@ -259,8 +287,12 @@ export const resourceRelationships = pgTable(
   'resource_relationships',
   {
     ...baseColumns,
-    sourceResourceId: uuid('source_resource_id').notNull().references(() => academicResources.id, { onDelete: 'cascade' }),
-    targetResourceId: uuid('target_resource_id').notNull().references(() => academicResources.id, { onDelete: 'cascade' }),
+    sourceResourceId: uuid('source_resource_id')
+      .notNull()
+      .references(() => academicResources.id, { onDelete: 'cascade' }),
+    targetResourceId: uuid('target_resource_id')
+      .notNull()
+      .references(() => academicResources.id, { onDelete: 'cascade' }),
     relationshipType: varchar('relationship_type', { length: 64 }).notNull(),
     ...auditColumns
   },
@@ -279,8 +311,12 @@ export const resourceRelationships = pgTable(
 export const resourceVotes = pgTable(
   'resource_votes',
   {
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
-    resourceId: uuid('resource_id').notNull().references(() => academicResources.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
+    resourceId: uuid('resource_id')
+      .notNull()
+      .references(() => academicResources.id, { onDelete: 'cascade' }),
     userId: uuid('user_id').notNull(),
     voteType: varchar('vote_type', { length: 16 }).notNull(), // HELPFUL, UNHELPFUL
     createdAt: timestamp('created_at', { mode: 'date', precision: 3 }).defaultNow().notNull()
@@ -296,8 +332,12 @@ export const resourceVotes = pgTable(
 export const resourceBookmarks = pgTable(
   'resource_bookmarks',
   {
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
-    resourceId: uuid('resource_id').notNull().references(() => academicResources.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
+    resourceId: uuid('resource_id')
+      .notNull()
+      .references(() => academicResources.id, { onDelete: 'cascade' }),
     userId: uuid('user_id').notNull(),
     createdAt: timestamp('created_at', { mode: 'date', precision: 3 }).defaultNow().notNull()
   },
@@ -313,8 +353,12 @@ export const resourceDownloads = pgTable(
   'resource_downloads',
   {
     ...baseColumns,
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
-    resourceId: uuid('resource_id').notNull().references(() => academicResources.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
+    resourceId: uuid('resource_id')
+      .notNull()
+      .references(() => academicResources.id, { onDelete: 'cascade' }),
     userId: uuid('user_id').notNull(),
     ipAddress: varchar('ip_address', { length: 64 }),
     downloadedAt: timestamp('downloaded_at', { mode: 'date', precision: 3 }).defaultNow().notNull()
@@ -331,8 +375,12 @@ export const resourceViews = pgTable(
   'resource_views',
   {
     ...baseColumns,
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
-    resourceId: uuid('resource_id').notNull().references(() => academicResources.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
+    resourceId: uuid('resource_id')
+      .notNull()
+      .references(() => academicResources.id, { onDelete: 'cascade' }),
     userId: uuid('user_id'),
     ipAddress: varchar('ip_address', { length: 64 }),
     viewedAt: timestamp('viewed_at', { mode: 'date', precision: 3 }).defaultNow().notNull()
@@ -349,8 +397,12 @@ export const resourceReports = pgTable(
   'resource_reports',
   {
     ...baseColumns,
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
-    resourceId: uuid('resource_id').notNull().references(() => academicResources.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
+    resourceId: uuid('resource_id')
+      .notNull()
+      .references(() => academicResources.id, { onDelete: 'cascade' }),
     reporterUserId: uuid('reporter_user_id').notNull(),
     reason: varchar('reason', { length: 64 }).notNull(), // SPAM, COPYRIGHT, BROKEN, WRONG_CATEGORY
     details: text('details'),
@@ -368,8 +420,12 @@ export const resourceReports = pgTable(
 export const resourceStatistics = pgTable(
   'resource_statistics',
   {
-    resourceId: uuid('resource_id').primaryKey().references(() => academicResources.id, { onDelete: 'cascade' }),
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
+    resourceId: uuid('resource_id')
+      .primaryKey()
+      .references(() => academicResources.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
     totalDownloads: integer('total_downloads').default(0).notNull(),
     totalViews: integer('total_views').default(0).notNull(),
     helpfulVotes: integer('helpful_votes').default(0).notNull(),
@@ -380,7 +436,10 @@ export const resourceStatistics = pgTable(
     lastCalculatedAt: timestamp('last_calculated_at', { mode: 'date', precision: 3 }).defaultNow().notNull()
   },
   (table) => ({
-    collegeQualityScoreIdx: index('resource_statistics_college_score_idx').on(table.collegeId, table.bayesianQualityScore)
+    collegeQualityScoreIdx: index('resource_statistics_college_score_idx').on(
+      table.collegeId,
+      table.bayesianQualityScore
+    )
   })
 );
 
@@ -391,7 +450,9 @@ export const contributors = pgTable(
   'contributors',
   {
     ...baseColumns,
-    collegeId: uuid('college_id').notNull().references(() => colleges.id, { onDelete: 'cascade' }),
+    collegeId: uuid('college_id')
+      .notNull()
+      .references(() => colleges.id, { onDelete: 'cascade' }),
     userId: uuid('user_id').notNull(),
     reputationScore: integer('reputation_score').default(0).notNull(),
     totalUploads: integer('total_uploads').default(0).notNull(),

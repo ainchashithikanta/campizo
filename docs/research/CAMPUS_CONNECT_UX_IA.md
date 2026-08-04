@@ -3,7 +3,7 @@
 **Module Name**: `Campus Connect` (`@college-hub/campus-connect`)  
 **Document Type**: UX & Information Architecture Blueprint  
 **Status**: 🟢 **FINAL UX/IA SPECIFICATION (WITH REFINEMENTS)**  
-**Target Platform**: College Hub Web & Mobile Platform  
+**Target Platform**: College Hub Web & Mobile Platform
 
 ---
 
@@ -103,26 +103,31 @@ Campus Connect Root (/connect)
 ## 3. Core User Journeys
 
 ### 3.1 Flow A: Progressive Student Onboarding
+
 ```
 [SSO Login] ➔ [Step 1: Enrolled Major & Year] ➔ [Instant Access to Dashboard] ➔ [Nudge 1: Add Courses when searching Study Partners] ➔ [Nudge 2: Add Skill Tags when creating Project Request]
 ```
 
 ### 3.2 Flow B: Finding a Study Partner for CS224N
+
 ```
 [Navigate to /connect/discover/study-partners] ➔ [Filter by Course: CS224N] ➔ [Inspect Compatibility Cards] ➔ [Click "Send Connection Request"] ➔ [Attach Intent Note] ➔ [Request Sent (1/5 Daily Limit Used)]
 ```
 
 ### 3.3 Flow C: Receiving & Accepting a Connection Request
+
 ```
 [Notification: "Alex sent a Study Request for CS224N"] ➔ [Open /connect/network/requests] ➔ [View Alex's Purpose Profile & Overlap] ➔ [Click "Accept Request"] ➔ [Intent-Bound Direct Message Thread Created]
 ```
 
 ### 3.4 Flow D: Senior-to-Junior Mentorship Request
+
 ```
 [Navigate to /connect/discover/mentorship] ➔ [Filter: "Software Engineering Internships"] ➔ [Select Senior Mentor] ➔ [Select Guidance Intent (e.g., Resume Review)] ➔ [Submit Request]
 ```
 
 ### 3.5 Flow E: Blocking & Reporting a Safety Incident
+
 ```
 [Click "..." on Message Thread or Profile] ➔ [Select "Report & Block User"] ➔ [Select Reason (e.g. Unsolicited Commercial Spam)] ➔ [Confirm Action] ➔ [Connection Severed + Chat Hidden + Dispatched to Admin Dashboard]
 ```
@@ -164,6 +169,7 @@ Profiles strictly prioritize academic, technical, and goal-oriented credentials 
 ## 5. Discovery & Matching Experience
 
 ### 5.1 Anti-Addictive Compatibility Cards
+
 Instead of swipe cards, students browse structured **Compatibility Grid Cards**:
 
 ```
@@ -183,6 +189,7 @@ Instead of swipe cards, students browse structured **Compatibility Grid Cards**:
 ```
 
 ### 5.2 Filter & Sort Capabilities
+
 - **Filter Parameters**: Course Code, Academic Major, Graduation Year, Skill Tag, Campus Residence, Goal (Exam Prep, Term Project, Hackathon).
 - **Sort Orders**: Highest Compatibility Vector, Most Course Overlap, Recently Active, Mutual Peer Connections.
 
@@ -281,14 +288,14 @@ When a feature flag is disabled in `@college-hub/platform-feature-flags`, the UI
 
 ## 10. Notifications Matrix
 
-| Notification Category | Trigger Condition | Delivery Channel | In-App Pill |
-| :--- | :--- | :--- | :--- |
-| **Connection Request** | Peer sends study/project request | Push + In-App | Red badge on Network tab |
-| **Accepted Request** | Peer accepts connection request | Push + In-App | Direct chat unlocked prompt |
-| **Direct Message** | Incoming message from connected peer | Push + In-App | Unread chat counter pill |
-| **Mentorship Invite** | Senior invites junior to mentorship | Email + In-App | Notification feed item |
-| **Project Invitation** | Teammate invites student to hackathon | In-App | Notification feed item |
-| **System Safety Alert** | Report outcome or login from new device | In-App | Security banner |
+| Notification Category   | Trigger Condition                       | Delivery Channel | In-App Pill                 |
+| :---------------------- | :-------------------------------------- | :--------------- | :-------------------------- |
+| **Connection Request**  | Peer sends study/project request        | Push + In-App    | Red badge on Network tab    |
+| **Accepted Request**    | Peer accepts connection request         | Push + In-App    | Direct chat unlocked prompt |
+| **Direct Message**      | Incoming message from connected peer    | Push + In-App    | Unread chat counter pill    |
+| **Mentorship Invite**   | Senior invites junior to mentorship     | Email + In-App   | Notification feed item      |
+| **Project Invitation**  | Teammate invites student to hackathon   | In-App           | Notification feed item      |
+| **System Safety Alert** | Report outcome or login from new device | In-App           | Security banner             |
 
 ---
 
@@ -315,7 +322,9 @@ When a feature flag is disabled in `@college-hub/platform-feature-flags`, the UI
 The following 6 UX refinements have been incorporated to enhance home dashboard goal tracking, presence granularity, contribution badges, smart empty states, progressive profile completion, and extensible navigation:
 
 ### 13.1 Networking Goals Dashboard
+
 The home feed features a prominent **Networking Goals Widget**:
+
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  🎯 YOUR SEMESTER COLLABORATION GOALS                        │
@@ -329,7 +338,9 @@ The home feed features a prominent **Networking Goals Widget**:
 ```
 
 ### 13.2 Richer Availability States
+
 Beyond binary online/offline presence dots, students can select active availability states:
+
 - 🟢 **Available to Study**: Open for course exam prep or homework discussion.
 - 🚀 **Open for Projects**: Seeking hackathon or course term project teammates.
 - 📚 **Exam Prep Focus Mode**: Mutes incoming requests; shows "In Focus Mode until 8 PM".
@@ -337,14 +348,18 @@ Beyond binary online/offline presence dots, students can select active availabil
 - 🔴 **Busy / Do Not Disturb**: Suppresses all real-time presence indicators.
 
 ### 13.3 Contribution-Based Trust Badges (Zero Vanity Metrics)
+
 Trust badges reflect verifiable student contributions:
+
 - 🏅 `Top Peer Mentor` (Completed 5+ verified junior mentorship milestones).
 - 📚 `Study Pod Anchor` (Hosted 10+ verified peer study sessions).
 - 🏆 `Hackathon Veteran` (Formed and completed 3+ hackathon teams).
 - 🤝 `Verified Course Contributor` (Endorsed by 3+ course project teammates).
 
 ### 13.4 Smart Actionable Empty States
+
 When a query returns zero results, empty states provide direct actionable next steps instead of dead ends:
+
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │ 🔍 No Study Partners Found for CS224N                        │
@@ -356,12 +371,15 @@ When a query returns zero results, empty states provide direct actionable next s
 ```
 
 ### 13.5 Progressive Profile Completion
+
 Rather than requiring a lengthy single onboarding form, profiles are built progressively through contextual micro-nudges:
+
 - **Onboarding Stage**: SSO Login + Major & Class Year (15 seconds).
 - **Context Nudge 1**: "Add enrolled courses to discover CS224N study partners" (triggered when opening Study Partners tab).
 - **Context Nudge 2**: "Add technical skills to assemble hackathon teams" (triggered when opening Hackathons tab).
 
 ### 13.6 Extensible Navigation for Alumni & Recruiters
+
 Navigation structures reserve clean, un-crowded slots for future Alumni (`/connect/alumni`) and Recruiter (`/connect/recruiters`) modules, allowing seamless activation without layout refactors.
 
 ---

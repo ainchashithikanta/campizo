@@ -24,11 +24,7 @@ export function FeatureFlagsNavHeader({ activePath }: { activePath: string }) {
   return (
     <nav className="ff-nav-grid" aria-label="Feature Flags Console Navigation">
       {links.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className={`ff-nav-link ${activePath === link.href ? 'active' : ''}`}
-        >
+        <Link key={link.href} href={link.href} className={`ff-nav-link ${activePath === link.href ? 'active' : ''}`}>
           {link.label}
         </Link>
       ))}
@@ -92,9 +88,7 @@ export function HoldToActivateButton({
       aria-label="Hold to activate emergency kill switch"
     >
       <div className="ff-hold-progress" style={{ width: `${progress}%` }} />
-      <span className="ff-hold-text">
-        {isHolding ? `HOLDING... ${Math.round(progress)}%` : label}
-      </span>
+      <span className="ff-hold-text">{isHolding ? `HOLDING... ${Math.round(progress)}%` : label}</span>
     </button>
   );
 }
@@ -117,7 +111,19 @@ export function MetricCard({ title, value, subtitle }: { title: string; value: s
  */
 export function TraceIdBadge({ traceId }: { traceId: string }) {
   return (
-    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 8px', background: '#334155', borderRadius: '4px', fontFamily: 'monospace', fontSize: '11px', color: '#06B6D4' }}>
+    <div
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        padding: '4px 8px',
+        background: '#334155',
+        borderRadius: '4px',
+        fontFamily: 'monospace',
+        fontSize: '11px',
+        color: '#06B6D4'
+      }}
+    >
       <span>🔍 Trace ID:</span>
       <span>{traceId}</span>
     </div>

@@ -37,7 +37,11 @@ describe('Campus Connect — Production Background Worker Pipeline Suite (MS-23.
 
   it('1. RecommendationWorker: Generates immutable recommendation snapshot in <150ms', async () => {
     const worker = new RecommendationWorker(useCases);
-    const event = buildEventEnvelope('IntentActivated', { intentId: 'int_101', studentProfileId: 'usr_stanford_101', intentType: 'STUDY_PARTNER' }, { collegeId: 'college_stanford_001' });
+    const event = buildEventEnvelope(
+      'IntentActivated',
+      { intentId: 'int_101', studentProfileId: 'usr_stanford_101', intentType: 'STUDY_PARTNER' },
+      { collegeId: 'college_stanford_001' }
+    );
 
     const startTime = Date.now();
     await worker.processIntentActivated(event);
@@ -62,7 +66,11 @@ describe('Campus Connect — Production Background Worker Pipeline Suite (MS-23.
     });
 
     const worker = new IntentExpiryWorker(useCases);
-    const event = buildEventEnvelope('IntentExpired', { intentId: 'int_exp_100' }, { collegeId: 'college_stanford_001' });
+    const event = buildEventEnvelope(
+      'IntentExpired',
+      { intentId: 'int_exp_100' },
+      { collegeId: 'college_stanford_001' }
+    );
 
     await worker.processIntentExpiryCheck(event);
 
@@ -72,7 +80,11 @@ describe('Campus Connect — Production Background Worker Pipeline Suite (MS-23.
 
   it('3. NotificationWorker: Prepares notification payload without direct email/push dispatch in <30ms', async () => {
     const worker = new NotificationWorker();
-    const event = buildEventEnvelope('NotificationQueued', { recipientId: 'usr_200', title: 'New Match', body: 'Sarah accepted your request.', category: 'CONNECTION' }, { collegeId: 'college_stanford_001' });
+    const event = buildEventEnvelope(
+      'NotificationQueued',
+      { recipientId: 'usr_200', title: 'New Match', body: 'Sarah accepted your request.', category: 'CONNECTION' },
+      { collegeId: 'college_stanford_001' }
+    );
 
     const startTime = Date.now();
     const payload = await worker.processNotificationEvent(event);
@@ -85,7 +97,11 @@ describe('Campus Connect — Production Background Worker Pipeline Suite (MS-23.
 
   it('4. SearchIndexWorker: Asynchronously updates discovery indexes in <80ms', async () => {
     const worker = new SearchIndexWorker();
-    const event = buildEventEnvelope('SearchIndexUpdate', { docId: 'int_301', docType: 'INTENT', content: { title: 'CS224N Pod' } }, { collegeId: 'college_stanford_001' });
+    const event = buildEventEnvelope(
+      'SearchIndexUpdate',
+      { docId: 'int_301', docType: 'INTENT', content: { title: 'CS224N Pod' } },
+      { collegeId: 'college_stanford_001' }
+    );
 
     const startTime = Date.now();
     await worker.processSearchIndexUpdate(event);
@@ -99,7 +115,11 @@ describe('Campus Connect — Production Background Worker Pipeline Suite (MS-23.
 
   it('5. TrustScoreWorker: Recalculates internal private trust score without exposing it publicly', async () => {
     const worker = new TrustScoreWorker();
-    const event = buildEventEnvelope('TrustScoreRecalculate', { studentProfileId: 'usr_student_101', factor: 'POLICY_VIOLATION_REPORTED', delta: -15.0 }, { collegeId: 'college_stanford_001' });
+    const event = buildEventEnvelope(
+      'TrustScoreRecalculate',
+      { studentProfileId: 'usr_student_101', factor: 'POLICY_VIOLATION_REPORTED', delta: -15.0 },
+      { collegeId: 'college_stanford_001' }
+    );
 
     await worker.processTrustScoreRecalculation(event);
 
@@ -109,7 +129,11 @@ describe('Campus Connect — Production Background Worker Pipeline Suite (MS-23.
 
   it('6. RelationshipWorker: Maintains derived RelationshipStrength between students', async () => {
     const worker = new RelationshipWorker();
-    const event = buildEventEnvelope('RelationshipActivity', { studentAId: 'usr_101', studentBId: 'usr_102', activityType: 'STUDY_GROUP_JOINED', scoreDelta: 0.25 }, { collegeId: 'college_stanford_001' });
+    const event = buildEventEnvelope(
+      'RelationshipActivity',
+      { studentAId: 'usr_101', studentBId: 'usr_102', activityType: 'STUDY_GROUP_JOINED', scoreDelta: 0.25 },
+      { collegeId: 'college_stanford_001' }
+    );
 
     await worker.processRelationshipActivity(event);
 
@@ -119,7 +143,11 @@ describe('Campus Connect — Production Background Worker Pipeline Suite (MS-23.
 
   it('7. ModerationWorker: Processes ReportCreated events into moderation queue', async () => {
     const worker = new ModerationWorker(useCases);
-    const event = buildEventEnvelope('ReportCreated', { caseId: 'case_99', reportedUserId: 'usr_bad', reporterUserId: 'usr_good', reason: 'SPAM' }, { collegeId: 'college_stanford_001' });
+    const event = buildEventEnvelope(
+      'ReportCreated',
+      { caseId: 'case_99', reportedUserId: 'usr_bad', reporterUserId: 'usr_good', reason: 'SPAM' },
+      { collegeId: 'college_stanford_001' }
+    );
 
     await worker.processReportCreated(event);
 
@@ -130,7 +158,11 @@ describe('Campus Connect — Production Background Worker Pipeline Suite (MS-23.
 
   it('8. ActivityWorker: Writes immutable, append-only activity feed entries', async () => {
     const worker = new ActivityWorker();
-    const event = buildEventEnvelope('ActivityRecorded', { actorId: 'usr_101', actionType: 'INTENT_CREATED', metadata: { intentId: 'int_1' } }, { collegeId: 'college_stanford_001' });
+    const event = buildEventEnvelope(
+      'ActivityRecorded',
+      { actorId: 'usr_101', actionType: 'INTENT_CREATED', metadata: { intentId: 'int_1' } },
+      { collegeId: 'college_stanford_001' }
+    );
 
     const entry = await worker.processActivityEvent(event);
 
@@ -141,7 +173,11 @@ describe('Campus Connect — Production Background Worker Pipeline Suite (MS-23.
 
   it('9. AnalyticsWorker: Exclusively aggregates system metrics across categories', async () => {
     const worker = new AnalyticsWorker();
-    const event = buildEventEnvelope('AnalyticsRecord', { category: 'DISCOVERY', incrementBy: 5 }, { collegeId: 'college_stanford_001' });
+    const event = buildEventEnvelope(
+      'AnalyticsRecord',
+      { category: 'DISCOVERY', incrementBy: 5 },
+      { collegeId: 'college_stanford_001' }
+    );
 
     await worker.processAnalyticsEvent(event);
 

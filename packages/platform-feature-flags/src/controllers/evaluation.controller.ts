@@ -26,10 +26,7 @@ export class EvaluationController {
   }
 
   /** POST /api/v1/feature-flags/evaluate/bulk */
-  async bulkEvaluate(
-    body: { flagKeys: string[]; context?: Record<string, unknown> | undefined },
-    ctx: RequestContext
-  ) {
+  async bulkEvaluate(body: { flagKeys: string[]; context?: Record<string, unknown> | undefined }, ctx: RequestContext) {
     const mapRes = this.evalService.bulkEvaluate(body.flagKeys, ctx.environment, body.context || {});
     const serialized = Object.fromEntries(mapRes);
     return buildSuccessResponse(serialized, ctx);
@@ -42,8 +39,16 @@ export class EvaluationController {
   }
 
   /** POST /api/v1/feature-flags/evaluate/simulate */
-  async simulate(body: { flagKey: string; sampleUserIds: string[]; proposedRolloutPercentage: number }, ctx: RequestContext) {
-    const sim = this.evalService.simulate(body.flagKey, ctx.environment, body.sampleUserIds, body.proposedRolloutPercentage);
+  async simulate(
+    body: { flagKey: string; sampleUserIds: string[]; proposedRolloutPercentage: number },
+    ctx: RequestContext
+  ) {
+    const sim = this.evalService.simulate(
+      body.flagKey,
+      ctx.environment,
+      body.sampleUserIds,
+      body.proposedRolloutPercentage
+    );
     return buildSuccessResponse(sim, ctx);
   }
 }

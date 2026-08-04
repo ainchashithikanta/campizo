@@ -92,14 +92,23 @@ export class InMemoryConnectionRepository {
 
   async findConnection(studentAId: string, studentBId: string, collegeId: string): Promise<any | null> {
     for (const c of this.connections.values()) {
-      if (c.collegeId === collegeId && ((c.studentAId === studentAId && c.studentBId === studentBId) || (c.studentAId === studentBId && c.studentBId === studentAId))) {
+      if (
+        c.collegeId === collegeId &&
+        ((c.studentAId === studentAId && c.studentBId === studentBId) ||
+          (c.studentAId === studentBId && c.studentBId === studentAId))
+      ) {
         return { ...c };
       }
     }
     return null;
   }
 
-  async listConnections(studentProfileId: string, collegeId: string, limit: number = 20, offset: number = 0): Promise<any[]> {
+  async listConnections(
+    studentProfileId: string,
+    collegeId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Promise<any[]> {
     const res: any[] = [];
     for (const c of this.connections.values()) {
       if (c.collegeId === collegeId && (c.studentAId === studentProfileId || c.studentBId === studentProfileId)) {
@@ -153,7 +162,12 @@ export class InMemoryMessageRepository {
     return m && m.collegeId === collegeId ? { ...m } : null;
   }
 
-  async listByConversation(conversationId: string, collegeId: string, limit: number = 50, offset: number = 0): Promise<any[]> {
+  async listByConversation(
+    conversationId: string,
+    collegeId: string,
+    limit: number = 50,
+    offset: number = 0
+  ): Promise<any[]> {
     const res: any[] = [];
     for (const m of this.messages.values()) {
       if (m.collegeId === collegeId && m.conversationId === conversationId && !m.isSoftDeleted) {

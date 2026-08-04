@@ -6,9 +6,10 @@
   border-radius: var(--ch-radius-lg);
   padding: var(--ch-spacing-5);
   gap: var(--ch-spacing-4);
-  transition: transform var(--ch-motion-fast) var(--ch-motion-easing),
-              box-shadow var(--ch-motion-fast) var(--ch-motion-easing),
-              border-color var(--ch-motion-fast) var(--ch-motion-easing);
+  transition:
+    transform var(--ch-motion-fast) var(--ch-motion-easing),
+    box-shadow var(--ch-motion-fast) var(--ch-motion-easing),
+    border-color var(--ch-motion-fast) var(--ch-motion-easing);
   text-decoration: none;
   color: var(--ch-color-text);
   position: relative;
@@ -39,7 +40,7 @@
   height: 48px;
   border-radius: var(--ch-radius-full);
   background: linear-gradient(135deg, var(--ch-color-primary) 0%, var(--ch-color-secondary) 100%);
-  color: #FFFFFF;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -21,7 +21,10 @@ export function RecommendationCard({ recommendation, onConnect }: Recommendation
       <div>
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
-            <h3 id={`rec-name-${recommendation.snapshotId}`} className="font-semibold text-base text-slate-900 dark:text-slate-10 font-sans">
+            <h3
+              id={`rec-name-${recommendation.snapshotId}`}
+              className="font-semibold text-base text-slate-900 dark:text-slate-10 font-sans"
+            >
               {recommendation.targetStudentName}
             </h3>
             {recommendation.major && (

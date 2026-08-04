@@ -13,7 +13,11 @@ export class RecommendationController {
 
   async getRecommendations(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const query = recommendationQuerySchema.parse(request.query || {});
-    const recs = await this.queryService.getRecommendations(request.context.userId, request.context.collegeId, query.limit);
+    const recs = await this.queryService.getRecommendations(
+      request.context.userId,
+      request.context.collegeId,
+      query.limit
+    );
     reply.send(formatApiV1Success(recs, request));
   }
 }

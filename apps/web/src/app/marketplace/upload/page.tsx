@@ -4,12 +4,7 @@ import React, { useState } from 'react';
 import '@web/styles/marketplace.css';
 
 export type PipelineStage =
-  | 'IDLE'
-  | 'UPLOADING'
-  | 'VIRUS_SCAN'
-  | 'IMAGE_OPTIMIZATION'
-  | 'METADATA_EXTRACTION'
-  | 'READY';
+  'IDLE' | 'UPLOADING' | 'VIRUS_SCAN' | 'IMAGE_OPTIMIZATION' | 'METADATA_EXTRACTION' | 'READY';
 
 export default function MarketplaceUploadPage() {
   const [step, setStep] = useState(1);
@@ -47,7 +42,7 @@ export default function MarketplaceUploadPage() {
             <input
               type="text"
               value={title}
-              onChange={e => setTitle(e.target.value)}
+              onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. CASIO FX-991ES+ Scientific Calculator"
               style={{
                 width: '100%',
@@ -88,7 +83,7 @@ export default function MarketplaceUploadPage() {
             <input
               type="number"
               value={price}
-              onChange={e => setPrice(e.target.value)}
+              onChange={(e) => setPrice(e.target.value)}
               style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -128,7 +123,7 @@ export default function MarketplaceUploadPage() {
             <input
               type="text"
               value={location}
-              onChange={e => setLocation(e.target.value)}
+              onChange={(e) => setLocation(e.target.value)}
               placeholder="e.g. Hostel Block 4 / Central Library Gate"
               style={{
                 width: '100%',
@@ -140,14 +135,18 @@ export default function MarketplaceUploadPage() {
           </div>
 
           {pipelineStage !== 'IDLE' && (
-            <div className="mp-reservation-banner" style={{ backgroundColor: '#eff6ff', borderColor: '#3b82f6', color: '#1e40af' }}>
+            <div
+              className="mp-reservation-banner"
+              style={{ backgroundColor: '#eff6ff', borderColor: '#3b82f6', color: '#1e40af' }}
+            >
               <span>🔄</span>
               <div>
                 <strong>Backend Processing Stage: {pipelineStage}</strong>
                 <div style={{ fontSize: '0.875rem', marginTop: '0.25rem' }}>
                   {pipelineStage === 'UPLOADING' && '1. Uploading media directly to S3 storage...'}
                   {pipelineStage === 'VIRUS_SCAN' && '2. VirusScanWorker inspecting file binaries...'}
-                  {pipelineStage === 'IMAGE_OPTIMIZATION' && '3. Generating WebP variants (Thumbnail, Small, Medium, Large)...'}
+                  {pipelineStage === 'IMAGE_OPTIMIZATION' &&
+                    '3. Generating WebP variants (Thumbnail, Small, Medium, Large)...'}
                   {pipelineStage === 'METADATA_EXTRACTION' && '4. Extracting image dimensions & EXIF metadata...'}
                   {pipelineStage === 'READY' && '5. All workers cleared! Ready to publish live.'}
                 </div>

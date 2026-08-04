@@ -5,6 +5,7 @@
 This document specifies the production PostgreSQL database architecture for the **College Hub Campus Marketplace**.
 
 The database design is engineered to support:
+
 - **Multi-Tenant Isolation**: Complete isolation across 100+ university campuses using `college_id` keys and PostgreSQL Row-Level Security (RLS).
 - **High Throughput & Concurrency**: Support for millions of listings, real-time negotiation offers, and heavy student chat messaging.
 - **State Machine Integrity**: Strict status transitions for listings (`PUBLISHED` $\rightarrow$ `RESERVED` $\rightarrow$ `SOLD`), offers (`CREATED` $\rightarrow$ `ACCEPTED` / `REJECTED`), and reservation timers.
@@ -34,6 +35,7 @@ The database design is engineered to support:
 ```
 
 ### 1.2 RLS Invariants
+
 - Every tenant-specific table contains an indexed, non-null `college_id` column.
 - Row-Level Security policies restrict read/write access to rows matching `current_setting('app.current_college_id')`.
 - Cross-college browsing, messaging, offers, and reservations are strictly blocked at the database boundary.
@@ -44,26 +46,27 @@ The database design is engineered to support:
 
 ### 2.1 Entity Summary & Domain Ownership
 
-| Entity Name | Primary Key | Aggregate Root | Tenant Bounded | Purpose & Ownership |
-| :--- | :--- | :--- | :---: | :--- |
-| `marketplace_listings` | `id` (UUID) | **Root** | Yes | Core listing entity holding title, price, condition, location, and lifecycle status. |
-| `listing_media` | `id` (UUID) | `MarketplaceListing` | Yes | Uploaded photos attached to a listing with display ordering (`position_order`). |
-| `marketplace_categories` | `code` (VARCHAR) | Reference | No | Global category taxonomy (Textbooks, Calculators, Cycles, Hostel Gear). |
-| `marketplace_offers` | `id` (UUID) | `MarketplaceListing` | Yes | Formal price negotiation proposals between buyer and seller. |
-| `marketplace_reservations` | `id` (UUID) | `MarketplaceListing` | Yes | 24-hour temporary item reservation binding buyer, seller, and listing. |
-| `marketplace_conversations` | `id` (UUID) | **Root** | Yes | Chat thread between buyer and seller associated with a specific listing. |
-| `marketplace_messages` | `id` (UUID) | `MarketplaceConversation` | Yes | Individual text messages, offer cards, and system notifications in chat. |
-| `seller_profiles` | `id` (UUID) | **Root** | Yes | Student seller reputation, completed sales count, and trust badges. |
-| `marketplace_reports` | `id` (UUID) | Independent | Yes | Safety reports filed by students for spam, counterfeit, or harassment. |
-| `marketplace_bookmarks` | `id` (UUID) | Independent | Yes | Student saved listings for quick offline/saved access. |
-| `marketplace_statistics` | `listing_id` | `MarketplaceListing` | Yes | Aggregate counters for views, bookmarks, offers, and popularity metrics. |
-| `marketplace_audit_logs` | `id` (UUID) | System | Yes | Immutable log of status transitions and moderation actions. |
+| Entity Name                 | Primary Key      | Aggregate Root            | Tenant Bounded | Purpose & Ownership                                                                  |
+| :-------------------------- | :--------------- | :------------------------ | :------------: | :----------------------------------------------------------------------------------- |
+| `marketplace_listings`      | `id` (UUID)      | **Root**                  |      Yes       | Core listing entity holding title, price, condition, location, and lifecycle status. |
+| `listing_media`             | `id` (UUID)      | `MarketplaceListing`      |      Yes       | Uploaded photos attached to a listing with display ordering (`position_order`).      |
+| `marketplace_categories`    | `code` (VARCHAR) | Reference                 |       No       | Global category taxonomy (Textbooks, Calculators, Cycles, Hostel Gear).              |
+| `marketplace_offers`        | `id` (UUID)      | `MarketplaceListing`      |      Yes       | Formal price negotiation proposals between buyer and seller.                         |
+| `marketplace_reservations`  | `id` (UUID)      | `MarketplaceListing`      |      Yes       | 24-hour temporary item reservation binding buyer, seller, and listing.               |
+| `marketplace_conversations` | `id` (UUID)      | **Root**                  |      Yes       | Chat thread between buyer and seller associated with a specific listing.             |
+| `marketplace_messages`      | `id` (UUID)      | `MarketplaceConversation` |      Yes       | Individual text messages, offer cards, and system notifications in chat.             |
+| `seller_profiles`           | `id` (UUID)      | **Root**                  |      Yes       | Student seller reputation, completed sales count, and trust badges.                  |
+| `marketplace_reports`       | `id` (UUID)      | Independent               |      Yes       | Safety reports filed by students for spam, counterfeit, or harassment.               |
+| `marketplace_bookmarks`     | `id` (UUID)      | Independent               |      Yes       | Student saved listings for quick offline/saved access.                               |
+| `marketplace_statistics`    | `listing_id`     | `MarketplaceListing`      |      Yes       | Aggregate counters for views, bookmarks, offers, and popularity metrics.             |
+| `marketplace_audit_logs`    | `id` (UUID)      | System                    |      Yes       | Immutable log of status transitions and moderation actions.                          |
 
 ---
 
 ## 3. Detailed Entity Models & Schema Design
 
 ### 3.1 `marketplace_listings` Table Specification
+
 - **Purpose**: Single source of truth for items posted for sale, rent, or giveaway.
 - **Attributes**:
   - `id`: UUID (Primary Key)
@@ -87,6 +90,7 @@ The database design is engineered to support:
 ---
 
 ### 3.2 `marketplace_offers` Table Specification
+
 - **Purpose**: Stores price negotiation lifecycle between buyer and seller.
 - **Attributes**:
   - `id`: UUID (Primary Key)
@@ -103,6 +107,7 @@ The database design is engineered to support:
 ---
 
 ### 3.3 `marketplace_reservations` Table Specification
+
 - **Purpose**: Governs 24-hour item lock period upon offer acceptance.
 - **Attributes**:
   - `id`: UUID (Primary Key)
@@ -119,6 +124,7 @@ The database design is engineered to support:
 ---
 
 ### 3.4 `marketplace_conversations` & `marketplace_messages` Tables
+
 - **Purpose**: In-app buyer/seller chat linked directly to an item listing.
 - **`marketplace_conversations` Attributes**:
   - `id`: UUID (Primary Key)
@@ -142,6 +148,7 @@ The database design is engineered to support:
 ---
 
 ### 3.5 `seller_profiles` Table Specification
+
 - **Purpose**: Tracks seller statistics, completed sales, and trust badges without public star ratings.
 - **Attributes**:
   - `id`: UUID (Primary Key)
@@ -187,10 +194,10 @@ The database design is engineered to support:
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **Core Aggregate Roots**: Designed `MarketplaceListing`, `MarketplaceConversation`, `SellerProfile`.
-* ✅ **Multi-Tenant RLS**: Guaranteed 100% tenant isolation across campuses using `college_id`.
-* ✅ **State Machine Integrity**: Complete lifecycle specs for listings, 48-hr offers, and 24-hr reservations.
-* ✅ **Zero Code Violation**: Pure database architecture specification document.
+- ✅ **Core Aggregate Roots**: Designed `MarketplaceListing`, `MarketplaceConversation`, `SellerProfile`.
+- ✅ **Multi-Tenant RLS**: Guaranteed 100% tenant isolation across campuses using `college_id`.
+- ✅ **State Machine Integrity**: Complete lifecycle specs for listings, 48-hr offers, and 24-hr reservations.
+- ✅ **Zero Code Violation**: Pure database architecture specification document.
 
 > [!IMPORTANT]
 > **MS-20.3 Complete**. Stopped for architecture review before proceeding to **MS-20.4 (Domain Model & Business Rules)**.

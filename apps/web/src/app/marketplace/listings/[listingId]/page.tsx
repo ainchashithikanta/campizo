@@ -10,14 +10,32 @@ export default async function ListingDetailPage({ params }: { params: { listingI
 
   return (
     <div className="mp-container" style={{ maxWidth: '800px' }}>
-      <Link href="/marketplace" style={{ color: 'var(--mp-color-emerald-dark)', fontWeight: 600, display: 'inline-block', marginBottom: '1rem' }}>
+      <Link
+        href="/marketplace"
+        style={{
+          color: 'var(--mp-color-emerald-dark)',
+          fontWeight: 600,
+          display: 'inline-block',
+          marginBottom: '1rem'
+        }}
+      >
         ← Back to Marketplace
       </Link>
 
       {reservationStatus && <ReservationBanner expiresAt={reservationStatus.expiresAt} />}
 
-      <div style={{ backgroundColor: '#ffffff', border: '1px solid var(--mp-color-slate-200)', borderRadius: 'var(--mp-radius-lg)', overflow: 'hidden', marginBottom: '2rem' }}>
-        <div style={{ width: '100%', height: '360px', backgroundColor: 'var(--mp-color-slate-100)', position: 'relative' }}>
+      <div
+        style={{
+          backgroundColor: '#ffffff',
+          border: '1px solid var(--mp-color-slate-200)',
+          borderRadius: 'var(--mp-radius-lg)',
+          overflow: 'hidden',
+          marginBottom: '2rem'
+        }}
+      >
+        <div
+          style={{ width: '100%', height: '360px', backgroundColor: 'var(--mp-color-slate-100)', position: 'relative' }}
+        >
           <img
             src={mediaList[0]?.mediaUrl || 'https://images.unsplash.com/photo-1594980596870-8aa52a78d8cd?w=800'}
             alt={listing.title}
@@ -27,7 +45,14 @@ export default async function ListingDetailPage({ params }: { params: { listingI
 
         <div style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <span style={{ fontFamily: 'monospace', fontSize: '1.75rem', fontWeight: 700, color: 'var(--mp-color-slate-900)' }}>
+            <span
+              style={{
+                fontFamily: 'monospace',
+                fontSize: '1.75rem',
+                fontWeight: 700,
+                color: 'var(--mp-color-slate-900)'
+              }}
+            >
               ₹{listing.priceInr.toLocaleString('en-IN')}
             </span>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -43,7 +68,8 @@ export default async function ListingDetailPage({ params }: { params: { listingI
           <div style={{ borderTop: '1px solid var(--mp-color-slate-200)', paddingTop: '1rem', marginTop: '1rem' }}>
             <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>Item Description</h3>
             <p style={{ color: 'var(--mp-color-slate-700)', lineHeight: 1.5 }}>
-              Mint condition scientific calculator. Mandatory for 1st-year engineering laboratory courses. Clean keypad with no scratches.
+              Mint condition scientific calculator. Mandatory for 1st-year engineering laboratory courses. Clean keypad
+              with no scratches.
             </p>
             <p style={{ fontSize: '0.875rem', color: 'var(--mp-color-slate-500)', marginTop: '0.75rem' }}>
               📍 Preferred Handover Spot: <strong>{listing.pickupLocationName}</strong>

@@ -32,7 +32,9 @@ export class InMemoryConfessionRepository implements ConfessionRepository {
     return null;
   }
 
-  async save(data: Partial<ConfessionEntity> & { collegeId: string; title: string; content: string }): Promise<ConfessionEntity> {
+  async save(
+    data: Partial<ConfessionEntity> & { collegeId: string; title: string; content: string }
+  ): Promise<ConfessionEntity> {
     const id = data.id || `conf-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
     const now = new Date();
     const entity: ConfessionEntity = {
@@ -40,7 +42,12 @@ export class InMemoryConfessionRepository implements ConfessionRepository {
       collegeId: data.collegeId,
       categoryCode: data.categoryCode || 'confession',
       title: data.title,
-      slug: data.slug || data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+      slug:
+        data.slug ||
+        data.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)+/g, ''),
       content: data.content,
       authorThreadPseudonym: data.authorThreadPseudonym || 'Curious Panda #402',
       status: data.status || 'PUBLISHED',
@@ -71,11 +78,11 @@ export class InMemoryConfessionRepository implements ConfessionRepository {
     options: { categoryCode?: string; tab?: 'trending' | 'latest'; cursor?: string; limit?: number }
   ): Promise<ConfessionEntity[]> {
     let items = Array.from(this.confessionsMap.values()).filter(
-      i => i.collegeId === collegeId && i.status === 'PUBLISHED'
+      (i) => i.collegeId === collegeId && i.status === 'PUBLISHED'
     );
 
     if (options.categoryCode) {
-      items = items.filter(i => i.categoryCode === options.categoryCode);
+      items = items.filter((i) => i.categoryCode === options.categoryCode);
     }
 
     if (options.tab === 'trending') {
@@ -98,7 +105,9 @@ export class InMemoryCommentRepository implements CommentRepository {
     return item;
   }
 
-  async save(data: Partial<CommentEntity> & { collegeId: string; confessionId: string; content: string }): Promise<CommentEntity> {
+  async save(
+    data: Partial<CommentEntity> & { collegeId: string; confessionId: string; content: string }
+  ): Promise<CommentEntity> {
     const id = data.id || `comm-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
     const now = new Date();
     const entity: CommentEntity = {
@@ -131,7 +140,7 @@ export class InMemoryCommentRepository implements CommentRepository {
 
   async listByConfession(confessionId: string, collegeId: string): Promise<CommentEntity[]> {
     return Array.from(this.commentsMap.values())
-      .filter(c => c.confessionId === confessionId && c.collegeId === collegeId)
+      .filter((c) => c.confessionId === confessionId && c.collegeId === collegeId)
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
   }
 }
@@ -145,7 +154,9 @@ export class InMemoryModerationRepository implements ModerationRepository {
     return item;
   }
 
-  async saveCase(data: Partial<ModerationCaseEntity> & { collegeId: string; confessionId: string; severityLevel: number }): Promise<ModerationCaseEntity> {
+  async saveCase(
+    data: Partial<ModerationCaseEntity> & { collegeId: string; confessionId: string; severityLevel: number }
+  ): Promise<ModerationCaseEntity> {
     const id = data.id || `mod-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
     const now = new Date();
     const entity: ModerationCaseEntity = {
@@ -163,35 +174,74 @@ export class InMemoryModerationRepository implements ModerationRepository {
     return entity;
   }
 
-  async recordAction(_action: { collegeId: string; caseId: string; moderatorUserId: string; action: string; reasonNote?: string }): Promise<void> {}
+  async recordAction(_action: {
+    collegeId: string;
+    caseId: string;
+    moderatorUserId: string;
+    action: string;
+    reasonNote?: string;
+  }): Promise<void> {}
 
   async listQueue(collegeId: string): Promise<ModerationCaseEntity[]> {
     return Array.from(this.casesMap.values())
-      .filter(c => c.collegeId === collegeId && (c.status === 'OPEN' || c.status === 'UNDER_REVIEW' || c.status === 'QUARANTINED'))
+      .filter(
+        (c) =>
+          c.collegeId === collegeId &&
+          (c.status === 'OPEN' || c.status === 'UNDER_REVIEW' || c.status === 'QUARANTINED')
+      )
       .sort((a, b) => a.severityLevel - b.severityLevel);
   }
 }
 
 export class InMemoryStatisticsRepository implements StatisticsRepository {
-  public statsMap = new Map<string, { views: number; upvotes: number; comments: number; reports: number; trendingScore: string }>();
+  public statsMap = new Map<
+    string,
+    { views: number; upvotes: number; comments: number; reports: number; trendingScore: string }
+  >();
 
   async incrementViews(confessionId: string, _collegeId: string): Promise<void> {
-    const stat = this.statsMap.get(confessionId) || { views: 0, upvotes: 0, comments: 0, reports: 0, trendingScore: '0.0000' };
+    const stat = this.statsMap.get(confessionId) || {
+      views: 0,
+      upvotes: 0,
+      comments: 0,
+      reports: 0,
+      trendingScore: '0.0000'
+    };
     stat.views += 1;
     this.statsMap.set(confessionId, stat);
   }
 
-  async recalculateScores(confessionId: string, _collegeId: string, metrics: { trendingScore: string; hotScore: string }): Promise<void> {
-    const stat = this.statsMap.get(confessionId) || { views: 0, upvotes: 0, comments: 0, reports: 0, trendingScore: '0.0000' };
+  async recalculateScores(
+    confessionId: string,
+    _collegeId: string,
+    metrics: { trendingScore: string; hotScore: string }
+  ): Promise<void> {
+    const stat = this.statsMap.get(confessionId) || {
+      views: 0,
+      upvotes: 0,
+      comments: 0,
+      reports: 0,
+      trendingScore: '0.0000'
+    };
     stat.trendingScore = metrics.trendingScore;
     this.statsMap.set(confessionId, stat);
   }
 }
 
 export class InMemoryNotificationRepository implements NotificationRepository {
-  public notifications: Array<{ collegeId: string; recipientUserId: string; notificationType: string; payloadJson: string }> = [];
+  public notifications: Array<{
+    collegeId: string;
+    recipientUserId: string;
+    notificationType: string;
+    payloadJson: string;
+  }> = [];
 
-  async queueNotification(notification: { collegeId: string; recipientUserId: string; notificationType: string; payloadJson: string }): Promise<void> {
+  async queueNotification(notification: {
+    collegeId: string;
+    recipientUserId: string;
+    notificationType: string;
+    payloadJson: string;
+  }): Promise<void> {
     this.notifications.push(notification);
   }
 }
@@ -220,7 +270,11 @@ export class InMemoryAnonymousIdentityRepository implements AnonymousIdentityRep
 export class InMemoryRankingRepository implements RankingRepository {
   public snapshots: Array<{ collegeId: string; snapshotType: string; topConfessionIdsJson: string }> = [];
 
-  async saveSnapshot(snapshot: { collegeId: string; snapshotType: string; topConfessionIdsJson: string }): Promise<void> {
+  async saveSnapshot(snapshot: {
+    collegeId: string;
+    snapshotType: string;
+    topConfessionIdsJson: string;
+  }): Promise<void> {
     this.snapshots.push(snapshot);
   }
 }
@@ -244,7 +298,12 @@ export class InMemoryBookmarkRepository implements BookmarkRepository {
 export class InMemoryVoteRepository implements VoteRepository {
   public votes = new Map<string, 'UPVOTE' | 'DOWNVOTE'>(); // `${userId}:${confessionId}`
 
-  async addConfessionVote(confessionId: string, voterUserId: string, voteType: 'UPVOTE' | 'DOWNVOTE', _collegeId: string): Promise<void> {
+  async addConfessionVote(
+    confessionId: string,
+    voterUserId: string,
+    voteType: 'UPVOTE' | 'DOWNVOTE',
+    _collegeId: string
+  ): Promise<void> {
     this.votes.set(`${voterUserId}:${confessionId}`, voteType);
   }
 
@@ -252,7 +311,11 @@ export class InMemoryVoteRepository implements VoteRepository {
     this.votes.delete(`${voterUserId}:${confessionId}`);
   }
 
-  async getUserConfessionVote(confessionId: string, voterUserId: string, _collegeId: string): Promise<'UPVOTE' | 'DOWNVOTE' | null> {
+  async getUserConfessionVote(
+    confessionId: string,
+    voterUserId: string,
+    _collegeId: string
+  ): Promise<'UPVOTE' | 'DOWNVOTE' | null> {
     return this.votes.get(`${voterUserId}:${confessionId}`) || null;
   }
 }
@@ -260,7 +323,13 @@ export class InMemoryVoteRepository implements VoteRepository {
 export class InMemoryMediaRepository implements MediaRepository {
   public mediaList: Array<{ confessionId: string; mediaUrl: string; mediaType: string }> = [];
 
-  async attachMedia(confessionId: string, mediaUrl: string, mediaType: string, _mimeType: string, _collegeId: string): Promise<void> {
+  async attachMedia(
+    confessionId: string,
+    mediaUrl: string,
+    mediaType: string,
+    _mimeType: string,
+    _collegeId: string
+  ): Promise<void> {
     this.mediaList.push({ confessionId, mediaUrl, mediaType });
   }
 }

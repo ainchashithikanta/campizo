@@ -41,8 +41,18 @@ export default function QuestionDetailPage() {
     }
   };
 
-  if (loading) return <main className="max-w-4xl mx-auto p-6"><LoadingSkeleton count={2} /></main>;
-  if (error) return <main className="max-w-4xl mx-auto p-6"><ErrorState message={error} /></main>;
+  if (loading)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <LoadingSkeleton count={2} />
+      </main>
+    );
+  if (error)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <ErrorState message={error} />
+      </main>
+    );
   if (!question) return null;
 
   return (
@@ -55,7 +65,9 @@ export default function QuestionDetailPage() {
           <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
             #{question.topic}
           </span>
-          <span className={`px-2.5 py-0.5 rounded text-xs font-bold ${question.difficulty === 'HARD' ? 'bg-rose-500/10 text-rose-600' : 'bg-amber-500/10 text-amber-600'}`}>
+          <span
+            className={`px-2.5 py-0.5 rounded text-xs font-bold ${question.difficulty === 'HARD' ? 'bg-rose-500/10 text-rose-600' : 'bg-amber-500/10 text-amber-600'}`}
+          >
             {question.difficulty}
           </span>
         </div>

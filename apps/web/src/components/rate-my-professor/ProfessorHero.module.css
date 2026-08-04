@@ -30,7 +30,7 @@
   height: 80px;
   border-radius: var(--ch-radius-full);
   background: linear-gradient(135deg, var(--ch-color-primary) 0%, var(--ch-color-secondary) 100%);
-  color: #FFFFFF;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;

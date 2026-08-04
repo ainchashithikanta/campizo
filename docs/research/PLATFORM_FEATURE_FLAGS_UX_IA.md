@@ -2,7 +2,7 @@
 
 **Document Type**: Product Design & Information Architecture Specification  
 **Status**: APPROVED BY CTO / ARCHITECTURE SPECIFICATION  
-**Target Application**: Platform Admin Console (`@college-hub/platform-feature-flags`)  
+**Target Application**: Platform Admin Console (`@college-hub/platform-feature-flags`)
 
 ---
 
@@ -16,14 +16,14 @@ Designed with a **safety-first user experience**, the console enables zero-downt
 
 ## Section 1 — Administrator Personas
 
-| Persona | Primary Responsibilities | Scope & Permissions | Key UX Workflows |
-|---------|--------------------------|----------------------|------------------|
-| **Super Admin** | Platform-wide governance, global kill switches, security policy enforcement. | Full Read/Write/Publish/Delete across all environments and colleges. | Global Kill Switch, Approval Template Config, System Audit Review, RBAC Assignment. |
-| **Platform Admin** | Managing feature rollouts, maintenance windows, module availability across partner campuses. | Create, edit, toggle flags in Staging and Production; create Feature Groups. | Guided Rollout Wizard, Maintenance Mode Toggle, Configuration Snapshot Restore. |
-| **College Admin** | Managing campus-specific feature toggles (e.g. enabling Confessions or Marketplace for their campus). | Scoped to own `collegeId`; read-only for platform core. | Campus Feature Enablement, Local Announcement Banners, Campus Feedback. |
-| **Engineering Lead** | Feature flag lifecycle management, dependency definition, target removal date scheduling. | Full flag creation and metadata editing; staging release. | Flag Creation, Dependency Mapping, Stale Flag Cleanup, Approval Request Submission. |
-| **Support Engineer** | Troubleshooting user issues, inspecting active flag variations for specific users/campuses. | Read-only inspection of flags, targeting rules, and audit logs. | User Flag Lookup, Feature Usage Dashboard Check, Diagnostic Search. |
-| **Operations Engineer** | Monitoring platform stability, error rates during canary releases, automated circuit breaking. | Staging/Prod toggle execution, monitoring dashboard access. | Canary Rollout Monitor, Emergency Rollback, Usage Telemetry Inspection. |
+| Persona                 | Primary Responsibilities                                                                              | Scope & Permissions                                                          | Key UX Workflows                                                                    |
+| ----------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **Super Admin**         | Platform-wide governance, global kill switches, security policy enforcement.                          | Full Read/Write/Publish/Delete across all environments and colleges.         | Global Kill Switch, Approval Template Config, System Audit Review, RBAC Assignment. |
+| **Platform Admin**      | Managing feature rollouts, maintenance windows, module availability across partner campuses.          | Create, edit, toggle flags in Staging and Production; create Feature Groups. | Guided Rollout Wizard, Maintenance Mode Toggle, Configuration Snapshot Restore.     |
+| **College Admin**       | Managing campus-specific feature toggles (e.g. enabling Confessions or Marketplace for their campus). | Scoped to own `collegeId`; read-only for platform core.                      | Campus Feature Enablement, Local Announcement Banners, Campus Feedback.             |
+| **Engineering Lead**    | Feature flag lifecycle management, dependency definition, target removal date scheduling.             | Full flag creation and metadata editing; staging release.                    | Flag Creation, Dependency Mapping, Stale Flag Cleanup, Approval Request Submission. |
+| **Support Engineer**    | Troubleshooting user issues, inspecting active flag variations for specific users/campuses.           | Read-only inspection of flags, targeting rules, and audit logs.              | User Flag Lookup, Feature Usage Dashboard Check, Diagnostic Search.                 |
+| **Operations Engineer** | Monitoring platform stability, error rates during canary releases, automated circuit breaking.        | Staging/Prod toggle execution, monitoring dashboard access.                  | Canary Rollout Monitor, Emergency Rollback, Usage Telemetry Inspection.             |
 
 ---
 
@@ -73,6 +73,7 @@ The primary Dashboard is designed as an operational control deck with real-time 
 ```
 
 ### Feature Usage Dashboard Telemetry
+
 - **Active Users**: Unique users evaluated against the flag in the last 24 hours.
 - **Evaluations**: Real-time evaluation throughput (evaluations per minute).
 - **Traffic Percentage**: Percent of total campus traffic receiving the `ENABLED` treatment.
@@ -148,6 +149,7 @@ Step 8: Confirmation     ──► Policy Template Approval (Low/High Risk, 4-Ey
 ```
 
 ### Automated Change Impact Analysis Screen
+
 Before any rollout or change confirmation, the UI generates an automated **Blast Radius Impact Report**:
 
 ```

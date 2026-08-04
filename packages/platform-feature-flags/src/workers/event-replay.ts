@@ -26,18 +26,11 @@ export class EventReplayManager {
     let failedCount = 0;
 
     // Sort by configuration version & timestamp for deterministic replay ordering
-    const sorted = [...envelopes].sort(
-      (a, b) => a.configurationVersion - b.configurationVersion
-    );
+    const sorted = [...envelopes].sort((a, b) => a.configurationVersion - b.configurationVersion);
 
     for (const env of sorted) {
       try {
-        await this.eventRouter.routeEvent(
-          env.event,
-          env.requestId,
-          env.traceId,
-          env.configurationVersion
-        );
+        await this.eventRouter.routeEvent(env.event, env.requestId, env.traceId, env.configurationVersion);
         replayedCount++;
       } catch (err) {
         failedCount++;

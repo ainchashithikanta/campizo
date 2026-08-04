@@ -1,7 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ResourceCard, ResourceGrid, ResourceHero, HelpfulVote, ResourcePreview, UploadProgressCard } from '../components/academic-resource-hub/AcademicComponents';
+import {
+  ResourceCard,
+  ResourceGrid,
+  ResourceHero,
+  HelpfulVote,
+  ResourcePreview,
+  UploadProgressCard
+} from '../components/academic-resource-hub/AcademicComponents';
 
 describe('Academic Resource Hub Frontend Components', () => {
   it('ResourceCard - should render resource title, type badge, and trigger download', () => {

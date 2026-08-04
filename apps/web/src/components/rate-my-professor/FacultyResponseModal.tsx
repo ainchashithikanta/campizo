@@ -60,7 +60,8 @@ export function FacultyResponseModal({ isOpen, onClose, review, onSubmit }: Facu
         {error && <div style={{ color: 'var(--ch-color-error)', fontSize: 'var(--ch-font-size-xs)' }}>{error}</div>}
 
         <p style={{ fontSize: 'var(--ch-font-size-xs)', color: 'var(--ch-color-text-muted)' }}>
-          Your response will be highlighted with a <strong>Verified Faculty Response</strong> badge directly under the student&apos;s review.
+          Your response will be highlighted with a <strong>Verified Faculty Response</strong> badge directly under the
+          student&apos;s review.
         </p>
 
         <textarea
@@ -73,7 +74,7 @@ export function FacultyResponseModal({ isOpen, onClose, review, onSubmit }: Facu
             backgroundColor: 'var(--ch-color-surface)',
             border: '1px solid var(--ch-color-border)',
             borderRadius: 'var(--ch-radius-md)',
-            color: 'var(--ch-color-text)',
+            color: 'var(--ch-color-text)'
           }}
           placeholder="Provide clarifying context regarding course policies, grading rubrics, or attendance requirements..."
           value={responseText}

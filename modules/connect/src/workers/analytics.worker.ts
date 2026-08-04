@@ -17,7 +17,12 @@ export interface AnalyticsAggregate {
 export class AnalyticsWorker {
   private analyticsStore: Map<string, number> = new Map();
 
-  async processAnalyticsEvent(event: ConnectEventEnvelope<{ category: 'DISCOVERY' | 'RECOMMENDATION' | 'PROFILE_VIEW' | 'CONNECTION_REQUEST' | 'STUDY_GROUP' | 'MESSAGING'; incrementBy?: number }>): Promise<void> {
+  async processAnalyticsEvent(
+    event: ConnectEventEnvelope<{
+      category: 'DISCOVERY' | 'RECOMMENDATION' | 'PROFILE_VIEW' | 'CONNECTION_REQUEST' | 'STUDY_GROUP' | 'MESSAGING';
+      incrementBy?: number;
+    }>
+  ): Promise<void> {
     const startTime = Date.now();
     try {
       const { category, incrementBy = 1 } = event.payload;

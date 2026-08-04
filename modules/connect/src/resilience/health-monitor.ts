@@ -47,8 +47,8 @@ export class HealthMonitor {
     const overallStatus = !isLiveness
       ? 'UNHEALTHY'
       : !isReadiness || redisHealth === 'DEGRADED' || recState !== 'CLOSED'
-      ? 'DEGRADED'
-      : 'HEALTHY';
+        ? 'DEGRADED'
+        : 'HEALTHY';
 
     return {
       status: overallStatus,

@@ -18,14 +18,18 @@ export default async function MarketplaceHomePage() {
           <Link href="/marketplace/upload" className="mp-btn mp-btn-primary">
             + Post a Listing
           </Link>
-          <Link href="/marketplace/search" className="mp-btn mp-btn-outline" style={{ color: '#ffffff', borderColor: '#a7f3d0' }}>
+          <Link
+            href="/marketplace/search"
+            className="mp-btn mp-btn-outline"
+            style={{ color: '#ffffff', borderColor: '#a7f3d0' }}
+          >
             🔍 Search Items
           </Link>
         </div>
       </div>
 
       <div className="mp-category-carousel">
-        {homeData.categories.map(cat => (
+        {homeData.categories.map((cat) => (
           <Link href={`/marketplace/search?category=${cat.code}`} key={cat.code} className="mp-category-pill">
             {cat.name}
           </Link>

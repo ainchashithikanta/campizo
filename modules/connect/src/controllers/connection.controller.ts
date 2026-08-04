@@ -7,7 +7,11 @@ import type { FastifyRequest, FastifyReply } from 'fastify';
 import { formatApiV1Success } from '../errors/http-error-handler.js';
 import { ConnectUseCases } from '../use-cases/connect.use-cases.js';
 import { ConnectQueryService } from '../queries/connect.queries.js';
-import { sendConnectionRequestSchema, connectionDecisionSchema, blockConnectionSchema } from '../validators/connection.validators.js';
+import {
+  sendConnectionRequestSchema,
+  connectionDecisionSchema,
+  blockConnectionSchema
+} from '../validators/connection.validators.js';
 
 export class ConnectionController {
   constructor(

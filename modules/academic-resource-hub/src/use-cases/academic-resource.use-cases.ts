@@ -20,11 +20,7 @@ import {
   assertNoSelfVote,
   assertValidFileMetadata
 } from '../domain/invariants.js';
-import {
-  ResourceNotFoundError,
-  DuplicateHashError,
-  InvalidResourceStateError
-} from '../errors/application-errors.js';
+import { ResourceNotFoundError, DuplicateHashError, InvalidResourceStateError } from '../errors/application-errors.js';
 import { AcademicResourceEvents } from '../domain/events.js';
 
 /**
@@ -265,7 +261,12 @@ export class CreateResourceVersionUseCase {
     private eventBus: EventBus
   ) {}
 
-  public async execute(resourceId: string, collegeId: string, createdByUserId: string, notes?: string): Promise<ResourceVersionEntity> {
+  public async execute(
+    resourceId: string,
+    collegeId: string,
+    createdByUserId: string,
+    notes?: string
+  ): Promise<ResourceVersionEntity> {
     const resource = await this.resourceRepo.findById(resourceId, collegeId);
     if (!resource) throw new ResourceNotFoundError(`Resource [${resourceId}] not found.`);
 
@@ -338,7 +339,11 @@ export class RollbackVersionUseCase {
     private eventBus: EventBus
   ) {}
 
-  public async execute(resourceId: string, targetVersionId: string, collegeId: string): Promise<AcademicResourceEntity> {
+  public async execute(
+    resourceId: string,
+    targetVersionId: string,
+    collegeId: string
+  ): Promise<AcademicResourceEntity> {
     const resource = await this.resourceRepo.findById(resourceId, collegeId);
     if (!resource) throw new ResourceNotFoundError(`Resource [${resourceId}] not found.`);
 
@@ -372,7 +377,12 @@ export class CreateStudyCollectionUseCase {
     private eventBus: EventBus
   ) {}
 
-  public async execute(collegeId: string, ownerUserId: string, title: string, description?: string): Promise<StudyCollectionEntity> {
+  public async execute(
+    collegeId: string,
+    ownerUserId: string,
+    title: string,
+    description?: string
+  ): Promise<StudyCollectionEntity> {
     const collection: StudyCollectionEntity = {
       id: `col-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
       collegeId,
@@ -403,7 +413,12 @@ export class CreateStudyCollectionUseCase {
 export class UpdateStudyCollectionUseCase {
   constructor(private collectionRepo: StudyCollectionRepository) {}
 
-  public async execute(collectionId: string, collegeId: string, title: string, description?: string): Promise<StudyCollectionEntity> {
+  public async execute(
+    collectionId: string,
+    collegeId: string,
+    title: string,
+    description?: string
+  ): Promise<StudyCollectionEntity> {
     const collection = await this.collectionRepo.findById(collectionId, collegeId);
     if (!collection) throw new ResourceNotFoundError(`Collection [${collectionId}] not found.`);
 

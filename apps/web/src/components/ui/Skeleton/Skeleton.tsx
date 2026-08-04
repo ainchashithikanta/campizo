@@ -16,8 +16,18 @@ export function Skeleton({ variant = 'text', width, height, lines = 1, className
   if (variant === 'card') {
     return (
       <div className={`${styles.card} ${className}`} role="status" aria-label="Loading...">
-        <div className={styles.shimmer} style={{ width: '100%', height: '160px', borderRadius: 'var(--ch-radius-md) var(--ch-radius-md) 0 0' }} />
-        <div style={{ padding: 'var(--ch-spacing-4)', display: 'flex', flexDirection: 'column', gap: 'var(--ch-spacing-2)' }}>
+        <div
+          className={styles.shimmer}
+          style={{ width: '100%', height: '160px', borderRadius: 'var(--ch-radius-md) var(--ch-radius-md) 0 0' }}
+        />
+        <div
+          style={{
+            padding: 'var(--ch-spacing-4)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--ch-spacing-2)'
+          }}
+        >
           <div className={styles.shimmer} style={{ width: '60%', height: '20px' }} />
           <div className={styles.shimmer} style={{ width: '80%', height: '14px' }} />
           <div className={styles.shimmer} style={{ width: '40%', height: '14px' }} />
@@ -29,7 +39,12 @@ export function Skeleton({ variant = 'text', width, height, lines = 1, className
 
   if (variant === 'circle') {
     return (
-      <div className={`${styles.shimmer} ${styles.circle} ${className}`} style={style} role="status" aria-label="Loading...">
+      <div
+        className={`${styles.shimmer} ${styles.circle} ${className}`}
+        style={style}
+        role="status"
+        aria-label="Loading..."
+      >
         <span className="visually-hidden">Loading...</span>
       </div>
     );

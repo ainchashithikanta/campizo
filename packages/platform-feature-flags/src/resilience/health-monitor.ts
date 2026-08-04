@@ -25,11 +25,7 @@ export class HealthMonitor {
     const isDegraded = !redisConnected || evalLatencyMs > 5.0;
     const isCritical = !dbConnected;
 
-    const status: SystemHealthReport['status'] = isCritical
-      ? 'CRITICAL'
-      : isDegraded
-      ? 'DEGRADED'
-      : 'HEALTHY';
+    const status: SystemHealthReport['status'] = isCritical ? 'CRITICAL' : isDegraded ? 'DEGRADED' : 'HEALTHY';
 
     return {
       status,

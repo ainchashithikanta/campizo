@@ -29,7 +29,9 @@ export class InMemoryAcademicResourceRepository implements AcademicResourceRepos
   }
 
   public async findBySubject(subjectId: string, collegeId: string): Promise<AcademicResourceEntity[]> {
-    return Array.from(this.resources.values()).filter((r) => r.subjectId === subjectId && r.collegeId === collegeId && r.status === 'APPROVED');
+    return Array.from(this.resources.values()).filter(
+      (r) => r.subjectId === subjectId && r.collegeId === collegeId && r.status === 'APPROVED'
+    );
   }
 
   public async save(resource: AcademicResourceEntity): Promise<AcademicResourceEntity> {
@@ -82,7 +84,9 @@ export class InMemoryStudyCollectionRepository implements StudyCollectionReposit
   }
 
   public async findByOwner(ownerUserId: string, collegeId: string): Promise<StudyCollectionEntity[]> {
-    return Array.from(this.collections.values()).filter((c) => c.ownerUserId === ownerUserId && c.collegeId === collegeId);
+    return Array.from(this.collections.values()).filter(
+      (c) => c.ownerUserId === ownerUserId && c.collegeId === collegeId
+    );
   }
 
   public async save(collection: StudyCollectionEntity): Promise<StudyCollectionEntity> {

@@ -1,5 +1,8 @@
 export class DomainError extends Error {
-  constructor(message: string, public readonly code: string) {
+  constructor(
+    message: string,
+    public readonly code: string
+  ) {
     super(message);
     this.name = this.constructor.name;
   }
@@ -70,7 +73,10 @@ export class ConfessionNotFoundError extends DomainError {
 
 export class AnonymousIdentityUnavailableError extends DomainError {
   constructor(confessionId: string) {
-    super(`Failed to assign or retrieve thread pseudonym for confession ${confessionId}.`, 'ANONYMOUS_IDENTITY_UNAVAILABLE');
+    super(
+      `Failed to assign or retrieve thread pseudonym for confession ${confessionId}.`,
+      'ANONYMOUS_IDENTITY_UNAVAILABLE'
+    );
   }
 }
 

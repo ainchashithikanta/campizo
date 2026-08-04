@@ -15,15 +15,15 @@ application code changes**.
 
 ## 2. Core Principles
 
-| Principle | Implementation |
-| :--- | :--- |
-| Production = Kubernetes | All app workloads run as Deployments managed by a Helm chart |
-| Provider neutrality | No cloud-specific CRDs, Ingress controllers, or CSI secrets; external dependencies are plain endpoints |
-| GitOps friendly | Plain manifests are rendered and committed under `infra/k8s/render/<env>` |
-| Zero-Touch scaling | HPA (CPU + memory) on API / web / worker |
-| Resilience | Rolling updates (`maxUnavailable: 0`), PodDisruptionBudgets, readiness/liveness probes |
-| Security first | Non-root UIDs, no automount SA tokens, default-deny ingress + port-scoped egress NetworkPolicies, per-env namespace isolation |
-| Migrations | Pre-install/pre-upgrade Helm hook runs Drizzle migrations before rollout |
+| Principle               | Implementation                                                                                                                |
+| :---------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| Production = Kubernetes | All app workloads run as Deployments managed by a Helm chart                                                                  |
+| Provider neutrality     | No cloud-specific CRDs, Ingress controllers, or CSI secrets; external dependencies are plain endpoints                        |
+| GitOps friendly         | Plain manifests are rendered and committed under `infra/k8s/render/<env>`                                                     |
+| Zero-Touch scaling      | HPA (CPU + memory) on API / web / worker                                                                                      |
+| Resilience              | Rolling updates (`maxUnavailable: 0`), PodDisruptionBudgets, readiness/liveness probes                                        |
+| Security first          | Non-root UIDs, no automount SA tokens, default-deny ingress + port-scoped egress NetworkPolicies, per-env namespace isolation |
+| Migrations              | Pre-install/pre-upgrade Helm hook runs Drizzle migrations before rollout                                                      |
 
 ---
 
@@ -70,12 +70,12 @@ scripts/validate-manifests.js     # offline sanity check of rendered manifests
 
 ## 4. Deployable Components
 
-| Component | Image | Port | Probes | Scaling |
-| :--- | :--- | :--- | :--- | :--- |
-| `api` | `collegehub-api` | 4000 | `/health/live`, `/health/ready` | HPA 3-12 (prod) |
-| `web` | `collegehub-web` | 3000 | `/` HTTP | HPA 3-12 (prod) |
-| `worker` | `collegehub-worker` | 4100 | `/health/live`, `/health/ready` | HPA 2-8 (prod) |
-| `migrations` | reuses API image | – | Job (hook) | `backoffLimit: 4` |
+| Component    | Image               | Port | Probes                          | Scaling           |
+| :----------- | :------------------ | :--- | :------------------------------ | :---------------- |
+| `api`        | `collegehub-api`    | 4000 | `/health/live`, `/health/ready` | HPA 3-12 (prod)   |
+| `web`        | `collegehub-web`    | 3000 | `/` HTTP                        | HPA 3-12 (prod)   |
+| `worker`     | `collegehub-worker` | 4100 | `/health/live`, `/health/ready` | HPA 2-8 (prod)    |
+| `migrations` | reuses API image    | –    | Job (hook)                      | `backoffLimit: 4` |
 
 Every app container runs as **non-root UID 1001**, matching the Dockerfile
 `nodeuser` / `nextjs` / `workeruser` accounts.
@@ -84,11 +84,11 @@ Every app container runs as **non-root UID 1001**, matching the Dockerfile
 
 ## 5. Environment Overlays
 
-| Env | Namespace | Replicas | Datastores | NetworkPolicies | Ingress |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| dev | `collegehub-dev` | 1/1/1 | bundled (opt-in) | disabled | disabled |
-| staging | `collegehub-staging` | 2/2/1 | external | enabled | staging TLS |
-| prod | `collegehub-prod` | 3/3/2 | external | enabled | prod TLS |
+| Env     | Namespace            | Replicas | Datastores       | NetworkPolicies | Ingress     |
+| :------ | :------------------- | :------- | :--------------- | :-------------- | :---------- |
+| dev     | `collegehub-dev`     | 1/1/1    | bundled (opt-in) | disabled        | disabled    |
+| staging | `collegehub-staging` | 2/2/1    | external         | enabled         | staging TLS |
+| prod    | `collegehub-prod`    | 3/3/2    | external         | enabled         | prod TLS    |
 
 Secrets in `values.*.yaml` are **placeholders**. Production secrets must be
 injected via SealedSecrets, the External Secrets Operator, or cloud KMS.
@@ -129,18 +129,18 @@ Cloud-specific notes (no chart changes required):
 
 ## 7. Kubernetes Resource Coverage (MS-54 requirements)
 
-| Requirement | Resource |
-| :--- | :--- |
-| Namespace isolation | `Namespace` per environment |
-| ConfigMaps | `collegehub-config` (runtime config) |
-| Secrets | `collegehub-secret` (derived connection URLs + keys) |
-| ServiceAccounts | least-privilege, no API token automount |
-| Deployments / Services | API, web, worker (ClusterIP) |
-| HPA | CPU + memory autoscaling per component |
-| Ingress | `/api` -> api, `/` -> web, TLS ready |
-| PDB | `minAvailable: 1` per component |
-| NetworkPolicies | default-deny ingress, ingress-controller/web allowed in, port-scoped egress |
-| Jobs | pre-upgrade migration hook |
+| Requirement            | Resource                                                                    |
+| :--------------------- | :-------------------------------------------------------------------------- |
+| Namespace isolation    | `Namespace` per environment                                                 |
+| ConfigMaps             | `collegehub-config` (runtime config)                                        |
+| Secrets                | `collegehub-secret` (derived connection URLs + keys)                        |
+| ServiceAccounts        | least-privilege, no API token automount                                     |
+| Deployments / Services | API, web, worker (ClusterIP)                                                |
+| HPA                    | CPU + memory autoscaling per component                                      |
+| Ingress                | `/api` -> api, `/` -> web, TLS ready                                        |
+| PDB                    | `minAvailable: 1` per component                                             |
+| NetworkPolicies        | default-deny ingress, ingress-controller/web allowed in, port-scoped egress |
+| Jobs                   | pre-upgrade migration hook                                                  |
 
 ---
 
@@ -154,25 +154,25 @@ local experimentation. Production and staging run exclusively on Kubernetes.
 
 ## 9. CI/CD Validation (`.github/workflows/deploy-validation.yml`)
 
-| Job | Purpose |
-| :--- | :--- |
-| `helm-lint` | `helm lint` + template render of all three environments |
-| `kubeconform` | Schema validation (`-strict`) of every rendered manifest |
+| Job            | Purpose                                                              |
+| :------------- | :------------------------------------------------------------------- |
+| `helm-lint`    | `helm lint` + template render of all three environments              |
+| `kubeconform`  | Schema validation (`-strict`) of every rendered manifest             |
 | `docker-build` | Builds `api`, `web`, `worker` images to catch Dockerfile regressions |
 
 ---
 
 ## 10. Audit Findings Resolved
 
-| Finding | Resolution |
-| :--- | :--- |
-| `Dockerfile.api` CMD pointed at missing `dist/index.js` | CMD -> `node apps/api/dist/server.js` |
-| `Dockerfile.web` referenced non-existent app node_modules | Rewritten for Next.js standalone output |
-| `Dockerfile.worker` was a placeholder `setInterval` | Real worker image -> `node apps/worker/dist/index.js` |
-| No worker application existed | New `@college-hub/worker` workspace with health server + graceful shutdown |
-| No liveness/readiness endpoints | `/health/live`, `/health/ready` on API and worker |
-| `infra/k8s/base` contained hard-coded secrets | Removed; chart renders secrets from values/overlays |
-| No migration artifacts | Migration Job guards on folder existence (`db:generate` before real use) |
+| Finding                                                   | Resolution                                                                 |
+| :-------------------------------------------------------- | :------------------------------------------------------------------------- |
+| `Dockerfile.api` CMD pointed at missing `dist/index.js`   | CMD -> `node apps/api/dist/server.js`                                      |
+| `Dockerfile.web` referenced non-existent app node_modules | Rewritten for Next.js standalone output                                    |
+| `Dockerfile.worker` was a placeholder `setInterval`       | Real worker image -> `node apps/worker/dist/index.js`                      |
+| No worker application existed                             | New `@college-hub/worker` workspace with health server + graceful shutdown |
+| No liveness/readiness endpoints                           | `/health/live`, `/health/ready` on API and worker                          |
+| `infra/k8s/base` contained hard-coded secrets             | Removed; chart renders secrets from values/overlays                        |
+| No migration artifacts                                    | Migration Job guards on folder existence (`db:generate` before real use)   |
 
 ---
 
@@ -209,4 +209,3 @@ replace placeholder values without rebuilding manifests.
   Vault, or Azure Key Vault. Secret rotation happens without editing or
   re-rendering manifests. All workloads already consume secrets via
   `envFrom.secretRef`, so the swap is additive.
-

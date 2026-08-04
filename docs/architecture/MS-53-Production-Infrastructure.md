@@ -2,12 +2,12 @@
 
 ## 1. CI/CD Workflows (`.github/workflows/`)
 
-| Workflow File | Trigger | Purpose |
-| :--- | :--- | :--- |
-| `ci.yml` | Push / PR to `main` or `develop` | Validates pnpm lockfile, runs `type-check`, `lint`, Vitest test suite across all 20 workspace projects, and builds production bundles. |
-| `security.yml` | Push / PR & Daily Cron (2 AM UTC) | Runs `pnpm audit --audit-level=high`, generates SBOM JSON compliance report (`scripts/generate-sbom.js`), and uploads artifacts. |
-| `release.yml` | Manual (`workflow_dispatch`) | Bundles production application artifacts into semantic versioned tarballs. |
-| `nightly.yml` | Nightly Cron (Midnight UTC) | Full workspace regression test suite, dependency security scan, and build verification. |
+| Workflow File  | Trigger                           | Purpose                                                                                                                                |
+| :------------- | :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml`       | Push / PR to `main` or `develop`  | Validates pnpm lockfile, runs `type-check`, `lint`, Vitest test suite across all 20 workspace projects, and builds production bundles. |
+| `security.yml` | Push / PR & Daily Cron (2 AM UTC) | Runs `pnpm audit --audit-level=high`, generates SBOM JSON compliance report (`scripts/generate-sbom.js`), and uploads artifacts.       |
+| `release.yml`  | Manual (`workflow_dispatch`)      | Bundles production application artifacts into semantic versioned tarballs.                                                             |
+| `nightly.yml`  | Nightly Cron (Midnight UTC)       | Full workspace regression test suite, dependency security scan, and build verification.                                                |
 
 ---
 

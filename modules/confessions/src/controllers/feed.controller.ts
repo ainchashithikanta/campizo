@@ -33,7 +33,9 @@ export class FeedController {
 
     const items = await this.queries.getFeed(collegeId, feedOptions);
     const filtered = items.filter(
-      i => i.title.toLowerCase().includes(parsed.q.toLowerCase()) || i.content.toLowerCase().includes(parsed.q.toLowerCase())
+      (i) =>
+        i.title.toLowerCase().includes(parsed.q.toLowerCase()) ||
+        i.content.toLowerCase().includes(parsed.q.toLowerCase())
     );
 
     reply.status(200).send({

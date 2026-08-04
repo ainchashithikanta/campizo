@@ -8,7 +8,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { LoadingSkeleton, ErrorState } from '../../../../components/connect/state-components';
-import { fetchDiscussionById, createReply, voteDiscussion, voteReply, type DiscussionThread } from '../../../../lib/api-placement-guidance';
+import {
+  fetchDiscussionById,
+  createReply,
+  voteDiscussion,
+  voteReply,
+  type DiscussionThread
+} from '../../../../lib/api-placement-guidance';
 
 export default function DiscussionDetailPage() {
   const params = useParams();
@@ -35,7 +41,9 @@ export default function DiscussionDetailPage() {
     if (!thread) return;
     try {
       const updated = await voteDiscussion(thread.id, direction);
-      setThread((prev) => (prev ? { ...prev, upvotesCount: updated.upvotesCount, downvotesCount: updated.downvotesCount } : prev));
+      setThread((prev) =>
+        prev ? { ...prev, upvotesCount: updated.upvotesCount, downvotesCount: updated.downvotesCount } : prev
+      );
     } catch {
       // Retain UI
     }
@@ -46,15 +54,27 @@ export default function DiscussionDetailPage() {
     if (!thread || !replyText) return;
     try {
       const newReply = await createReply(thread.id, replyText);
-      setThread((prev) => (prev ? { ...prev, repliesCount: prev.repliesCount + 1, replies: [...(prev.replies || []), newReply] } : prev));
+      setThread((prev) =>
+        prev ? { ...prev, repliesCount: prev.repliesCount + 1, replies: [...(prev.replies || []), newReply] } : prev
+      );
       setReplyText('');
     } catch (err: any) {
       alert(err.message || 'Failed to post reply');
     }
   };
 
-  if (loading) return <main className="max-w-4xl mx-auto p-6"><LoadingSkeleton count={3} /></main>;
-  if (error) return <main className="max-w-4xl mx-auto p-6"><ErrorState message={error} /></main>;
+  if (loading)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <LoadingSkeleton count={3} />
+      </main>
+    );
+  if (error)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <ErrorState message={error} />
+      </main>
+    );
   if (!thread) return null;
 
   return (
@@ -96,7 +116,10 @@ export default function DiscussionDetailPage() {
         {thread.replies && thread.replies.length > 0 ? (
           <div className="space-y-3">
             {thread.replies.map((rep) => (
-              <div key={rep.id} className={`p-5 rounded-2xl border ${rep.isAcceptedAnswer ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'}`}>
+              <div
+                key={rep.id}
+                className={`p-5 rounded-2xl border ${rep.isAcceptedAnswer ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'}`}
+              >
                 {rep.isAcceptedAnswer && (
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white mb-2 inline-block">
                     ✓ Accepted Answer
@@ -115,7 +138,10 @@ export default function DiscussionDetailPage() {
         )}
       </section>
 
-      <form onSubmit={handlePostReply} className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+      <form
+        onSubmit={handlePostReply}
+        className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm"
+      >
         <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 mb-2">Your Answer</h3>
         <textarea
           value={replyText}

@@ -19,13 +19,7 @@ export function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const classNames = [
-    styles.button,
-    styles[variant],
-    styles[size],
-    fullWidth ? styles.fullWidth : '',
-    className,
-  ]
+  const classNames = [styles.button, styles[variant], styles[size], fullWidth ? styles.fullWidth : '', className]
     .filter(Boolean)
     .join(' ');
 

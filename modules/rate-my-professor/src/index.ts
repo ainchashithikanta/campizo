@@ -98,9 +98,19 @@ class InMemoryReviewRepo implements ReviewRepository {
     return r && r.collegeId === collegeId ? r : null;
   }
 
-  public async findAlreadyReviewed(authorUserId: string, professorId: string, courseAssignmentId: string, collegeId: string): Promise<boolean> {
+  public async findAlreadyReviewed(
+    authorUserId: string,
+    professorId: string,
+    courseAssignmentId: string,
+    collegeId: string
+  ): Promise<boolean> {
     for (const r of this.reviews.values()) {
-      if (r.collegeId === collegeId && r.professorId === professorId && r.authorUserId === authorUserId && r.courseAssignmentId === courseAssignmentId) {
+      if (
+        r.collegeId === collegeId &&
+        r.professorId === professorId &&
+        r.authorUserId === authorUserId &&
+        r.courseAssignmentId === courseAssignmentId
+      ) {
         return true;
       }
     }

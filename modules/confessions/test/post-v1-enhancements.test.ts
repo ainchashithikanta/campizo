@@ -54,7 +54,13 @@ describe('Post-V1 Production Enhancements & Chaos Testing Suite', () => {
     const meili = new MeilisearchProvider();
     const openSearch = new OpenSearchProvider();
 
-    const doc = { id: 'c1', collegeId: COLLEGE, title: 'OS Exam Tips', content: 'Semaphore deadlock avoidance', categoryCode: 'academic' };
+    const doc = {
+      id: 'c1',
+      collegeId: COLLEGE,
+      title: 'OS Exam Tips',
+      content: 'Semaphore deadlock avoidance',
+      categoryCode: 'academic'
+    };
 
     await meili.index(doc);
     await openSearch.index(doc);

@@ -92,13 +92,27 @@
   animation: rmp-fade-in var(--ch-motion-normal) var(--ch-motion-easing) both;
 }
 
-.rmp-stagger > *:nth-child(1) { animation-delay: 0ms; }
-.rmp-stagger > *:nth-child(2) { animation-delay: 50ms; }
-.rmp-stagger > *:nth-child(3) { animation-delay: 100ms; }
-.rmp-stagger > *:nth-child(4) { animation-delay: 150ms; }
-.rmp-stagger > *:nth-child(5) { animation-delay: 200ms; }
-.rmp-stagger > *:nth-child(6) { animation-delay: 250ms; }
-.rmp-stagger > *:nth-child(n+7) { animation-delay: 300ms; }
+.rmp-stagger > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.rmp-stagger > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+.rmp-stagger > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+.rmp-stagger > *:nth-child(4) {
+  animation-delay: 150ms;
+}
+.rmp-stagger > *:nth-child(5) {
+  animation-delay: 200ms;
+}
+.rmp-stagger > *:nth-child(6) {
+  animation-delay: 250ms;
+}
+.rmp-stagger > *:nth-child(n + 7) {
+  animation-delay: 300ms;
+}
 
 /* ---------- Shimmer Animation ---------- */
 @keyframes rmp-shimmer {

@@ -6,11 +6,11 @@
   --conf-card-hover: #334155;
   --conf-border: #334155;
   --conf-border-accent: #475569;
-  
+
   --conf-text-primary: #f8fafc;
   --conf-text-secondary: #94a3b8;
   --conf-text-muted: #64748b;
-  
+
   --conf-accent-primary: #6366f1;
   --conf-accent-primary-hover: #4f46e5;
   --conf-accent-success: #10b981;
@@ -22,7 +22,7 @@
   --conf-badge-trending-fg: #f59e0b;
   --conf-badge-hot-bg: rgba(239, 68, 68, 0.15);
   --conf-badge-hot-fg: #f87171;
-  
+
   --conf-font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --conf-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
@@ -101,7 +101,9 @@
   border-radius: var(--conf-radius-md);
   padding: 1.25rem;
   margin-bottom: 1.25rem;
-  transition: transform var(--conf-transition-fast), border-color var(--conf-transition-fast);
+  transition:
+    transform var(--conf-transition-fast),
+    border-color var(--conf-transition-fast);
 }
 
 .conf-card:hover {
@@ -297,9 +299,15 @@
   border-radius: 0 var(--conf-radius-sm) var(--conf-radius-sm) 0;
 }
 
-.conf-comment-item.depth-2 { margin-left: 1rem; }
-.conf-comment-item.depth-3 { margin-left: 2rem; }
-.conf-comment-item.depth-4 { margin-left: 3rem; }
+.conf-comment-item.depth-2 {
+  margin-left: 1rem;
+}
+.conf-comment-item.depth-3 {
+  margin-left: 2rem;
+}
+.conf-comment-item.depth-4 {
+  margin-left: 3rem;
+}
 
 .conf-comment-pseudonym {
   font-family: var(--conf-font-mono);
@@ -350,8 +358,12 @@
 }
 
 @keyframes confSkeletonLoading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .conf-empty-state {
@@ -373,7 +385,9 @@ a:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+  *,
+  ::before,
+  ::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }

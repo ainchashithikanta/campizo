@@ -48,7 +48,7 @@ jobs:
       - name: Package Production Build Artifacts
         run: |
           mkdir -p release-artifacts
-          tar -czf release-artifacts/college-hub-release-${{ github.event.inputs.version }}.tar.gz apps/ modules/ packages/ package.json pnpm-workspace.yaml docker-compose.prod.yml
+          tar -czf release-artifacts/college-hub-release-${{ github.event.inputs.version }}.tar.gz apps/ modules/ packages/ Dockerfile.api Dockerfile.worker Dockerfile.web Dockerfile.backup package.json pnpm-workspace.yaml docker-compose.prod.yml
 
       - name: Upload Release Bundle
         uses: actions/upload-artifact@v4

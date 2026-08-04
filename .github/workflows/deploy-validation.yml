@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        component: [api, web, worker]
+        component: [api, web, worker, backup]
     steps:
       - name: Checkout
         uses: actions/checkout@v4

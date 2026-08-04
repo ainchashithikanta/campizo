@@ -50,13 +50,17 @@ describe('Campus Confessions Production Resilience & Failure Mode Suite', () => 
     };
 
     useCases = new ConfessionUseCases(
-      confessionRepo, commentRepo, voteRepo, bookmarkRepo,
-      modRepo, identityRepo, notifRepo, eventPublisher
+      confessionRepo,
+      commentRepo,
+      voteRepo,
+      bookmarkRepo,
+      modRepo,
+      identityRepo,
+      notifRepo,
+      eventPublisher
     );
 
-    queries = new ConfessionQueries(
-      confessionRepo, commentRepo, bookmarkRepo, voteRepo, modRepo
-    );
+    queries = new ConfessionQueries(confessionRepo, commentRepo, bookmarkRepo, voteRepo, modRepo);
 
     app = Fastify({ logger: false });
     await app.register(confessionRoutes, { useCases, queries });
@@ -71,9 +75,15 @@ describe('Campus Confessions Production Resilience & Failure Mode Suite', () => 
 
   it('1. should gracefully fallback and succeed if IdempotencyStore throws storage error', async () => {
     const failingStore: IIdempotencyStore = {
-      async has() { throw new Error('REDIS_CONNECTION_REFUSED'); },
-      async get() { throw new Error('REDIS_CONNECTION_REFUSED'); },
-      async set() { throw new Error('REDIS_CONNECTION_REFUSED'); }
+      async has() {
+        throw new Error('REDIS_CONNECTION_REFUSED');
+      },
+      async get() {
+        throw new Error('REDIS_CONNECTION_REFUSED');
+      },
+      async set() {
+        throw new Error('REDIS_CONNECTION_REFUSED');
+      }
     };
 
     const resilientApp = Fastify({ logger: false });
@@ -112,7 +122,11 @@ describe('Campus Confessions Production Resilience & Failure Mode Suite', () => 
       new InMemoryModerationRepository(),
       new InMemoryAnonymousIdentityRepository(),
       new InMemoryNotificationRepository(),
-      { async publish() { eventsEmitted = true; } }
+      {
+        async publish() {
+          eventsEmitted = true;
+        }
+      }
     );
 
     await expect(

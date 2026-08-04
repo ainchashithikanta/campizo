@@ -76,6 +76,17 @@ observability:
 errorTracking:
   enabled: true
 
+# Backups run in staging against the staging S3-compatible object store with
+# the production retention policy so restore tooling is exercised in staging
+# before production.
+backup:
+  enabled: true
+  prefix: collegehub-staging
+  s3:
+    endpoint: 'REPLACE-WITH-STAGING-S3-ENDPOINT'
+    region: us-east-1
+    bucket: collegehub-staging-backups
+
 # Bundled dependencies stay disabled in staging; point at externally managed
 # endpoints via `secrets.databaseUrl` / `secrets.redisUrl` and `external.*`.
 postgresql:
@@ -98,5 +109,7 @@ secrets:
   REDIS_PASSWORD: 'CHANGE-ME-STAGING'
   JWT_SECRET: 'staging-jwt-secret-must-be-32-characters-long'
   ENCRYPTION_KEY_32_BYTES: '0123456789abcdef0123456789abcdef'
+  BACKUP_S3_ACCESS_KEY_ID: 'CHANGE-ME-STAGING'
+  BACKUP_S3_SECRET_ACCESS_KEY: 'CHANGE-ME-STAGING'
   databaseUrl: 'postgresql://collegehub_user:CHANGE-ME-STAGING@collegehub-staging-postgres:5432/collegehub_db'
   redisUrl: 'redis://:CHANGE-ME-STAGING@collegehub-staging-redis:6379'

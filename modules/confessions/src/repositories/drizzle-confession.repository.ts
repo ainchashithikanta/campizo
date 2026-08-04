@@ -55,8 +55,15 @@ export class DrizzleConfessionRepository implements ConfessionRepository {
     return row as ConfessionEntity;
   }
 
-  async save(data: Partial<ConfessionEntity> & { collegeId: string; title: string; content: string }): Promise<ConfessionEntity> {
-    const slug = data.slug || data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+  async save(
+    data: Partial<ConfessionEntity> & { collegeId: string; title: string; content: string }
+  ): Promise<ConfessionEntity> {
+    const slug =
+      data.slug ||
+      data.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
     const [inserted] = await this.db
       .insert(confessions)
       .values({
@@ -121,7 +128,9 @@ export class DrizzleCommentRepository implements CommentRepository {
     return (rows[0] as CommentEntity) || null;
   }
 
-  async save(data: Partial<CommentEntity> & { collegeId: string; confessionId: string; content: string }): Promise<CommentEntity> {
+  async save(
+    data: Partial<CommentEntity> & { collegeId: string; confessionId: string; content: string }
+  ): Promise<CommentEntity> {
     const [inserted] = await this.db
       .insert(confessionComments)
       .values({
@@ -174,7 +183,9 @@ export class DrizzleModerationRepository implements ModerationRepository {
     return (rows[0] as ModerationCaseEntity) || null;
   }
 
-  async saveCase(data: Partial<ModerationCaseEntity> & { collegeId: string; confessionId: string; severityLevel: number }): Promise<ModerationCaseEntity> {
+  async saveCase(
+    data: Partial<ModerationCaseEntity> & { collegeId: string; confessionId: string; severityLevel: number }
+  ): Promise<ModerationCaseEntity> {
     const [inserted] = await this.db
       .insert(moderationCases)
       .values({
@@ -189,7 +200,13 @@ export class DrizzleModerationRepository implements ModerationRepository {
     return inserted as ModerationCaseEntity;
   }
 
-  async recordAction(action: { collegeId: string; caseId: string; moderatorUserId: string; action: string; reasonNote?: string }): Promise<void> {
+  async recordAction(action: {
+    collegeId: string;
+    caseId: string;
+    moderatorUserId: string;
+    action: string;
+    reasonNote?: string;
+  }): Promise<void> {
     await this.db.insert(moderationActions).values({
       collegeId: action.collegeId,
       caseId: action.caseId,
@@ -203,7 +220,12 @@ export class DrizzleModerationRepository implements ModerationRepository {
     const rows = await this.db
       .select()
       .from(moderationCases)
-      .where(and(eq(moderationCases.collegeId, collegeId), sql`${moderationCases.status} IN ('OPEN', 'UNDER_REVIEW', 'QUARANTINED')`))
+      .where(
+        and(
+          eq(moderationCases.collegeId, collegeId),
+          sql`${moderationCases.status} IN ('OPEN', 'UNDER_REVIEW', 'QUARANTINED')`
+        )
+      )
       .orderBy(moderationCases.severityLevel);
 
     return rows as ModerationCaseEntity[];
@@ -223,7 +245,11 @@ export class DrizzleStatisticsRepository implements StatisticsRepository {
       });
   }
 
-  async recalculateScores(confessionId: string, collegeId: string, metrics: { trendingScore: string; hotScore: string }): Promise<void> {
+  async recalculateScores(
+    confessionId: string,
+    collegeId: string,
+    metrics: { trendingScore: string; hotScore: string }
+  ): Promise<void> {
     await this.db
       .insert(confessionStatistics)
       .values({ confessionId, collegeId, trendingScore: metrics.trendingScore, hotScore: metrics.hotScore })
@@ -237,7 +263,12 @@ export class DrizzleStatisticsRepository implements StatisticsRepository {
 export class DrizzleNotificationRepository implements NotificationRepository {
   constructor(private db: any) {}
 
-  async queueNotification(notification: { collegeId: string; recipientUserId: string; notificationType: string; payloadJson: string }): Promise<void> {
+  async queueNotification(notification: {
+    collegeId: string;
+    recipientUserId: string;
+    notificationType: string;
+    payloadJson: string;
+  }): Promise<void> {
     await this.db.insert(confessionNotifications).values({
       collegeId: notification.collegeId,
       recipientUserId: notification.recipientUserId,
@@ -254,7 +285,12 @@ export class DrizzleAnonymousIdentityRepository implements AnonymousIdentityRepo
     const existing = await this.db
       .select()
       .from(anonymousThreadIdentities)
-      .where(and(eq(anonymousThreadIdentities.confessionId, confessionId), eq(anonymousThreadIdentities.userIdHash, userIdHash)))
+      .where(
+        and(
+          eq(anonymousThreadIdentities.confessionId, confessionId),
+          eq(anonymousThreadIdentities.userIdHash, userIdHash)
+        )
+      )
       .limit(1);
 
     if (existing[0]) return existing[0].assignedPseudonym;
@@ -275,7 +311,11 @@ export class DrizzleAnonymousIdentityRepository implements AnonymousIdentityRepo
 export class DrizzleRankingRepository implements RankingRepository {
   constructor(private db: any) {}
 
-  async saveSnapshot(snapshot: { collegeId: string; snapshotType: string; topConfessionIdsJson: string }): Promise<void> {
+  async saveSnapshot(snapshot: {
+    collegeId: string;
+    snapshotType: string;
+    topConfessionIdsJson: string;
+  }): Promise<void> {
     await this.db.insert(rankingSnapshots).values(snapshot);
   }
 }
@@ -288,14 +328,28 @@ export class DrizzleBookmarkRepository implements BookmarkRepository {
   }
 
   async removeBookmark(confessionId: string, userId: string, collegeId: string): Promise<void> {
-    await this.db.delete(confessionBookmarks).where(and(eq(confessionBookmarks.confessionId, confessionId), eq(confessionBookmarks.userId, userId), eq(confessionBookmarks.collegeId, collegeId)));
+    await this.db
+      .delete(confessionBookmarks)
+      .where(
+        and(
+          eq(confessionBookmarks.confessionId, confessionId),
+          eq(confessionBookmarks.userId, userId),
+          eq(confessionBookmarks.collegeId, collegeId)
+        )
+      );
   }
 
   async isBookmarked(confessionId: string, userId: string, collegeId: string): Promise<boolean> {
     const rows = await this.db
       .select()
       .from(confessionBookmarks)
-      .where(and(eq(confessionBookmarks.confessionId, confessionId), eq(confessionBookmarks.userId, userId), eq(confessionBookmarks.collegeId, collegeId)))
+      .where(
+        and(
+          eq(confessionBookmarks.confessionId, confessionId),
+          eq(confessionBookmarks.userId, userId),
+          eq(confessionBookmarks.collegeId, collegeId)
+        )
+      )
       .limit(1);
 
     return !!rows[0];
@@ -305,19 +359,42 @@ export class DrizzleBookmarkRepository implements BookmarkRepository {
 export class DrizzleVoteRepository implements VoteRepository {
   constructor(private db: any) {}
 
-  async addConfessionVote(confessionId: string, voterUserId: string, voteType: 'UPVOTE' | 'DOWNVOTE', collegeId: string): Promise<void> {
+  async addConfessionVote(
+    confessionId: string,
+    voterUserId: string,
+    voteType: 'UPVOTE' | 'DOWNVOTE',
+    collegeId: string
+  ): Promise<void> {
     await this.db.insert(confessionVotes).values({ confessionId, voterUserId, voteType, collegeId });
   }
 
   async removeConfessionVote(confessionId: string, voterUserId: string, collegeId: string): Promise<void> {
-    await this.db.delete(confessionVotes).where(and(eq(confessionVotes.confessionId, confessionId), eq(confessionVotes.voterUserId, voterUserId), eq(confessionVotes.collegeId, collegeId)));
+    await this.db
+      .delete(confessionVotes)
+      .where(
+        and(
+          eq(confessionVotes.confessionId, confessionId),
+          eq(confessionVotes.voterUserId, voterUserId),
+          eq(confessionVotes.collegeId, collegeId)
+        )
+      );
   }
 
-  async getUserConfessionVote(confessionId: string, voterUserId: string, collegeId: string): Promise<'UPVOTE' | 'DOWNVOTE' | null> {
+  async getUserConfessionVote(
+    confessionId: string,
+    voterUserId: string,
+    collegeId: string
+  ): Promise<'UPVOTE' | 'DOWNVOTE' | null> {
     const rows = await this.db
       .select()
       .from(confessionVotes)
-      .where(and(eq(confessionVotes.confessionId, confessionId), eq(confessionVotes.voterUserId, voterUserId), eq(confessionVotes.collegeId, collegeId)))
+      .where(
+        and(
+          eq(confessionVotes.confessionId, confessionId),
+          eq(confessionVotes.voterUserId, voterUserId),
+          eq(confessionVotes.collegeId, collegeId)
+        )
+      )
       .limit(1);
 
     return rows[0] ? (rows[0].voteType as 'UPVOTE' | 'DOWNVOTE') : null;
@@ -327,7 +404,13 @@ export class DrizzleVoteRepository implements VoteRepository {
 export class DrizzleMediaRepository implements MediaRepository {
   constructor(private db: any) {}
 
-  async attachMedia(confessionId: string, mediaUrl: string, mediaType: string, mimeType: string, collegeId: string): Promise<void> {
+  async attachMedia(
+    confessionId: string,
+    mediaUrl: string,
+    mediaType: string,
+    mimeType: string,
+    collegeId: string
+  ): Promise<void> {
     await this.db.insert(confessionMedia).values({ confessionId, mediaUrl, mediaType, mimeType, collegeId });
   }
 }

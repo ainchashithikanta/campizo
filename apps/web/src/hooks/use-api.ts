@@ -6,7 +6,13 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { SearchParams, ProfessorSummaryDto, ProfessorProfileDto, ProfessorStatisticsDto, ReviewDto } from '@web/lib/types';
+import type {
+  SearchParams,
+  ProfessorSummaryDto,
+  ProfessorProfileDto,
+  ProfessorStatisticsDto,
+  ReviewDto
+} from '@web/lib/types';
 import * as api from '@web/lib/api';
 
 /* ---------- Generic Query Hook ---------- */
@@ -123,24 +129,15 @@ export function useProfessors(params: SearchParams) {
 }
 
 export function useProfessorProfile(slug: string) {
-  return useApiQuery<ProfessorProfileDto>(
-    (signal) => api.getProfessorProfile(slug, signal),
-    [slug]
-  );
+  return useApiQuery<ProfessorProfileDto>((signal) => api.getProfessorProfile(slug, signal), [slug]);
 }
 
 export function useProfessorStats(slug: string) {
-  return useApiQuery<ProfessorStatisticsDto>(
-    (signal) => api.getProfessorStatistics(slug, signal),
-    [slug]
-  );
+  return useApiQuery<ProfessorStatisticsDto>((signal) => api.getProfessorStatistics(slug, signal), [slug]);
 }
 
 export function useProfessorReviews(slug: string, page = 1) {
-  return useApiQuery<ReviewDto[]>(
-    (signal) => api.getProfessorReviews(slug, page, 20, signal),
-    [slug, page]
-  );
+  return useApiQuery<ReviewDto[]>((signal) => api.getProfessorReviews(slug, page, 20, signal), [slug, page]);
 }
 
 /* ---------- Debounce Hook ---------- */

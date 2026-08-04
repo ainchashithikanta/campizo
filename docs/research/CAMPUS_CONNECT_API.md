@@ -3,12 +3,13 @@
 **Module Name**: `Campus Connect` (`@college-hub/campus-connect`)  
 **Document Type**: REST API Contracts, Fastify Route Specifications & SDK Specification  
 **Status**: 🟢 **FINAL API SPECIFICATION**  
-**Target Architecture**: Fastify HTTP Server Layer with TypeScript SDK  
+**Target Architecture**: Fastify HTTP Server Layer with TypeScript SDK
 
 ---
 
 > [!IMPORTANT]
 > **Mandatory API Design Constraints**:
+>
 > 1. **Idempotency**: Every state-mutating endpoint (`POST`, `PUT`, `PATCH`, `DELETE`) MUST accept an `Idempotency-Key` header to prevent duplicate execution.
 > 2. **Standardized Response Envelope**: Every HTTP endpoint returns a strict `ApiV1Response<T>` envelope with trace ID and tenant context.
 > 3. **Explainable Recommendations**: Recommendation endpoints return explicit, human-readable match reasons alongside weighted vectors.
@@ -55,6 +56,7 @@ export interface PaginatedResponse<T> {
 ```
 
 ### Required Request Headers
+
 - `Authorization`: `Bearer <jwt_token>` (Contains `userId`, `collegeId`, `roles`).
 - `X-College-Id`: `varchar(64)` (Tenant isolation key).
 - `Idempotency-Key`: `UUIDv4` (Mandatory for `POST`, `PUT`, `PATCH`, `DELETE`).
@@ -83,19 +85,22 @@ The API surface comprises 32 endpoints categorized into 8 functional controllers
 ### 2.1 Complete Endpoint Specifications
 
 #### Controller 1: Intent Management (`/api/v1/connect/intents`)
+
 - `POST /api/v1/connect/intents`: Declare a new collaboration intent (`Idempotency-Key` required).
 - `GET /api/v1/connect/intents`: List active intents for authenticated student.
 - `GET /api/v1/connect/intents/:intentId`: Get specific intent details.
-- `PATCH /api/v1/connect/intents/:intentId/status`: Update intent status (*PAUSED*, *FULFILLED*, *ARCHIVED*).
+- `PATCH /api/v1/connect/intents/:intentId/status`: Update intent status (_PAUSED_, _FULFILLED_, _ARCHIVED_).
 - `DELETE /api/v1/connect/intents/:intentId`: Soft-delete an intent.
 
 #### Controller 2: Student Profile & Skills (`/api/v1/connect/profiles`)
+
 - `GET /api/v1/connect/profiles/me`: Fetch own profile credentials and active goals.
 - `GET /api/v1/connect/profiles/:userId`: Fetch peer profile (Enforces target user's `VisibilityScope`).
 - `PUT /api/v1/connect/profiles/me`: Update profile skills, interests, and bio.
 - `POST /api/v1/connect/profiles/:userId/endorse`: Endorse a peer's skill (Requires shared project completion).
 
 #### Controller 3: Network Graph & Connections (`/api/v1/connect/network`)
+
 - `POST /api/v1/connect/network/requests`: Send connection request (`Idempotency-Key` required; Enforces 5/day cap).
 - `GET /api/v1/connect/network/requests`: List incoming/outgoing pending connection requests.
 - `POST /api/v1/connect/network/requests/:requestId/accept`: Accept connection request.
@@ -104,6 +109,7 @@ The API surface comprises 32 endpoints categorized into 8 functional controllers
 - `DELETE /api/v1/connect/network/connections/:peerId`: Remove a peer connection.
 
 #### Controller 4: Contextual Messaging (`/api/v1/connect/messages`)
+
 - `GET /api/v1/connect/messages/conversations`: List active conversations (Requires `contextType` and `contextId` query filters).
 - `POST /api/v1/connect/messages/conversations`: Create context-bound conversation (`contextType` and `contextId` mandatory).
 - `GET /api/v1/connect/messages/conversations/:conversationId/messages`: Fetch messages with pagination.
@@ -111,21 +117,25 @@ The API surface comprises 32 endpoints categorized into 8 functional controllers
 - `PATCH /api/v1/connect/messages/conversations/:conversationId/read`: Update read receipt timestamp.
 
 #### Controller 5: Discovery & Recommendations (`/api/v1/connect/discover`)
+
 - `GET /api/v1/connect/discover/feed`: High-throughput intent discovery feed with pagination (`page`, `limit`, `intentType`, `courseCode`).
 - `GET /api/v1/connect/discover/recommendations`: AI recommendation feed returning explainable match reasons (`weightedReasons`).
 
 #### Controller 6: Privacy & Safety Hub (`/api/v1/connect/privacy`)
+
 - `GET /api/v1/connect/privacy`: Fetch privacy and discoverability settings.
 - `PUT /api/v1/connect/privacy`: Update visibility scope, Incognito mode, and presence indicators.
 - `POST /api/v1/connect/privacy/block`: Block a user (`Idempotency-Key` required).
 - `DELETE /api/v1/connect/privacy/block/:targetUserId`: Unblock a user.
 
 #### Controller 7: Moderation & Trust (`/api/v1/connect/moderation`)
+
 - `POST /api/v1/connect/moderation/reports`: Submit a safety report with evidence (`Idempotency-Key` required).
 - `GET /api/v1/connect/moderation/cases`: (Campus Admins) List pending moderation review cases.
-- `POST /api/v1/connect/moderation/cases/:caseId/action`: (Campus Admins) Execute disciplinary action (*WARNING*, *COOLDOWN*, *SUSPENSION*).
+- `POST /api/v1/connect/moderation/cases/:caseId/action`: (Campus Admins) Execute disciplinary action (_WARNING_, _COOLDOWN_, _SUSPENSION_).
 
 #### Controller 8: Notifications (`/api/v1/connect/notifications`)
+
 - `GET /api/v1/connect/notifications`: Fetch user notification stream with pagination.
 - `PATCH /api/v1/connect/notifications/:notificationId/read`: Mark notification as read.
 
@@ -145,7 +155,7 @@ The API surface comprises 32 endpoints categorized into 8 functional controllers
         "fullName": "Sarah Chen",
         "classYear": 2027,
         "major": "Symbolic Systems",
-        "compatibilityPct": 92.50,
+        "compatibilityPct": 92.5,
         "activeIntent": {
           "intentId": "int_88412",
           "intentType": "STUDY_PARTNER",
@@ -164,7 +174,7 @@ The API surface comprises 32 endpoints categorized into 8 functional controllers
           },
           {
             "reasonCode": "SHARED_INTEREST",
-            "weight": 0.20,
+            "weight": 0.2,
             "humanText": "Shared interest in Hackathons & NLP Research"
           }
         ]
@@ -202,18 +212,33 @@ export interface ICampusConnectSdk {
   updateIntentStatus(intentId: string, status: IntentStatus): Promise<ApiV1Response<StudentIntentDto>>;
 
   // Network & Connection APIs
-  sendConnectionRequest(receiverId: string, intentId: string, note: string, idempotencyKey: string): Promise<ApiV1Response<ConnectionRequestDto>>;
+  sendConnectionRequest(
+    receiverId: string,
+    intentId: string,
+    note: string,
+    idempotencyKey: string
+  ): Promise<ApiV1Response<ConnectionRequestDto>>;
   acceptConnectionRequest(requestId: string, idempotencyKey: string): Promise<ApiV1Response<ConnectionDto>>;
   listConnections(params?: PaginationParams): Promise<ApiV1Response<PaginatedResponse<ConnectionDto>>>;
 
   // Messaging APIs (Context Required)
-  createContextConversation(contextType: string, contextId: string, participantIds: string[], idempotencyKey: string): Promise<ApiV1Response<ConversationDto>>;
+  createContextConversation(
+    contextType: string,
+    contextId: string,
+    participantIds: string[],
+    idempotencyKey: string
+  ): Promise<ApiV1Response<ConversationDto>>;
   sendMessage(conversationId: string, content: string, idempotencyKey: string): Promise<ApiV1Response<MessageDto>>;
-  listMessages(conversationId: string, params?: PaginationParams): Promise<ApiV1Response<PaginatedResponse<MessageDto>>>;
+  listMessages(
+    conversationId: string,
+    params?: PaginationParams
+  ): Promise<ApiV1Response<PaginatedResponse<MessageDto>>>;
 
   // Discovery & Recommendations
   getDiscoveryFeed(params: DiscoveryFeedParams): Promise<ApiV1Response<PaginatedResponse<DiscoveryItemDto>>>;
-  getExplainableRecommendations(params?: RecommendationParams): Promise<ApiV1Response<PaginatedResponse<ExplainableRecommendationDto>>>;
+  getExplainableRecommendations(
+    params?: RecommendationParams
+  ): Promise<ApiV1Response<PaginatedResponse<ExplainableRecommendationDto>>>;
 
   // Privacy & Safety
   updatePrivacySettings(settings: Partial<PrivacySettingsDto>): Promise<ApiV1Response<PrivacySettingsDto>>;

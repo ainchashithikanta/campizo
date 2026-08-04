@@ -62,9 +62,7 @@ export class FeatureEvaluationService {
         ? {
             decisionExplanation: `Evaluated ${flagKey} in ${environment}: ${result.reason}`,
             skippedRules,
-            evaluationTimeline: [
-              { policy: 'PolicyEnginePipeline', outcome: result.matchedRule, durationMs }
-            ]
+            evaluationTimeline: [{ policy: 'PolicyEnginePipeline', outcome: result.matchedRule, durationMs }]
           }
         : undefined
     });
@@ -114,11 +112,7 @@ export class FeatureEvaluationService {
   /**
    * Dry-run evaluation without updating telemetry counters.
    */
-  dryRun(
-    flagKey: string,
-    environment: EnvironmentType,
-    proposedContext: Partial<EvaluationContext>
-  ): EvaluationResult {
+  dryRun(flagKey: string, environment: EnvironmentType, proposedContext: Partial<EvaluationContext>): EvaluationResult {
     return this.evaluateFeature(flagKey, environment, proposedContext, true);
   }
 

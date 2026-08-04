@@ -23,7 +23,12 @@ export class ConnectProfileController {
 
   async getDiscoveryFeed(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const query = discoveryQuerySchema.parse(request.query);
-    const feed = await this.queryService.getDiscoveryFeed(request.context.collegeId, query.intentType, query.limit, query.page);
+    const feed = await this.queryService.getDiscoveryFeed(
+      request.context.collegeId,
+      query.intentType,
+      query.limit,
+      query.page
+    );
     reply.send(formatApiV1Success(feed, request));
   }
 }

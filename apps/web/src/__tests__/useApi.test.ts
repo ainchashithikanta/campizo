@@ -5,7 +5,7 @@ import { useDebounce } from '@web/hooks/use-api';
 describe('useDebounce Hook', () => {
   it('updates debounced value after delay', async () => {
     const { result, rerender } = renderHook(({ val }) => useDebounce(val, 100), {
-      initialProps: { val: 'initial' },
+      initialProps: { val: 'initial' }
     });
 
     expect(result.current).toBe('initial');

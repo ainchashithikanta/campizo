@@ -34,8 +34,22 @@ export default function ConversationDetailPage() {
       });
 
       setMessages([
-        { id: 'msg_1', conversationId, senderProfileId: 'usr_sarah', content: 'Hey! Ready for the CS224N study session today?', createdAt: new Date(Date.now() - 3600000).toISOString(), isRead: true },
-        { id: 'msg_2', conversationId, senderProfileId: 'usr_me', content: 'Yes! I finished the PyTorch transformer assignment.', createdAt: new Date(Date.now() - 1800000).toISOString(), isRead: true }
+        {
+          id: 'msg_1',
+          conversationId,
+          senderProfileId: 'usr_sarah',
+          content: 'Hey! Ready for the CS224N study session today?',
+          createdAt: new Date(Date.now() - 3600000).toISOString(),
+          isRead: true
+        },
+        {
+          id: 'msg_2',
+          conversationId,
+          senderProfileId: 'usr_me',
+          content: 'Yes! I finished the PyTorch transformer assignment.',
+          createdAt: new Date(Date.now() - 1800000).toISOString(),
+          isRead: true
+        }
       ]);
       setLoading(false);
     }, 100);
@@ -64,7 +78,12 @@ export default function ConversationDetailPage() {
     }
   };
 
-  if (loading) return <main className="max-w-4xl mx-auto p-6"><LoadingSkeleton count={3} /></main>;
+  if (loading)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <LoadingSkeleton count={3} />
+      </main>
+    );
 
   return (
     <main className="max-w-4xl mx-auto p-6 font-sans flex flex-col h-[calc(100vh-100px)]">

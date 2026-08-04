@@ -16,7 +16,7 @@ The **Academic Resource Hub Database Architecture** is engineered to support hun
 
 ### Core Architectural Principles
 
-1. **Resource-Centric, Not File-Centric**: 
+1. **Resource-Centric, Not File-Centric**:
    A study resource is a logical academic entity (`AcademicResource`), distinct from its historical revisions (`ResourceVersion`), and its physical file representations (`ResourceFile`). A single resource can evolve through multiple revisions, and a single revision can be backed by multiple binary renditions (e.g., original PDF, optimized web PDF, thumbnail image, plain-text OCR extract).
 2. **Immutable Audit & Revision Lineage**:
    Resource versions and file binaries are never overwritten in-place. Edits generate new version records, maintaining an unalterable audit trail and enabling 1-click version rollbacks.
@@ -39,26 +39,26 @@ erDiagram
     departments ||--o{ subjects : offers
     colleges ||--o{ subjects : scope
     subjects ||--o{ courses : contains
-    
+
     colleges ||--o{ academic_resources : isolates
     departments ||--o{ academic_resources : categorizes
     subjects ||--o{ academic_resources : relates
     courses ||--o{ academic_resources : maps
-    
+
     academic_resources ||--o{ resource_versions : contains_history
     academic_resources ||--1| resource_statistics : maintains_stats
     academic_resources ||--o{ resource_moderations : flagged_by
     academic_resources ||--o{ resource_tag_mappings : tagged_with
-    
+
     resource_versions ||--o{ resource_files : renders_as
-    
+
     academic_resources ||--o{ collection_resources : included_in
     study_collections ||--o{ collection_resources : bundles
     colleges ||--o{ study_collections : isolates
-    
+
     academic_resources ||--o{ resource_relationships : source_node
     academic_resources ||--o{ resource_relationships : target_node
-    
+
     academic_resources ||--o{ resource_votes : receives_vote
     academic_resources ||--o{ resource_bookmarks : bookmarked_by
     academic_resources ||--o{ resource_downloads : downloaded_by
@@ -82,7 +82,7 @@ flowchart TD
     Req[Incoming HTTP Request] --> TenantContext[AsyncLocalStorage / Fastify Tenant Hook]
     TenantContext --> SetCtx["SET LOCAL app.current_college_id = 'college-stanford-001'"]
     SetCtx --> DBQuery[Execute PostgreSQL Query]
-    
+
     DBQuery --> RLSGuard{PostgreSQL RLS Guard}
     RLSGuard -->|college_id Matches Session| Allow[Grant Table Rows Access]
     RLSGuard -->|college_id Mismatch / Unset| Deny[Return 0 Rows / 403 Forbidden]
@@ -110,10 +110,10 @@ flowchart LR
 flowchart TD
     ClientUpload[Upload PDF Request] --> ClientHash[Compute SHA-256 Checksum on Client/API]
     ClientHash --> DBCheck{Exists in resource_files?}
-    
+
     DBCheck -->|Yes - Duplicate Found| ReuseStorage[Reuse Existing S3 Storage Key & File ID]
     DBCheck -->|No - New Binary| S3Upload[Upload Binary Stream to MinIO / S3]
-    
+
     ReuseStorage --> CreateVersion[Create New ResourceVersion Record]
     S3Upload --> CreateFileRecord[Create New ResourceFile Record]
     CreateFileRecord --> CreateVersion
@@ -128,12 +128,12 @@ flowchart TD
 flowchart TD
     ReportEvent[User Submits Report] --> InsertReport[Insert Into resource_reports]
     InsertReport --> WorkerCheck{Reports Count in 24h >= 3?}
-    
+
     WorkerCheck -->|No| KeepActive[Maintain Status = APPROVED]
     WorkerCheck -->|Yes| Quarantine[Update Status = QUARANTINED in academic_resources]
     Quarantine --> ModQueue[Insert Record into resource_moderations]
     ModQueue --> AdminAction{Moderator Review}
-    
+
     AdminAction -->|Approve| Restore[Set Status = APPROVED]
     AdminAction -->|Reject / Delete| SoftDelete[Set Status = REJECTED / Soft-Delete]
 ```
@@ -159,6 +159,7 @@ flowchart TD
 ### 3.1 Academic Reference Tables (Shared / Reference)
 
 #### 1. `academic_schemes`
+
 - **Purpose**: Defines university academic regulation schemes (e.g., `2018 Scheme`, `2021 Regulation`, `2024 NEP Scheme`).
 - **Why Separate**: Regulations change every 3-4 years across Indian universities. Isolating schemes allows resources to be explicitly tagged with their syllabus version.
 - **Merge Analysis**: Cannot be merged into subjects because a single subject (e.g. `Operating Systems`) exists across multiple regulation schemes with different syllabus modules.
@@ -174,6 +175,7 @@ flowchart TD
 - **Expected Size**: $<100$ rows.
 
 #### 2. `exam_types`
+
 - **Purpose**: Standardized taxonomy of academic examinations (e.g. `MID_SEM_1`, `MID_SEM_2`, `END_SEM`, `LAB_VIVA`, `MAKEUP_EXAM`).
 - **Why Separate**: Enforces standardized filtering across all colleges and material query APIs.
 - **Merge Analysis**: Cannot be merged into `academic_resources` as a string to prevent typos and ensure API schema consistency.
@@ -187,6 +189,7 @@ flowchart TD
 - **Expected Size**: $<20$ rows.
 
 #### 3. `resource_types`
+
 - **Purpose**: Standardized material classification (e.g. `PYQ`, `LECTURE_NOTES`, `LAB_MANUAL`, `FORMULA_SHEET`, `SYLLABUS_COPY`).
 - **Why Separate**: Controls UI icons, filter badges, and upload validation rules per material category.
 - **Expected Size**: $<15$ rows.
@@ -196,6 +199,7 @@ flowchart TD
 ### 3.2 Academic Structure Tables (Multi-Tenant)
 
 #### 4. `colleges`
+
 - **Purpose**: Represents tenant college institutions (e.g. `Stanford University`, `NIT Trichy`, `AKTU Campus`).
 - **Ownership**: Platform Root Entity.
 - **Columns**:
@@ -206,6 +210,7 @@ flowchart TD
   - `created_at`: `TIMESTAMPTZ` (NOT NULL, Default `NOW()`)
 
 #### 5. `departments`
+
 - **Purpose**: Academic departments within a college (e.g. `Computer Science & Engineering`).
 - **RLS Policy**: `USING (college_id = CURRENT_SETTING('app.current_college_id', true))`
 - **Columns**:
@@ -216,6 +221,7 @@ flowchart TD
 - **Indexing**: Composite B-Tree `(college_id, code)`.
 
 #### 6. `subjects`
+
 - **Purpose**: Canonical subject entities within a department and college (e.g. `CS501: Operating Systems`).
 - **RLS Policy**: Tenant isolated.
 - **Columns**:
@@ -232,6 +238,7 @@ flowchart TD
 ### 3.3 Core Resource Tables (Resource-Centric Paradigm)
 
 #### 7. `academic_resources` (Core Logical Entity)
+
 - **Purpose**: The canonical logical record representing a study resource. Does NOT store binary file data directly.
 - **Why Separate**: Separates resource metadata (title, subject, uploader, overall quality score) from physical file blobs and historical version revisions.
 - **Merge Analysis**: Merging with `resource_files` would break multi-format support and version history.
@@ -264,6 +271,7 @@ flowchart TD
 - **Expected Size**: 5,000,000+ rows across platform.
 
 #### 8. `resource_versions`
+
 - **Purpose**: Stores immutable revision lineage for an `AcademicResource`.
 - **Why Separate**: Enables 1-click rollback, changelog tracking, and multi-file attachment without mutating the parent resource record.
 - **Columns**:
@@ -276,6 +284,7 @@ flowchart TD
 - **Constraints**: `UNIQUE (resource_id, version_number)`.
 
 #### 9. `resource_files`
+
 - **Purpose**: Stores metadata and cloud storage locator pointers for physical binaries.
 - **Why Separate**: Allows a single version to have multiple renditions (e.g. original PDF, Web-Optimized PDF, PNG Thumbnail grid, Plain-Text OCR extract).
 - **Columns**:
@@ -298,6 +307,7 @@ flowchart TD
 ### 3.4 Study Collections & Graph Relationship Tables
 
 #### 10. `study_collections`
+
 - **Purpose**: Ordered bundles of study materials curated by students or faculty ("Exam Survival Kits").
 - **Columns**:
   - `id`: `UUID` (PK)
@@ -309,6 +319,7 @@ flowchart TD
   - `created_at`: `TIMESTAMPTZ` (NOT NULL, Default `NOW()`)
 
 #### 11. `collection_resources`
+
 - **Purpose**: Join table mapping resources into a collection with explicit positional ordering.
 - **Columns**:
   - `collection_id`: `UUID` (FK -> `study_collections.id`, NOT NULL)
@@ -318,6 +329,7 @@ flowchart TD
 - **Constraints**: Primary Key `(collection_id, resource_id)`.
 
 #### 12. `resource_relationships`
+
 - **Purpose**: Directed relationship graph linking academic resources.
 - **Why Separate**: Supports explicit graph edges like:
   - `SOLUTION_FOR`: (Resource B is the solution key for PYQ Resource A)
@@ -336,6 +348,7 @@ flowchart TD
 ### 3.5 Engagement & Analytics Tables
 
 #### 13. `resource_statistics` (Pre-Aggregated Read Cache Table)
+
 - **Purpose**: Stores pre-computed aggregate metrics and Bayesian quality scores for instant resource card rendering.
 - **Why Separate**: Eliminates runtime `COUNT(*)` operations across millions of download/view log rows.
 - **Columns**:
@@ -352,11 +365,13 @@ flowchart TD
 - **Indexing Strategy**: B-Tree `(college_id, bayesian_quality_score DESC)`.
 
 #### 14. `resource_downloads` (Append-Only Log)
+
 - **Purpose**: Audit log of file downloads for analytics and rate limiting.
 - **Columns**: `id`, `college_id`, `resource_id`, `user_id`, `ip_address`, `downloaded_at`.
 - **Partitioning Strategy**: Range Partitioned by Month (`downloaded_at`).
 
 #### 15. `resource_votes`
+
 - **Purpose**: Tracks student helpfulness votes (`HELPFUL` / `UNHELPFUL`).
 - **Columns**: `resource_id`, `user_id`, `college_id`, `vote_type`, `created_at`.
 - **Constraints**: Primary Key `(resource_id, user_id)`.
@@ -381,12 +396,12 @@ CREATE POLICY academic_resources_tenant_isolation_policy ON academic_resources
 
 ### Shared vs Multi-Tenant Access Matrix
 
-| Table Category | RLS Enabled | Context Variable Required | Cross-Tenant Sharing Permitted |
-| :--- | :--- | :--- | :--- |
-| **Reference Tables** (`schemes`, `exam_types`) | ❌ No | ❌ No | ✅ Yes (Platform-wide) |
-| **Structure Tables** (`departments`, `subjects`) | ✅ Yes | `app.current_college_id` | ❌ Restricted to Tenant |
-| **Resource Core** (`academic_resources`) | ✅ Yes | `app.current_college_id` | ❌ Restricted to Tenant |
-| **Activity Logs** (`downloads`, `votes`) | ✅ Yes | `app.current_college_id` | ❌ Restricted to Tenant |
+| Table Category                                   | RLS Enabled | Context Variable Required | Cross-Tenant Sharing Permitted |
+| :----------------------------------------------- | :---------- | :------------------------ | :----------------------------- |
+| **Reference Tables** (`schemes`, `exam_types`)   | ❌ No       | ❌ No                     | ✅ Yes (Platform-wide)         |
+| **Structure Tables** (`departments`, `subjects`) | ✅ Yes      | `app.current_college_id`  | ❌ Restricted to Tenant        |
+| **Resource Core** (`academic_resources`)         | ✅ Yes      | `app.current_college_id`  | ❌ Restricted to Tenant        |
+| **Activity Logs** (`downloads`, `votes`)         | ✅ Yes      | `app.current_college_id`  | ❌ Restricted to Tenant        |
 
 ---
 
@@ -419,13 +434,13 @@ The schema reserves architectural provisions for future expansion without requir
 
 ## 7. Architectural Definition of Done Verification
 
-| Architectural Requirement | Verification Status | Rationale / Reference |
-| :--- | :--- | :--- |
-| **Resource-Centric Paradigm** | ✅ Verified | Separated `AcademicResource` (logical) from `ResourceVersion` (lineage) and `ResourceFile` (rendition). |
-| **Tenant Isolation** | ✅ Verified | `college_id` foreign keys + RLS policies on all multi-tenant tables. |
-| **Deduplication Engine** | ✅ Verified | SHA-256 hash index on `resource_files`. |
-| **Fast-Path Read Performance** | ✅ Verified | Decoupled `resource_statistics` pre-aggregated read cache table. |
-| **No Code / No APIs** | ✅ Verified | Pure database architecture and schema specification. |
+| Architectural Requirement      | Verification Status | Rationale / Reference                                                                                   |
+| :----------------------------- | :------------------ | :------------------------------------------------------------------------------------------------------ |
+| **Resource-Centric Paradigm**  | ✅ Verified         | Separated `AcademicResource` (logical) from `ResourceVersion` (lineage) and `ResourceFile` (rendition). |
+| **Tenant Isolation**           | ✅ Verified         | `college_id` foreign keys + RLS policies on all multi-tenant tables.                                    |
+| **Deduplication Engine**       | ✅ Verified         | SHA-256 hash index on `resource_files`.                                                                 |
+| **Fast-Path Read Performance** | ✅ Verified         | Decoupled `resource_statistics` pre-aggregated read cache table.                                        |
+| **No Code / No APIs**          | ✅ Verified         | Pure database architecture and schema specification.                                                    |
 
 ---
 

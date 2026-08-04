@@ -11,7 +11,9 @@ import { WorkerMetrics } from '../metrics/worker-metrics.js';
 export class RecommendationWorker {
   constructor(private readonly useCases: ConnectUseCases) {}
 
-  async processIntentActivated(event: ConnectEventEnvelope<{ intentId: string; studentProfileId: string; intentType: string }>): Promise<void> {
+  async processIntentActivated(
+    event: ConnectEventEnvelope<{ intentId: string; studentProfileId: string; intentType: string }>
+  ): Promise<void> {
     const startTime = Date.now();
     try {
       const { intentId, studentProfileId } = event.payload;

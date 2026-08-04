@@ -78,7 +78,10 @@ export class ModerationQueueWorker {
       review.moderationStatus = 'PENDING_MODERATION';
       await this.reviewRepo.save(review);
 
-      logger.warn({ reviewId, collegeId, riskScore, flaggedReasons }, 'Review failed risk evaluation. Queued for moderator review.');
+      logger.warn(
+        { reviewId, collegeId, riskScore, flaggedReasons },
+        'Review failed risk evaluation. Queued for moderator review.'
+      );
 
       await this.eventBus.publish('ReviewReported', {
         eventId: randomUUID(),

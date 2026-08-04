@@ -16,12 +16,19 @@ export default function GroupsPage() {
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-          {['Marketplace', 'Confessions', 'Academic Resources', 'Connect', 'Clubs', 'Events', 'Alumni', 'AI'].map((mod) => (
-            <div key={mod} style={{ background: '#0F172A', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
-              <div style={{ fontWeight: 700, fontSize: '15px' }}>{mod}</div>
-              <div style={{ fontSize: '12px', color: '#94A3B8', marginTop: '4px' }}>Module Group Enabled (100% SLA)</div>
-            </div>
-          ))}
+          {['Marketplace', 'Confessions', 'Academic Resources', 'Connect', 'Clubs', 'Events', 'Alumni', 'AI'].map(
+            (mod) => (
+              <div
+                key={mod}
+                style={{ background: '#0F172A', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}
+              >
+                <div style={{ fontWeight: 700, fontSize: '15px' }}>{mod}</div>
+                <div style={{ fontSize: '12px', color: '#94A3B8', marginTop: '4px' }}>
+                  Module Group Enabled (100% SLA)
+                </div>
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>

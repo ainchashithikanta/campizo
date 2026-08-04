@@ -39,6 +39,7 @@ The Marketplace visual identity inherits the core **College Hub Design System** 
 ```
 
 ### 2.2 Typography Tokens
+
 - **Font Sans**: `Inter`, system-ui, -apple-system, sans-serif.
 - **Font Mono**: `JetBrains Mono` (for price tags & transaction IDs).
 - **Font Sizes**:
@@ -51,6 +52,7 @@ The Marketplace visual identity inherits the core **College Hub Design System** 
   - `Micro`: 0.75rem (12px), Medium
 
 ### 2.3 Spacing & Border Radius
+
 - **Spacing Scale**: 4px, 8px, 12px, 16px, 24px, 32px, 48px, 64px.
 - **Border Radius**:
   - `sm`: 4px (Badges & tags)
@@ -89,6 +91,7 @@ The Marketplace visual identity inherits the core **College Hub Design System** 
 ```
 
 ### 4.1 Visual Hierarchy Priorities
+
 1. **Item Image & Price**: Primary visual anchors. Price displayed in bold mono font (`₹900`).
 2. **Negotiability & Condition Badges**: High contrast badges (`LIKE_NEW`, `NEGOTIABLE`).
 3. **Title & Campus Location**: Clear 2-line truncated title and hostel/department tag.
@@ -159,11 +162,11 @@ The Marketplace visual identity inherits the core **College Hub Design System** 
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **Marketplace Design Identity**: Defined emerald green accent (`#10B981`) paired with College Hub tokens.
-* ✅ **Card & Detail Anatomy**: Specified visual priority matrix and sticky bottom mobile bars.
-* ✅ **Immutable Offer UX**: Designed chat offer cards, counter-offer cards, and reservation banners.
-* ✅ **Accessibility & Motion**: WCAG 2.1 AA compliance and sub-200ms motion specs.
-* ✅ **Zero Code / Component Violation**: Pure visual design system specification.
+- ✅ **Marketplace Design Identity**: Defined emerald green accent (`#10B981`) paired with College Hub tokens.
+- ✅ **Card & Detail Anatomy**: Specified visual priority matrix and sticky bottom mobile bars.
+- ✅ **Immutable Offer UX**: Designed chat offer cards, counter-offer cards, and reservation banners.
+- ✅ **Accessibility & Motion**: WCAG 2.1 AA compliance and sub-200ms motion specs.
+- ✅ **Zero Code / Component Violation**: Pure visual design system specification.
 
 > [!IMPORTANT]
 > **MS-20.7 Complete**. Stopped for design approval before proceeding to **MS-20.8.1 (Production Database Implementation)**.

@@ -2,7 +2,7 @@
 
 **Document Type**: Product Research & Architectural Blueprint  
 **Status**: APPROVED BY CTO / ARCHITECTURE SPECIFICATION  
-**Target Module**: `@college-hub/platform-feature-flags` (Shared Platform Core Service)  
+**Target Module**: `@college-hub/platform-feature-flags` (Shared Platform Core Service)
 
 ---
 
@@ -16,17 +16,18 @@ The **Platform Feature Management System** provides an enterprise-grade, interna
 
 ## Section 1 — Competitive Research
 
-| Feature Platform | Key Strengths | Weaknesses | Rollout & Targeting Model | Audit & Governance | Scalability & Architecture | Pricing & Self-Host Model | Lessons for College Hub |
-|------------------|---------------|------------|---------------------------|--------------------|---------------------------|------------------------|-------------------------|
-| **LaunchDarkly** | Industry gold standard; sub-millisecond evaluation via streaming architecture (SSE); rich context attributes (multi-context evaluation). | High cost at scale; vendor lock-in; complex pricing tiering per monthly active user (MAU). | Rule-based flag variations, percentage rollouts, multivariate flags, prerequisite flags, segment targeting. | Full immutable audit logging, flag change approvals, role-based access control (RBAC). | Extreme (trillions of evaluations/day); edge relay proxies; local evaluation SDKs. | Expensive SaaS ($75+/user/mo); high MAU seat cost. | Adopt local evaluation SDK pattern (in-memory evaluation + streaming background update) to avoid network latency on hot paths. |
-| **ConfigCat** | Great developer experience; simple matrix pricing; light SDK overhead; built-in YAML/JSON config support. | Less advanced experiment analytics; limited automated remediation triggers compared to LaunchDarkly. | Percentage-based, user-targeted, custom attribute rules, environment overrides. | Complete audit trail, version history, change comparison, environment locking. | Global CDN distribution; lightweight JSON polling/streaming. | Developer-friendly flat pricing SaaS; open-source SDKs. | Simple JSON schema representation of targeting rules ensures sub-1ms evaluation without complex external dependencies. |
-| **Unleash** | 100% open-source core; privacy-first architecture (local evaluation SDKs); no PII sent to server; Docker/K8s native. | Requires self-hosted infrastructure management; UI is functional but less polished than SaaS competitors. | Strategy-based targeting (Default, UserIDs, GradualRollout, FlexibleRollout, IPs, RemoteAddresses). | Event log history, environment management, API token scoping, RBAC in Enterprise. | Highly scalable; stateless server with PostgreSQL; Redis caching layer. | Open-source (Free Apache 2.0); paid Enterprise tier. | **Primary Architectural Model**: Keep PII strictly inside the evaluation context on the application node. Evaluate flags locally in memory. |
-| **Firebase Remote Config** | Native integration with Google Cloud & Firebase mobile apps; built-in Google Analytics A/B testing. | High latency on propagation (hours unless using realtime signals); poor server-side Node.js evaluation model; rigid conditions. | Condition-based targeting (App version, OS, Country, Analytics User Property, Random percentile). | Basic version history; rollback support; limited granular audit trail. | Massive Google Cloud infrastructure; client-side caching with fetch throttling. | Free tier with generous limits; pay-as-you-go GCP. | Mobile app version targeting is critical for mobile client feature gating. |
-| **Microsoft App Configuration** | Seamless Azure integration; key-value configuration + feature flags in one unified endpoint; Key Vault integration. | Deep Azure lock-in; generic UI; clunky targeting rule builder. | Feature filters (TimeWindow, Targeting/Percentage, Custom Microsoft.Targeting filter). | Azure Activity Log integration; revision history; RBAC. | High throughput via Azure cloud infrastructure. | Metered per request + monthly base fee. | Unified key-value dynamic configuration + boolean flag evaluation simplifies system design. |
-| **GitLab Feature Flags** | Built directly into GitLab CI/CD pipelines; backed by Unleash engine; single pane of glass for dev + ops. | Dependent on GitLab ecosystem; limited advanced multivariate targeting compared to standalone tools. | User ID, IP, percentage rollout, environment specs (production, staging). | Pipeline logs, environment logs, commit history ties. | Scales with GitLab instance/runner infrastructure. | Included in GitLab Premium/Ultimate. | Integrating flag definitions into git commits or deployment pipelines provides gitops auditability. |
-| **Split.io** | Industry leader in data-driven feature experimentation and automated anomaly detection (statistical engine). | Heavy setup overhead; expensive; complex data pipeline integration required. | Attribute-based targeting, percentage splits, dynamic configurations, multi-variate treatments. | Audit logs, approval workflows, compliance reports (SOC2, HIPAA). | High-scale impression data pipeline; local evaluation SDKs. | Enterprise SaaS pricing. | Automated circuit breaking: automatically trip a flag if error rates spike after a rollout. |
+| Feature Platform                | Key Strengths                                                                                                                            | Weaknesses                                                                                                                      | Rollout & Targeting Model                                                                                   | Audit & Governance                                                                     | Scalability & Architecture                                                         | Pricing & Self-Host Model                               | Lessons for College Hub                                                                                                                     |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **LaunchDarkly**                | Industry gold standard; sub-millisecond evaluation via streaming architecture (SSE); rich context attributes (multi-context evaluation). | High cost at scale; vendor lock-in; complex pricing tiering per monthly active user (MAU).                                      | Rule-based flag variations, percentage rollouts, multivariate flags, prerequisite flags, segment targeting. | Full immutable audit logging, flag change approvals, role-based access control (RBAC). | Extreme (trillions of evaluations/day); edge relay proxies; local evaluation SDKs. | Expensive SaaS ($75+/user/mo); high MAU seat cost.      | Adopt local evaluation SDK pattern (in-memory evaluation + streaming background update) to avoid network latency on hot paths.              |
+| **ConfigCat**                   | Great developer experience; simple matrix pricing; light SDK overhead; built-in YAML/JSON config support.                                | Less advanced experiment analytics; limited automated remediation triggers compared to LaunchDarkly.                            | Percentage-based, user-targeted, custom attribute rules, environment overrides.                             | Complete audit trail, version history, change comparison, environment locking.         | Global CDN distribution; lightweight JSON polling/streaming.                       | Developer-friendly flat pricing SaaS; open-source SDKs. | Simple JSON schema representation of targeting rules ensures sub-1ms evaluation without complex external dependencies.                      |
+| **Unleash**                     | 100% open-source core; privacy-first architecture (local evaluation SDKs); no PII sent to server; Docker/K8s native.                     | Requires self-hosted infrastructure management; UI is functional but less polished than SaaS competitors.                       | Strategy-based targeting (Default, UserIDs, GradualRollout, FlexibleRollout, IPs, RemoteAddresses).         | Event log history, environment management, API token scoping, RBAC in Enterprise.      | Highly scalable; stateless server with PostgreSQL; Redis caching layer.            | Open-source (Free Apache 2.0); paid Enterprise tier.    | **Primary Architectural Model**: Keep PII strictly inside the evaluation context on the application node. Evaluate flags locally in memory. |
+| **Firebase Remote Config**      | Native integration with Google Cloud & Firebase mobile apps; built-in Google Analytics A/B testing.                                      | High latency on propagation (hours unless using realtime signals); poor server-side Node.js evaluation model; rigid conditions. | Condition-based targeting (App version, OS, Country, Analytics User Property, Random percentile).           | Basic version history; rollback support; limited granular audit trail.                 | Massive Google Cloud infrastructure; client-side caching with fetch throttling.    | Free tier with generous limits; pay-as-you-go GCP.      | Mobile app version targeting is critical for mobile client feature gating.                                                                  |
+| **Microsoft App Configuration** | Seamless Azure integration; key-value configuration + feature flags in one unified endpoint; Key Vault integration.                      | Deep Azure lock-in; generic UI; clunky targeting rule builder.                                                                  | Feature filters (TimeWindow, Targeting/Percentage, Custom Microsoft.Targeting filter).                      | Azure Activity Log integration; revision history; RBAC.                                | High throughput via Azure cloud infrastructure.                                    | Metered per request + monthly base fee.                 | Unified key-value dynamic configuration + boolean flag evaluation simplifies system design.                                                 |
+| **GitLab Feature Flags**        | Built directly into GitLab CI/CD pipelines; backed by Unleash engine; single pane of glass for dev + ops.                                | Dependent on GitLab ecosystem; limited advanced multivariate targeting compared to standalone tools.                            | User ID, IP, percentage rollout, environment specs (production, staging).                                   | Pipeline logs, environment logs, commit history ties.                                  | Scales with GitLab instance/runner infrastructure.                                 | Included in GitLab Premium/Ultimate.                    | Integrating flag definitions into git commits or deployment pipelines provides gitops auditability.                                         |
+| **Split.io**                    | Industry leader in data-driven feature experimentation and automated anomaly detection (statistical engine).                             | Heavy setup overhead; expensive; complex data pipeline integration required.                                                    | Attribute-based targeting, percentage splits, dynamic configurations, multi-variate treatments.             | Audit logs, approval workflows, compliance reports (SOC2, HIPAA).                      | High-scale impression data pipeline; local evaluation SDKs.                        | Enterprise SaaS pricing.                                | Automated circuit breaking: automatically trip a flag if error rates spike after a rollout.                                                 |
 
 ### Key Takeaways for College Hub
+
 1. **Local In-Memory Evaluation**: Evaluate feature flags in-memory inside application services (`@college-hub/platform-feature-flags`) using cached rules. Never make a blocking HTTP/Redis RPC call on every single user request.
 2. **Zero PII Exposure**: Evaluation context (real user ID, email, IP) remains inside the application process. Only flag rules (which contain anonymous target IDs, college IDs, or roles) are distributed.
 3. **Strategy Pattern Architecture**: Adopt Unleash's strategy-based evaluation model (`GlobalStrategy`, `CollegeStrategy`, `RoleStrategy`, `UserStrategy`, `PercentageStrategy`, `ScheduleStrategy`).
@@ -38,17 +39,17 @@ The **Platform Feature Management System** provides an enterprise-grade, interna
 College Hub operates a multi-tenant, multi-college campus platform. The operational and business requirements for a unified Feature Management System include:
 
 1. **Tenant-Isolated College Rollouts**:
-   - Rolling out a new feature (e.g., *Confessions Module* or *Marketplace Chat*) to Stanford University first, followed by MIT, then statewide public universities.
+   - Rolling out a new feature (e.g., _Confessions Module_ or _Marketplace Chat_) to Stanford University first, followed by MIT, then statewide public universities.
 2. **Emergency Kill Switch (Blast Radius Containment)**:
-   - If an unhandled bug or security vulnerability is identified in *Marketplace P2P Payments*, administrators can trip the kill switch in `< 100ms`, immediately hiding the feature without a hotfix deployment.
+   - If an unhandled bug or security vulnerability is identified in _Marketplace P2P Payments_, administrators can trip the kill switch in `< 100ms`, immediately hiding the feature without a hotfix deployment.
 3. **Graceful Maintenance Mode**:
-   - Placing specific modules (e.g., *Academic Resource Uploads* during semester exam grading peak) into read-only maintenance mode.
+   - Placing specific modules (e.g., _Academic Resource Uploads_ during semester exam grading peak) into read-only maintenance mode.
 4. **Gradual Percentage (Canary) Rollouts**:
    - Releasing an update to 1% of users → 5% → 25% → 100%, monitoring error rates and server load at each step.
 5. **Hidden Unfinished Modules (Dark Launching)**:
-   - Merging code into `main` continuously while keeping unfinished modules (e.g., *Alumni Mentorship*) completely invisible to end users until official launch.
+   - Merging code into `main` continuously while keeping unfinished modules (e.g., _Alumni Mentorship_) completely invisible to end users until official launch.
 6. **Role-Based Beta Access**:
-   - Enabling experimental features (e.g., *AI Professor Rating Summaries*) exclusively for Faculty Members, Campus Representatives (CRs), or System Administrators.
+   - Enabling experimental features (e.g., _AI Professor Rating Summaries_) exclusively for Faculty Members, Campus Representatives (CRs), or System Administrators.
 7. **Business Value & ROI**:
    - Reduces deployment risk to zero, increases release velocity by 10x, eliminates off-hours deployment stress, and prevents cross-college outages.
 
@@ -65,11 +66,14 @@ Connect  ──depends_on──►  Notifications  ──depends_on──►  Pr
 ```
 
 #### Dependency Validation & Activation Policies
+
 When an administrator attempts to enable a parent feature whose prerequisite features are disabled:
+
 - **`PREVENT` Policy (Default)**: Rejects activation at the API gateway layer with a descriptive error listing missing prerequisites.
 - **`WARN` Policy**: Allows activation but displays a prominent warning and logs an operational audit event.
 
 #### Circular Dependency Prevention Strategy
+
 - During flag creation or dependency assignment, a **Kahn's Algorithm (Topological Sort)** DAG validation executes.
 - If a cycle is detected (e.g., `Flag A -> Flag B -> Flag C -> Flag A`), the dependency update is rejected instantly with `CIRCULAR_DEPENDENCY_DETECTED`.
 
@@ -89,6 +93,7 @@ Marketplace (Group)
 ```
 
 #### Group Activation Rules
+
 - **Cascade Enablement**: Enabling a Feature Group can toggle all child features simultaneously.
 - **Granular Override**: Admins can enable specific child features (e.g., `Chat` and `Uploads`) while keeping `Offers` and `Reservations` disabled.
 - **Inherited Kill Switch**: Disabling a Feature Group immediately disables all underlying child features regardless of their individual states.
@@ -236,6 +241,7 @@ The platform supports 9 production rollout strategies:
 If the feature flag service, Redis cache, or network connection fails completely:
 
 ### 1. Fail Open vs. Fail Closed vs. Hybrid Analysis
+
 - **Fail Open**: Default feature to `ENABLED` on error. Risk: Exposes broken or incomplete code.
 - **Fail Closed**: Default feature to `DISABLED` on error. Risk: Hides operational features.
 - **Hybrid (Recommended for College Hub)**:

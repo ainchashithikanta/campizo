@@ -18,14 +18,7 @@ export interface ReviewCardProps {
   onFacultyRespond?: (review: ReviewDto) => void;
 }
 
-export function ReviewCard({
-  review,
-  onVote,
-  onReport,
-  onEdit,
-  onDelete,
-  onFacultyRespond,
-}: ReviewCardProps) {
+export function ReviewCard({ review, onVote, onReport, onEdit, onDelete, onFacultyRespond }: ReviewCardProps) {
   const [userVote, setUserVote] = useState<'HELPFUL' | 'UNHELPFUL' | null>(review.userVote || null);
   const [helpfulCount, setHelpfulCount] = useState(review.helpfulCount || 0);
   const [unhelpfulCount, setUnhelpfulCount] = useState(review.unhelpfulCount || 0);
@@ -83,10 +76,10 @@ export function ReviewCard({
         <span className={styles.courseBadge}>{review.courseCode}</span>
         <span>{review.courseName}</span>
         <span>•</span>
-        <span>{review.semester} ({review.academicYear})</span>
-        {review.gradeReceived && (
-          <Badge variant="primary">Grade: {review.gradeReceived}</Badge>
-        )}
+        <span>
+          {review.semester} ({review.academicYear})
+        </span>
+        {review.gradeReceived && <Badge variant="primary">Grade: {review.gradeReceived}</Badge>}
       </div>
 
       <p className={styles.text}>{review.reviewText}</p>

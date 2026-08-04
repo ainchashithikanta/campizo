@@ -8,8 +8,18 @@ import Link from 'next/link';
 
 export default function ConnectHubPage() {
   const navLinks = [
-    { title: 'Discover Students', href: '/connect/discover', desc: 'Find study pods and project collaborators', icon: '🔍' },
-    { title: 'Recommendations', href: '/connect/recommendations', desc: 'AI-matched compatibility profiles', icon: '✨' },
+    {
+      title: 'Discover Students',
+      href: '/connect/discover',
+      desc: 'Find study pods and project collaborators',
+      icon: '🔍'
+    },
+    {
+      title: 'Recommendations',
+      href: '/connect/recommendations',
+      desc: 'AI-matched compatibility profiles',
+      icon: '✨'
+    },
     { title: 'My Network', href: '/connect/network', desc: 'Manage your campus connections and requests', icon: '👥' },
     { title: 'Messages', href: '/connect/messages', desc: 'Chat with contextual study pods and mentors', icon: '💬' },
     { title: 'Study Pods', href: '/connect/study', desc: 'Join or create course-based study groups', icon: '📚' },
@@ -23,7 +33,9 @@ export default function ConnectHubPage() {
     <main className="max-w-6xl mx-auto p-6 font-sans">
       <header className="mb-8">
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Campus Connect Hub</h1>
-        <p className="text-sm text-slate-500 mt-1">Connect with student peers for study pods, hackathons, projects, and mentorship.</p>
+        <p className="text-sm text-slate-500 mt-1">
+          Connect with student peers for study pods, hackathons, projects, and mentorship.
+        </p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

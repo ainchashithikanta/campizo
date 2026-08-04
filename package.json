@@ -22,7 +22,15 @@
     "infra:lint": "helm lint infra/helm/collegehub",
     "infra:render": "node scripts/render-manifests.js",
     "infra:template": "node scripts/render-manifests.js",
-    "infra:validate": "node scripts/render-manifests.js && node scripts/validate-manifests.js"
+    "infra:validate": "node scripts/render-manifests.js && node scripts/validate-manifests.js",
+    "backup": "turbo run build --filter=@college-hub/backup && node packages/backup/dist/cli.js",
+    "backup:create": "pnpm backup run-all",
+    "backup:verify": "pnpm backup verify",
+    "backup:list": "pnpm backup list",
+    "backup:cleanup": "pnpm backup cleanup",
+    "backup:drill": "bash scripts/dr-restore-test.sh",
+    "security:audit": "node scripts/run-security-audit.js",
+    "load:test": "node scripts/run-load-test.js"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",

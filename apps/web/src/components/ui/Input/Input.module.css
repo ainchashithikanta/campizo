@@ -27,8 +27,9 @@
   border: 1px solid var(--ch-color-border);
   border-radius: var(--ch-radius-md);
   color: var(--ch-color-text);
-  transition: border-color var(--ch-motion-fast) var(--ch-motion-easing),
-              box-shadow var(--ch-motion-fast) var(--ch-motion-easing);
+  transition:
+    border-color var(--ch-motion-fast) var(--ch-motion-easing),
+    box-shadow var(--ch-motion-fast) var(--ch-motion-easing);
 }
 
 .input::placeholder {

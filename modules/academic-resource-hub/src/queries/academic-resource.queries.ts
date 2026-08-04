@@ -28,7 +28,10 @@ export class SearchResourcesQuery {
 export class GetSubjectDashboardQuery {
   constructor(private resourceRepo: AcademicResourceRepository) {}
 
-  public async execute(collegeId: string, subjectId: string): Promise<{ subjectId: string; materials: AcademicResourceEntity[] }> {
+  public async execute(
+    collegeId: string,
+    subjectId: string
+  ): Promise<{ subjectId: string; materials: AcademicResourceEntity[] }> {
     const materials = await this.resourceRepo.findBySubject(subjectId, collegeId);
     return { subjectId, materials };
   }
@@ -46,7 +49,10 @@ export class GetResourceDetailQuery {
     private statsRepo: StatisticsRepository
   ) {}
 
-  public async execute(resourceId: string, collegeId: string): Promise<{ resource: AcademicResourceEntity; stats: ResourceStatisticsEntity | null }> {
+  public async execute(
+    resourceId: string,
+    collegeId: string
+  ): Promise<{ resource: AcademicResourceEntity; stats: ResourceStatisticsEntity | null }> {
     const resource = await this.resourceRepo.findById(resourceId, collegeId);
     if (!resource) {
       throw new ResourceNotFoundError(`Academic resource [${resourceId}] not found.`);

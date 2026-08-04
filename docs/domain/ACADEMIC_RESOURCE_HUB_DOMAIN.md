@@ -132,26 +132,32 @@ classDiagram
 ## 3. Core Business Rules
 
 ### 3.1 Resource Creation & Ownership Rules
+
 1. **Tenant Membership Constraint**: A user can only upload study materials for the college institution to which their verified `.edu` / `.ac.in` email or student ID belongs.
 2. **Single Subject Mapping**: An academic resource must belong to exactly **one canonical Subject** (`subject_id`) and **one Department** (`department_id`).
 3. **Mandatory Scheme & Exam Classification**: Materials categorized as `PYQ` must specify `exam_type` (`MID_SEM` or `END_SEM`) and `academic_year`.
 
 ### 3.2 Upload & Deduplication Rules
+
 1. **SHA-256 Pre-Flight Block**: If an uploaded file's binary SHA-256 hash matches an existing file in the college tenant repository, the upload is rejected as a duplicate, and the user is redirected to the existing resource.
 2. **File Sanitation**: Uploads containing password protection, zero renderable pages, or unapproved MIME types (`.exe`, `.bat`, `.zip` with executables) are automatically rejected.
 
 ### 3.3 Version Control & Replacement Rules
+
 1. **History Immutability**: Editing a resource creates a new `ResourceVersion` (e.g. Version 2). Version 1 remains accessible in the version history log.
 2. **Current Version Pointer**: Only one `ResourceVersion` per `AcademicResource` can hold the `is_current = true` flag at any point in time.
 
 ### 3.4 Voting & Self-Vote Prohibition Rules
+
 1. **Self-Voting Prohibition**: An uploader **cannot vote (Helpful/Unhelpful) on their own uploaded resource**. Attempting to do so triggers a `SelfVoteProhibitedException`.
 2. **Single Vote Constraint**: A student can cast at most **one active vote** (`HELPFUL` or `UNHELPFUL`) per resource. Tapping the same vote type again toggles the vote off.
 
 ### 3.5 Download Tracking & Rate Limit Rules
+
 1. **Session Deduplication**: Multiple downloads of the same file by the same user within 24 hours count as **1 unique download** in the `total_downloads` statistics counter.
 
 ### 3.6 Reporting & Automated Quarantine Rules
+
 1. **Quarantine Circuit Breaker**: If a published resource receives **3 unique community reports within a 24-hour window**, the domain automatically transitions its status from `PUBLISHED` to `QUARANTINED` and enqueues a `ResourceQuarantined` domain event.
 
 ---
@@ -177,6 +183,7 @@ stateDiagram-v2
 ```
 
 #### Transition Rules:
+
 - `DRAFT → UPLOADED`: Triggered when file bytes are received in temporary storage.
 - `UPLOADED → SCANNING`: Pre-flight sanitation runner verifies SHA-256 hash, virus status, and MIME type.
 - `SCANNING → PENDING_VERIFICATION`: File passes validation; awaits publishing.
@@ -215,16 +222,16 @@ export interface DomainEvent<T> {
 
 ### Event Catalogue Table
 
-| Event Name | Trigger Condition | Primary Consumers | Business Rationale |
-| :--- | :--- | :--- | :--- |
-| `AcademicResourceCreated` | Draft resource record initialized | Audit Log, Search Indexer | Initializes tracking for new resource. |
-| `AcademicResourcePublished` | Resource transitions to `PUBLISHED` | Search Indexer, Notification Worker | Makes file searchable & notifies enrolled students. |
-| `ResourceVersionPublished` | New version published | Cache Manager, Search Indexer | Invalidates stale file caches. |
-| `ResourceDownloaded` | Student downloads PDF | Stats Aggregator Worker | Increments download stats & uploader points. |
-| `ResourceVoteAdded` | Student votes `HELPFUL`/`UNHELPFUL` | Bayesian Score Engine | Recalculates Bayesian Quality Score. |
-| `ResourceReported` | Student flags file for violation | Moderation Circuit Breaker | Evaluates 3-report quarantine threshold. |
-| `ResourceQuarantined` | Resource status set to `QUARANTINED` | Search Indexer, Mod Queue | Removes file from search & alerts moderators. |
-| `ContributorPromoted` | Uploader hits 50+ helpful votes | Reputation System, Notifications | Grants "Peer Tutor" badge to uploader. |
+| Event Name                  | Trigger Condition                    | Primary Consumers                   | Business Rationale                                  |
+| :-------------------------- | :----------------------------------- | :---------------------------------- | :-------------------------------------------------- |
+| `AcademicResourceCreated`   | Draft resource record initialized    | Audit Log, Search Indexer           | Initializes tracking for new resource.              |
+| `AcademicResourcePublished` | Resource transitions to `PUBLISHED`  | Search Indexer, Notification Worker | Makes file searchable & notifies enrolled students. |
+| `ResourceVersionPublished`  | New version published                | Cache Manager, Search Indexer       | Invalidates stale file caches.                      |
+| `ResourceDownloaded`        | Student downloads PDF                | Stats Aggregator Worker             | Increments download stats & uploader points.        |
+| `ResourceVoteAdded`         | Student votes `HELPFUL`/`UNHELPFUL`  | Bayesian Score Engine               | Recalculates Bayesian Quality Score.                |
+| `ResourceReported`          | Student flags file for violation     | Moderation Circuit Breaker          | Evaluates 3-report quarantine threshold.            |
+| `ResourceQuarantined`       | Resource status set to `QUARANTINED` | Search Indexer, Mod Queue           | Removes file from search & alerts moderators.       |
+| `ContributorPromoted`       | Uploader hits 50+ helpful votes      | Reputation System, Notifications    | Grants "Peer Tutor" badge to uploader.              |
 
 ---
 
@@ -256,12 +263,14 @@ export interface DomainEvent<T> {
 ## 8. Architecture Decision Log (ADR)
 
 ### Decision 1: Strict Domain Self-Voting Prohibition
+
 - **Inspired By**: Stack Overflow & Academic Peer Review Standards
 - **Why Chosen**: Allowing uploaders to upvote their own study notes skews Bayesian quality scores and undermines community trust.
 - **Why Alternatives Were Rejected**: Allowing self-voting with a 1-vote limit still artificially boosts new uploads.
 - **Adaptation for Indian Colleges**: Prevents Class Representatives or student groups from artificially inflating their own notes above official faculty slides.
 
 ### Decision 2: 3-Report Automated Quarantine Circuit Breaker
+
 - **Inspired By**: Wikipedia Abuse Filter
 - **Why Chosen**: Protects students on exam nights from studying corrupted, incorrect, or offensive files before human moderators can review them.
 - **Why Alternatives Were Rejected**: Pure post-moderation allows toxic or wrong syllabus files to remain live during peak exam hours.
@@ -278,13 +287,13 @@ export interface DomainEvent<T> {
 
 ## 10. DDD Definition of Done Verification
 
-| DDD Requirement | Verification Status | Rationale / Reference |
-| :--- | :--- | :--- |
-| **Aggregate Roots & Entities** | ✅ Verified | Defined `AcademicResource`, `ResourceVersion`, `StudyCollection`, `Contributor`. |
-| **Domain Events** | ✅ Verified | Specified payloads and consumers for 15+ events. |
-| **State Machines** | ✅ Verified | Mermaid state diagrams for Resource & Version lifecycles. |
-| **Domain Invariants** | ✅ Verified | 6 non-negotiable domain rules defined. |
-| **No Code / No APIs** | ✅ Verified | Pure domain model specification. |
+| DDD Requirement                | Verification Status | Rationale / Reference                                                            |
+| :----------------------------- | :------------------ | :------------------------------------------------------------------------------- |
+| **Aggregate Roots & Entities** | ✅ Verified         | Defined `AcademicResource`, `ResourceVersion`, `StudyCollection`, `Contributor`. |
+| **Domain Events**              | ✅ Verified         | Specified payloads and consumers for 15+ events.                                 |
+| **State Machines**             | ✅ Verified         | Mermaid state diagrams for Resource & Version lifecycles.                        |
+| **Domain Invariants**          | ✅ Verified         | 6 non-negotiable domain rules defined.                                           |
+| **No Code / No APIs**          | ✅ Verified         | Pure domain model specification.                                                 |
 
 ---
 

@@ -25,7 +25,11 @@ export const ResourceCreateSchema = z.object({
   semesterNumber: z.number().int().min(1).max(10),
   isAnonymous: z.boolean().optional().default(false),
   authorDisplayName: z.string().optional(),
-  fileSizeBytes: z.number().int().min(50 * 1024).max(50 * 1024 * 1024),
+  fileSizeBytes: z
+    .number()
+    .int()
+    .min(50 * 1024)
+    .max(50 * 1024 * 1024),
   mimeType: z.string().min(3),
   sha256Hash: z.string().length(64),
   fileName: z.string().min(1).max(256),
@@ -34,7 +38,11 @@ export const ResourceCreateSchema = z.object({
 
 export const ResourceVersionCreateSchema = z.object({
   changelogNotes: z.string().optional(),
-  fileSizeBytes: z.number().int().min(50 * 1024).max(50 * 1024 * 1024),
+  fileSizeBytes: z
+    .number()
+    .int()
+    .min(50 * 1024)
+    .max(50 * 1024 * 1024),
   mimeType: z.string().min(3),
   sha256Hash: z.string().length(64),
   fileName: z.string().min(1).max(256),
@@ -77,7 +85,11 @@ export const ReportSchema = z.object({
 
 export const UploadSessionCreateSchema = z.object({
   fileName: z.string().min(1).max(256),
-  fileSizeBytes: z.number().int().min(50 * 1024).max(50 * 1024 * 1024),
+  fileSizeBytes: z
+    .number()
+    .int()
+    .min(50 * 1024)
+    .max(50 * 1024 * 1024),
   mimeType: z.string().min(3),
   sha256Hash: z.string().length(64)
 });

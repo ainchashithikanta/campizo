@@ -12,24 +12,24 @@ All endpoints adhere to RESTful principles, versioned namespace `/api/v1/confess
 
 ### 1.1 Mandatory HTTP Headers
 
-| Header Key | Type | Requirement | Description |
-| :--- | :--- | :---: | :--- |
-| `Authorization` | String | **Mandatory** | Bearer JWT containing authenticated user identity (`sub`, `roles`). |
-| `x-college-id` | String | **Mandatory** | Tenant scope identifier (`college-stanford-001`). Enforces RLS isolation. |
-| `x-request-id` | String | **Mandatory** | Distributed tracing UUID for cross-service logging. |
-| `x-idempotency-key` | String | Conditional | Required for write operations (`POST`, `PUT`, `DELETE`). |
+| Header Key          | Type   |  Requirement  | Description                                                               |
+| :------------------ | :----- | :-----------: | :------------------------------------------------------------------------ |
+| `Authorization`     | String | **Mandatory** | Bearer JWT containing authenticated user identity (`sub`, `roles`).       |
+| `x-college-id`      | String | **Mandatory** | Tenant scope identifier (`college-stanford-001`). Enforces RLS isolation. |
+| `x-request-id`      | String | **Mandatory** | Distributed tracing UUID for cross-service logging.                       |
+| `x-idempotency-key` | String |  Conditional  | Required for write operations (`POST`, `PUT`, `DELETE`).                  |
 
 ---
 
 ### 1.2 Rate Limiting Protection Matrix
 
-| Operation | Rate Limit Window | Maximum Allowed | Enforcement Action |
-| :--- | :--- | :--- | :--- |
-| Confession Creation | 1 Hour | 5 posts / user | HTTP 429 Too Many Requests |
-| Comment Creation | 1 Hour | 30 comments / user | HTTP 429 Too Many Requests |
-| Voting Actions | 1 Minute | 120 votes / user | HTTP 429 Too Many Requests |
-| Abuse Reporting | 1 Hour | 10 reports / user | HTTP 429 Too Many Requests |
-| Keyword Search | 1 Minute | 60 queries / user | HTTP 429 Too Many Requests |
+| Operation           | Rate Limit Window | Maximum Allowed    | Enforcement Action         |
+| :------------------ | :---------------- | :----------------- | :------------------------- |
+| Confession Creation | 1 Hour            | 5 posts / user     | HTTP 429 Too Many Requests |
+| Comment Creation    | 1 Hour            | 30 comments / user | HTTP 429 Too Many Requests |
+| Voting Actions      | 1 Minute          | 120 votes / user   | HTTP 429 Too Many Requests |
+| Abuse Reporting     | 1 Hour            | 10 reports / user  | HTTP 429 Too Many Requests |
+| Keyword Search      | 1 Minute          | 60 queries / user  | HTTP 429 Too Many Requests |
 
 ---
 
@@ -49,10 +49,10 @@ All endpoints adhere to RESTful principles, versioned namespace `/api/v1/confess
 ### 2.2 Confession & Composite Detail Endpoints
 
 - **`POST /api/v1/confessions`**: Submits a new anonymous confession.
-  - *Payload*: `{ categoryCode: string; title: string; content: string }`
+  - _Payload_: `{ categoryCode: string; title: string; content: string }`
 - **`GET /api/v1/confessions/:id`**: Composite read model endpoint returning confession, comments, statistics, current user vote, current user bookmark, related confessions, and thread pseudonyms in 1 request.
 - **`POST /api/v1/confessions/:id/vote`**: Explicit voting action (`UPVOTE` | `DOWNVOTE` | `REMOVE`).
-  - *Payload*: `{ voteType: 'UPVOTE' | 'DOWNVOTE' | 'REMOVE' }`
+  - _Payload_: `{ voteType: 'UPVOTE' | 'DOWNVOTE' | 'REMOVE' }`
 - **`POST /api/v1/confessions/:id/bookmark`**: Toggles saved bookmark state.
 - **`POST /api/v1/confessions/:id/report`**: Flags a confession for moderation.
 
@@ -61,7 +61,7 @@ All endpoints adhere to RESTful principles, versioned namespace `/api/v1/confess
 ### 2.3 Comment Endpoints
 
 - **`POST /api/v1/confessions/:id/comments`**: Adds a reply to a confession or nested comment.
-  - *Payload*: `{ parentCommentId?: string; content: string }`
+  - _Payload_: `{ parentCommentId?: string; content: string }`
 - **`POST /api/v1/confessions/comments/:commentId/soft-delete`**: Soft-deletes a comment (`[Comment removed by moderation]`).
 
 ---
@@ -98,11 +98,11 @@ export interface ConfessionDetailDto {
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **Composite Read Model**: Designed `GET /api/v1/confessions/:id` returning complete thread payload in 1 request.
-* ✅ **Dedicated Feed APIs**: Separated `feed/trending`, `feed/latest`, `feed/categories/:category`, `feed/saved`, `feed/my-activity`.
-* ✅ **Explicit Voting Action**: Enforced explicit `voteType` (`UPVOTE`, `DOWNVOTE`, `REMOVE`).
-* ✅ **Internal Moderator Notes**: Added `POST /moderation/:caseId/notes`.
-* ✅ **Rate Limiting Matrix**: Defined protection thresholds for creation, comments, voting, reports, and search.
+- ✅ **Composite Read Model**: Designed `GET /api/v1/confessions/:id` returning complete thread payload in 1 request.
+- ✅ **Dedicated Feed APIs**: Separated `feed/trending`, `feed/latest`, `feed/categories/:category`, `feed/saved`, `feed/my-activity`.
+- ✅ **Explicit Voting Action**: Enforced explicit `voteType` (`UPVOTE`, `DOWNVOTE`, `REMOVE`).
+- ✅ **Internal Moderator Notes**: Added `POST /moderation/:caseId/notes`.
+- ✅ **Rate Limiting Matrix**: Defined protection thresholds for creation, comments, voting, reports, and search.
 
 > [!IMPORTANT]
 > **MS-21.5 Approved with Refinements**. Ready for **MS-21.6 (Technical Architecture & Technology Blueprint)**.

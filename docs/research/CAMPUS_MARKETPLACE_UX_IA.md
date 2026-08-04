@@ -11,6 +11,7 @@ The primary objective is to enable any verified college student to discover, neg
 ## 1. User Personas
 
 ### 1.1 First-Year Student Buyer (Rohan, 18)
+
 - **Goals**: Buy affordable 1st-year engineering textbooks, CASIO calculator, and lab coat without paying full retail store prices.
 - **Pain Points**: Fear of buying damaged/outdated editions or getting scammed on open platforms like OLX.
 - **Device Usage**: 100% Mobile (Android/iOS).
@@ -18,6 +19,7 @@ The primary objective is to enable any verified college student to discover, neg
 - **Trust Concern**: Wants to confirm seller is an authentic senior from their own campus before meeting.
 
 ### 1.2 Senior Student Seller (Ananya, 21)
+
 - **Goals**: Quickly sell cycles, mattress, mini-fan, and study notes before graduating and vacating hostel.
 - **Pain Points**: Lowball offers on WhatsApp groups; messages getting buried; ghosting after agreeing on price.
 - **Device Usage**: Mobile & Laptop.
@@ -25,6 +27,7 @@ The primary objective is to enable any verified college student to discover, neg
 - **Trust Concern**: Doesn't want external non-college strangers coming to hostel premises.
 
 ### 1.3 Hostel Resident (Vikram, 20)
+
 - **Goals**: Acquire room decor, mini-refrigerators, and appliances directly from hostel room neighbors.
 - **Pain Points**: Carrying heavy items across large campus distances.
 - **Device Usage**: Mobile-first.
@@ -32,6 +35,7 @@ The primary objective is to enable any verified college student to discover, neg
 - **Trust Concern**: Prefers hostel-block level handovers at night or during breaks.
 
 ### 1.4 Day Scholar (Priya, 19)
+
 - **Goals**: Buy used reference books and sell unused course materials at campus gates or library.
 - **Pain Points**: Strict schedule; cannot stay late on campus for item handovers.
 - **Device Usage**: Mobile.
@@ -39,6 +43,7 @@ The primary objective is to enable any verified college student to discover, neg
 - **Trust Concern**: Needs precise meet-up scheduling during college hours (10 AM - 4 PM).
 
 ### 1.5 Student Seeking Free Items / Giveaways (Karan, 18)
+
 - **Goals**: Find free leftover textbooks, stationery, or room accessories from seniors moving out.
 - **Pain Points**: Cannot afford high prices; misses out on free items posted in chaotic chat groups.
 - **Device Usage**: Mobile.
@@ -46,6 +51,7 @@ The primary objective is to enable any verified college student to discover, neg
 - **Trust Concern**: Ensuring items are genuinely free without hidden costs.
 
 ### 1.6 Wanted-Post Creator (Sneha, 20)
+
 - **Goals**: Request a specific rare textbook edition or scientific calculator model that isn't currently listed.
 - **Pain Points**: Posting in WhatsApp gets ignored or spammed.
 - **Device Usage**: Mobile.
@@ -53,6 +59,7 @@ The primary objective is to enable any verified college student to discover, neg
 - **Trust Concern**: Receiving responses from sellers who actually possess the item.
 
 ### 1.7 Moderator & Admin (Faculty / Student Admin)
+
 - **Goals**: Maintain a scam-free, safe marketplace environment free from commercial spam or prohibited items.
 - **Pain Points**: Reviewing mass reports; handling duplicate listings and prohibited merchandise.
 - **Device Usage**: Laptop / Desktop dashboard.
@@ -191,21 +198,21 @@ College Hub Main App
 
 ## 10. Strategic UX Decisions & Rationale
 
-| UX Decision | Chosen Approach | Inspiration | Rejected Alternative | Campus Fit Rationale |
-| :--- | :--- | :--- | :--- | :--- |
-| **Offer Protocol** | Structured In-Chat Offer Cards | Mercari / OfferUp | Plain text bargaining in chat | Eliminates endless text haggling and clarifies final price commitment. |
-| **Item Reservation** | Automated 24-Hour Lock on Offer Acceptance | Vinted | Manual "Mark Reserved" toggle | Prevents sellers from selling to someone else while buyer is traveling across campus. |
-| **Location Tagging** | Hostel Block / Campus Gate Picker | Internal Campus Mapping | GPS Coordinates / Pin Codes | GPS coordinates are imprecise inside multi-story hostel dorms. |
-| **Giveaway Support** | Dedicated "Free & Giveaways" Filter | Freecycle / Reddit | Setting price to ₹0 in paid feed | Highlight zero-cost items clearly for needy students without polluting paid listings. |
+| UX Decision          | Chosen Approach                            | Inspiration             | Rejected Alternative             | Campus Fit Rationale                                                                  |
+| :------------------- | :----------------------------------------- | :---------------------- | :------------------------------- | :------------------------------------------------------------------------------------ |
+| **Offer Protocol**   | Structured In-Chat Offer Cards             | Mercari / OfferUp       | Plain text bargaining in chat    | Eliminates endless text haggling and clarifies final price commitment.                |
+| **Item Reservation** | Automated 24-Hour Lock on Offer Acceptance | Vinted                  | Manual "Mark Reserved" toggle    | Prevents sellers from selling to someone else while buyer is traveling across campus. |
+| **Location Tagging** | Hostel Block / Campus Gate Picker          | Internal Campus Mapping | GPS Coordinates / Pin Codes      | GPS coordinates are imprecise inside multi-story hostel dorms.                        |
+| **Giveaway Support** | Dedicated "Free & Giveaways" Filter        | Freecycle / Reddit      | Setting price to ₹0 in paid feed | Highlight zero-cost items clearly for needy students without polluting paid listings. |
 
 ---
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **User Personas**: 7 detailed personas covering buyers, sellers, hostellers, day scholars, giveaway seekers, and admins.
-* ✅ **User Journeys**: Complete step-by-step flows for buying, selling, negotiating, reserving, and reporting.
-* ✅ **Information Architecture**: Full sitemap, deep linking structure, and screen hierarchy.
-* ✅ **Zero Code / Schema Violation**: Pure UX/IA design specification document suitable for engineering & design review.
+- ✅ **User Personas**: 7 detailed personas covering buyers, sellers, hostellers, day scholars, giveaway seekers, and admins.
+- ✅ **User Journeys**: Complete step-by-step flows for buying, selling, negotiating, reserving, and reporting.
+- ✅ **Information Architecture**: Full sitemap, deep linking structure, and screen hierarchy.
+- ✅ **Zero Code / Schema Violation**: Pure UX/IA design specification document suitable for engineering & design review.
 
 > [!IMPORTANT]
 > **MS-20.2 Complete**. Stopped for architecture review before proceeding to **MS-20.3 (Database Architecture & Data Model)**.

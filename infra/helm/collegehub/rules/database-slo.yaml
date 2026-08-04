@@ -10,7 +10,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: collegehub-slo-database
-  namespace: {{ .Values.global.namespace | quote }}
+  namespace: { { .Values.global.namespace | quote } }
   labels:
     app.kubernetes.io/name: collegehub
     app.kubernetes.io/part-of: collegehub-observability
@@ -60,8 +60,8 @@ spec:
             severity: page
             team: platform
           annotations:
-            summary: "College Hub database SLO burning fast (short window)"
-            description: "Database query failure burn rate is {{ $value }}x over 5m (limit 14.4x)."
+            summary: 'College Hub database SLO burning fast (short window)'
+            description: 'Database query failure burn rate is {{ $value }}x over 5m (limit 14.4x).'
 
         - alert: CollegeHubDBErrorBudgetBurnMediumWindow
           expr: |
@@ -71,8 +71,8 @@ spec:
             severity: page
             team: platform
           annotations:
-            summary: "College Hub database SLO burning (medium window)"
-            description: "Database query failure burn rate is {{ $value }}x over 30m (limit 6x)."
+            summary: 'College Hub database SLO burning (medium window)'
+            description: 'Database query failure burn rate is {{ $value }}x over 30m (limit 6x).'
 
         - alert: CollegeHubDBErrorBudgetBurnLongWindow
           expr: |
@@ -82,8 +82,8 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "College Hub database SLO burning (long window)"
-            description: "Database query failure burn rate is {{ $value }}x over 1h (limit 1x)."
+            summary: 'College Hub database SLO burning (long window)'
+            description: 'Database query failure burn rate is {{ $value }}x over 1h (limit 1x).'
 
         - alert: CollegeHubDBErrorBudgetExhausted
           expr: |
@@ -93,5 +93,5 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "College Hub database error budget below 25%"
-            description: "{{ $value | humanizePercentage }} of the database error budget remains; the platform will miss its 99% SLO at this rate."
+            summary: 'College Hub database error budget below 25%'
+            description: '{{ $value | humanizePercentage }} of the database error budget remains; the platform will miss its 99% SLO at this rate.'

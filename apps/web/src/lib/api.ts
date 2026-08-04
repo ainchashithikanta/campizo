@@ -14,7 +14,7 @@ import type {
   VoteRequest,
   ReportRequest,
   FacultyResponseRequest,
-  SearchParams,
+  SearchParams
 } from './types';
 
 const BASE = '/api/v1/professors';

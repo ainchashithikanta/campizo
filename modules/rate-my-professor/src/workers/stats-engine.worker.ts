@@ -1,7 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import type { EventBus } from '@college-hub/core';
 import { logger } from '@college-hub/logger';
-import type { ReviewRepository, ProfessorStatisticsRepository, ProfessorStatisticsEntity } from '../domain/repository.interface.js';
+import type {
+  ReviewRepository,
+  ProfessorStatisticsRepository,
+  ProfessorStatisticsEntity
+} from '../domain/repository.interface.js';
 
 export class StatsEngineWorker {
   private static readonly PRIOR_MEAN = 3.5;
@@ -41,17 +45,19 @@ export class StatsEngineWorker {
     }
 
     const rawAverageRating = totalReviewsCount > 0 ? Number((sumRatings / totalReviewsCount).toFixed(2)) : 0.0;
-    const recommendationPercentage = totalReviewsCount > 0 ? Number(((recommendedCount / totalReviewsCount) * 100).toFixed(1)) : 0.0;
+    const recommendationPercentage =
+      totalReviewsCount > 0 ? Number(((recommendedCount / totalReviewsCount) * 100).toFixed(1)) : 0.0;
 
     // Bayesian Rating Formula: (C * m + Sum(R)) / (C + N)
-    const bayesianRating = totalReviewsCount > 0
-      ? Number(
-          (
-            (StatsEngineWorker.PRIOR_WEIGHT * StatsEngineWorker.PRIOR_MEAN + sumRatings) /
-            (StatsEngineWorker.PRIOR_WEIGHT + totalReviewsCount)
-          ).toFixed(2)
-        )
-      : 0.0;
+    const bayesianRating =
+      totalReviewsCount > 0
+        ? Number(
+            (
+              (StatsEngineWorker.PRIOR_WEIGHT * StatsEngineWorker.PRIOR_MEAN + sumRatings) /
+              (StatsEngineWorker.PRIOR_WEIGHT + totalReviewsCount)
+            ).toFixed(2)
+          )
+        : 0.0;
 
     const statsEntity: ProfessorStatisticsEntity = {
       professorId,

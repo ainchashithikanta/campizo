@@ -17,7 +17,9 @@ export class StaleFeatureWorker {
    * Scans production flags for stale usage (>60 days unchanged).
    * Expected complexity: O(N) where N is production flag count.
    */
-  async scanStaleFeatures(activeFlags: Array<{ flagKey: string; ownerTeam: string; daysUnchanged: number }>): Promise<StaleFeatureReport[]> {
+  async scanStaleFeatures(
+    activeFlags: Array<{ flagKey: string; ownerTeam: string; daysUnchanged: number }>
+  ): Promise<StaleFeatureReport[]> {
     const reports: StaleFeatureReport[] = [];
 
     for (const flag of activeFlags) {

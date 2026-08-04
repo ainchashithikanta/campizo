@@ -78,6 +78,30 @@ observability:
 errorTracking:
   enabled: true
 
+# Backup & DR (MS-57): nightly run-all (PostgreSQL logical + Redis RDB + MinIO
+# mirror + verification + retention) into the production S3-compatible object
+# store (R2/GCS/AWS S3 — no commercial SaaS dependency). WAL archiving targets
+# externally managed PostgreSQL (RDS etc.) via its archive_command; the chart
+# ships archive-wal/fetch-wal CLI commands for that purpose (see runbooks).
+# Velero is enabled at the platform level for cluster-scoped resources (PVCs,
+# namespaces); application data is covered by backup above.
+backup:
+  enabled: true
+  prefix: collegehub-prod
+  s3:
+    endpoint: 'REPLACE-WITH-S3-COMPATIBLE-ENDPOINT'
+    region: us-east-1
+    bucket: collegehub-prod-backups
+  retention:
+    fullBackups: 7
+    walHours: 72
+    redisSnapshots: 3
+    minioMirrors: 7
+  velero:
+    enabled: true
+    schedule: '@daily'
+    ttl: '720h'
+
 postgresql:
   enabled: false
 
@@ -104,6 +128,8 @@ secrets:
   ENCRYPTION_KEY_32_BYTES: 'A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P'
   S3_ACCESS_KEY_ID: ''
   S3_SECRET_ACCESS_KEY: ''
+  BACKUP_S3_ACCESS_KEY_ID: ''
+  BACKUP_S3_SECRET_ACCESS_KEY: ''
   FIREBASE_CREDENTIALS_JSON: ''
   TYPESENSE_API_KEY: ''
   OPENAI_API_KEY: ''

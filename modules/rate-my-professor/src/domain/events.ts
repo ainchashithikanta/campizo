@@ -98,4 +98,3 @@ export interface ReviewHiddenPayload {
   collegeId: string;
   reason: string;
 }
-

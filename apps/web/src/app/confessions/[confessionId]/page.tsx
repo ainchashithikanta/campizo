@@ -140,7 +140,9 @@ export default function ConfessionDetailPage({ params }: { params: Promise<{ con
 
       <form onSubmit={handleAddComment} style={{ margin: '1.5rem 0' }}>
         <div className="conf-form-group">
-          <label className="conf-label" htmlFor="new-comment">Add Anonymous Reply</label>
+          <label className="conf-label" htmlFor="new-comment">
+            Add Anonymous Reply
+          </label>
           <textarea
             id="new-comment"
             className="conf-textarea"

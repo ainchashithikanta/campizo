@@ -54,7 +54,10 @@ export class AlreadyConnectedError extends CampusConnectDomainError {
 
 export class InvalidConversationContextError extends CampusConnectDomainError {
   constructor() {
-    super('Conversation creation requires a valid, non-null context (context_type and context_id).', 'INVALID_CONVERSATION_CONTEXT');
+    super(
+      'Conversation creation requires a valid, non-null context (context_type and context_id).',
+      'INVALID_CONVERSATION_CONTEXT'
+    );
   }
 }
 
@@ -66,7 +69,10 @@ export class RecommendationExpiredError extends CampusConnectDomainError {
 
 export class CrossCollegeViolationError extends CampusConnectDomainError {
   constructor(homeCollege: string, targetCollege: string) {
-    super(`Cross-college interaction between '${homeCollege}' and '${targetCollege}' is disabled by policy.`, 'CROSS_COLLEGE_VIOLATION');
+    super(
+      `Cross-college interaction between '${homeCollege}' and '${targetCollege}' is disabled by policy.`,
+      'CROSS_COLLEGE_VIOLATION'
+    );
   }
 }
 
@@ -84,12 +90,18 @@ export class TrustScoreViolationError extends CampusConnectDomainError {
 
 export class IllegalStateTransitionError extends CampusConnectDomainError {
   constructor(entityName: string, fromState: string, toState: string) {
-    super(`Illegal state transition for ${entityName} from '${fromState}' to '${toState}'.`, 'ILLEGAL_STATE_TRANSITION');
+    super(
+      `Illegal state transition for ${entityName} from '${fromState}' to '${toState}'.`,
+      'ILLEGAL_STATE_TRANSITION'
+    );
   }
 }
 
 export class OptimisticLockingError extends CampusConnectDomainError {
   constructor(entityName: string, expectedVersion: number, actualVersion: number) {
-    super(`Optimistic locking conflict on ${entityName}: expected version ${expectedVersion}, found ${actualVersion}.`, 'OPTIMISTIC_LOCKING_CONFLICT');
+    super(
+      `Optimistic locking conflict on ${entityName}: expected version ${expectedVersion}, found ${actualVersion}.`,
+      'OPTIMISTIC_LOCKING_CONFLICT'
+    );
   }
 }

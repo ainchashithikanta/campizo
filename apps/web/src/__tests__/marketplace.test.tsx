@@ -1,7 +1,12 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ListingCard, ListingGrid, ReservationBanner, SellerProfileCard } from '../components/marketplace/MarketplaceComponents';
+import {
+  ListingCard,
+  ListingGrid,
+  ReservationBanner,
+  SellerProfileCard
+} from '../components/marketplace/MarketplaceComponents';
 import { fetchMarketplaceHome, getListingDetail } from '../lib/api-marketplace';
 
 describe('Campus Marketplace Next.js 16 Component Suite', () => {

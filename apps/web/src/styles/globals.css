@@ -71,35 +71,35 @@ ol {
 /* ---------- Design Tokens (Light Mode — Default) ---------- */
 :root {
   /* Colors */
-  --ch-color-primary: #4F46E5;
-  --ch-color-primary-hover: #4338CA;
-  --ch-color-primary-light: #EEF2FF;
-  --ch-color-secondary: #06B6D4;
-  --ch-color-background: #FFFFFF;
-  --ch-color-surface: #F9FAFB;
-  --ch-color-surface-elevated: #FFFFFF;
+  --ch-color-primary: #4f46e5;
+  --ch-color-primary-hover: #4338ca;
+  --ch-color-primary-light: #eef2ff;
+  --ch-color-secondary: #06b6d4;
+  --ch-color-background: #ffffff;
+  --ch-color-surface: #f9fafb;
+  --ch-color-surface-elevated: #ffffff;
   --ch-color-text: #111827;
-  --ch-color-text-muted: #6B7280;
-  --ch-color-text-inverse: #FFFFFF;
-  --ch-color-border: #E5E7EB;
-  --ch-color-border-focus: #4F46E5;
-  --ch-color-accent: #4F46E5;
-  --ch-color-badge-bg: #EEF2FF;
-  --ch-color-success: #10B981;
-  --ch-color-success-bg: #ECFDF5;
-  --ch-color-warning: #F59E0B;
-  --ch-color-warning-bg: #FFFBEB;
-  --ch-color-error: #EF4444;
-  --ch-color-error-bg: #FEF2F2;
-  --ch-color-info: #3B82F6;
-  --ch-color-info-bg: #EFF6FF;
+  --ch-color-text-muted: #6b7280;
+  --ch-color-text-inverse: #ffffff;
+  --ch-color-border: #e5e7eb;
+  --ch-color-border-focus: #4f46e5;
+  --ch-color-accent: #4f46e5;
+  --ch-color-badge-bg: #eef2ff;
+  --ch-color-success: #10b981;
+  --ch-color-success-bg: #ecfdf5;
+  --ch-color-warning: #f59e0b;
+  --ch-color-warning-bg: #fffbeb;
+  --ch-color-error: #ef4444;
+  --ch-color-error-bg: #fef2f2;
+  --ch-color-info: #3b82f6;
+  --ch-color-info-bg: #eff6ff;
 
   /* Rating Colors */
-  --ch-color-rating-excellent: #10B981;
-  --ch-color-rating-good: #34D399;
-  --ch-color-rating-average: #F59E0B;
-  --ch-color-rating-below: #F97316;
-  --ch-color-rating-poor: #EF4444;
+  --ch-color-rating-excellent: #10b981;
+  --ch-color-rating-good: #34d399;
+  --ch-color-rating-average: #f59e0b;
+  --ch-color-rating-below: #f97316;
+  --ch-color-rating-poor: #ef4444;
 
   /* Typography */
   --ch-font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -172,28 +172,28 @@ ol {
 
 /* ---------- Dark Mode Tokens ---------- */
 [data-theme='dark'] {
-  --ch-color-primary: #6366F1;
-  --ch-color-primary-hover: #818CF8;
-  --ch-color-primary-light: #1E1B4B;
-  --ch-color-secondary: #22D3EE;
-  --ch-color-background: #0F172A;
-  --ch-color-surface: #1E293B;
+  --ch-color-primary: #6366f1;
+  --ch-color-primary-hover: #818cf8;
+  --ch-color-primary-light: #1e1b4b;
+  --ch-color-secondary: #22d3ee;
+  --ch-color-background: #0f172a;
+  --ch-color-surface: #1e293b;
   --ch-color-surface-elevated: #334155;
-  --ch-color-text: #F8FAFC;
-  --ch-color-text-muted: #94A3B8;
-  --ch-color-text-inverse: #0F172A;
+  --ch-color-text: #f8fafc;
+  --ch-color-text-muted: #94a3b8;
+  --ch-color-text-inverse: #0f172a;
   --ch-color-border: #334155;
-  --ch-color-border-focus: #6366F1;
-  --ch-color-accent: #6366F1;
-  --ch-color-badge-bg: #1E1B4B;
-  --ch-color-success: #34D399;
-  --ch-color-success-bg: #064E3B;
-  --ch-color-warning: #FBBF24;
-  --ch-color-warning-bg: #78350F;
-  --ch-color-error: #F87171;
-  --ch-color-error-bg: #7F1D1D;
-  --ch-color-info: #60A5FA;
-  --ch-color-info-bg: #1E3A5F;
+  --ch-color-border-focus: #6366f1;
+  --ch-color-accent: #6366f1;
+  --ch-color-badge-bg: #1e1b4b;
+  --ch-color-success: #34d399;
+  --ch-color-success-bg: #064e3b;
+  --ch-color-warning: #fbbf24;
+  --ch-color-warning-bg: #78350f;
+  --ch-color-error: #f87171;
+  --ch-color-error-bg: #7f1d1d;
+  --ch-color-info: #60a5fa;
+  --ch-color-info-bg: #1e3a5f;
 
   --ch-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --ch-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);

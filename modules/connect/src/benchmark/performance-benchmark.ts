@@ -84,7 +84,11 @@ export class PerformanceBenchmarkSuite {
 
     // 4. Recommendation Generation Target: <150ms
     const recGenBegin = Date.now();
-    const recEvt = buildEventEnvelope('IntentActivated', { intentId: 'int_bench_1', studentProfileId: 'usr_bench_1', intentType: 'STUDY_PARTNER' }, { collegeId: 'college_stanford_001' });
+    const recEvt = buildEventEnvelope(
+      'IntentActivated',
+      { intentId: 'int_bench_1', studentProfileId: 'usr_bench_1', intentType: 'STUDY_PARTNER' },
+      { collegeId: 'college_stanford_001' }
+    );
     await recWorker.processIntentActivated(recEvt);
     const recGenMs = Date.now() - recGenBegin;
     results.push({
@@ -107,7 +111,11 @@ export class PerformanceBenchmarkSuite {
 
     // 6. Notification Preparation Target: <30ms
     const notifBegin = Date.now();
-    const notifEvt = buildEventEnvelope('NotificationQueued', { recipientId: 'usr_bench_1', title: 'Test', body: 'Body' }, { collegeId: 'college_stanford_001' });
+    const notifEvt = buildEventEnvelope(
+      'NotificationQueued',
+      { recipientId: 'usr_bench_1', title: 'Test', body: 'Body' },
+      { collegeId: 'college_stanford_001' }
+    );
     await notifWorker.processNotificationEvent(notifEvt);
     const notifMs = Date.now() - notifBegin;
     results.push({

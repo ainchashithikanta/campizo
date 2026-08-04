@@ -21,8 +21,12 @@ export function StudentCard({ student, onAction, actionLabel = 'Connect' }: Stud
             {student.fullName?.[0] || 'S'}
           </div>
           <div>
-            <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-base">{student.fullName || 'Student'}</h3>
-            <p className="text-xs text-slate-500">{student.major || 'Computer Science'} • {student.classYear || 2026}</p>
+            <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-base">
+              {student.fullName || 'Student'}
+            </h3>
+            <p className="text-xs text-slate-500">
+              {student.major || 'Computer Science'} • {student.classYear || 2026}
+            </p>
           </div>
         </div>
 
@@ -31,7 +35,10 @@ export function StudentCard({ student, onAction, actionLabel = 'Connect' }: Stud
         {student.courses && student.courses.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
             {student.courses.map((c, i) => (
-              <span key={i} className="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              <span
+                key={i}
+                className="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+              >
                 {c}
               </span>
             ))}
@@ -65,7 +72,9 @@ export function ProfileHero({ profile }: ProfileHeroProps) {
         </div>
         <div>
           <h1 className="text-2xl font-bold">{profile.fullName}</h1>
-          <p className="text-sm text-indigo-200 mt-1">{profile.major} • Class of {profile.classYear}</p>
+          <p className="text-sm text-indigo-200 mt-1">
+            {profile.major} • Class of {profile.classYear}
+          </p>
           {profile.bio && <p className="text-xs text-slate-300 mt-2 max-w-xl">{profile.bio}</p>}
         </div>
       </div>

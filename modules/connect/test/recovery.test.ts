@@ -34,7 +34,11 @@ describe('Campus Connect System Recovery Suite', () => {
 
   it('1. RollbackManager: Executes recommendation rollback and emits structured audit logs', async () => {
     const rollbackMgr = new RollbackManager(useCases);
-    const auditEntry = await rollbackMgr.rollbackRecommendation('rec_snapshot_100', 'college_stanford_001', 'ALGORITHM_REPLAY_CORRECTION');
+    const auditEntry = await rollbackMgr.rollbackRecommendation(
+      'rec_snapshot_100',
+      'college_stanford_001',
+      'ALGORITHM_REPLAY_CORRECTION'
+    );
 
     expect(auditEntry.rollbackId).toBeDefined();
     expect(auditEntry.targetType).toBe('RECOMMENDATION');
@@ -64,8 +68,16 @@ describe('Campus Connect System Recovery Suite', () => {
     });
 
     const events = [
-      buildEventEnvelope('TestEvent', { id: 1 }, { eventId: 'evt_1', timestamp: '2026-08-04T10:00:00.000Z', version: 1 }),
-      buildEventEnvelope('TestEvent', { id: 2 }, { eventId: 'evt_2', timestamp: '2026-08-04T11:00:00.000Z', version: 2 })
+      buildEventEnvelope(
+        'TestEvent',
+        { id: 1 },
+        { eventId: 'evt_1', timestamp: '2026-08-04T10:00:00.000Z', version: 1 }
+      ),
+      buildEventEnvelope(
+        'TestEvent',
+        { id: 2 },
+        { eventId: 'evt_2', timestamp: '2026-08-04T11:00:00.000Z', version: 2 }
+      )
     ];
 
     const count = await replayer.replayByVersion(events, 1);

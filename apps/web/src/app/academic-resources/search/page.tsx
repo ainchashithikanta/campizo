@@ -18,12 +18,21 @@ export default function ResourceSearchPage() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Filter by subject, course, or title..."
-          style={{ flex: 1, padding: '12px 16px', borderRadius: 'var(--ch-radius-md)', border: '1px solid var(--ch-color-border)' }}
+          style={{
+            flex: 1,
+            padding: '12px 16px',
+            borderRadius: 'var(--ch-radius-md)',
+            border: '1px solid var(--ch-color-border)'
+          }}
         />
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          style={{ padding: '12px 16px', borderRadius: 'var(--ch-radius-md)', border: '1px solid var(--ch-color-border)' }}
+          style={{
+            padding: '12px 16px',
+            borderRadius: 'var(--ch-radius-md)',
+            border: '1px solid var(--ch-color-border)'
+          }}
         >
           <option value="ALL">All Material Types</option>
           <option value="NOTES">Lecture Notes</option>

@@ -26,7 +26,7 @@ export function ProgressBar({ label, percentage, count, fillColor }: ProgressBar
           className={styles.fill}
           style={{
             width: `${clampPercent}%`,
-            backgroundColor: fillColor,
+            backgroundColor: fillColor
           }}
         />
       </div>

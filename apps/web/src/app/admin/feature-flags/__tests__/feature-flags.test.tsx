@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { featureFlagsApi } from '@web/lib/api-feature-flags';
 
 describe('Platform Feature Flags — Next.js 16 Frontend Suite', () => {
-
   it('1. API Client: getHealth() should return HEALTHY platform status', async () => {
     const health = await featureFlagsApi.getHealth();
     expect(health.status).toBe('HEALTHY');

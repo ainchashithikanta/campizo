@@ -7,12 +7,7 @@ import { RequestContext } from './request-context.js';
 import { ForbiddenApplicationError } from '../errors/application-errors.js';
 
 export type UserRole =
-  | 'SUPER_ADMIN'
-  | 'PLATFORM_ADMIN'
-  | 'ENGINEERING_LEAD'
-  | 'OPERATIONS'
-  | 'SUPPORT'
-  | 'READONLY_ADMIN';
+  'SUPER_ADMIN' | 'PLATFORM_ADMIN' | 'ENGINEERING_LEAD' | 'OPERATIONS' | 'SUPPORT' | 'READONLY_ADMIN';
 
 export function authorizeRole(ctx: RequestContext, allowedRoles: UserRole[]): void {
   // Super Admin overrides all role requirements

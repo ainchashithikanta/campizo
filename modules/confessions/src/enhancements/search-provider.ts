@@ -21,7 +21,7 @@ export class MeilisearchProvider implements SearchProvider {
 
   async search(collegeId: string, query: string): Promise<SearchDocument[]> {
     return Array.from(this.docs.values()).filter(
-      d => d.collegeId === collegeId && (d.title.includes(query) || d.content.includes(query))
+      (d) => d.collegeId === collegeId && (d.title.includes(query) || d.content.includes(query))
     );
   }
 
@@ -39,7 +39,7 @@ export class OpenSearchProvider implements SearchProvider {
 
   async search(collegeId: string, query: string): Promise<SearchDocument[]> {
     return Array.from(this.docs.values()).filter(
-      d => d.collegeId === collegeId && (d.title.includes(query) || d.content.includes(query))
+      (d) => d.collegeId === collegeId && (d.title.includes(query) || d.content.includes(query))
     );
   }
 

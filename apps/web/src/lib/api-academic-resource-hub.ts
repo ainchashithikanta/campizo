@@ -73,7 +73,9 @@ export async function fetchResources(subjectId?: string, query?: string): Promis
   return json.data;
 }
 
-export async function fetchResourceDetail(resourceId: string): Promise<{ resource: AcademicResourceDTO; stats: ResourceStatisticsDTO | null }> {
+export async function fetchResourceDetail(
+  resourceId: string
+): Promise<{ resource: AcademicResourceDTO; stats: ResourceStatisticsDTO | null }> {
   const res = await fetch(`/api/v1/resources/${resourceId}`, { headers: DEFAULT_HEADERS });
   if (!res.ok) throw new Error('Resource not found');
   const json = await res.json();
@@ -123,7 +125,12 @@ export async function reportResource(resourceId: string, reason: string): Promis
   if (!res.ok) throw new Error('Failed to report resource');
 }
 
-export async function createUploadSession(fileName: string, fileSizeBytes: number, mimeType: string, sha256Hash: string): Promise<UploadSessionDTO> {
+export async function createUploadSession(
+  fileName: string,
+  fileSizeBytes: number,
+  mimeType: string,
+  sha256Hash: string
+): Promise<UploadSessionDTO> {
   const res = await fetch('/api/v1/uploads/session', {
     method: 'POST',
     headers: DEFAULT_HEADERS,
@@ -134,7 +141,9 @@ export async function createUploadSession(fileName: string, fileSizeBytes: numbe
   return json.data;
 }
 
-export async function fetchUploadStatus(uploadId: string): Promise<{ uploadId: string; status: string; virusScanStatus: string }> {
+export async function fetchUploadStatus(
+  uploadId: string
+): Promise<{ uploadId: string; status: string; virusScanStatus: string }> {
   const res = await fetch(`/api/v1/uploads/${uploadId}/status`, { headers: DEFAULT_HEADERS });
   if (!res.ok) throw new Error('Failed to fetch upload status');
   const json = await res.json();

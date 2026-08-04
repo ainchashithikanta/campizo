@@ -20,20 +20,20 @@ const DEPARTMENTS = [
   { value: 'ME', label: 'Mechanical Eng (ME)' },
   { value: 'EE', label: 'Electrical Eng (EE)' },
   { value: 'MATH', label: 'Mathematics & Computing' },
-  { value: 'PHYS', label: 'Applied Physics' },
+  { value: 'PHYS', label: 'Applied Physics' }
 ];
 
 const RATINGS = [
   { value: '4.5', label: '★ 4.5 & Above (Excellent)' },
   { value: '4.0', label: '★ 4.0 & Above (Good)' },
-  { value: '3.0', label: '★ 3.0 & Above (Average)' },
+  { value: '3.0', label: '★ 3.0 & Above (Average)' }
 ];
 
 const SORT_OPTIONS = [
   { value: 'MOST_HELPFUL', label: 'Most Helpful' },
   { value: 'RECENT', label: 'Recently Reviewed' },
   { value: 'HIGHEST_RATED', label: 'Highest Bayesian Rating' },
-  { value: 'LOWEST_RATED', label: 'Lowest Bayesian Rating' },
+  { value: 'LOWEST_RATED', label: 'Lowest Bayesian Rating' }
 ];
 
 export function ProfessorSearchHeader({ params, onChange, onReset, totalResults }: ProfessorSearchHeaderProps) {

@@ -179,11 +179,7 @@ export class DeleteReviewUseCase {
     private readonly eventBus: EventBus
   ) {}
 
-  public async execute(params: {
-    reviewId: string;
-    authorUserId: string;
-    collegeId: string;
-  }): Promise<void> {
+  public async execute(params: { reviewId: string; authorUserId: string; collegeId: string }): Promise<void> {
     const existing = await this.reviewRepo.findById(params.reviewId, params.collegeId);
     if (!existing) {
       throw new EntityNotFoundError('Review', params.reviewId);
@@ -219,4 +215,3 @@ export class DeleteReviewUseCase {
     });
   }
 }
-

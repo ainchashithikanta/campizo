@@ -22,10 +22,26 @@ export default function StudyPartnersPage() {
   const loadGroups = () => {
     fetchStudyGroups()
       .then((res) => {
-        setGroups(res || [
-          { id: 'sg_101', courseCode: 'CS224N', title: 'NLP Midterm Study Pod', maxCapacity: 5, currentMembers: 3, status: 'OPEN' },
-          { id: 'sg_102', courseCode: 'CS246', title: 'Mining Massive Datasets Pod', maxCapacity: 4, currentMembers: 2, status: 'OPEN' }
-        ]);
+        setGroups(
+          res || [
+            {
+              id: 'sg_101',
+              courseCode: 'CS224N',
+              title: 'NLP Midterm Study Pod',
+              maxCapacity: 5,
+              currentMembers: 3,
+              status: 'OPEN'
+            },
+            {
+              id: 'sg_102',
+              courseCode: 'CS246',
+              title: 'Mining Massive Datasets Pod',
+              maxCapacity: 4,
+              currentMembers: 2,
+              status: 'OPEN'
+            }
+          ]
+        );
         setLoading(false);
       })
       .catch((err) => {
@@ -75,19 +91,47 @@ export default function StudyPartnersPage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <form onSubmit={handleCreate} className="bg-white dark:bg-slate-900 p-6 rounded-2xl max-w-md w-full border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+          <form
+            onSubmit={handleCreate}
+            className="bg-white dark:bg-slate-900 p-6 rounded-2xl max-w-md w-full border border-slate-200 dark:border-slate-800 shadow-xl space-y-4"
+          >
             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Create Study Pod</h2>
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Course Code</label>
-              <input type="text" value={courseCode} onChange={(e) => setCourseCode(e.target.value)} placeholder="e.g. CS224N" required className="w-full min-h-[44px] px-3 border rounded-xl" />
+              <input
+                type="text"
+                value={courseCode}
+                onChange={(e) => setCourseCode(e.target.value)}
+                placeholder="e.g. CS224N"
+                required
+                className="w-full min-h-[44px] px-3 border rounded-xl"
+              />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Pod Title</label>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Exam Prep Pod" required className="w-full min-h-[44px] px-3 border rounded-xl" />
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Exam Prep Pod"
+                required
+                className="w-full min-h-[44px] px-3 border rounded-xl"
+              />
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={() => setShowModal(false)} className="min-h-[44px] px-4 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Cancel</button>
-              <button type="submit" className="min-h-[44px] px-4 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white">Create Pod</button>
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="min-h-[44px] px-4 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="min-h-[44px] px-4 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white"
+              >
+                Create Pod
+              </button>
             </div>
           </form>
         </div>

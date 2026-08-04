@@ -108,7 +108,9 @@ export function assertValidFileMetadata(fileMeta: FileMetadataInvariantCheck): v
   ];
 
   if (fileMeta.fileSizeBytes < MIN_SIZE || fileMeta.fileSizeBytes > MAX_SIZE) {
-    throw new InvalidFileMetadataError(`File size (${fileMeta.fileSizeBytes} bytes) is outside permitted 50KB - 50MB bounds.`);
+    throw new InvalidFileMetadataError(
+      `File size (${fileMeta.fileSizeBytes} bytes) is outside permitted 50KB - 50MB bounds.`
+    );
   }
 
   if (!APPROVED_MIMES.includes(fileMeta.mimeType)) {

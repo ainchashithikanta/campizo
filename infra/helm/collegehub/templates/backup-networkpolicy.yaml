@@ -1,0 +1,75 @@
+{{- if and .Values.networkPolicies.enabled .Values.backup.enabled }}
+{{- $dnsUdpPort := .Values.networkPolicies.dnsUdpPort }}
+{{- $postgresPort := .Values.postgresql.port }}
+{{- $redisPort := .Values.redis.port }}
+{{- $minioPort := .Values.minio.port }}
+---
+# Backup workload egress: DNS + PostgreSQL + Redis + MinIO + HTTP(S) for
+# externally managed S3-compatible object stores. Backup pods are one-shot
+# (CronJobs/Jobs) or the WAL archiver sidecar; they never serve inbound
+# traffic, so no ingress policy is required.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "collegehub.fullname" . }}-backup-egress
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "collegehub.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: backup
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - protocol: UDP
+          port: {{ $dnsUdpPort }}
+        - protocol: TCP
+          port: {{ $dnsUdpPort }}
+    - ports:
+        - protocol: TCP
+          port: {{ $postgresPort }}
+        - protocol: TCP
+          port: {{ $redisPort }}
+        - protocol: TCP
+          port: {{ $minioPort }}
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+---
+{{- if .Values.postgresql.enabled }}
+# WAL archiver sidecar runs inside the bundled PostgreSQL pod; give it the
+# same backup-store egress (DNS + S3-compatible endpoints) so segments reach
+# the object store without opening unrelated traffic.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "collegehub.fullname" . }}-backup-wal-egress
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - protocol: UDP
+          port: {{ $dnsUdpPort }}
+        - protocol: TCP
+          port: {{ $dnsUdpPort }}
+    - ports:
+        - protocol: TCP
+          port: {{ $minioPort }}
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+{{- end }}
+{{- end }}

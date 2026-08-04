@@ -2,7 +2,7 @@
 
 **Document Type**: Technical Architecture & System Blueprint  
 **Status**: APPROVED BY CTO / ARCHITECTURE BLUEPRINT  
-**Target Package**: `packages/platform-feature-flags/` (Shared Platform Core Service)  
+**Target Package**: `packages/platform-feature-flags/` (Shared Platform Core Service)
 
 ---
 
@@ -95,7 +95,9 @@ Raw Configuration Payload ──► Pre-Load Validation ──► Graph Compiler
 ```
 
 ### Pre-Load Validation Pipeline
+
 Before any configuration payload is loaded into process memory, it must pass 5 strict pre-load validators:
+
 1. **HMAC Signature Check**: Validates payload cryptographic HMAC-SHA256 signature.
 2. **Zod Schema Check**: Verifies structural type safety and non-empty required fields.
 3. **DAG Cycle Check**: Runs Topological Sort to guarantee zero circular dependencies (`INVALID_CYCLE`).
@@ -132,6 +134,7 @@ Level 3: PostgreSQL Database (Partitioned Persistence) ──► Latency: 8.50ms
 ```
 
 ### Redis Outage Resilience Guarantee
+
 - **CRITICAL RULE**: A complete Redis network partition or cluster failure MUST NEVER interrupt local feature evaluations.
 - Application nodes continue evaluating feature treatments from their local L1 process memory graph indefinitely, logging warning metrics until Redis recovers.
 
@@ -160,12 +163,12 @@ Level 3: PostgreSQL Database (Partitioned Persistence) ──► Latency: 8.50ms
 
 The system includes automated chaos test suites verifying resiliency:
 
-1. **Redis Outage Simulation**: Simulates cluster network drop. *Verified*: Local evaluation continues uninterrupted in L1 memory.
-2. **Database Outage Simulation**: Simulates DB connection pool exhaustion. *Verified*: Evaluation reads remain 100% operational.
-3. **Worker Crash Simulation**: Simulates worker process crash. *Verified*: Process supervisor restarts worker; messages stay queued.
-4. **Partial Rollout Fault Simulation**: Injects network delays during canary rollout. *Verified*: Auto-rollback trips at error threshold.
-5. **Configuration Corruption Simulation**: Injects invalid HMAC signature. *Verified*: Pre-load validator rejects payload; retains valid graph.
-6. **Node Restart Simulation**: Simulates abrupt node termination. *Verified*: New node rebuilds in-memory graph from Redis in $<200\text{ ms}$.
+1. **Redis Outage Simulation**: Simulates cluster network drop. _Verified_: Local evaluation continues uninterrupted in L1 memory.
+2. **Database Outage Simulation**: Simulates DB connection pool exhaustion. _Verified_: Evaluation reads remain 100% operational.
+3. **Worker Crash Simulation**: Simulates worker process crash. _Verified_: Process supervisor restarts worker; messages stay queued.
+4. **Partial Rollout Fault Simulation**: Injects network delays during canary rollout. _Verified_: Auto-rollback trips at error threshold.
+5. **Configuration Corruption Simulation**: Injects invalid HMAC signature. _Verified_: Pre-load validator rejects payload; retains valid graph.
+6. **Node Restart Simulation**: Simulates abrupt node termination. _Verified_: New node rebuilds in-memory graph from Redis in $<200\text{ ms}$.
 
 ---
 
@@ -177,12 +180,12 @@ Cryptographic HMAC-SHA256 configuration payload verification.
 
 ## Section 11 — Target Performance SLAs (p95 Benchmarks)
 
-| Operational Path | SLA Target | Achieved Architecture Guarantee |
-|------------------|------------|---------------------------------|
-| **Local SDK Evaluation** | $< 1\text{ ms}$ | $0.25\text{ ms}$ (Compiled Graph) |
-| **REST Evaluation Endpoint** | $< 10\text{ ms}$ | $4.20\text{ ms}$ |
-| **Bulk Evaluation Endpoint** | $< 50\text{ ms}$ | $18.50\text{ ms}$ |
-| **Hot Reload Propagation** | $< 50\text{ ms}$ | $22.00\text{ ms}$ |
+| Operational Path             | SLA Target       | Achieved Architecture Guarantee   |
+| ---------------------------- | ---------------- | --------------------------------- |
+| **Local SDK Evaluation**     | $< 1\text{ ms}$  | $0.25\text{ ms}$ (Compiled Graph) |
+| **REST Evaluation Endpoint** | $< 10\text{ ms}$ | $4.20\text{ ms}$                  |
+| **Bulk Evaluation Endpoint** | $< 50\text{ ms}$ | $18.50\text{ ms}$                 |
+| **Hot Reload Propagation**   | $< 50\text{ ms}$ | $22.00\text{ ms}$                 |
 
 ---
 

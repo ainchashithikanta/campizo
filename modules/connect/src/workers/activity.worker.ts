@@ -18,7 +18,9 @@ export interface ActivityFeedEntry {
 export class ActivityWorker {
   private activityStore: ActivityFeedEntry[] = [];
 
-  async processActivityEvent(event: ConnectEventEnvelope<{ actorId: string; actionType: string; metadata?: Record<string, any> }>): Promise<ActivityFeedEntry> {
+  async processActivityEvent(
+    event: ConnectEventEnvelope<{ actorId: string; actionType: string; metadata?: Record<string, any> }>
+  ): Promise<ActivityFeedEntry> {
     const startTime = Date.now();
     try {
       const entry: ActivityFeedEntry = {

@@ -14,7 +14,9 @@ export class PreviewGenerationWorker {
     private eventBus: EventBus
   ) {}
 
-  public async process(job: PreviewGenerationJobData): Promise<{ fileId: string; hasPreview: boolean; pageCount: number }> {
+  public async process(
+    job: PreviewGenerationJobData
+  ): Promise<{ fileId: string; hasPreview: boolean; pageCount: number }> {
     const file = await this.storageRepo.findFileByHash(job.sha256Hash);
 
     const isPdf = job.mimeType === 'application/pdf';

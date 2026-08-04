@@ -6,7 +6,11 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { formatApiV1Success } from '../errors/http-error-handler.js';
 import { StudentIntentService } from '../use-cases/connect.use-cases.js';
-import { createIntentSchema, updateIntentSchema, intentStateTransitionSchema } from '../validators/intent.validators.js';
+import {
+  createIntentSchema,
+  updateIntentSchema,
+  intentStateTransitionSchema
+} from '../validators/intent.validators.js';
 
 export class IntentController {
   constructor(private readonly intentService: StudentIntentService) {}

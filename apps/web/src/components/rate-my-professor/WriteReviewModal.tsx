@@ -18,7 +18,7 @@ export interface WriteReviewModalProps {
 const COURSES = [
   { value: 'course-101-uuid', label: 'CS101 — Introduction to Computer Science' },
   { value: 'course-102-uuid', label: 'CS201 — Data Structures & Algorithms' },
-  { value: 'course-103-uuid', label: 'CS301 — Operating Systems' },
+  { value: 'course-103-uuid', label: 'CS301 — Operating Systems' }
 ];
 
 const GRADES = [
@@ -27,7 +27,7 @@ const GRADES = [
   { value: 'B', label: 'B (Good)' },
   { value: 'C', label: 'C (Average)' },
   { value: 'F', label: 'F (Fail)' },
-  { value: 'PASSED', label: 'Passed / Audit' },
+  { value: 'PASSED', label: 'Passed / Audit' }
 ];
 
 export function WriteReviewModal({ isOpen, onClose, profile, onSubmit }: WriteReviewModalProps) {
@@ -65,8 +65,8 @@ export function WriteReviewModal({ isOpen, onClose, profile, onSubmit }: WriteRe
           teachingClarity,
           gradingFairness,
           punctuality,
-          approachability,
-        },
+          approachability
+        }
       });
       setSuccess(true);
       setTimeout(() => {
@@ -114,7 +114,7 @@ export function WriteReviewModal({ isOpen, onClose, profile, onSubmit }: WriteRe
                 backgroundColor: 'var(--ch-color-error-bg)',
                 color: 'var(--ch-color-error)',
                 borderRadius: 'var(--ch-radius-md)',
-                fontSize: 'var(--ch-font-size-xs)',
+                fontSize: 'var(--ch-font-size-xs)'
               }}
             >
               {error}

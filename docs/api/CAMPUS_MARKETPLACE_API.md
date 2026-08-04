@@ -5,6 +5,7 @@
 This document specifies the production REST API contracts, Data Transfer Objects (DTOs), request/response envelopes, header requirements, error codes, and validation rules for the **College Hub Campus Marketplace**.
 
 The API architecture enforces:
+
 - **Strict Multi-Tenant Isolation**: Mandatory `x-college-id` header on every request.
 - **Idempotency Protection**: Mandatory `x-idempotency-key` header on all write operations (`POST`, `PUT`, `PATCH`, `DELETE`).
 - **Standard Envelopes**: Uniform `ApiV1Response<T>` success and error structures.
@@ -16,17 +17,18 @@ The API architecture enforces:
 ## 1. API Protocol & Standard Envelopes
 
 ### 1.1 Base URL & Versioning
+
 - **Base URL**: `https://api.collegehub.edu.in/api/v1/marketplace`
 - **Protocol**: HTTPS (TLS 1.3)
 
 ### 1.2 Mandatory Request Headers
 
-| Header Name | Type | Requirement | Purpose |
-| :--- | :--- | :--- | :--- |
-| `Authorization` | `Bearer <JWT>` | Mandatory | Authenticates the student identity (`user_id`). |
-| `x-college-id` | String (UUID/Slug) | Mandatory | Resolves tenant scope (e.g. `college-stanford-001`). Prevents cross-college requests. |
-| `x-request-id` | String (UUID) | Mandatory | Traces distributed logs across system boundaries. |
-| `x-idempotency-key` | String (UUID) | Mandatory (Writes) | Prevents duplicate offer, listing, or reservation requests. |
+| Header Name         | Type               | Requirement        | Purpose                                                                               |
+| :------------------ | :----------------- | :----------------- | :------------------------------------------------------------------------------------ |
+| `Authorization`     | `Bearer <JWT>`     | Mandatory          | Authenticates the student identity (`user_id`).                                       |
+| `x-college-id`      | String (UUID/Slug) | Mandatory          | Resolves tenant scope (e.g. `college-stanford-001`). Prevents cross-college requests. |
+| `x-request-id`      | String (UUID)      | Mandatory          | Traces distributed logs across system boundaries.                                     |
+| `x-idempotency-key` | String (UUID)      | Mandatory (Writes) | Prevents duplicate offer, listing, or reservation requests.                           |
 
 ---
 
@@ -68,6 +70,7 @@ The API architecture enforces:
 ## 2. Listing REST APIs
 
 ### 2.1 List & Search Listings
+
 - **HTTP Method**: `GET /api/v1/marketplace/listings`
 - **Query Parameters**:
   - `query` (string, optional): Full-text keyword search.
@@ -81,12 +84,14 @@ The API architecture enforces:
 ---
 
 ### 2.2 Get Listing Detail
+
 - **HTTP Method**: `GET /api/v1/marketplace/listings/:id`
 - **Response**: `ApiV1Response<ListingDetailDto>`
 
 ---
 
 ### 2.3 Create Listing Draft & Publish
+
 - **HTTP Method**: `POST /api/v1/marketplace/listings`
 - **Request Body**:
   ```json
@@ -95,7 +100,7 @@ The API architecture enforces:
     "categoryCode": "calculators",
     "conditionCode": "LIKE_NEW",
     "listingType": "SELL",
-    "priceInr": 900.00,
+    "priceInr": 900.0,
     "isNegotiable": true,
     "pickupLocationName": "Hostel Block 4 / Central Library Gate",
     "description": "Mint condition scientific calculator. Required for 1st year CSE lab.",
@@ -107,6 +112,7 @@ The API architecture enforces:
 ---
 
 ### 2.4 Publish / Archive / Mark Sold / Delete Listing
+
 - `PATCH /api/v1/marketplace/listings/:id/publish` $\rightarrow$ Transition to `PUBLISHED`.
 - `PATCH /api/v1/marketplace/listings/:id/archive` $\rightarrow$ Transition to `ARCHIVED`.
 - `POST /api/v1/marketplace/listings/:id/sold` $\rightarrow$ Transition to `SOLD`.
@@ -117,24 +123,26 @@ The API architecture enforces:
 ## 3. Offer & Negotiation REST APIs
 
 ### 3.1 Submit Offer
+
 - **HTTP Method**: `POST /api/v1/marketplace/listings/:id/offers`
 - **Request Body**:
   ```json
   {
-    "offeredPriceInr": 750.00,
+    "offeredPriceInr": 750.0,
     "message": "Hi, can pick up from Library Gate today at 4 PM."
   }
   ```
 - **Response**: `ApiV1Response<OfferDto>` (HTTP 201 Created)
-- *Note*: If `offeredPriceInr` is significantly lower than asking price, response metadata includes a non-blocking UI warning advisory.
+- _Note_: If `offeredPriceInr` is significantly lower than asking price, response metadata includes a non-blocking UI warning advisory.
 
 ---
 
 ### 3.2 Counter Offer / Accept Offer / Reject Offer
+
 - `POST /api/v1/marketplace/offers/:offerId/counter`
   - Body: `{ "counterPriceInr": 850.00 }`
 - `POST /api/v1/marketplace/offers/:offerId/accept`
-  - *Automated Trigger*: Creates a 24-hour `MarketplaceReservation` and locks listing status to `RESERVED`.
+  - _Automated Trigger_: Creates a 24-hour `MarketplaceReservation` and locks listing status to `RESERVED`.
 - `POST /api/v1/marketplace/offers/:offerId/reject`
 
 ---
@@ -144,7 +152,7 @@ The API architecture enforces:
 - **`GET /api/v1/marketplace/reservations/:id`**: Returns current reservation status & countdown expiry.
 - **`POST /api/v1/marketplace/reservations/:id/cancel`**: Seller or buyer cancels reservation; returns listing to `PUBLISHED`.
 - **`POST /api/v1/marketplace/reservations/:id/complete`**: Seller confirms transaction completion; marks listing `SOLD`.
-- *Note*: Direct client creation of reservations is disabled. Reservations can only be spawned via `POST /offers/:id/accept`.
+- _Note_: Direct client creation of reservations is disabled. Reservations can only be spawned via `POST /offers/:id/accept`.
 
 ---
 
@@ -245,25 +253,25 @@ export interface SellerProfileDto {
 
 ## 10. Error Code Catalogue
 
-| HTTP Status | Error Code | Description |
-| :---: | :--- | :--- |
-| **403** | `SELF_PURCHASE_NOT_ALLOWED` | Student attempted to buy/vote on their own listing. |
-| **403** | `CROSS_COLLEGE_OPERATION` | Request header `x-college-id` does not match resource college. |
-| **409** | `LISTING_ALREADY_SOLD` | Item has already been sold. |
-| **409** | `RESERVATION_EXPIRED` | 24-hour reservation window has lapsed. |
-| **409** | `DUPLICATE_BOOKMARK` | Listing already present in bookmarks. |
-| **409** | `DUPLICATE_REPORT` | User has already submitted a report for this listing. |
-| **404** | `LISTING_NOT_FOUND` | Specified listing ID does not exist. |
-| **400** | `INVALID_INPUT` | Zod DTO validation error. |
+| HTTP Status | Error Code                  | Description                                                    |
+| :---------: | :-------------------------- | :------------------------------------------------------------- |
+|   **403**   | `SELF_PURCHASE_NOT_ALLOWED` | Student attempted to buy/vote on their own listing.            |
+|   **403**   | `CROSS_COLLEGE_OPERATION`   | Request header `x-college-id` does not match resource college. |
+|   **409**   | `LISTING_ALREADY_SOLD`      | Item has already been sold.                                    |
+|   **409**   | `RESERVATION_EXPIRED`       | 24-hour reservation window has lapsed.                         |
+|   **409**   | `DUPLICATE_BOOKMARK`        | Listing already present in bookmarks.                          |
+|   **409**   | `DUPLICATE_REPORT`          | User has already submitted a report for this listing.          |
+|   **404**   | `LISTING_NOT_FOUND`         | Specified listing ID does not exist.                           |
+|   **400**   | `INVALID_INPUT`             | Zod DTO validation error.                                      |
 
 ---
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **Mandatory Headers**: Enforced `Authorization`, `x-college-id`, `x-request-id`, `x-idempotency-key`.
-* ✅ **Standard Envelopes**: Uniform `ApiV1Response<T>` success/error JSON envelopes.
-* ✅ **Refinements Incorporated**: No hard 50% offer floor constraint; reservations spawned exclusively via accepted offers; immutable offer history.
-* ✅ **Zero Code / Schema Violation**: Pure API contract and DTO specification.
+- ✅ **Mandatory Headers**: Enforced `Authorization`, `x-college-id`, `x-request-id`, `x-idempotency-key`.
+- ✅ **Standard Envelopes**: Uniform `ApiV1Response<T>` success/error JSON envelopes.
+- ✅ **Refinements Incorporated**: No hard 50% offer floor constraint; reservations spawned exclusively via accepted offers; immutable offer history.
+- ✅ **Zero Code / Schema Violation**: Pure API contract and DTO specification.
 
 > [!IMPORTANT]
 > **MS-20.5 Complete**. Stopped for architecture review before proceeding to **MS-20.6 (Technical Architecture & Technology Blueprint)**.

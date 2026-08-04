@@ -17,7 +17,12 @@ export class PrivacyController {
 
   async getPrivacySettings(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const settings = await this.queryService.getPrivacySettings(request.context.userId, request.context.collegeId);
-    reply.send(formatApiV1Success(settings || { studentProfileId: request.context.userId, isGhostMode: false, isIncognitoMode: false }, request));
+    reply.send(
+      formatApiV1Success(
+        settings || { studentProfileId: request.context.userId, isGhostMode: false, isIncognitoMode: false },
+        request
+      )
+    );
   }
 
   async updatePrivacySettings(request: FastifyRequest, reply: FastifyReply): Promise<void> {

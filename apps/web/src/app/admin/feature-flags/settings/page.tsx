@@ -26,7 +26,9 @@ export default function SettingsPage() {
             <input type="text" className="ff-input-field" value="feature-flags:events:hot-reload" readOnly />
           </div>
 
-          <button className="ff-btn-primary" onClick={() => alert('Settings saved.')}>Save Settings</button>
+          <button className="ff-btn-primary" onClick={() => alert('Settings saved.')}>
+            Save Settings
+          </button>
         </div>
       </div>
     </div>

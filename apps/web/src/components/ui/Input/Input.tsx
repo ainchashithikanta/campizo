@@ -31,7 +31,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             error ? styles.inputError : '',
             iconLeft ? styles.hasIconLeft : '',
             iconRight ? styles.hasIconRight : '',
-            className,
+            className
           ]
             .filter(Boolean)
             .join(' ')}

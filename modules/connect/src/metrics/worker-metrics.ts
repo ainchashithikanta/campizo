@@ -14,7 +14,8 @@ export interface MetricSnapshot {
 
 export class WorkerMetrics {
   private static instance: WorkerMetrics;
-  private metricsMap: Map<string, { latencies: number[]; errors: number; total: number; lastTime: string | null }> = new Map();
+  private metricsMap: Map<string, { latencies: number[]; errors: number; total: number; lastTime: string | null }> =
+    new Map();
   private startupTime: number = Date.now();
 
   static getInstance(): WorkerMetrics {

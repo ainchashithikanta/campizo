@@ -2,7 +2,7 @@
 
 **Document Type**: API Architecture & Interface Specification  
 **Status**: APPROVED BY CTO / API SPECIFICATION  
-**Target Module**: `@college-hub/platform-feature-flags` (Shared Platform Core Service)  
+**Target Module**: `@college-hub/platform-feature-flags` (Shared Platform Core Service)
 
 ---
 
@@ -17,16 +17,19 @@ Designed for sub-millisecond local evaluation and sub-10ms API gateway responses
 ## Section 1 — API Standards, Versioning & Compatibility Policy
 
 ### 1.1 Base URL & Versioning Strategy
+
 - **Base URL**: `https://api.collegehub.edu/api/v1/feature-flags`
 - **Versioning**: URI path versioning (`/v1/`).
 
 ### 1.2 API Compatibility & Deprecation Policy
+
 1. **Additive-Only Changes in v1**: New endpoints, optional request parameters, and additional response fields are introduced without version bumps.
 2. **Semantic Versioning**: Minor updates for non-breaking additions; major version bumps (`/v2/`) reserved exclusively for breaking structural changes.
 3. **Deprecation Policy**: Minimum 6-month formal deprecation notice prior to retiring any `/v1/` endpoint.
 4. **Long-Term SDK Support Policy**: Client SDK versions maintained for 12 months minimum after major releases.
 
 ### 1.3 Mandatory Request Headers
+
 - `Authorization`: `Bearer <jwt_token>` (Admin/Service API Token).
 - `x-college-id`: Target campus tenant identifier.
 - `x-request-id`: Distributed correlation ID for tracing.
@@ -37,26 +40,28 @@ Designed for sub-millisecond local evaluation and sub-10ms API gateway responses
 
 ## Section 2 — Feature Management REST APIs
 
-| Method | Endpoint | Description | HTTP Status |
-|--------|----------|-------------|-------------|
-| `GET` | `/api/v1/feature-flags` | List all flags with search/filter params | `200 OK` |
-| `POST` | `/api/v1/feature-flags` | Create a new feature flag definition | `201 Created` |
-| `GET` | `/api/v1/feature-flags/:key` | Fetch detailed flag definition | `200 OK` / `404` |
-| `PUT` | `/api/v1/feature-flags/:key` | Update flag rules and metadata | `200 OK` |
-| `POST` | `/api/v1/feature-flags/:key/enable` | Enable flag in environment | `200 OK` |
-| `POST` | `/api/v1/feature-flags/:key/disable` | Disable flag in environment | `200 OK` |
-| `POST` | `/api/v1/feature-flags/:key/archive` | Move flag to `DEPRECATED` stage | `200 OK` |
-| `POST` | `/api/v1/feature-flags/:key/restore` | Restore archived flag | `200 OK` |
-| `DELETE` | `/api/v1/feature-flags/:key` | Soft delete flag (`REMOVED` stage) | `200 OK` |
+| Method   | Endpoint                             | Description                              | HTTP Status      |
+| -------- | ------------------------------------ | ---------------------------------------- | ---------------- |
+| `GET`    | `/api/v1/feature-flags`              | List all flags with search/filter params | `200 OK`         |
+| `POST`   | `/api/v1/feature-flags`              | Create a new feature flag definition     | `201 Created`    |
+| `GET`    | `/api/v1/feature-flags/:key`         | Fetch detailed flag definition           | `200 OK` / `404` |
+| `PUT`    | `/api/v1/feature-flags/:key`         | Update flag rules and metadata           | `200 OK`         |
+| `POST`   | `/api/v1/feature-flags/:key/enable`  | Enable flag in environment               | `200 OK`         |
+| `POST`   | `/api/v1/feature-flags/:key/disable` | Disable flag in environment              | `200 OK`         |
+| `POST`   | `/api/v1/feature-flags/:key/archive` | Move flag to `DEPRECATED` stage          | `200 OK`         |
+| `POST`   | `/api/v1/feature-flags/:key/restore` | Restore archived flag                    | `200 OK`         |
+| `DELETE` | `/api/v1/feature-flags/:key`         | Soft delete flag (`REMOVED` stage)       | `200 OK`         |
 
 ---
 
 ## Section 3 — Evaluation REST APIs & Explain Mode
 
 ### `POST /api/v1/feature-flags/evaluate?explain=true`
+
 Evaluates a single feature flag with optional **Evaluation Explain Mode**.
 
 #### Request Body
+
 ```json
 {
   "flagKey": "marketplace.p2p_chat",
@@ -70,6 +75,7 @@ Evaluates a single feature flag with optional **Evaluation Explain Mode**.
 ```
 
 #### Response Payload (`EvaluationResult` with Explainability)
+
 ```json
 {
   "success": true,
@@ -127,6 +133,7 @@ For clients requiring instant sub-50ms feature update notifications:
 ## Section 6 — Platform Health & Diagnostics APIs
 
 ### `GET /api/v1/feature-flags/health`
+
 Returns comprehensive operational health telemetry:
 
 ```json
@@ -135,7 +142,7 @@ Returns comprehensive operational health telemetry:
   "data": {
     "status": "HEALTHY",
     "cacheStatus": { "redis": "CONNECTED", "hitRate": 99.85 },
-    "evaluationLatency": { "p50Ms": 0.12, "p95Ms": 0.45, "p99Ms": 1.20 },
+    "evaluationLatency": { "p50Ms": 0.12, "p95Ms": 0.45, "p99Ms": 1.2 },
     "pubSubConnectivity": { "activeChannels": 4, "messagesPerSec": 120 },
     "snapshotFreshness": { "lastSnapshot": "2026-08-03T18:00:00Z", "ageHours": 1.7 },
     "workerHealth": { "activeWorkers": 8, "queueWaitMs": 2 }
@@ -172,6 +179,7 @@ Returns comprehensive operational health telemetry:
 ## Section 10 — Language-Neutral SDK Contracts
 
 ### 10.1 `FeatureEvaluationService` (SDK Contract)
+
 - `evaluate(flagKey, context): EvaluationResult`: Local in-memory evaluation in $< 1\text{ ms}$.
 - `evaluateWithExplain(flagKey, context): EvaluationResult`: Detailed evaluation with explainability breakdown.
 
@@ -185,13 +193,13 @@ Signed HMAC-SHA256 webhooks for `feature.enabled`, `feature.disabled`, `kill_swi
 
 ## Section 12 — Typed API Error Catalog
 
-| Error Code | HTTP Status | Trigger Condition |
-|------------|-------------|-------------------|
-| `FEATURE_NOT_FOUND` | `404 Not Found` | Requested `flagKey` does not exist |
-| `CIRCULAR_DEPENDENCY` | `400 Bad Request` | Dependency loop detected during graph modification |
-| `DEPENDENCY_NOT_SATISFIED` | `422 Unprocessable` | Prerequisite feature is disabled |
-| `KILL_SWITCH_ACTIVE` | `423 Locked` | Action blocked due to active emergency kill switch |
-| `MAINTENANCE_ACTIVE` | `503 Service Unavailable` | Write action attempted during active maintenance |
+| Error Code                 | HTTP Status               | Trigger Condition                                  |
+| -------------------------- | ------------------------- | -------------------------------------------------- |
+| `FEATURE_NOT_FOUND`        | `404 Not Found`           | Requested `flagKey` does not exist                 |
+| `CIRCULAR_DEPENDENCY`      | `400 Bad Request`         | Dependency loop detected during graph modification |
+| `DEPENDENCY_NOT_SATISFIED` | `422 Unprocessable`       | Prerequisite feature is disabled                   |
+| `KILL_SWITCH_ACTIVE`       | `423 Locked`              | Action blocked due to active emergency kill switch |
+| `MAINTENANCE_ACTIVE`       | `503 Service Unavailable` | Write action attempted during active maintenance   |
 
 ---
 

@@ -5,7 +5,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import type { PlacementExperience, Company, SalaryInsight, InterviewRound, CompanyAISummary } from '../../lib/api-placement-guidance';
+import type {
+  PlacementExperience,
+  Company,
+  SalaryInsight,
+  InterviewRound,
+  CompanyAISummary
+} from '../../lib/api-placement-guidance';
 import { saveBookmark, removeBookmark } from '../../lib/api-placement-guidance';
 
 export function DifficultyBadge({ difficulty }: { difficulty: number }) {
@@ -19,13 +25,21 @@ export function DifficultyBadge({ difficulty }: { difficulty: number }) {
 
   const current = labels[difficulty] || labels[3]!;
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${current.color}`}>
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${current.color}`}
+    >
       Difficulty: {current.text} ({difficulty}/5)
     </span>
   );
 }
 
-export function CompensationBadge({ ctcLpa, stipendMonthly }: { ctcLpa?: number | null; stipendMonthly?: number | null }) {
+export function CompensationBadge({
+  ctcLpa,
+  stipendMonthly
+}: {
+  ctcLpa?: number | null;
+  stipendMonthly?: number | null;
+}) {
   if (ctcLpa) {
     return (
       <span className="px-3 py-1 rounded-xl font-mono font-bold text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -43,7 +57,15 @@ export function CompensationBadge({ ctcLpa, stipendMonthly }: { ctcLpa?: number 
   return null;
 }
 
-export function BookmarkButton({ targetType, targetId, initialSaved = false }: { targetType: 'COMPANY' | 'EXPERIENCE'; targetId: string; initialSaved?: boolean }) {
+export function BookmarkButton({
+  targetType,
+  targetId,
+  initialSaved = false
+}: {
+  targetType: 'COMPANY' | 'EXPERIENCE';
+  targetId: string;
+  initialSaved?: boolean;
+}) {
   const [saved, setSaved] = useState(initialSaved);
 
   const toggleBookmark = async () => {
@@ -88,7 +110,10 @@ export function CompanyAISummaryCard({ summary }: { summary: CompanyAISummary })
       {summary.topTopics && summary.topTopics.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {summary.topTopics.map((t, i) => (
-            <span key={i} className="px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-indigo-600/10 text-indigo-700 dark:text-indigo-300">
+            <span
+              key={i}
+              className="px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-indigo-600/10 text-indigo-700 dark:text-indigo-300"
+            >
               #{t}
             </span>
           ))}
@@ -121,7 +146,9 @@ export function PlacementCard({ experience }: { experience: PlacementExperience 
 
         <div className="flex items-center gap-2 mb-3">
           <DifficultyBadge difficulty={experience.difficultyRating} />
-          <span className="text-xs text-slate-400">• {experience.branch} (CGPA: {experience.cgpa})</span>
+          <span className="text-xs text-slate-400">
+            • {experience.branch} (CGPA: {experience.cgpa})
+          </span>
         </div>
 
         <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-3 mb-4">{experience.summary}</p>
@@ -129,7 +156,8 @@ export function PlacementCard({ experience }: { experience: PlacementExperience 
 
       <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
         <span className="text-[11px] text-slate-400">
-          Posted by {experience.isAnonymous ? 'Anonymous Student' : 'Verified Senior'} (v{experience.versionNumber || 1})
+          Posted by {experience.isAnonymous ? 'Anonymous Student' : 'Verified Senior'} (v{experience.versionNumber || 1}
+          )
         </span>
         <Link
           href={`/placements/experience/${experience.id}`}
@@ -157,8 +185,10 @@ export function CompanyHeader({ company, salaryInsights }: { company: Company; s
               <h1 className="text-2xl font-bold">{company.name}</h1>
               <BookmarkButton targetType="COMPANY" targetId={company.id} />
             </div>
-            <p className="text-xs text-indigo-200 mt-0.5">{company.industry} • Tier: {company.tier}</p>
-            
+            <p className="text-xs text-indigo-200 mt-0.5">
+              {company.industry} • Tier: {company.tier}
+            </p>
+
             {/* Company External Links */}
             <div className="flex gap-3 mt-2 text-[11px] font-semibold text-indigo-300">
               {company.careerUrl && (
@@ -179,7 +209,9 @@ export function CompanyHeader({ company, salaryInsights }: { company: Company; s
           <div className="p-3.5 rounded-2xl bg-white/10 border border-white/20 text-right">
             <span className="text-[10px] uppercase font-mono tracking-wider text-indigo-200">Average Compensation</span>
             <p className="text-xl font-bold font-mono text-emerald-400">₹{topInsight.avgCtcLpa} LPA</p>
-            <p className="text-[10px] text-slate-300">Min: ₹{topInsight.minCtcLpa}L | Max: ₹{topInsight.maxCtcLpa}L</p>
+            <p className="text-[10px] text-slate-300">
+              Min: ₹{topInsight.minCtcLpa}L | Max: ₹{topInsight.maxCtcLpa}L
+            </p>
           </div>
         )}
       </div>
@@ -207,7 +239,10 @@ export function RoundAccordion({ round }: { round: InterviewRound }) {
       {round.topicsCovered && round.topicsCovered.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-3">
           {round.topicsCovered.map((t, i) => (
-            <span key={i} className="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+            <span
+              key={i}
+              className="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+            >
               #{t}
             </span>
           ))}

@@ -25,7 +25,8 @@ export default function KillSwitchPage() {
       <div className="ff-card-panel" style={{ border: '1px solid #EF4444' }}>
         <h1 style={{ fontSize: '20px', color: '#EF4444', marginBottom: '12px' }}>🚨 Emergency Kill Switch Panel</h1>
         <p style={{ color: '#94A3B8', fontSize: '13px', marginBottom: '20px' }}>
-          Immediately trip emergency overrides forcing treatments to OFF in &lt;100ms. Requires 2-second hold-to-activate.
+          Immediately trip emergency overrides forcing treatments to OFF in &lt;100ms. Requires 2-second
+          hold-to-activate.
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px' }}>

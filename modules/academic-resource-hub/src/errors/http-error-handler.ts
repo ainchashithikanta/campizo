@@ -11,11 +11,7 @@ import {
   InvalidUploadError,
   StorageUnavailableError
 } from './application-errors.js';
-import {
-  DomainValidationError,
-  TenantMismatchError,
-  SelfVoteProhibitedError
-} from './domain-errors.js';
+import { DomainValidationError, TenantMismatchError, SelfVoteProhibitedError } from './domain-errors.js';
 
 export function handleHttpError(err: Error, request: FastifyRequest, reply: FastifyReply) {
   const requestId = (request.headers['x-request-id'] as string) || 'unknown';

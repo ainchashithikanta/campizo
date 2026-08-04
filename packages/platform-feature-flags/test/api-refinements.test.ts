@@ -9,7 +9,6 @@ import {
 } from '../src/index.js';
 
 describe('Platform Feature Flags — API Refinements Suite', () => {
-
   it('1. Versioning Middleware: should return API version lifecycle details', () => {
     const v1 = checkApiVersion('v1');
     expect(v1.apiVersion).toBe('v1');

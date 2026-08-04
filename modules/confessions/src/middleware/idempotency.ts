@@ -53,7 +53,10 @@ export class InMemoryIdempotencyStore implements IIdempotencyStore {
  * RedisIdempotencyStore Placeholder (Production Redis Implementation)
  */
 export class RedisIdempotencyStore implements IIdempotencyStore {
-  constructor(private redisClient?: any, private ttlSeconds: number = 86400) {}
+  constructor(
+    private redisClient?: any,
+    private ttlSeconds: number = 86400
+  ) {}
 
   async has(key: string): Promise<boolean> {
     if (!this.redisClient) return false;
@@ -108,11 +111,7 @@ export function createIdempotencyMiddleware(store: IIdempotencyStore) {
  * onSend hook that captures the response for idempotent write requests.
  */
 export function createIdempotencyOnSend(store: IIdempotencyStore) {
-  return async function idempotencyOnSend(
-    req: FastifyRequest,
-    _reply: FastifyReply,
-    payload: string
-  ): Promise<string> {
+  return async function idempotencyOnSend(req: FastifyRequest, _reply: FastifyReply, payload: string): Promise<string> {
     if (!IDEMPOTENT_METHODS.has(req.method)) return payload;
 
     const key = req.ctx?.idempotencyKey;

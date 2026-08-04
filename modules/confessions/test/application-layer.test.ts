@@ -66,13 +66,7 @@ describe('Campus Confessions Application Services & CQRS Suite', () => {
       eventPublisher
     );
 
-    queries = new ConfessionQueries(
-      confessionRepo,
-      commentRepo,
-      bookmarkRepo,
-      voteRepo,
-      modRepo
-    );
+    queries = new ConfessionQueries(confessionRepo, commentRepo, bookmarkRepo, voteRepo, modRepo);
   });
 
   it('should publish a new confession and emit ConfessionPublished domain event', async () => {
@@ -188,9 +182,24 @@ describe('Campus Confessions Application Services & CQRS Suite', () => {
       content: 'Quality dropped significantly this week.'
     });
 
-    await useCases.reportConfession({ collegeId: COLLEGE, confessionId: confession.id, reporterUserId: 'r1', reasonCode: 'SPAM' });
-    await useCases.reportConfession({ collegeId: COLLEGE, confessionId: confession.id, reporterUserId: 'r2', reasonCode: 'SPAM' });
-    await useCases.reportConfession({ collegeId: COLLEGE, confessionId: confession.id, reporterUserId: 'r3', reasonCode: 'SPAM' });
+    await useCases.reportConfession({
+      collegeId: COLLEGE,
+      confessionId: confession.id,
+      reporterUserId: 'r1',
+      reasonCode: 'SPAM'
+    });
+    await useCases.reportConfession({
+      collegeId: COLLEGE,
+      confessionId: confession.id,
+      reporterUserId: 'r2',
+      reasonCode: 'SPAM'
+    });
+    await useCases.reportConfession({
+      collegeId: COLLEGE,
+      confessionId: confession.id,
+      reporterUserId: 'r3',
+      reasonCode: 'SPAM'
+    });
 
     const updated = await confessionRepo.findById(confession.id, COLLEGE);
     expect(updated?.status).toBe('QUARANTINED');

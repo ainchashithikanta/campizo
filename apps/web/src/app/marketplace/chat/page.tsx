@@ -22,7 +22,18 @@ export default function MarketplaceChatListPage() {
             color: 'inherit'
           }}
         >
-          <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--mp-color-emerald-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
+          <div
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              backgroundColor: 'var(--mp-color-emerald-light)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700
+            }}
+          >
             S1
           </div>
           <div style={{ flex: 1 }}>

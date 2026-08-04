@@ -30,16 +30,32 @@ export default function CompanyStatisticsPage() {
       });
   }, [slug]);
 
-  if (loading) return <main className="max-w-4xl mx-auto p-6"><LoadingSkeleton count={3} /></main>;
-  if (error) return <main className="max-w-4xl mx-auto p-6"><ErrorState message={error} /></main>;
+  if (loading)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <LoadingSkeleton count={3} />
+      </main>
+    );
+  if (error)
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <ErrorState message={error} />
+      </main>
+    );
   if (!stats) return null;
 
   return (
     <main className="max-w-4xl mx-auto p-6 font-sans">
       <header className="mb-6">
-        <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">SQL Computed Metrics (No AI)</span>
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mt-1 uppercase">{slug} Placement Analytics</h1>
-        <p className="text-xs text-slate-500 mt-1">Aggregated statistics computed directly from candidate interview logs.</p>
+        <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+          SQL Computed Metrics (No AI)
+        </span>
+        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mt-1 uppercase">
+          {slug} Placement Analytics
+        </h1>
+        <p className="text-xs text-slate-500 mt-1">
+          Aggregated statistics computed directly from candidate interview logs.
+        </p>
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -68,7 +84,10 @@ export default function CompanyStatisticsPage() {
         <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3">Most Common Topics Asked</h2>
         <div className="flex flex-wrap gap-2">
           {stats.mostCommonTopics.map((topic, i) => (
-            <span key={i} className="px-3 py-1 rounded-xl text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+            <span
+              key={i}
+              className="px-3 py-1 rounded-xl text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20"
+            >
               #{topic}
             </span>
           ))}

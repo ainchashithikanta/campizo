@@ -1,0 +1,145 @@
+{{- if .Values.backup.enabled }}
+{{- $backupImage := include "collegehub.backup.image" . }}
+{{- $secretName := printf "%s-secret" (include "collegehub.fullname" .) }}
+---
+# Nightly consolidated backup: PostgreSQL logical snapshot + Redis RDB +
+# MinIO mirror + verification + retention cleanup (one atomic run-all).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "collegehub.fullname" . }}-backup
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.componentLabels" (dict "context" . "component" "backup") | nindent 4 }}
+  {{- if .Values.backup.velero.enabled }}
+  annotations:
+    velero.io/schedule-name: {{ printf "%s-velero" (include "collegehub.fullname" .) | quote }}
+    velero.io/ttl: {{ .Values.backup.velero.ttl | quote }}
+  {{- end }}
+spec:
+  schedule: {{ .Values.backup.runAll.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.backup.runAll.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.backup.runAll.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ .Values.backup.backoffLimit }}
+      activeDeadlineSeconds: {{ .Values.backup.activeDeadlineSeconds }}
+      ttlSecondsAfterFinished: {{ .Values.backup.ttlSecondsAfterFinished }}
+      template:
+        metadata:
+          labels:
+            {{- include "collegehub.componentSelectorLabels" (dict "context" . "component" "backup") | nindent 12 }}
+        spec:
+          restartPolicy: {{ .Values.backup.restartPolicy }}
+          serviceAccountName: {{ .Values.serviceAccount.name }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+          {{- with .Values.backup.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.backup.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.backup.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: backup
+              image: {{ $backupImage }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              args: ["run-all"]
+              env:
+                {{- include "collegehub.backup.envVars" . | nindent 16 }}
+              resources:
+                {{- toYaml .Values.backup.resources | nindent 16 }}
+---
+{{- if .Values.backup.redis.schedule }}
+# Extra Redis RDB cadence (e.g. hourly) on top of the nightly run-all.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "collegehub.fullname" . }}-backup-redis
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.componentLabels" (dict "context" . "component" "backup") | nindent 4 }}
+spec:
+  schedule: {{ .Values.backup.redis.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.backup.runAll.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.backup.runAll.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ .Values.backup.backoffLimit }}
+      activeDeadlineSeconds: {{ .Values.backup.activeDeadlineSeconds }}
+      ttlSecondsAfterFinished: {{ .Values.backup.ttlSecondsAfterFinished }}
+      template:
+        metadata:
+          labels:
+            {{- include "collegehub.componentSelectorLabels" (dict "context" . "component" "backup") | nindent 12 }}
+        spec:
+          restartPolicy: {{ .Values.backup.restartPolicy }}
+          serviceAccountName: {{ .Values.serviceAccount.name }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+          containers:
+            - name: backup-redis
+              image: {{ $backupImage }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              args: ["create-redis"]
+              env:
+                {{- include "collegehub.backup.envVars" . | nindent 16 }}
+              resources:
+                {{- toYaml .Values.backup.resources | nindent 16 }}
+{{- end }}
+---
+{{- if .Values.backup.minio.schedule }}
+# Extra MinIO mirror cadence on top of the nightly run-all.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "collegehub.fullname" . }}-backup-minio
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.componentLabels" (dict "context" . "component" "backup") | nindent 4 }}
+spec:
+  schedule: {{ .Values.backup.minio.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.backup.runAll.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.backup.runAll.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ .Values.backup.backoffLimit }}
+      activeDeadlineSeconds: {{ .Values.backup.activeDeadlineSeconds }}
+      ttlSecondsAfterFinished: {{ .Values.backup.ttlSecondsAfterFinished }}
+      template:
+        metadata:
+          labels:
+            {{- include "collegehub.componentSelectorLabels" (dict "context" . "component" "backup") | nindent 12 }}
+        spec:
+          restartPolicy: {{ .Values.backup.restartPolicy }}
+          serviceAccountName: {{ .Values.serviceAccount.name }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+          containers:
+            - name: backup-minio
+              image: {{ $backupImage }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              args: ["mirror-minio"]
+              env:
+                - name: BACKUP_MINIO_SOURCE_BUCKET
+                  value: {{ .Values.backup.minio.sourceBucket | default "collegehub-media" | quote }}
+                {{- include "collegehub.backup.envVars" . | nindent 16 }}
+              resources:
+                {{- toYaml .Values.backup.resources | nindent 16 }}
+{{- end }}
+{{- end }}

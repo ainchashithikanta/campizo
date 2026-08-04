@@ -48,15 +48,15 @@ export default function PrivacyCenterPage() {
     <main className="max-w-4xl mx-auto p-6 font-sans">
       <header className="mb-6">
         <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Privacy Center</h1>
-        <p className="text-xs text-slate-500 mt-1">Configure your profile visibility and anonymous browsing controls.</p>
+        <p className="text-xs text-slate-500 mt-1">
+          Configure your profile visibility and anonymous browsing controls.
+        </p>
       </header>
 
       {loading && <LoadingSkeleton count={1} />}
       {error && <ErrorState message={error} />}
 
-      {!loading && !error && settings && (
-        <PrivacyPanel settings={settings} onToggle={handleToggle} />
-      )}
+      {!loading && !error && settings && <PrivacyPanel settings={settings} onToggle={handleToggle} />}
     </main>
   );
 }

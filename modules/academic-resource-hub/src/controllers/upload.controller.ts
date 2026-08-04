@@ -31,20 +31,26 @@ export function registerUploadRoutes(app: FastifyInstance): void {
   });
 
   // 2. Get Upload Status
-  app.get('/api/v1/uploads/:uploadId/status', async (request: FastifyRequest<{ Params: { uploadId: string } }>, reply: FastifyReply) => {
-    return reply.send({
-      success: true,
-      data: { uploadId: request.params.uploadId, status: 'CLEAN', virusScanStatus: 'CLEAN' },
-      meta: { requestId: request.headers['x-request-id'] || 'unknown', timestamp: new Date().toISOString() }
-    });
-  });
+  app.get(
+    '/api/v1/uploads/:uploadId/status',
+    async (request: FastifyRequest<{ Params: { uploadId: string } }>, reply: FastifyReply) => {
+      return reply.send({
+        success: true,
+        data: { uploadId: request.params.uploadId, status: 'CLEAN', virusScanStatus: 'CLEAN' },
+        meta: { requestId: request.headers['x-request-id'] || 'unknown', timestamp: new Date().toISOString() }
+      });
+    }
+  );
 
   // 3. Delete / Cancel Upload Session
-  app.delete('/api/v1/uploads/:uploadId', async (request: FastifyRequest<{ Params: { uploadId: string } }>, reply: FastifyReply) => {
-    return reply.send({
-      success: true,
-      data: { status: 'UPLOAD_CANCELLED' },
-      meta: { requestId: request.headers['x-request-id'] || 'unknown', timestamp: new Date().toISOString() }
-    });
-  });
+  app.delete(
+    '/api/v1/uploads/:uploadId',
+    async (request: FastifyRequest<{ Params: { uploadId: string } }>, reply: FastifyReply) => {
+      return reply.send({
+        success: true,
+        data: { status: 'UPLOAD_CANCELLED' },
+        meta: { requestId: request.headers['x-request-id'] || 'unknown', timestamp: new Date().toISOString() }
+      });
+    }
+  );
 }

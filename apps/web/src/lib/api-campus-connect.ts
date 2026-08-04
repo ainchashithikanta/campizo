@@ -130,16 +130,26 @@ export async function updateMyProfile(data: Partial<StudentProfile>): Promise<St
   return apiPut<StudentProfile>('/connect/profile', data);
 }
 
-export async function fetchDiscoveryFeed(params: { intentType?: string; courseCode?: string; limit?: number; page?: number } = {}): Promise<{ items: any[]; total: number; hasMore: boolean }> {
+export async function fetchDiscoveryFeed(
+  params: { intentType?: string; courseCode?: string; limit?: number; page?: number } = {}
+): Promise<{ items: any[]; total: number; hasMore: boolean }> {
   const qs = buildQueryString(params);
   return apiGet<{ items: any[]; total: number; hasMore: boolean }>(`/connect/discovery${qs}`);
 }
 
-export async function fetchRecommendations(limit: number = 10): Promise<{ items: RecommendationItem[]; total: number }> {
+export async function fetchRecommendations(
+  limit: number = 10
+): Promise<{ items: RecommendationItem[]; total: number }> {
   return apiGet<{ items: RecommendationItem[]; total: number }>(`/connect/recommendations?limit=${limit}`);
 }
 
-export async function createIntent(data: { intentType: string; title: string; description?: string; courseCode?: string; priority?: number }): Promise<StudentIntent> {
+export async function createIntent(data: {
+  intentType: string;
+  title: string;
+  description?: string;
+  courseCode?: string;
+  priority?: number;
+}): Promise<StudentIntent> {
   return apiPost<StudentIntent>('/connect/intents', data);
 }
 
@@ -155,7 +165,11 @@ export async function archiveIntent(id: string, version: number = 1): Promise<{ 
   return apiPost<{ status: string }>(`/connect/intents/${id}/archive`, { version });
 }
 
-export async function sendConnectionRequest(data: { receiverProfileId: string; originatingIntentId: string; note?: string }): Promise<ConnectionItem> {
+export async function sendConnectionRequest(data: {
+  receiverProfileId: string;
+  originatingIntentId: string;
+  note?: string;
+}): Promise<ConnectionItem> {
   return apiPost<ConnectionItem>('/connect/connections/request', data);
 }
 
@@ -175,7 +189,12 @@ export async function fetchNetwork(): Promise<{ items: ConnectionItem[]; total: 
   return apiGet<{ items: ConnectionItem[]; total: number }>('/connect/network');
 }
 
-export async function createConversation(data: { conversationType?: string; contextType: string; contextId: string; title?: string }): Promise<ConversationItem> {
+export async function createConversation(data: {
+  conversationType?: string;
+  contextType: string;
+  contextId: string;
+  title?: string;
+}): Promise<ConversationItem> {
   return apiPost<ConversationItem>('/connect/conversations', data);
 }
 
@@ -216,7 +235,11 @@ export async function fetchPrivacySettings(): Promise<PrivacySettings> {
   return apiGet<PrivacySettings>('/connect/privacy');
 }
 
-export async function updatePrivacySettings(data: { isGhostMode: boolean; isIncognitoMode: boolean; version?: number }): Promise<PrivacySettings> {
+export async function updatePrivacySettings(data: {
+  isGhostMode: boolean;
+  isIncognitoMode: boolean;
+  version?: number;
+}): Promise<PrivacySettings> {
   return apiPut<PrivacySettings>('/connect/privacy', data);
 }
 

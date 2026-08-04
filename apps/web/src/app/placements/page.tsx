@@ -32,7 +32,11 @@ export default function PlacementHubPage() {
   }, []);
 
   const filtered = experiences.filter((e) => {
-    const matchesSearch = !searchQuery || e.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) || e.roleTitle.toLowerCase().includes(searchQuery.toLowerCase()) || e.summary.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      !searchQuery ||
+      e.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.roleTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.summary.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesJobType = !jobTypeFilter || e.jobType === jobTypeFilter;
     return matchesSearch && matchesJobType;
   });
@@ -41,8 +45,12 @@ export default function PlacementHubPage() {
     <main className="max-w-6xl mx-auto p-6 font-sans">
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Placement Guidance & Interview Hub</h1>
-          <p className="text-sm text-slate-500 mt-1">Verified interview experiences, round breakdowns, salary insights, and preparation tips.</p>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+            Placement Guidance & Interview Hub
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Verified interview experiences, round breakdowns, salary insights, and preparation tips.
+          </p>
         </div>
         <Link
           href="/placements/submit"
@@ -54,14 +62,20 @@ export default function PlacementHubPage() {
 
       <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
         <div className="flex-1 w-full">
-          <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Search company, role, or question topics (e.g. Google, System Design)..." />
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search company, role, or question topics (e.g. Google, System Design)..."
+          />
         </div>
         <div className="flex gap-2 shrink-0">
           <button
             type="button"
             onClick={() => setJobTypeFilter(undefined)}
             className={`min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
-              jobTypeFilter === undefined ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+              jobTypeFilter === undefined
+                ? 'bg-indigo-600 text-white'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
             }`}
           >
             All Types
@@ -70,7 +84,9 @@ export default function PlacementHubPage() {
             type="button"
             onClick={() => setJobTypeFilter('FULL_TIME')}
             className={`min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
-              jobTypeFilter === 'FULL_TIME' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+              jobTypeFilter === 'FULL_TIME'
+                ? 'bg-indigo-600 text-white'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
             }`}
           >
             Full-Time
@@ -79,7 +95,9 @@ export default function PlacementHubPage() {
             type="button"
             onClick={() => setJobTypeFilter('INTERNSHIP')}
             className={`min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
-              jobTypeFilter === 'INTERNSHIP' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+              jobTypeFilter === 'INTERNSHIP'
+                ? 'bg-indigo-600 text-white'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
             }`}
           >
             Internship
@@ -91,7 +109,10 @@ export default function PlacementHubPage() {
       {error && <ErrorState message={error} />}
 
       {!loading && !error && filtered.length === 0 && (
-        <EmptyState title="No Placement Experiences Found" description="Try clearing your search filters or be the first senior to post an experience!" />
+        <EmptyState
+          title="No Placement Experiences Found"
+          description="Try clearing your search filters or be the first senior to post an experience!"
+        />
       )}
 
       {!loading && !error && filtered.length > 0 && (

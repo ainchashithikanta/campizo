@@ -20,7 +20,9 @@ export interface PreparedNotificationPayload {
 export class NotificationWorker {
   private enqueuedPayloads: PreparedNotificationPayload[] = [];
 
-  async processNotificationEvent(event: ConnectEventEnvelope<{ recipientId: string; title: string; body: string; category?: string }>): Promise<PreparedNotificationPayload> {
+  async processNotificationEvent(
+    event: ConnectEventEnvelope<{ recipientId: string; title: string; body: string; category?: string }>
+  ): Promise<PreparedNotificationPayload> {
     const startTime = Date.now();
     try {
       const payload: PreparedNotificationPayload = {

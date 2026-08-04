@@ -55,7 +55,9 @@ describe('Campus Confessions Domain & Database Layer', () => {
 
   it('should enforce immutable thread pseudonym invariant', () => {
     expect(() => assertThreadIdentityImmutable('Curious Panda #402', 'Curious Panda #402')).not.toThrow();
-    expect(() => assertThreadIdentityImmutable('Curious Panda #402', 'Witty Owl #108')).toThrow(InvalidStateTransitionError);
+    expect(() => assertThreadIdentityImmutable('Curious Panda #402', 'Witty Owl #108')).toThrow(
+      InvalidStateTransitionError
+    );
   });
 
   it('should prohibit self-voting via assertNoSelfVote', () => {

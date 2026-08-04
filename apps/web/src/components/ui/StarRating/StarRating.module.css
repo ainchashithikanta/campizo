@@ -4,9 +4,18 @@
   gap: 2px;
 }
 
-.sm .star { width: 16px; height: 16px; }
-.md .star { width: 24px; height: 24px; }
-.lg .star { width: 32px; height: 32px; }
+.sm .star {
+  width: 16px;
+  height: 16px;
+}
+.md .star {
+  width: 24px;
+  height: 24px;
+}
+.lg .star {
+  width: 32px;
+  height: 32px;
+}
 
 .star {
   padding: 0;

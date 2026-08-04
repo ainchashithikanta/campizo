@@ -14,26 +14,26 @@ Campus Confessions solves these challenges by combining **mandatory domain verif
 
 ### 1.1 Global Platform Analysis
 
-| Platform | Core Strengths | Critical Weaknesses | Anonymity Model | Failure / Success Lesson for College Hub |
-| :--- | :--- | :--- | :--- | :--- |
-| **Fizz** | Hyper-local college feeds, verified edu emails, strong student moderator network. | High moderation overhead, occasional campus drama leaks. | Verified edu login; handles displayed as random avatars/pseudonyms per post. | **Primary Benchmark**: Mandatory edu verification paired with local student moderators is the gold standard. |
-| **Sidechat** | Clean UI, college-bound feeds, viral meme culture. | Toxicity spikes during campus elections or fraternity events. | Edu verified; per-post pseudonyms. | High engagement requires strict PII (Personally Identifiable Information) filters. |
-| **Yik Yak** | Location-based 5-mile radius feed, ultra-fast local virality. | Widespread cyberbullying, hate speech, lack of identity verification. | Location-only (GPS); zero account verification. | **Rejected**: GPS-only location leads to abusive behavior. Mandatory student ID verification is required. |
-| **Jodel** | Geofenced European student feeds, karma points, local voting. | Spam posts, repetitive questions, localized harassment. | Geofenced device ID; karma score reputation. | Karma/Reputation scores encourage positive contributions without revealing real identity. |
-| **Reddit** | Threaded discussions, rich subreddits, robust automoderation rules. | High barrier to entry, non-campus specific, complex karma rules. | Persistent user handles (pseudonymous). | Threaded comment trees and upvote/downvote ranking algorithms work best for discussions. |
-| **NGL / Whisper** | High Instagram integration, private Q&A prompts. | Rampant cyberbullying, paid monetization traps, zero moderation. | Fully anonymous link; no verification. | **Rejected**: Unfiltered anonymous inbox links breed toxic harassment and extortion. |
-| **Blind / Fishbowl** | Verified corporate email, workplace candid discussions. | Professional cynicism, leaks of confidential information. | Work email verification; persistent handle per company. | Professional verification builds high trust; domain verification works at scale. |
+| Platform             | Core Strengths                                                                    | Critical Weaknesses                                                   | Anonymity Model                                                              | Failure / Success Lesson for College Hub                                                                     |
+| :------------------- | :-------------------------------------------------------------------------------- | :-------------------------------------------------------------------- | :--------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| **Fizz**             | Hyper-local college feeds, verified edu emails, strong student moderator network. | High moderation overhead, occasional campus drama leaks.              | Verified edu login; handles displayed as random avatars/pseudonyms per post. | **Primary Benchmark**: Mandatory edu verification paired with local student moderators is the gold standard. |
+| **Sidechat**         | Clean UI, college-bound feeds, viral meme culture.                                | Toxicity spikes during campus elections or fraternity events.         | Edu verified; per-post pseudonyms.                                           | High engagement requires strict PII (Personally Identifiable Information) filters.                           |
+| **Yik Yak**          | Location-based 5-mile radius feed, ultra-fast local virality.                     | Widespread cyberbullying, hate speech, lack of identity verification. | Location-only (GPS); zero account verification.                              | **Rejected**: GPS-only location leads to abusive behavior. Mandatory student ID verification is required.    |
+| **Jodel**            | Geofenced European student feeds, karma points, local voting.                     | Spam posts, repetitive questions, localized harassment.               | Geofenced device ID; karma score reputation.                                 | Karma/Reputation scores encourage positive contributions without revealing real identity.                    |
+| **Reddit**           | Threaded discussions, rich subreddits, robust automoderation rules.               | High barrier to entry, non-campus specific, complex karma rules.      | Persistent user handles (pseudonymous).                                      | Threaded comment trees and upvote/downvote ranking algorithms work best for discussions.                     |
+| **NGL / Whisper**    | High Instagram integration, private Q&A prompts.                                  | Rampant cyberbullying, paid monetization traps, zero moderation.      | Fully anonymous link; no verification.                                       | **Rejected**: Unfiltered anonymous inbox links breed toxic harassment and extortion.                         |
+| **Blind / Fishbowl** | Verified corporate email, workplace candid discussions.                           | Professional cynicism, leaks of confidential information.             | Work email verification; persistent handle per company.                      | Professional verification builds high trust; domain verification works at scale.                             |
 
 ---
 
 ### 1.2 Indian Informal Channel Analysis
 
-| Channel | Operating Mechanism | Strengths | Major Failure Modes & Pain Points |
-| :--- | :--- | :--- | :--- |
-| **Instagram Confession Pages** | Admin posts Google Form submissions as IG posts/stories. | Massive student reach and familiarity. | **Extreme Toxicity & Admin Bias**: Admins selectively leak names, blackmail peers, post target harassment, and ghost legit posts. |
-| **Google Forms + IG Link** | Students submit anonymous text via Google Forms. | Low barrier to post. | **Zero Safety & Doxxing**: Forms collect IP/emails if misconfigured; full names of students & faculty are posted openly. |
-| **Telegram Confession Channels** | Broadcast channels with anonymous bot submissions. | Supports multimedia & polls. | **Legal Risks & Harassment**: Non-college outsiders join links; illegal content and exam leaks spread unchecked. |
-| **WhatsApp Campus Groups** | Unofficial peer chat groups. | Real-time chat. | **Zero Anonymity**: Phone numbers exposed; high social friction and fear of judgment. |
+| Channel                          | Operating Mechanism                                      | Strengths                              | Major Failure Modes & Pain Points                                                                                                 |
+| :------------------------------- | :------------------------------------------------------- | :------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| **Instagram Confession Pages**   | Admin posts Google Form submissions as IG posts/stories. | Massive student reach and familiarity. | **Extreme Toxicity & Admin Bias**: Admins selectively leak names, blackmail peers, post target harassment, and ghost legit posts. |
+| **Google Forms + IG Link**       | Students submit anonymous text via Google Forms.         | Low barrier to post.                   | **Zero Safety & Doxxing**: Forms collect IP/emails if misconfigured; full names of students & faculty are posted openly.          |
+| **Telegram Confession Channels** | Broadcast channels with anonymous bot submissions.       | Supports multimedia & polls.           | **Legal Risks & Harassment**: Non-college outsiders join links; illegal content and exam leaks spread unchecked.                  |
+| **WhatsApp Campus Groups**       | Unofficial peer chat groups.                             | Real-time chat.                        | **Zero Anonymity**: Phone numbers exposed; high social friction and fear of judgment.                                             |
 
 ---
 
@@ -124,22 +124,22 @@ $$\text{Score} = \text{Recency} + \text{Engagement} + \text{Discussion Activity}
 
 ## 8. Strategic Product Decisions & Rationale
 
-| Strategic Decision | Chosen Approach | Inspired By | Rejected Alternative | Indian Campus Rationale |
-| :--- | :--- | :--- | :--- | :--- |
-| **Authentication** | Mandatory `@college.edu.in` SSO | Fizz / Blind | Open GPS-based access (Yik Yak) | Eliminates external trolls and non-student cyberbullies. |
-| **Pseudonym Scope** | Thread-Consistent Pseudonyms | Sidechat | Persistent handles across app | Preserves comment tree continuity while preventing cross-thread tracking. |
-| **Moderation Scope** | AI Flags $\rightarrow$ Human / Deterministic Action | Reddit AutoMod | AI Auto-Deletion | Prevents AI false positives from suppressing valid student discussions. |
-| **Moderator Privacy** | 100% Blind Moderation Tools | Fizz | Admin view of submitter identity | Eliminates Instagram-style admin blackmail or favoritism. |
+| Strategic Decision    | Chosen Approach                                     | Inspired By    | Rejected Alternative             | Indian Campus Rationale                                                   |
+| :-------------------- | :-------------------------------------------------- | :------------- | :------------------------------- | :------------------------------------------------------------------------ |
+| **Authentication**    | Mandatory `@college.edu.in` SSO                     | Fizz / Blind   | Open GPS-based access (Yik Yak)  | Eliminates external trolls and non-student cyberbullies.                  |
+| **Pseudonym Scope**   | Thread-Consistent Pseudonyms                        | Sidechat       | Persistent handles across app    | Preserves comment tree continuity while preventing cross-thread tracking. |
+| **Moderation Scope**  | AI Flags $\rightarrow$ Human / Deterministic Action | Reddit AutoMod | AI Auto-Deletion                 | Prevents AI false positives from suppressing valid student discussions.   |
+| **Moderator Privacy** | 100% Blind Moderation Tools                         | Fizz           | Admin view of submitter identity | Eliminates Instagram-style admin blackmail or favoritism.                 |
 
 ---
 
 ## Deliverables & Sign-Off Summary
 
-* ✅ **Thread-Consistent Anonymity**: Enforced thread pseudonym continuity (OP = `Curious Panda`) + new pseudonym per post.
-* ✅ **AI vs Human Moderation**: AI flags content; human moderators / deterministic rules execute actions.
-* ✅ **Concise V1 Categories**: Launching with 6 core categories (Crush, Academic, Funny, Advice, Rant, Confession).
-* ✅ **Strict Internal Privacy Policy**: 100% blind moderation tools for student moderators.
-* ✅ **Feed Ranking Formula**: Weighted score incorporating recency, engagement, discussion activity, and reports.
+- ✅ **Thread-Consistent Anonymity**: Enforced thread pseudonym continuity (OP = `Curious Panda`) + new pseudonym per post.
+- ✅ **AI vs Human Moderation**: AI flags content; human moderators / deterministic rules execute actions.
+- ✅ **Concise V1 Categories**: Launching with 6 core categories (Crush, Academic, Funny, Advice, Rant, Confession).
+- ✅ **Strict Internal Privacy Policy**: 100% blind moderation tools for student moderators.
+- ✅ **Feed Ranking Formula**: Weighted score incorporating recency, engagement, discussion activity, and reports.
 
 > [!IMPORTANT]
 > **MS-21.1 Approved with Refinements**. Ready for **MS-21.2 (UX & Information Architecture)**.

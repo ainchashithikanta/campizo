@@ -60,11 +60,18 @@ export default function SubmitExperiencePage() {
   return (
     <main className="max-w-3xl mx-auto p-6 font-sans">
       <header className="mb-6">
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Share Placement & Interview Experience</h1>
-        <p className="text-xs text-slate-500 mt-1">Help junior peers prepare by sharing your interview round questions and advice.</p>
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
+          Share Placement & Interview Experience
+        </h1>
+        <p className="text-xs text-slate-500 mt-1">
+          Help junior peers prepare by sharing your interview round questions and advice.
+        </p>
       </header>
 
-      <form onSubmit={handleSubmit} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-5"
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Company Name</label>
@@ -105,7 +112,9 @@ export default function SubmitExperiencePage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Branch / Degree</label>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              Branch / Degree
+            </label>
             <input
               type="text"
               value={branch}
@@ -116,7 +125,9 @@ export default function SubmitExperiencePage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">CGPA Cutoff / Score</label>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              CGPA Cutoff / Score
+            </label>
             <input
               type="number"
               step="0.01"
@@ -129,7 +140,9 @@ export default function SubmitExperiencePage() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Offered Package (CTC in LPA)</label>
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            Offered Package (CTC in LPA)
+          </label>
           <input
             type="number"
             step="0.5"
@@ -141,7 +154,9 @@ export default function SubmitExperiencePage() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Interview Summary & Overview</label>
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            Interview Summary & Overview
+          </label>
           <textarea
             value={summary}
             onChange={(e) => setSummary(e.target.value)}
@@ -153,7 +168,9 @@ export default function SubmitExperiencePage() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Preparation Advice & Resources</label>
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            Preparation Advice & Resources
+          </label>
           <textarea
             value={preparationTips}
             onChange={(e) => setPreparationTips(e.target.value)}
