@@ -16,6 +16,11 @@ on:
       - 'modules/**'
       - 'packages/**'
       - 'infra/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'tsconfig.json'
       - '.github/workflows/deploy-validation.yml'
   push:
     branches:
@@ -26,6 +31,11 @@ on:
       - 'modules/**'
       - 'packages/**'
       - 'infra/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'tsconfig.json'
       - '.github/workflows/deploy-validation.yml'
 
 jobs:

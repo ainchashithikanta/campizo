@@ -13,7 +13,12 @@
 FROM node:20-alpine AS builder
 
 WORKDIR /app
-RUN npm install -g pnpm@9.1.0
+
+# Install native build tools required for C++ addons (e.g. argon2) on Alpine musl
+RUN apk add --no-cache python3 make g++ libc6-compat
+
+# Enable pinned pnpm package manager via Corepack
+RUN corepack enable && corepack prepare pnpm@9.1.0 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.json ./
 COPY apps/ ./apps/
@@ -30,7 +35,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # PostgreSQL + Redis client tooling used by the backup CLI.
-RUN apk add --no-cache postgresql16-client redis
+RUN apk add --no-cache postgresql-client redis
 
 RUN addgroup --system --gid 1001 backupuser && \
     adduser --system --uid 1001 backupuser
