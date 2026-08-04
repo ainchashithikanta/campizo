@@ -1,0 +1,46 @@
+﻿apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-process
+  namespace: {{ .Values.global.namespace | quote }}
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-process
+      rules:
+        - alert: CollegeHubEventLoopLagHigh
+          expr: |
+            max(nodejs_eventloop_lag_seconds) by (service) > 1
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub event loop lag above 1s"
+            description: "Service {{ $labels.service }} event loop is blocked for {{ $value }}s. Look for synchronous work or unbounded CPU loops."
+
+        - alert: CollegeHubHeapUsageHigh
+          expr: |
+            max(nodejs_heap_size_used_bytes / nodejs_heap_size_total_bytes) by (service) > 0.9
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub Node.js heap usage above 90%"
+            description: "Service {{ $labels.service }} heap is {{ $value | humanizePercentage }} full. Investigate memory leaks or growing caches."
+
+        - alert: CollegeHubProcessRestarting
+          expr: |
+            changes(process_start_time_seconds[15m]) > 2
+          for: 0m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub process restarting repeatedly"
+            description: "Process on {{ $labels.instance }} has restarted more than twice in 15 minutes (crash loop)."

@@ -1,0 +1,73 @@
+﻿apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-database
+  namespace: {{ .Values.global.namespace | quote }}
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-database
+      rules:
+        - alert: CollegeHubDBQueryErrorRateHigh
+          expr: |
+            sum(rate(collegehub_db_query_errors_total[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_db_query_duration_seconds_count[5m])) by (service), 1e-9) > 0.02
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database query error rate above 2%"
+            description: "Service {{ $labels.service }} is failing {{ $value | humanizePercentage }} of database queries."
+
+        - alert: CollegeHubDBQueryLatencyP99High
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(collegehub_db_query_duration_seconds_bucket[5m])) by (le, service)) > 1
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database p99 query latency above 1s"
+            description: "p99 database query latency for {{ $labels.service }} is {{ $value }}s."
+
+        - alert: CollegeHubDBSlowQuerySpike
+          expr: |
+            sum(rate(collegehub_db_slow_queries_total[5m])) by (service) > 5
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database slow query spike"
+            description: "More than 5 slow queries per second on {{ $labels.service }}. Inspect `collegehub_db_slow_queries_total` for query hashes."
+
+        - alert: CollegeHubDBConnectionPoolExhaustion
+          expr: |
+            max(collegehub_db_pool{state="waiting"}) by (service) > 0
+          for: 10m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: "College Hub database connection pool exhausted"
+            description: "Service {{ $labels.service }} has had {{ $value }} queries waiting for a pooled connection for 10 minutes."
+
+        - alert: CollegeHubDBConnectionPoolSaturation
+          expr: |
+            max(collegehub_db_pool{state="total"}) by (service) > 0
+              and
+            max(collegehub_db_pool{state="idle"}) by (service) == 0
+          for: 15m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database connection pool saturated"
+            description: "All connections in the {{ $labels.service }} pool are in use."

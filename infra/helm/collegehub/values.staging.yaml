@@ -1,0 +1,102 @@
+# ------------------------------------------------------------------------------
+# College Hub - Staging environment overlay.
+# Production-like topology against externally managed dependencies
+# (hosted PostgreSQL/Redis/S3). Data is real but non-production.
+# ------------------------------------------------------------------------------
+global:
+  environment: staging
+  namespace: collegehub-staging
+
+image:
+  tag: staging
+
+api:
+  replicas: 2
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 6
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+web:
+  replicas: 2
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 6
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+worker:
+  replicas: 1
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+migrations:
+  enabled: true
+
+ingress:
+  enabled: true
+  hosts:
+    - host: staging.collegehub.edu
+      paths:
+        - path: /api
+          pathType: Prefix
+          service:
+            name: api
+            port: 4000
+        - path: /
+          pathType: Prefix
+          service:
+            name: web
+            port: 3000
+  tls:
+    - hosts:
+        - staging.collegehub.edu
+      secretName: collegehub-staging-tls
+
+networkPolicies:
+  enabled: true
+
+# Trace collection is enabled in staging; point otlpEndpoint at the staging
+# OpenTelemetry collector if one is provisioned.
+observability:
+  tracesEnabled: true
+
+# Error tracking runs in staging with the same transport profile as production
+# (structured logger + OpenTelemetry events).
+errorTracking:
+  enabled: true
+
+# Bundled dependencies stay disabled in staging; point at externally managed
+# endpoints via `secrets.databaseUrl` / `secrets.redisUrl` and `external.*`.
+postgresql:
+  enabled: false
+
+redis:
+  enabled: false
+
+minio:
+  enabled: false
+
+config:
+  LOG_LEVEL: info
+  ALLOWED_ORIGINS: https://staging.collegehub.edu
+  COOKIE_DOMAIN: collegehub.edu
+  NEXT_PUBLIC_API_URL: http://collegehub-api:4000
+
+secrets:
+  POSTGRES_PASSWORD: 'CHANGE-ME-STAGING'
+  REDIS_PASSWORD: 'CHANGE-ME-STAGING'
+  JWT_SECRET: 'staging-jwt-secret-must-be-32-characters-long'
+  ENCRYPTION_KEY_32_BYTES: '0123456789abcdef0123456789abcdef'
+  databaseUrl: 'postgresql://collegehub_user:CHANGE-ME-STAGING@collegehub-staging-postgres:5432/collegehub_db'
+  redisUrl: 'redis://:CHANGE-ME-STAGING@collegehub-staging-redis:6379'

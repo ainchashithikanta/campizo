@@ -1,0 +1,112 @@
+# ------------------------------------------------------------------------------
+# College Hub - Production environment overlay.
+# Full HA topology. All secrets are placeholders and MUST be injected via the
+# environment (SealedSecrets / External Secrets Operator / cloud KMS) before use.
+# External managed dependencies (RDS, ElastiCache, S3) are the production norm.
+# ------------------------------------------------------------------------------
+global:
+  environment: production
+  namespace: collegehub-prod
+
+image:
+  tag: prod
+
+api:
+  replicas: 3
+  hpa:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 12
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+web:
+  replicas: 3
+  hpa:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 12
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+worker:
+  replicas: 2
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 8
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+migrations:
+  enabled: true
+
+ingress:
+  enabled: true
+  hosts:
+    - host: collegehub.edu
+      paths:
+        - path: /api
+          pathType: Prefix
+          service:
+            name: api
+            port: 4000
+        - path: /
+          pathType: Prefix
+          service:
+            name: web
+            port: 3000
+  tls:
+    - hosts:
+        - collegehub.edu
+        - app.collegehub.edu
+      secretName: collegehub-prod-tls
+
+networkPolicies:
+  enabled: true
+
+# Trace collection is enabled in production; point otlpEndpoint at the
+# production OpenTelemetry collector before rollout.
+observability:
+  tracesEnabled: true
+
+# Error tracking runs in production with the default transport profile
+# (structured logger + OpenTelemetry events).
+errorTracking:
+  enabled: true
+
+postgresql:
+  enabled: false
+
+redis:
+  enabled: false
+
+minio:
+  enabled: false
+
+config:
+  LOG_LEVEL: info
+  STORAGE_PROVIDER: s3
+  NOTIFICATION_PROVIDER: firebase
+  SEARCH_PROVIDER: postgres
+  AI_PROVIDER: mock
+  ALLOWED_ORIGINS: https://collegehub.edu,https://app.collegehub.edu
+  COOKIE_DOMAIN: collegehub.edu
+  NEXT_PUBLIC_API_URL: http://collegehub-api:4000
+
+secrets:
+  POSTGRES_PASSWORD: 'REPLACE-ME'
+  REDIS_PASSWORD: 'REPLACE-ME'
+  JWT_SECRET: 'REPLACE-WITH-SECURE-JWT-SECRET-32-CHARACTERS'
+  ENCRYPTION_KEY_32_BYTES: 'A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P'
+  S3_ACCESS_KEY_ID: ''
+  S3_SECRET_ACCESS_KEY: ''
+  FIREBASE_CREDENTIALS_JSON: ''
+  TYPESENSE_API_KEY: ''
+  OPENAI_API_KEY: ''
+  # Provide managed endpoints explicitly in production:
+  databaseUrl: 'postgresql://collegehub_user:REPLACE-ME@collegehub-prod-postgres:5432/collegehub_db'
+  redisUrl: 'redis://:REPLACE-ME@collegehub-prod-redis:6379'

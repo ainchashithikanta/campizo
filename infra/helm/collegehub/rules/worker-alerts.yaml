@@ -1,0 +1,60 @@
+﻿apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-worker
+  namespace: {{ .Values.global.namespace | quote }}
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-worker
+      rules:
+        - alert: CollegeHubWorkerDown
+          expr: |
+            up{job="collegehub-worker"} == 0
+          for: 1m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: "College Hub worker is down"
+            description: "{{ $labels.instance }} has been unreachable for more than 1 minute."
+
+        - alert: CollegeHubJobFailureRateHigh
+          expr: |
+            sum(rate(collegehub_jobs_total{result="failure"}[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_jobs_total[5m])) by (service), 1e-9) > 0.1
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub job failure rate above 10%"
+            description: "Service {{ $labels.service }} is failing {{ $value | humanizePercentage }} of background jobs. Check `collegehub_jobs_total` by job label."
+
+        - alert: CollegeHubJobDurationP99High
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(collegehub_job_duration_seconds_bucket[5m])) by (le, service)) > 30
+          for: 15m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub job p99 duration above 30s"
+            description: "p99 background job duration for {{ $labels.service }} is {{ $value }}s."
+
+        - alert: CollegeHubJobsStuckInFlight
+          expr: |
+            sum(collegehub_jobs_in_flight) by (service) > 20
+          for: 15m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub background jobs appear stuck"
+            description: "Service {{ $labels.service }} has had {{ $value }} jobs in flight for 15 minutes; the worker may be hung or retrying a poison message."

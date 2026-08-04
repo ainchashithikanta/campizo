@@ -1,0 +1,109 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import '../../styles/confessions.css';
+import { ConfessionsApiClient, ConfessionDTO } from '../../lib/api-confessions';
+import { FeedList, LoadingSkeleton, ErrorState } from '../../components/confessions/ConfessionComponents';
+
+export default function ConfessionsFeedPage() {
+  const [tab, setTab] = useState<'trending' | 'latest'>('trending');
+  const [confessions, setConfessions] = useState<ConfessionDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const COLLEGE = 'college-stanford-001';
+
+  useEffect(() => {
+    async function loadFeed() {
+      setLoading(true);
+      setError(null);
+      const res = await ConfessionsApiClient.fetchFeed(COLLEGE, { tab });
+      if (res.success && res.data) {
+        setConfessions(res.data);
+      } else {
+        // Fallback mock data if API unavailable
+        setConfessions([
+          {
+            id: 'conf-1',
+            collegeId: COLLEGE,
+            categoryCode: 'academic',
+            title: 'CASIO FX-991ES+ Usage',
+            slug: 'casio-fx-991es-usage',
+            content: 'How to clear memory before entering exam hall? Press Shift + 9 + 3 + =',
+            authorThreadPseudonym: 'Curious Panda #402',
+            status: 'PUBLISHED',
+            upvotesCount: 42,
+            commentsCount: 5,
+            reportsCount: 0,
+            rankScore: '15.5000',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'conf-2',
+            collegeId: COLLEGE,
+            categoryCode: 'funny',
+            title: 'Hostel 4 Cat',
+            slug: 'hostel-4-cat',
+            content: 'Hostel 4 cat attended morning OS lecture and slept on first bench.',
+            authorThreadPseudonym: 'Witty Owl #108',
+            status: 'PUBLISHED',
+            upvotesCount: 88,
+            commentsCount: 12,
+            reportsCount: 0,
+            rankScore: '32.1000',
+            createdAt: new Date().toISOString()
+          }
+        ]);
+      }
+      setLoading(false);
+    }
+
+    loadFeed();
+  }, [tab]);
+
+  return (
+    <div className="conf-container">
+      <header className="conf-header">
+        <h1 className="conf-title">💭 Campus Confessions</h1>
+        <Link href="/confessions/search" className="conf-action-btn">
+          🔍 Search
+        </Link>
+      </header>
+
+      <nav className="conf-nav">
+        <button
+          className={`conf-nav-link ${tab === 'trending' ? 'active' : ''}`}
+          onClick={() => setTab('trending')}
+        >
+          🔥 Trending
+        </button>
+        <button
+          className={`conf-nav-link ${tab === 'latest' ? 'active' : ''}`}
+          onClick={() => setTab('latest')}
+        >
+          ✨ Latest
+        </button>
+        <Link href="/confessions/bookmarks" className="conf-nav-link">
+          🔖 Bookmarks
+        </Link>
+        <Link href="/confessions/activity" className="conf-nav-link">
+          ⚡ Activity
+        </Link>
+        <Link href="/confessions/notifications" className="conf-nav-link">
+          🔔 Notifications
+        </Link>
+        <Link href="/confessions/moderation" className="conf-nav-link">
+          🛡️ Moderation
+        </Link>
+      </nav>
+
+      {error && <ErrorState message={error} />}
+      {loading ? <LoadingSkeleton /> : <FeedList confessions={confessions} />}
+
+      <Link href="/confessions/create" className="conf-fab" aria-label="Create confession">
+        ✍️
+      </Link>
+    </div>
+  );
+}

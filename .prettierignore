@@ -1,0 +1,30 @@
+# Build artifacts / generated output
+node_modules
+.turbo
+.next
+dist
+coverage
+out
+build
+
+# Generated / committed build output (rendered from the Helm chart)
+infra/k8s/render
+
+# Lockfiles (machine-generated)
+pnpm-lock.yaml
+
+# Local env
+.env
+.env.*
+!.env.example
+
+# Binary / media
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.ico
+*.woff
+*.woff2

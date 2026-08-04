@@ -1,0 +1,54 @@
+# =============================================================================
+# DEPRECATED (MS-54) - LOCAL DEVELOPMENT ONLY
+#
+# Staging is deployed via Kubernetes/Helm, not Docker Compose:
+#   Helm chart:  infra/helm/collegehub  (overlay: values.staging.yaml)
+#   Rendered:    infra/k8s/render/staging/all.yaml
+#
+# Kept only for local experimentation against staging-shaped configuration.
+# Do NOT use this file to run staging in any shared or production capacity.
+# =============================================================================
+version: '3.8'
+
+networks:
+  collegehub_net:
+    driver: bridge
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: collegehub_staging_postgres
+    restart: unless-stopped
+    networks:
+      - collegehub_net
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: staging_user
+      POSTGRES_PASSWORD: staging_password
+      POSTGRES_DB: staging_collegehub_db
+
+  redis:
+    image: redis:7-alpine
+    container_name: collegehub_staging_redis
+    restart: unless-stopped
+    networks:
+      - collegehub_net
+    ports:
+      - "6380:6379"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: collegehub_staging_api
+    networks:
+      - collegehub_net
+    ports:
+      - "4001:4000"
+    environment:
+      NODE_ENV: staging
+      DATABASE_URL: postgres://staging_user:staging_password@postgres:5432/staging_collegehub_db
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: staging_super_secret_jwt_key_at_least_32_chars_long
+      ENCRYPTION_KEY_32_BYTES: 12345678901234567890123456789012

@@ -1,0 +1,24 @@
+{
+  "name": "@college-hub/mod-notifications",
+  "version": "1.0.0",
+  "description": "Unified Notification Engine Module for College Hub Monorepo",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\""
+  },
+  "dependencies": {
+    "@college-hub/observability": "workspace:^",
+    "drizzle-orm": "^0.30.0",
+    "fastify": "^5.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.0"
+  }
+}

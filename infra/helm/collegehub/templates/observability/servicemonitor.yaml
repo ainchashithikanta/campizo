@@ -1,0 +1,21 @@
+{{- if and .Values.api.enabled .Values.observability.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "collegehub.fullname" . }}-api
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.componentLabels" (dict "context" . "component" "api") | nindent 4 }}
+    {{- with .Values.observability.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "collegehub.componentSelectorLabels" (dict "context" . "component" "api") | nindent 6 }}
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      honorLabels: true
+{{- end }}

@@ -1,0 +1,48 @@
+.container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ch-spacing-1);
+}
+
+.badge {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  border-radius: var(--ch-radius-lg);
+  font-weight: var(--ch-font-weight-bold);
+  color: #fff;
+  box-shadow: var(--ch-shadow-md);
+  transition: transform var(--ch-motion-fast) var(--ch-motion-easing),
+    box-shadow var(--ch-motion-fast) var(--ch-motion-easing);
+}
+
+.badge:hover {
+  transform: scale(1.05);
+}
+
+.sm .badge { padding: 4px 10px; font-size: var(--ch-font-size-sm); border-radius: var(--ch-radius-md); }
+.md .badge { padding: 8px 16px; font-size: var(--ch-font-size-2xl); }
+.lg .badge { padding: 12px 24px; font-size: var(--ch-font-size-4xl); }
+
+.value { letter-spacing: -0.5px; }
+.max { font-size: 0.5em; opacity: 0.7; margin-left: 2px; font-weight: var(--ch-font-weight-medium); }
+
+.label {
+  font-size: var(--ch-font-size-xs);
+  font-weight: var(--ch-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Quality color coding */
+.excellent { background: linear-gradient(135deg, #10B981, #059669); }
+.excellent.label { color: #10B981; }
+.good { background: linear-gradient(135deg, #34D399, #10B981); }
+.good.label { color: #10B981; }
+.average { background: linear-gradient(135deg, #F59E0B, #D97706); }
+.average.label { color: #F59E0B; }
+.below { background: linear-gradient(135deg, #F97316, #EA580C); }
+.below.label { color: #F97316; }
+.poor { background: linear-gradient(135deg, #EF4444, #DC2626); }
+.poor.label { color: #EF4444; }

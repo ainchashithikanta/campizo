@@ -1,0 +1,88 @@
+# ------------------------------------------------------------------------------
+# College Hub - Local/Development environment overlay.
+# Bundles PostgreSQL, Redis and MinIO inside the cluster for a self-contained
+# dev namespace. Not a production topology.
+# ------------------------------------------------------------------------------
+global:
+  environment: development
+  namespace: collegehub-dev
+
+image:
+  tag: dev
+
+api:
+  replicas: 1
+  hpa:
+    enabled: false
+  pdb:
+    enabled: false
+
+web:
+  replicas: 1
+  hpa:
+    enabled: false
+  pdb:
+    enabled: false
+
+worker:
+  replicas: 1
+  hpa:
+    enabled: false
+  pdb:
+    enabled: false
+
+migrations:
+  enabled: true
+
+ingress:
+  enabled: false
+
+networkPolicies:
+  enabled: false
+
+postgresql:
+  enabled: true
+  auth:
+    password: collegehub_dev_password
+
+redis:
+  enabled: true
+  auth:
+    password: collegehub_dev_redis_password
+
+minio:
+  enabled: true
+  auth:
+    rootUser: minioadmin
+    rootPassword: collegehub_dev_minio_password
+
+config:
+  LOG_LEVEL: debug
+  ALLOWED_ORIGINS: http://localhost:3000
+  COOKIE_DOMAIN: localhost
+  NEXT_PUBLIC_API_URL: http://collegehub-api:4000
+
+# Error tracking stays disabled in the dev namespace (console output is the
+# dev-time provider); enable explicitly when debugging the console UI.
+errorTracking:
+  enabled: false
+
+# No monitoring stack (Prometheus/Grafana/OTel collector) in the dev namespace.
+observability:
+  tracesEnabled: false
+  serviceMonitor:
+    enabled: false
+  podMonitor:
+    enabled: false
+  prometheusRules:
+    enabled: false
+  grafanaDashboards:
+    enabled: false
+
+secrets:
+  POSTGRES_PASSWORD: collegehub_dev_password
+  REDIS_PASSWORD: collegehub_dev_redis_password
+  JWT_SECRET: collegehub-development-jwt-secret-key
+  ENCRYPTION_KEY_32_BYTES: 'abcdefghijklmnopqrstuvwxyz123456'
+  S3_ACCESS_KEY_ID: minioadmin
+  S3_SECRET_ACCESS_KEY: collegehub_dev_minio_password

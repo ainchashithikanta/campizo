@@ -1,0 +1,29 @@
+{
+  "name": "@college-hub/database",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node dist/migrator.js",
+    "db:seed": "node dist/seeder.js",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@college-hub/config": "workspace:*",
+    "@college-hub/logger": "workspace:*",
+    "@college-hub/types": "workspace:*",
+    "drizzle-orm": "^0.33.0",
+    "pg": "^8.12.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.6",
+    "drizzle-kit": "^0.24.0",
+    "typescript": "^5.5.4",
+    "vitest": "^1.6.0"
+  }
+}

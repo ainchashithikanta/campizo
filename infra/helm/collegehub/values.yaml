@@ -1,0 +1,394 @@
+# ------------------------------------------------------------------------------
+# College Hub - Production Deployment Platform (MS-54)
+# Provider-neutral Helm values. Override per-environment via values.dev/staging/prod.yaml.
+# ------------------------------------------------------------------------------
+
+global:
+  environment: production
+  # Namespace where every resource is deployed. Isolated per environment
+  # (e.g. collegehub-dev, collegehub-staging, collegehub-prod).
+  namespace: collegehub
+  # Extra labels applied to every resource (e.g. cost centre, team, owner).
+  labels: {}
+  # Pull secrets used by every workload (e.g. private image registry credentials).
+  imagePullSecrets: []
+
+# Default image settings; individual components may override registry/organization/tag.
+image:
+  registry: ghcr.io
+  organization: college-hub
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ''
+fullnameOverride: ''
+
+serviceAccount:
+  create: true
+  name: collegehub
+  # The application does not need Kubernetes API access.
+  automountToken: false
+  annotations: {}
+
+# ------------------------------------------------------------------------------
+# API (Fastify monolith)
+# ------------------------------------------------------------------------------
+api:
+  enabled: true
+  replicas: 3
+  image:
+    # registry / organization fall back to `.Values.image` defaults.
+    repository: college-hub/collegehub-api
+    tag: ''
+  containerPort: 4000
+  service:
+    port: 4000
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+  hpa:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 85
+  pdb:
+    enabled: true
+    minAvailable: 1
+  probes:
+    liveness:
+      path: /health/live
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      path: /health/ready
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+  # Extra environment variables merged into the deployment.
+  env: {}
+
+# ------------------------------------------------------------------------------
+# Web (Next.js standalone)
+# ------------------------------------------------------------------------------
+web:
+  enabled: true
+  replicas: 3
+  image:
+    repository: college-hub/collegehub-web
+    tag: ''
+  containerPort: 3000
+  service:
+    port: 3000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+  hpa:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 85
+  pdb:
+    enabled: true
+    minAvailable: 1
+  probes:
+    liveness:
+      path: /
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      path: /
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+  env: {}
+
+# ------------------------------------------------------------------------------
+# Worker (background task runtime)
+# ------------------------------------------------------------------------------
+worker:
+  enabled: true
+  replicas: 2
+  image:
+    repository: college-hub/collegehub-worker
+    tag: ''
+  containerPort: 4100
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 85
+  pdb:
+    enabled: true
+    minAvailable: 1
+  probes:
+    liveness:
+      path: /health/live
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      path: /health/ready
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+  env: {}
+
+# ------------------------------------------------------------------------------
+# Database schema migrations (executed before deployments roll out)
+# ------------------------------------------------------------------------------
+migrations:
+  enabled: true
+  # Reuses the API image; override if the migration entrypoint lives elsewhere.
+  imageTag: ''
+  backoffLimit: 4
+  restartPolicy: OnFailure
+  activeDeadlineSeconds: 300
+
+# ------------------------------------------------------------------------------
+# Ingress
+# ------------------------------------------------------------------------------
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: '25m'
+  hosts:
+    - host: collegehub.edu
+      paths:
+        - path: /api
+          pathType: Prefix
+          service:
+            name: api
+            port: 4000
+        - path: /
+          pathType: Prefix
+          service:
+            name: web
+            port: 3000
+  tls: []
+
+# ------------------------------------------------------------------------------
+# Network isolation
+# ------------------------------------------------------------------------------
+networkPolicies:
+  enabled: true
+  # Ingress controller pod selector (namespace omitted = all namespaces).
+  ingressController:
+    matchLabels:
+      app.kubernetes.io/name: ingress-nginx
+  dnsUdpPort: 53
+
+# ------------------------------------------------------------------------------
+# Externally managed dependencies (default: managed outside the cluster).
+# Set hosts/endpoints to point at AWS RDS, ElastiCache, S3, etc.
+# ------------------------------------------------------------------------------
+external:
+  databaseHost: collegehub-postgres
+  redisHost: collegehub-redis
+  storageEndpoint: ''
+
+# ------------------------------------------------------------------------------
+# Application configuration (ConfigMap data)
+# ------------------------------------------------------------------------------
+config:
+  LOG_LEVEL: info
+  GRACEFUL_SHUTDOWN_TIMEOUT_MS: '30000'
+  WORKER_HEALTH_PORT: '4100'
+  POSTGRES_USER: collegehub_user
+  POSTGRES_DB: collegehub_db
+  POSTGRES_PORT: '5432'
+  REDIS_PORT: '6379'
+  JWT_EXPIRES_IN: 15m
+  REFRESH_TOKEN_EXPIRES_IN: 7d
+  STORAGE_PROVIDER: local
+  S3_REGION: us-east-1
+  S3_BUCKET_NAME: collegehub-media
+  S3_FORCE_PATH_STYLE: 'true'
+  NOTIFICATION_PROVIDER: mock
+  SMTP_HOST: localhost
+  SMTP_PORT: '1025'
+  SEARCH_PROVIDER: postgres
+  AI_PROVIDER: mock
+  ALLOWED_ORIGINS: https://collegehub.edu,https://app.collegehub.edu
+  COOKIE_DOMAIN: collegehub.edu
+  # Used by Next.js rewrites to proxy /api/* to the API service.
+  NEXT_PUBLIC_API_URL: http://collegehub-api:4000
+
+# ------------------------------------------------------------------------------
+# Observability (MS-55)
+# Metrics/tracing runtime config plus Prometheus Operator integration
+# (ServiceMonitor/PodMonitor), alert rules and Grafana dashboards.
+# ------------------------------------------------------------------------------
+observability:
+  enabled: true
+  # Runtime flags applied to every workload via the shared ConfigMap.
+  metricsEnabled: true
+  tracesEnabled: false
+  # OpenTelemetry collector endpoint (gRPC). No collector is deployed by this
+  # chart; point this at your OTLP receiver or a separately managed collector.
+  otlpEndpoint: http://collegehub-otlp-collector:4317
+  # Per-component service name used as the Prometheus `service` default label
+  # and the tracing `service.name` attribute. Set per deployment so metrics are
+  # attributable to the right process.
+  serviceNameApi: college-hub
+  serviceNameWorker: college-hub-worker
+  # Prometheus Operator resources. Requires the CRDs from kube-prometheus-stack
+  # (or Prometheus Operator) to be installed in the cluster.
+  serviceMonitor:
+    enabled: true
+    # Labels used by your Prometheus installation to discover the ServiceMonitor
+    # (kube-prometheus-stack default is `release: prometheus`).
+    labels:
+      release: prometheus
+  podMonitor:
+    enabled: true
+    labels:
+      release: prometheus
+  # PrometheusRule manifests for alerting + SLO burn-rate rules. Rendered from
+  # the chart's `rules/` directory (canonical source for MS-55 alerting).
+  prometheusRules:
+    enabled: true
+  # Grafana dashboards as ConfigMaps (label `grafana_dashboard: "1"` for the
+  # kube-prometheus-stack sidecar). Rendered from the chart's `dashboards/`
+  # directory (7 dashboards: API HTTP, database, cache, jobs, business,
+  # process, kubernetes).
+  grafanaDashboards:
+    enabled: true
+
+# ------------------------------------------------------------------------------
+# Error Tracking & Incident Response (MS-56)
+# Runtime config for the platform error tracking module. The implementation is
+# provider-neutral: transports are selected via ERROR_TRACKING_TRANSPORTS and
+# future external providers (Sentry, self-hosted) plug in through the same
+# IErrorTransport contract (see values overrides below).
+# ------------------------------------------------------------------------------
+errorTracking:
+  enabled: true
+  # Deduplication window (ms): identical errors captured within this window are
+  # aggregated into a single occurrence group (fingerprint).
+  dedupeWindowMs: '86400000'
+  # Comma separated transport names: console, structured, otel.
+  # Development defaults to console+structured; staging/production to
+  # structured+otel (OpenTelemetry events for the observability stack).
+  transports: 'structured,otel'
+  # Future external providers. Unused today; kept as the values extension point
+  # so enabling a provider never requires a chart change.
+  sentry:
+    enabled: false
+    dsn: ''
+  selfHosted:
+    enabled: false
+    endpoint: ''
+
+# ------------------------------------------------------------------------------
+# Application secrets (Secret data)
+# NOTE: placeholder values only. Override per environment, ideally via external
+# secret management (SealedSecrets, External Secrets Operator, cloud KMS).
+# ------------------------------------------------------------------------------
+secrets:
+  POSTGRES_PASSWORD: 'changeme-postgres-password'
+  REDIS_PASSWORD: 'changeme-redis-password'
+  JWT_SECRET: 'changeme-jwt-secret-at-least-32-characters-long'
+  ENCRYPTION_KEY_32_BYTES: '12345678901234567890123456789012'
+  S3_ACCESS_KEY_ID: ''
+  S3_SECRET_ACCESS_KEY: ''
+  FIREBASE_CREDENTIALS_JSON: ''
+  TYPESENSE_API_KEY: ''
+  OPENAI_API_KEY: ''
+  # Optional full connection URL overrides. When empty the chart builds the URL
+  # from the Postgres/Redis sections below.
+  databaseUrl: ''
+  redisUrl: ''
+
+# ------------------------------------------------------------------------------
+# Bundled dependencies (opt-in StatefulSets). Disabled by default; the chart
+# targets externally managed PostgreSQL/Redis/MinIO in production.
+# ------------------------------------------------------------------------------
+postgresql:
+  enabled: false
+  image: pgvector/pgvector:pg16
+  port: 5432
+  auth:
+    username: collegehub_user
+    password: changeme-postgres-password
+    database: collegehub_db
+  storage:
+    className: ''
+    size: 20Gi
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: '2'
+      memory: 2Gi
+  nodeSelector: {}
+  tolerations: []
+
+redis:
+  enabled: false
+  image: redis:7-alpine
+  port: 6379
+  auth:
+    enabled: true
+    password: changeme-redis-password
+  storage:
+    className: ''
+    size: 5Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+  nodeSelector: {}
+  tolerations: []
+
+minio:
+  enabled: false
+  image: minio/minio:RELEASE.2024-05-28T17-19-04Z
+  port: 9000
+  consolePort: 9001
+  auth:
+    rootUser: minioadmin
+    rootPassword: changeme-minio-password
+  bucket: collegehub-media
+  storage:
+    className: ''
+    size: 10Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+  nodeSelector: {}
+  tolerations: []

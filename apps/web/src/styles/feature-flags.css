@@ -1,0 +1,174 @@
+/* ==========================================================================
+   Platform Feature Flags — Enterprise Administration Console Stylesheet
+   Vanilla CSS (No Tailwind, No Inline Styles) — WCAG 2.2 AA Compliant
+   ========================================================================== */
+
+.ff-container {
+  min-height: 100vh;
+  background-color: var(--ch-color-background, #0F172A);
+  color: var(--ch-color-text, #F8FAFC);
+  font-family: var(--ch-font-sans, system-ui, sans-serif);
+  padding: 24px;
+}
+
+.ff-nav-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--ch-color-border, #334155);
+}
+
+.ff-nav-link {
+  min-height: 48px; /* 48px touch target */
+  padding: 12px 18px;
+  border-radius: var(--ch-radius-md, 8px);
+  background: var(--ch-color-surface, #1E293B);
+  color: var(--ch-color-text-muted, #94A3B8);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ff-nav-link:hover,
+.ff-nav-link:focus-visible {
+  color: var(--ch-color-text-bright, #FFFFFF);
+  background: var(--ch-color-surface-elevated, #334155);
+  outline: 2px solid var(--ch-color-primary, #6366F1);
+}
+
+.ff-nav-link.active {
+  background: var(--ch-color-primary, #6366F1);
+  color: #FFFFFF;
+}
+
+.ff-card-panel {
+  background: var(--ch-color-surface, #1E293B);
+  border: 1px solid var(--ch-color-border, #334155);
+  border-radius: var(--ch-radius-lg, 12px);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--ch-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.4));
+}
+
+.ff-grid-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ff-metric-box {
+  background: var(--ch-color-surface-elevated, #334155);
+  border: 1px solid var(--ch-color-border, #475569);
+  border-radius: var(--ch-radius-md, 8px);
+  padding: 20px;
+}
+
+.ff-metric-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ch-color-text-muted, #94A3B8);
+  letter-spacing: 0.05em;
+}
+
+.ff-metric-val {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--ch-font-mono, monospace);
+  color: var(--ch-color-text, #F8FAFC);
+  margin-top: 6px;
+}
+
+.ff-btn-primary {
+  min-height: 48px;
+  padding: 12px 24px;
+  background: var(--ch-color-primary, #6366F1);
+  color: #FFFFFF;
+  border-radius: var(--ch-radius-md, 8px);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s ease;
+}
+
+.ff-btn-primary:hover {
+  transform: translateY(-1px);
+}
+
+.ff-btn-danger {
+  min-height: 48px;
+  padding: 12px 24px;
+  background: var(--ch-color-error, #EF4444);
+  color: #FFFFFF;
+  border-radius: var(--ch-radius-md, 8px);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ff-hold-btn {
+  min-height: 56px;
+  width: 100%;
+  background: #7F1D1D;
+  color: #FFFFFF;
+  border: 2px solid #EF4444;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.ff-hold-progress {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  background: #EF4444;
+  transition: width 0.1s linear;
+  z-index: 1;
+}
+
+.ff-hold-text {
+  position: relative;
+  z-index: 2;
+}
+
+.ff-input-field {
+  min-height: 48px;
+  width: 100%;
+  background: var(--ch-color-surface-elevated, #334155);
+  border: 1px solid var(--ch-color-border, #475569);
+  color: var(--ch-color-text, #F8FAFC);
+  padding: 12px 16px;
+  border-radius: var(--ch-radius-md, 8px);
+  font-size: 14px;
+}
+
+.ff-input-field:focus-visible {
+  outline: 2px solid var(--ch-color-primary, #6366F1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ff-nav-link, .ff-btn-primary, .ff-hold-progress {
+    transition: none !important;
+    animation: none !important;
+  }
+}

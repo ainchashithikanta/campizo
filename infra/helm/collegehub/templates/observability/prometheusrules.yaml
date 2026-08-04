@@ -1,0 +1,7 @@
+{{- if and .Values.observability.enabled .Values.observability.prometheusRules.enabled }}
+{{- range $path, $_ := .Files.Glob "rules/*.yaml" }}
+{{- $content := replace "{{ .Values.global.namespace | quote }}" ($.Values.global.namespace | quote) ($.Files.Get $path) }}
+{{ $content }}
+---
+{{- end }}
+{{- end }}

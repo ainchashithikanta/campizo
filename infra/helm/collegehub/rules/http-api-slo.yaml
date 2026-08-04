@@ -1,0 +1,112 @@
+﻿# ------------------------------------------------------------------------------
+# HTTP API SLO (College Hub)
+# ------------------------------------------------------------------------------
+# Objective:   99.5% of API requests return non-5xx over a 30-day rolling window.
+# Service:     college-hub (apps/api) - the label is applied as a Prometheus
+#              default label by observability.configure({ serviceName }).
+# ------------------------------------------------------------------------------
+# Method:      Google SRE multi-window multi-burn-rate alerting.
+#              Recording rules compute the error ratio over a 5m (short) and 1h
+#              (long) window; alerts fire when the burn rate exceeds the budget.
+#              Error budget = 1 - 0.995 = 0.005.
+# ------------------------------------------------------------------------------
+
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-slo-http-api
+  namespace: {{ .Values.global.namespace | quote }}
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: slo-rules
+spec:
+  groups:
+    - name: collegehub-slo-http-api
+      rules:
+        # --- SLI error ratios -------------------------------------------------
+        - record: collegehub:slo:http:errors_ratio:rate5m
+          expr: |
+            sum(rate(collegehub_http_requests_total{status=~"5.."}[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_http_requests_total[5m])) by (service), 1e-9)
+        - record: collegehub:slo:http:errors_ratio:rate30m
+          expr: |
+            sum(rate(collegehub_http_requests_total{status=~"5.."}[30m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_http_requests_total[30m])) by (service), 1e-9)
+        - record: collegehub:slo:http:errors_ratio:rate1h
+          expr: |
+            sum(rate(collegehub_http_requests_total{status=~"5.."}[1h])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_http_requests_total[1h])) by (service), 1e-9)
+
+        # --- Error budget (objective = 99.5%, budget = 0.005) -----------------
+        - record: collegehub:slo:http:error_budget_remaining
+          expr: |
+            1 - (sum(rate(collegehub_http_requests_total{status=~"5.."}[30d])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_http_requests_total[30d])) by (service), 1e-9)) / 0.005
+
+        # --- Burn rates -------------------------------------------------------
+        - record: collegehub:slo:http:burn_rate:5m
+          expr: |
+            collegehub:slo:http:errors_ratio:rate5m / 0.005
+        - record: collegehub:slo:http:burn_rate:30m
+          expr: |
+            collegehub:slo:http:errors_ratio:rate30m / 0.005
+        - record: collegehub:slo:http:burn_rate:1h
+          expr: |
+            collegehub:slo:http:errors_ratio:rate1h / 0.005
+
+        # --- Alerting ---------------------------------------------------------
+        # Burn rate >= 14.4 over 5 minutes => >=2% of monthly budget consumed
+        # in 5 minutes. Page immediately.
+        - alert: CollegeHubHTTPErrorBudgetBurnShortWindow
+          expr: |
+            collegehub:slo:http:burn_rate:5m >= 14.4
+          for: 5m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub HTTP SLO burning fast (short window)"
+            description: "HTTP 5xx error budget burn rate is {{ $value }}x over 5m (limit 14.4x)."
+
+        # Burn rate >= 6 over 30 minutes => ~2% of monthly budget consumed in
+        # 30 minutes. Page.
+        - alert: CollegeHubHTTPErrorBudgetBurnMediumWindow
+          expr: |
+            collegehub:slo:http:burn_rate:30m >= 6
+          for: 30m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub HTTP SLO burning (medium window)"
+            description: "HTTP 5xx error budget burn rate is {{ $value }}x over 30m (limit 6x)."
+
+        # Burn rate >= 1 over 1 hour => steady state consumption. Ticket.
+        - alert: CollegeHubHTTPErrorBudgetBurnLongWindow
+          expr: |
+            collegehub:slo:http:burn_rate:1h >= 1
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub HTTP SLO burning (long window)"
+            description: "HTTP 5xx error budget burn rate is {{ $value }}x over 1h (limit 1x)."
+
+        # Budget nearly exhausted => ticket.
+        - alert: CollegeHubHTTPErrorBudgetExhausted
+          expr: |
+            collegehub:slo:http:error_budget_remaining <= 0.25
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub HTTP error budget below 25%"
+            description: "{{ $value | humanizePercentage }} of the HTTP error budget remains; the service will miss its 99.5% SLO at this rate."

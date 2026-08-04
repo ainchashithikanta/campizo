@@ -1,0 +1,15 @@
+# Grafana dashboard provisioning for the College Hub observability profile.
+# Loads the dashboards mounted at /etc/grafana/dashboards (canonical source:
+# infra/helm/collegehub/dashboards).
+apiVersion: 1
+
+providers:
+  - name: collegehub
+    orgId: 1
+    folder: College Hub
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards

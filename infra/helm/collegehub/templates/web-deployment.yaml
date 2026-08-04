@@ -1,0 +1,68 @@
+{{- if .Values.web.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "collegehub.fullname" . }}-web
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.componentLabels" (dict "context" . "component" "web") | nindent 4 }}
+spec:
+  replicas: {{ .Values.web.replicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      {{- include "collegehub.componentSelectorLabels" (dict "context" . "component" "web") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "collegehub.componentSelectorLabels" (dict "context" . "component" "web") | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+        - name: web
+          image: {{ include "collegehub.image" (dict "context" . "image" .Values.web.image) }}
+          imagePullPolicy: {{ .Values.web.image.pullPolicy | default .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.web.containerPort }}
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "collegehub.fullname" . }}-config
+          env:
+            {{- range $key, $value := .Values.web.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.web.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.web.probes.liveness.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.web.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.web.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.web.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.web.probes.liveness.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.web.probes.readiness.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.web.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.web.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.web.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.web.probes.readiness.failureThreshold }}
+{{- end }}

@@ -1,0 +1,141 @@
+/* ==========================================================================
+   Rate My Professor — Module-Specific Styles
+   ========================================================================== */
+
+/* ---------- Page Layout ---------- */
+.rmp-page {
+  padding-top: var(--ch-header-height);
+  padding-bottom: var(--ch-mobile-nav-height);
+  min-height: 100dvh;
+}
+
+@media (min-width: 1024px) {
+  .rmp-page {
+    padding-bottom: 0;
+  }
+}
+
+/* ---------- Section Spacing ---------- */
+.rmp-section {
+  padding-block: var(--ch-spacing-8);
+}
+
+.rmp-section + .rmp-section {
+  border-top: 1px solid var(--ch-color-border);
+}
+
+/* ---------- Grid Layouts ---------- */
+.rmp-grid {
+  display: grid;
+  gap: var(--ch-spacing-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .rmp-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .rmp-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---------- Profile Layout (Desktop: 2-column) ---------- */
+.rmp-profile-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-8);
+}
+
+@media (min-width: 1024px) {
+  .rmp-profile-layout {
+    flex-direction: row;
+  }
+
+  .rmp-profile-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .rmp-profile-sidebar {
+    width: 360px;
+    flex-shrink: 0;
+    position: sticky;
+    top: calc(var(--ch-header-height) + var(--ch-spacing-4));
+    align-self: flex-start;
+    max-height: calc(100dvh - var(--ch-header-height) - var(--ch-spacing-8));
+    overflow-y: auto;
+  }
+}
+
+/* ---------- Fade In Animation ---------- */
+@keyframes rmp-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rmp-fade-in {
+  animation: rmp-fade-in var(--ch-motion-normal) var(--ch-motion-easing) both;
+}
+
+/* ---------- Staggered Animations ---------- */
+.rmp-stagger > * {
+  animation: rmp-fade-in var(--ch-motion-normal) var(--ch-motion-easing) both;
+}
+
+.rmp-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.rmp-stagger > *:nth-child(2) { animation-delay: 50ms; }
+.rmp-stagger > *:nth-child(3) { animation-delay: 100ms; }
+.rmp-stagger > *:nth-child(4) { animation-delay: 150ms; }
+.rmp-stagger > *:nth-child(5) { animation-delay: 200ms; }
+.rmp-stagger > *:nth-child(6) { animation-delay: 250ms; }
+.rmp-stagger > *:nth-child(n+7) { animation-delay: 300ms; }
+
+/* ---------- Shimmer Animation ---------- */
+@keyframes rmp-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.rmp-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--ch-color-surface) 25%,
+    var(--ch-color-border) 50%,
+    var(--ch-color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: rmp-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--ch-radius-md);
+}
+
+/* ---------- Glassmorphism Card ---------- */
+.rmp-glass-card {
+  background: var(--ch-color-surface-elevated);
+  border: 1px solid var(--ch-color-border);
+  border-radius: var(--ch-radius-lg);
+  box-shadow: var(--ch-shadow-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ---------- Divider ---------- */
+.rmp-divider {
+  height: 1px;
+  background: var(--ch-color-border);
+  border: none;
+  margin-block: var(--ch-spacing-4);
+}

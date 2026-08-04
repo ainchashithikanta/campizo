@@ -1,0 +1,141 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-4);
+  background-color: var(--ch-color-surface-elevated);
+  border: 1px solid var(--ch-color-border);
+  border-radius: var(--ch-radius-lg);
+  padding: var(--ch-spacing-5);
+  box-shadow: var(--ch-shadow-sm);
+  transition: border-color var(--ch-motion-fast) var(--ch-motion-easing);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ch-spacing-3);
+  flex-wrap: wrap;
+}
+
+.authorMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--ch-spacing-2);
+  flex-wrap: wrap;
+}
+
+.authorName {
+  font-size: var(--ch-font-size-sm);
+  font-weight: var(--ch-font-weight-semibold);
+  color: var(--ch-color-text);
+}
+
+.time {
+  font-size: var(--ch-font-size-xs);
+  color: var(--ch-color-text-muted);
+}
+
+.courseRow {
+  display: flex;
+  align-items: center;
+  gap: var(--ch-spacing-2);
+  font-size: var(--ch-font-size-xs);
+  color: var(--ch-color-text-muted);
+  flex-wrap: wrap;
+}
+
+.courseBadge {
+  font-weight: var(--ch-font-weight-semibold);
+  color: var(--ch-color-primary);
+  background-color: var(--ch-color-badge-bg);
+  padding: 2px 8px;
+  border-radius: var(--ch-radius-sm);
+}
+
+.text {
+  font-size: var(--ch-font-size-sm);
+  color: var(--ch-color-text);
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--ch-spacing-3);
+  border-top: 1px solid var(--ch-color-border);
+  flex-wrap: wrap;
+  gap: var(--ch-spacing-3);
+}
+
+.voteGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--ch-spacing-2);
+}
+
+.voteButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--ch-radius-md);
+  font-size: var(--ch-font-size-xs);
+  font-weight: var(--ch-font-weight-medium);
+  border: 1px solid var(--ch-color-border);
+  background-color: var(--ch-color-surface);
+  color: var(--ch-color-text-muted);
+  cursor: pointer;
+  transition: all var(--ch-motion-fast) var(--ch-motion-easing);
+}
+
+.voteButton:hover {
+  background-color: var(--ch-color-surface-elevated);
+  color: var(--ch-color-text);
+}
+
+.votedHelpful {
+  background-color: var(--ch-color-success-bg);
+  color: var(--ch-color-success);
+  border-color: var(--ch-color-success);
+}
+
+.votedUnhelpful {
+  background-color: var(--ch-color-error-bg);
+  color: var(--ch-color-error);
+  border-color: var(--ch-color-error);
+}
+
+.actionGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--ch-spacing-2);
+}
+
+.facultyResponse {
+  margin-top: var(--ch-spacing-3);
+  padding: var(--ch-spacing-4);
+  background-color: var(--ch-color-surface);
+  border-left: 3px solid var(--ch-color-primary);
+  border-radius: var(--ch-radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-2);
+}
+
+.facultyResponseHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--ch-font-size-xs);
+  font-weight: var(--ch-font-weight-semibold);
+  color: var(--ch-color-primary);
+}
+
+.facultyResponseText {
+  font-size: var(--ch-font-size-sm);
+  color: var(--ch-color-text);
+  line-height: 1.5;
+}

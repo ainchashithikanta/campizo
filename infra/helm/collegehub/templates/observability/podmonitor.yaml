@@ -1,0 +1,20 @@
+{{- if and .Values.worker.enabled .Values.observability.podMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "collegehub.fullname" . }}-worker
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.componentLabels" (dict "context" . "component" "worker") | nindent 4 }}
+    {{- with .Values.observability.podMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "collegehub.componentSelectorLabels" (dict "context" . "component" "worker") | nindent 6 }}
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+{{- end }}

@@ -1,0 +1,97 @@
+﻿# ------------------------------------------------------------------------------
+# Database Query SLO (College Hub)
+# ------------------------------------------------------------------------------
+# Objective:   99% of database queries succeed over a 30-day window.
+# Services:    all workloads that touch PostgreSQL (college-hub, college-hub-worker)
+# Error budget = 1 - 0.99 = 0.01
+# ------------------------------------------------------------------------------
+
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-slo-database
+  namespace: {{ .Values.global.namespace | quote }}
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: slo-rules
+spec:
+  groups:
+    - name: collegehub-slo-database
+      rules:
+        - record: collegehub:slo:db:failure_ratio:rate5m
+          expr: |
+            sum(rate(collegehub_db_query_errors_total[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_db_query_duration_seconds_count[5m])) by (service), 1e-9)
+        - record: collegehub:slo:db:failure_ratio:rate30m
+          expr: |
+            sum(rate(collegehub_db_query_errors_total[30m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_db_query_duration_seconds_count[30m])) by (service), 1e-9)
+        - record: collegehub:slo:db:failure_ratio:rate1h
+          expr: |
+            sum(rate(collegehub_db_query_errors_total[1h])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_db_query_duration_seconds_count[1h])) by (service), 1e-9)
+
+        - record: collegehub:slo:db:error_budget_remaining
+          expr: |
+            1 - (sum(rate(collegehub_db_query_errors_total[30d])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_db_query_duration_seconds_count[30d])) by (service), 1e-9)) / 0.01
+
+        - record: collegehub:slo:db:burn_rate:5m
+          expr: |
+            collegehub:slo:db:failure_ratio:rate5m / 0.01
+        - record: collegehub:slo:db:burn_rate:30m
+          expr: |
+            collegehub:slo:db:failure_ratio:rate30m / 0.01
+        - record: collegehub:slo:db:burn_rate:1h
+          expr: |
+            collegehub:slo:db:failure_ratio:rate1h / 0.01
+
+        - alert: CollegeHubDBErrorBudgetBurnShortWindow
+          expr: |
+            collegehub:slo:db:burn_rate:5m >= 14.4
+          for: 5m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub database SLO burning fast (short window)"
+            description: "Database query failure burn rate is {{ $value }}x over 5m (limit 14.4x)."
+
+        - alert: CollegeHubDBErrorBudgetBurnMediumWindow
+          expr: |
+            collegehub:slo:db:burn_rate:30m >= 6
+          for: 30m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub database SLO burning (medium window)"
+            description: "Database query failure burn rate is {{ $value }}x over 30m (limit 6x)."
+
+        - alert: CollegeHubDBErrorBudgetBurnLongWindow
+          expr: |
+            collegehub:slo:db:burn_rate:1h >= 1
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database SLO burning (long window)"
+            description: "Database query failure burn rate is {{ $value }}x over 1h (limit 1x)."
+
+        - alert: CollegeHubDBErrorBudgetExhausted
+          expr: |
+            collegehub:slo:db:error_budget_remaining <= 0.25
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database error budget below 25%"
+            description: "{{ $value | humanizePercentage }} of the database error budget remains; the platform will miss its 99% SLO at this rate."

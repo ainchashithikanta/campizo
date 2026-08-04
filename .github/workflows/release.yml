@@ -1,0 +1,57 @@
+name: Production Release Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+      release_type:
+        description: 'Release Type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  release:
+    name: Build Production Release Artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.0
+
+      - name: Setup Node.js (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify Monorepo Build Integrity
+        run: pnpm run verify
+
+      - name: Package Production Build Artifacts
+        run: |
+          mkdir -p release-artifacts
+          tar -czf release-artifacts/college-hub-release-${{ github.event.inputs.version }}.tar.gz apps/ modules/ packages/ package.json pnpm-workspace.yaml docker-compose.prod.yml
+
+      - name: Upload Release Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ github.event.inputs.version }}
+          path: release-artifacts/

@@ -1,0 +1,93 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-6);
+  background-color: var(--ch-color-surface-elevated);
+  border: 1px solid var(--ch-color-border);
+  border-radius: var(--ch-radius-xl);
+  padding: var(--ch-spacing-6);
+  box-shadow: var(--ch-shadow-md);
+  margin-bottom: var(--ch-spacing-6);
+}
+
+.topRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-4);
+}
+
+@media (min-width: 768px) {
+  .topRow {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.bayesianBlock {
+  display: flex;
+  align-items: center;
+  gap: var(--ch-spacing-4);
+}
+
+.confidenceBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--ch-font-size-xs);
+  color: var(--ch-color-success);
+  background-color: var(--ch-color-success-bg);
+  padding: 4px 10px;
+  border-radius: var(--ch-radius-full);
+  font-weight: var(--ch-font-weight-medium);
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ch-spacing-6);
+}
+
+@media (min-width: 768px) {
+  .metricsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.sectionTitle {
+  font-size: var(--ch-font-size-sm);
+  font-weight: var(--ch-font-weight-semibold);
+  color: var(--ch-color-text-muted);
+  margin-bottom: var(--ch-spacing-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dimensionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-3);
+}
+
+.dimensionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dimName {
+  font-size: var(--ch-font-size-sm);
+  color: var(--ch-color-text);
+}
+
+.dimVal {
+  font-size: var(--ch-font-size-sm);
+  font-weight: var(--ch-font-weight-bold);
+  color: var(--ch-color-primary);
+}
+
+.histogramList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-2);
+}

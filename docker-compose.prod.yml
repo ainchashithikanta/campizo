@@ -1,0 +1,132 @@
+# =============================================================================
+# DEPRECATED (MS-54) - LOCAL EXPERIMENTATION ONLY
+#
+# This file was previously treated as a "production" Compose stack. It is NOT a
+# production-grade topology and MUST NOT be used to run production.
+#
+# Production is deployed via Kubernetes/Helm:
+#   Helm chart:  infra/helm/collegehub  (overlay: values.prod.yaml)
+#   Rendered:    infra/k8s/render/prod/all.yaml
+#   Validation:  .github/workflows/deploy-validation.yml
+#
+# Prefer the Helm chart. Delete this file once all local workflows are migrated.
+# =============================================================================
+version: '3.8'
+
+networks:
+  collegehub_net:
+    driver: bridge
+
+volumes:
+  collegehub_postgres_data:
+    driver: local
+  collegehub_redis_data:
+    driver: local
+  collegehub_minio_data:
+    driver: local
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: collegehub_prod_postgres
+    restart: always
+    networks:
+      - collegehub_net
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - collegehub_postgres_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4096M
+        reservations:
+          memory: 1024M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: collegehub_prod_redis
+    restart: always
+    networks:
+      - collegehub_net
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+    volumes:
+      - collegehub_redis_data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1024M
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: collegehub_prod_api
+    restart: always
+    networks:
+      - collegehub_net
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      ENCRYPTION_KEY_32_BYTES: ${ENCRYPTION_KEY_32_BYTES}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: collegehub_prod_web
+    restart: always
+    networks:
+      - collegehub_net
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://api:4000/api/v1
+    depends_on:
+      - api
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: collegehub_prod_worker
+    restart: always
+    networks:
+      - collegehub_net
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

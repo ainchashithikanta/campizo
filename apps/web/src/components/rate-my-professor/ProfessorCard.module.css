@@ -1,0 +1,122 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--ch-color-surface-elevated);
+  border: 1px solid var(--ch-color-border);
+  border-radius: var(--ch-radius-lg);
+  padding: var(--ch-spacing-5);
+  gap: var(--ch-spacing-4);
+  transition: transform var(--ch-motion-fast) var(--ch-motion-easing),
+              box-shadow var(--ch-motion-fast) var(--ch-motion-easing),
+              border-color var(--ch-motion-fast) var(--ch-motion-easing);
+  text-decoration: none;
+  color: var(--ch-color-text);
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ch-shadow-md);
+  border-color: var(--ch-color-primary);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ch-spacing-3);
+}
+
+.profInfo {
+  display: flex;
+  gap: var(--ch-spacing-3);
+  align-items: center;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--ch-radius-full);
+  background: linear-gradient(135deg, var(--ch-color-primary) 0%, var(--ch-color-secondary) 100%);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--ch-font-weight-bold);
+  font-size: var(--ch-font-size-base);
+  flex-shrink: 0;
+  box-shadow: var(--ch-shadow-sm);
+}
+
+.name {
+  font-size: var(--ch-font-size-base);
+  font-weight: var(--ch-font-weight-semibold);
+  color: var(--ch-color-text);
+  line-height: 1.3;
+}
+
+.designation {
+  font-size: var(--ch-font-size-xs);
+  color: var(--ch-color-text-muted);
+}
+
+.deptBadge {
+  font-size: var(--ch-font-size-xs);
+  font-weight: var(--ch-font-weight-medium);
+  padding: 2px 8px;
+  background-color: var(--ch-color-surface);
+  border: 1px solid var(--ch-color-border);
+  border-radius: var(--ch-radius-sm);
+  color: var(--ch-color-text-muted);
+  width: fit-content;
+  margin-top: 4px;
+}
+
+.statsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--ch-spacing-2);
+  border-top: 1px dashed var(--ch-color-border);
+  border-bottom: 1px dashed var(--ch-color-border);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.statLabel {
+  font-size: var(--ch-font-size-xs);
+  color: var(--ch-color-text-muted);
+}
+
+.statValue {
+  font-size: var(--ch-font-size-sm);
+  font-weight: var(--ch-font-weight-bold);
+  color: var(--ch-color-text);
+}
+
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ch-spacing-1);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  font-size: var(--ch-font-size-xs);
+  color: var(--ch-color-primary);
+  font-weight: var(--ch-font-weight-medium);
+}
+
+.footerLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

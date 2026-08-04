@@ -1,0 +1,17 @@
+{
+  "name": "@college-hub/types",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^1.6.0"
+  }
+}

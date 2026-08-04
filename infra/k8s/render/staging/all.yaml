@@ -1,0 +1,2681 @@
+---
+# Source: collegehub/templates/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: collegehub/templates/networkpolicy.yaml
+# Default-deny ingress for the entire College Hub namespace. Every workload must
+# be explicitly allowed by a subsequent policy.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: collegehub-default-deny-ingress
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+---
+# Source: collegehub/templates/networkpolicy.yaml
+# Allow the ingress controller to reach the web workload.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: collegehub-allow-ingress-web
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: web
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 3000
+---
+# Source: collegehub/templates/networkpolicy.yaml
+# Allow the ingress controller and the web workload to reach the API.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: collegehub-allow-api
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: collegehub
+              app.kubernetes.io/instance: collegehub
+              app.kubernetes.io/component: web
+      ports:
+        - protocol: TCP
+          port: 4000
+---
+# Source: collegehub/templates/networkpolicy.yaml
+# Allow the worker to reach its health server from probes (same pod, any source).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: collegehub-allow-worker-health
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: worker
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: collegehub
+              app.kubernetes.io/instance: collegehub
+              app.kubernetes.io/component: worker
+      ports:
+        - protocol: TCP
+          port: 4100
+---
+# Source: collegehub/templates/networkpolicy.yaml
+# API egress: DNS + web/health + PostgreSQL + Redis + HTTP(S) for external providers.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: collegehub-api-egress
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: api
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - ports:
+        - protocol: TCP
+          port: 5432
+        - protocol: TCP
+          port: 6379
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+---
+# Source: collegehub/templates/networkpolicy.yaml
+# Worker egress: DNS + PostgreSQL + Redis + HTTP(S) for external providers.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: collegehub-worker-egress
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: worker
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - ports:
+        - protocol: TCP
+          port: 5432
+        - protocol: TCP
+          port: 6379
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+---
+# Source: collegehub/templates/networkpolicy.yaml
+# Web egress: DNS + API + HTTP(S) for external assets.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: collegehub-web-egress
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: web
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - ports:
+        - protocol: TCP
+          port: 4000
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+---
+# Source: collegehub/templates/api-pdb.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: collegehub-api
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "api"
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: "api"
+---
+# Source: collegehub/templates/web-pdb.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: collegehub-web
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "web"
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: "web"
+---
+# Source: collegehub/templates/worker-pdb.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: collegehub-worker
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "worker"
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: "worker"
+---
+# Source: collegehub/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: collegehub
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+automountServiceAccountToken: false
+---
+# Source: collegehub/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: collegehub-secret
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+stringData:
+  DATABASE_URL: "postgresql://collegehub_user:CHANGE-ME-STAGING@collegehub-staging-postgres:5432/collegehub_db"
+  REDIS_URL: "redis://:CHANGE-ME-STAGING@collegehub-staging-redis:6379"
+  ENCRYPTION_KEY_32_BYTES: "0123456789abcdef0123456789abcdef"
+  JWT_SECRET: "staging-jwt-secret-must-be-32-characters-long"
+  POSTGRES_PASSWORD: "CHANGE-ME-STAGING"
+  REDIS_PASSWORD: "CHANGE-ME-STAGING"
+---
+# Source: collegehub/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collegehub-config
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+data:
+  NODE_ENV: "staging"
+  HOST: "0.0.0.0"
+  PORT: "4000"
+  POSTGRES_HOST: "collegehub-postgres"
+  REDIS_HOST: "collegehub-redis"
+  METRICS_ENABLED: "true"
+  OTEL_TRACES_ENABLED: "true"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://collegehub-otlp-collector:4317"
+  ERROR_TRACKING_ENABLED: "true"
+  ERROR_TRACKING_DEDUPE_WINDOW_MS: "86400000"
+  ERROR_TRACKING_TRANSPORTS: "structured,otel"
+  AI_PROVIDER: "mock"
+  ALLOWED_ORIGINS: "https://staging.collegehub.edu"
+  COOKIE_DOMAIN: "collegehub.edu"
+  GRACEFUL_SHUTDOWN_TIMEOUT_MS: "30000"
+  JWT_EXPIRES_IN: "15m"
+  LOG_LEVEL: "info"
+  NEXT_PUBLIC_API_URL: "http://collegehub-api:4000"
+  NOTIFICATION_PROVIDER: "mock"
+  POSTGRES_DB: "collegehub_db"
+  POSTGRES_PORT: "5432"
+  POSTGRES_USER: "collegehub_user"
+  REDIS_PORT: "6379"
+  REFRESH_TOKEN_EXPIRES_IN: "7d"
+  S3_BUCKET_NAME: "collegehub-media"
+  S3_FORCE_PATH_STYLE: "true"
+  S3_REGION: "us-east-1"
+  SEARCH_PROVIDER: "postgres"
+  SMTP_HOST: "localhost"
+  SMTP_PORT: "1025"
+  STORAGE_PROVIDER: "local"
+  WORKER_HEALTH_PORT: "4100"
+---
+# Source: collegehub/templates/observability/grafana-dashboards.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collegehub-dashboard-api-http
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    grafana_dashboard: "1"
+data:
+  api-http.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "id": 1,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (route) (rate(collegehub_http_requests_total[$__rate_interval]))",
+              "legendFormat": "{{route}}",
+              "refId": "A"
+            }
+          ],
+          "title": "HTTP Request Rate by Route",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "id": 2,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.50, sum(rate(collegehub_http_request_duration_seconds_bucket[$__rate_interval])) by (le, route))",
+              "legendFormat": "p50 {{route}}",
+              "refId": "A"
+            },
+            {
+              "expr": "histogram_quantile(0.99, sum(rate(collegehub_http_request_duration_seconds_bucket[$__rate_interval])) by (le, route))",
+              "legendFormat": "p99 {{route}}",
+              "refId": "B"
+            }
+          ],
+          "title": "HTTP Latency (p50 / p99)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "id": 3,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (status) (rate(collegehub_http_requests_total[$__rate_interval]))",
+              "legendFormat": "{{status}}",
+              "refId": "A"
+            }
+          ],
+          "title": "HTTP Responses by Status Code",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+          "id": 4,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (route) (collegehub_http_requests_in_flight)",
+              "legendFormat": "{{route}}",
+              "refId": "A"
+            }
+          ],
+          "title": "In-Flight Requests",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "decbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+          "id": 5,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, sum(rate(collegehub_http_response_size_bytes_bucket[$__rate_interval])) by (le, route))",
+              "legendFormat": "p95 {{route}}",
+              "refId": "A"
+            }
+          ],
+          "title": "HTTP Response Size (p95)",
+          "type": "timeseries"
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["collegehub", "observability", "http"],
+      "templating": { "list": [] },
+      "time": { "from": "now-6h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "College Hub — HTTP API",
+      "uid": "collegehub-api-http",
+      "version": 1,
+      "weekStart": ""
+    }
+---
+# Source: collegehub/templates/observability/grafana-dashboards.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collegehub-dashboard-business
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    grafana_dashboard: "1"
+data:
+  business.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "ops"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "id": 1,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (result) (rate(collegehub_auth_logins_total[$__rate_interval]))",
+              "legendFormat": "logins {{result}}",
+              "refId": "A"
+            },
+            {
+              "expr": "sum by (result) (rate(collegehub_auth_registrations_total[$__rate_interval]))",
+              "legendFormat": "registrations {{result}}",
+              "refId": "B"
+            }
+          ],
+          "title": "Authentication Activity",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "ops"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "id": 2,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (action) (rate(collegehub_marketplace_listings_total[$__rate_interval]))",
+              "legendFormat": "listings {{action}}",
+              "refId": "A"
+            },
+            {
+              "expr": "sum by (action) (rate(collegehub_marketplace_offers_total[$__rate_interval]))",
+              "legendFormat": "offers {{action}}",
+              "refId": "B"
+            }
+          ],
+          "title": "Marketplace Activity",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "ops"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "id": 3,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (action) (rate(collegehub_notifications_total[$__rate_interval]))",
+              "legendFormat": "{{action}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Notification Engine",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "ops"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+          "id": 4,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (kind) (rate(collegehub_placement_queries_total[$__rate_interval]))",
+              "legendFormat": "queries {{kind}}",
+              "refId": "A"
+            },
+            {
+              "expr": "sum by (result) (rate(collegehub_interview_submissions_total[$__rate_interval]))",
+              "legendFormat": "interview submissions {{result}}",
+              "refId": "B"
+            }
+          ],
+          "title": "Placement Guidance",
+          "type": "timeseries"
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["collegehub", "observability", "business"],
+      "templating": { "list": [] },
+      "time": { "from": "now-6h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "College Hub — Business KPIs",
+      "uid": "collegehub-business",
+      "version": 1,
+      "weekStart": ""
+    }
+---
+# Source: collegehub/templates/observability/grafana-dashboards.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collegehub-dashboard-cache
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    grafana_dashboard: "1"
+data:
+  cache.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "ops"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "id": 1,
+          "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "topk(12, sum by (command) (rate(collegehub_redis_commands_total[$__rate_interval])))",
+              "legendFormat": "{{command}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Redis Command Rate (top 12)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "id": 2,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.50, sum(rate(collegehub_redis_command_duration_seconds_bucket[$__rate_interval])) by (le))",
+              "legendFormat": "p50",
+              "refId": "A"
+            },
+            {
+              "expr": "histogram_quantile(0.99, sum(rate(collegehub_redis_command_duration_seconds_bucket[$__rate_interval])) by (le))",
+              "legendFormat": "p99",
+              "refId": "B"
+            }
+          ],
+          "title": "Redis Command Latency (p50 / p99)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "id": 3,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum(rate(collegehub_redis_errors_total[$__rate_interval]))",
+              "legendFormat": "errors/s",
+              "refId": "A"
+            }
+          ],
+          "title": "Redis Errors",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "mappings": [
+                { "options": { "0": { "color": "red", "index": 0 } }, "type": "value" },
+                { "options": { "1": { "color": "green", "index": 1 } }, "type": "value" }
+              ],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+          "id": 4,
+          "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } },
+          "targets": [
+            {
+              "expr": "min(collegehub_cache_connected)",
+              "legendFormat": "connected",
+              "refId": "A"
+            }
+          ],
+          "title": "Cache Connectivity",
+          "type": "stat"
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["collegehub", "observability", "cache", "redis"],
+      "templating": { "list": [] },
+      "time": { "from": "now-6h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "College Hub — Cache (Redis)",
+      "uid": "collegehub-cache",
+      "version": 1,
+      "weekStart": ""
+    }
+---
+# Source: collegehub/templates/observability/grafana-dashboards.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collegehub-dashboard-database
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    grafana_dashboard: "1"
+data:
+  database.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "id": 1,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.50, sum(rate(collegehub_db_query_duration_seconds_bucket[$__rate_interval])) by (le, result))",
+              "legendFormat": "p50 {{result}}",
+              "refId": "A"
+            },
+            {
+              "expr": "histogram_quantile(0.99, sum(rate(collegehub_db_query_duration_seconds_bucket[$__rate_interval])) by (le, result))",
+              "legendFormat": "p99 {{result}}",
+              "refId": "B"
+            }
+          ],
+          "title": "Query Duration (p50 / p99)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "id": 2,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum(rate(collegehub_db_query_duration_seconds_count[$__rate_interval]))",
+              "legendFormat": "queries/s",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(rate(collegehub_db_query_errors_total[$__rate_interval]))",
+              "legendFormat": "errors/s",
+              "refId": "B"
+            }
+          ],
+          "title": "Query Throughput & Errors",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "id": 3,
+          "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "topk(10, sum by (query_hash, query_prefix) (increase(collegehub_db_slow_queries_total[$__range])))",
+              "legendFormat": "{{query_prefix}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Slow Queries (top 10 by hash)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+          "id": 4,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "collegehub_db_pool{state=\"total\"}",
+              "legendFormat": "total",
+              "refId": "A"
+            },
+            {
+              "expr": "collegehub_db_pool{state=\"idle\"}",
+              "legendFormat": "idle",
+              "refId": "B"
+            },
+            {
+              "expr": "collegehub_db_pool{state=\"waiting\"}",
+              "legendFormat": "waiting",
+              "refId": "C"
+            }
+          ],
+          "title": "PostgreSQL Connection Pool",
+          "type": "timeseries"
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["collegehub", "observability", "database"],
+      "templating": { "list": [] },
+      "time": { "from": "now-6h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "College Hub — Database",
+      "uid": "collegehub-database",
+      "version": 1,
+      "weekStart": ""
+    }
+---
+# Source: collegehub/templates/observability/grafana-dashboards.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collegehub-dashboard-jobs
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    grafana_dashboard: "1"
+data:
+  jobs.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "ops"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "id": 1,
+          "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (job) (rate(collegehub_jobs_total{result=\"success\"}[$__rate_interval]))",
+              "legendFormat": "{{job}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Job Success Rate",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "ops"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "id": 2,
+          "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (job) (rate(collegehub_jobs_total{result=\"failure\"}[$__rate_interval]))",
+              "legendFormat": "{{job}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Job Failure Rate",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "id": 3,
+          "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.99, sum(rate(collegehub_job_duration_seconds_bucket[$__rate_interval])) by (le, job))",
+              "legendFormat": "p99 {{job}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Job Duration (p99)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+          "id": 4,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (job) (collegehub_jobs_in_flight)",
+              "legendFormat": "{{job}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Jobs In-Flight",
+          "type": "timeseries"
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["collegehub", "observability", "jobs"],
+      "templating": { "list": [] },
+      "time": { "from": "now-6h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "College Hub — Background Jobs",
+      "uid": "collegehub-jobs",
+      "version": 1,
+      "weekStart": ""
+    }
+---
+# Source: collegehub/templates/observability/grafana-dashboards.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collegehub-dashboard-kubernetes
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    grafana_dashboard: "1"
+data:
+  kubernetes.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "id": 1,
+          "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+              "legendFormat": "{{pod}}",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(kube_pod_container_resource_requests{namespace=~\"$namespace\",pod=~\"$pod\",resource=\"cpu\"}) by (pod)",
+              "legendFormat": "{{pod}} request",
+              "refId": "B"
+            }
+          ],
+          "title": "Pod CPU Usage vs Requests",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "decbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "id": 2,
+          "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum(container_memory_working_set_bytes{namespace=~\"$namespace\",pod=~\"$pod\"}) by (pod)",
+              "legendFormat": "{{pod}}",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(kube_pod_container_resource_requests{namespace=~\"$namespace\",pod=~\"$pod\",resource=\"memory\"}) by (pod)",
+              "legendFormat": "{{pod}} request",
+              "refId": "B"
+            }
+          ],
+          "title": "Pod Memory Usage vs Requests",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "ops"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "id": 3,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum by (pod) (rate(kube_pod_container_status_restarts_total{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval]))",
+              "legendFormat": "{{pod}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Pod Restarts",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+          "id": 4,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "sum(kube_pod_info{namespace=~\"$namespace\"}) by (node)",
+              "legendFormat": "{{node}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Pods per Node",
+          "type": "timeseries"
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["collegehub", "observability", "kubernetes"],
+      "templating": {
+        "list": [
+          {
+            "current": { "selected": false, "text": "collegehub", "value": "collegehub" },
+            "definition": "label_values(kube_namespace_labels, namespace)",
+            "hide": 0,
+            "includeAll": false,
+            "multi": false,
+            "name": "namespace",
+            "options": [],
+            "query": { "query": "label_values(kube_namespace_labels, namespace)", "refId": "NamespaceVariable-Query" },
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 1,
+            "type": "query"
+          },
+          {
+            "current": { "selected": false, "text": "All", "value": "$__all" },
+            "definition": "label_values(kube_pod_info{namespace=~\"$namespace\"}, pod)",
+            "hide": 0,
+            "includeAll": true,
+            "multi": true,
+            "name": "pod",
+            "options": [],
+            "query": { "query": "label_values(kube_pod_info{namespace=~\"$namespace\"}, pod)", "refId": "PodVariable-Query" },
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 1,
+            "type": "query"
+          }
+        ]
+      },
+      "time": { "from": "now-6h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "College Hub — Kubernetes",
+      "uid": "collegehub-kubernetes",
+      "version": 1,
+      "weekStart": ""
+    }
+---
+# Source: collegehub/templates/observability/grafana-dashboards.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collegehub-dashboard-process
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    grafana_dashboard: "1"
+data:
+  process.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "id": 1,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "rate(process_cpu_user_seconds_total[$__rate_interval]) + rate(process_cpu_system_seconds_total[$__rate_interval])",
+              "legendFormat": "cpu cores",
+              "refId": "A"
+            }
+          ],
+          "title": "Process CPU Usage",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "decbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "id": 2,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "process_resident_memory_bytes",
+              "legendFormat": "rss",
+              "refId": "A"
+            },
+            {
+              "expr": "nodejs_heap_size_used_bytes",
+              "legendFormat": "heap used",
+              "refId": "B"
+            },
+            {
+              "expr": "nodejs_heap_size_total_bytes",
+              "legendFormat": "heap total",
+              "refId": "C"
+            }
+          ],
+          "title": "Memory Usage",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 0.05 }, { "color": "red", "value": 0.1 }] },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "id": 3,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "nodejs_eventloop_lag_seconds",
+              "legendFormat": "lag",
+              "refId": "A"
+            }
+          ],
+          "title": "Event Loop Lag",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+          "id": 4,
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+          "targets": [
+            {
+              "expr": "nodejs_active_handles",
+              "legendFormat": "handles",
+              "refId": "A"
+            },
+            {
+              "expr": "nodejs_active_requests",
+              "legendFormat": "requests",
+              "refId": "B"
+            },
+            {
+              "expr": "process_open_fds",
+              "legendFormat": "open fds",
+              "refId": "C"
+            }
+          ],
+          "title": "Handles & File Descriptors",
+          "type": "timeseries"
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["collegehub", "observability", "process", "nodejs"],
+      "templating": { "list": [] },
+      "time": { "from": "now-6h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "College Hub — Process (Node.js)",
+      "uid": "collegehub-process",
+      "version": 1,
+      "weekStart": ""
+    }
+---
+# Source: collegehub/templates/api-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: collegehub-api
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "api"
+spec:
+  type: ClusterIP
+  selector:
+    
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/component: "api"
+  ports:
+    - name: http
+      port: 4000
+      targetPort: http
+      protocol: TCP
+---
+# Source: collegehub/templates/web-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: collegehub-web
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "web"
+spec:
+  type: ClusterIP
+  selector:
+    
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/component: "web"
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+      protocol: TCP
+---
+# Source: collegehub/templates/api-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collegehub-api
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "api"
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: "api"
+  template:
+    metadata:
+      labels:
+        
+        app.kubernetes.io/name: collegehub
+        app.kubernetes.io/instance: collegehub
+        app.kubernetes.io/component: "api"
+    spec:
+      serviceAccountName: collegehub
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+        - name: api
+          image: ghcr.io/college-hub/collegehub-api:staging
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 4000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: collegehub-config
+            - secretRef:
+                name: collegehub-secret
+          env:
+            - name: SERVICE_NAME
+              value: "college-hub"
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+---
+# Source: collegehub/templates/web-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collegehub-web
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "web"
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: "web"
+  template:
+    metadata:
+      labels:
+        
+        app.kubernetes.io/name: collegehub
+        app.kubernetes.io/instance: collegehub
+        app.kubernetes.io/component: "web"
+    spec:
+      serviceAccountName: collegehub
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+        - name: web
+          image: ghcr.io/college-hub/collegehub-web:staging
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: collegehub-config
+          env:
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+---
+# Source: collegehub/templates/worker-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collegehub-worker
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "worker"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: "worker"
+  template:
+    metadata:
+      labels:
+        
+        app.kubernetes.io/name: collegehub
+        app.kubernetes.io/instance: collegehub
+        app.kubernetes.io/component: "worker"
+    spec:
+      serviceAccountName: collegehub
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+        - name: worker
+          image: ghcr.io/college-hub/collegehub-worker:staging
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 4100
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: collegehub-config
+            - secretRef:
+                name: collegehub-secret
+          env:
+            - name: SERVICE_NAME
+              value: "college-hub-worker"
+          resources:
+            limits:
+              cpu: 1
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+---
+# Source: collegehub/templates/api-hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: collegehub-api
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "api"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: collegehub-api
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 85
+---
+# Source: collegehub/templates/web-hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: collegehub-web
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "web"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: collegehub-web
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 85
+---
+# Source: collegehub/templates/worker-hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: collegehub-worker
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "worker"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: collegehub-worker
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 85
+---
+# Source: collegehub/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: collegehub
+  namespace: collegehub-staging
+  labels:
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 25m
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+      - staging.collegehub.edu
+      secretName: collegehub-staging-tls
+  rules:
+    - host: staging.collegehub.edu
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: collegehub-api
+                port:
+                  number: 4000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: collegehub-web
+                port:
+                  number: 3000
+---
+# Source: collegehub/templates/observability/podmonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: collegehub-worker
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "worker"
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: "worker"
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+---
+# Source: collegehub/templates/observability/prometheusrules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-api
+  namespace: "collegehub-staging"
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-api
+      rules:
+        - alert: CollegeHubAPIDown
+          expr: |
+            up{job="collegehub-api"} == 0
+          for: 1m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: "College Hub API is down"
+            description: "{{ $labels.instance }} has been unreachable for more than 1 minute."
+
+        - alert: CollegeHubAPIHigh5xxRate
+          expr: |
+            sum(rate(collegehub_http_requests_total{status=~"5.."}[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_http_requests_total[5m])) by (service), 1e-9) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub API 5xx rate above 5%"
+            description: "Service {{ $labels.service }} is returning 5xx on more than 5% of requests over the last 5 minutes ({{ $value | humanizePercentage }})."
+
+        - alert: CollegeHubAPIHighLatencyP99
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(collegehub_http_request_duration_seconds_bucket[5m])) by (le, service)) > 2
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub API p99 latency above 2s"
+            description: "p99 request latency for {{ $labels.service }} is {{ $value }}s, above the 2s threshold."
+
+        - alert: CollegeHubAPITooManyInFlight
+          expr: |
+            sum(collegehub_http_requests_in_flight) by (service) > 200
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub API has too many in-flight requests"
+            description: "Service {{ $labels.service }} is processing {{ $value }} concurrent requests; the API may be saturating."
+
+        - alert: CollegeHubAPIResponseSizeAnomaly
+          expr: |
+            histogram_quantile(0.95,
+              sum(rate(collegehub_http_response_size_bytes_bucket[5m])) by (le, service)) > 5e6
+          for: 10m
+          labels:
+            severity: info
+            team: platform
+          annotations:
+            summary: "College Hub API p95 response size above 5MB"
+            description: "p95 response payload for {{ $labels.service }} is {{ $value }} bytes."
+---
+# Source: collegehub/templates/observability/prometheusrules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-business
+  namespace: "collegehub-staging"
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-business
+      rules:
+        - alert: CollegeHubAuthLoginFailureSpike
+          expr: |
+            sum(rate(collegehub_auth_logins_total{result="failure"}[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_auth_logins_total[5m])) by (service), 1e-9) > 0.2
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub login failure ratio above 20%"
+            description: "{{ $value | humanizePercentage }} of login attempts on {{ $labels.service }} are failing. Possible credential-stuffing attack or broken identity provider."
+
+        - alert: CollegeHubAuthRegistrationFailureSpike
+          expr: |
+            sum(rate(collegehub_auth_registrations_total{result="failure"}[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_auth_registrations_total[5m])) by (service), 1e-9) > 0.5
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub registration failure ratio above 50%"
+            description: "{{ $value | humanizePercentage }} of registration attempts on {{ $labels.service }} are failing."
+
+        - alert: CollegeHubNotificationFailedRateHigh
+          expr: |
+            sum(rate(collegehub_notifications_total{action="failed"}[15m])) by (service) > 5
+          for: 15m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub notification failures climbing"
+            description: "Service {{ $labels.service }} is failing more than 5 notifications per second; check the email/push provider."
+
+        - alert: CollegeHubMarketplaceActivityPlunged
+          expr: |
+            absent(sum(rate(collegehub_marketplace_listings_total[30m])) by (service))
+          for: 30m
+          labels:
+            severity: info
+            team: platform
+          annotations:
+            summary: "No marketplace listing activity detected"
+            description: "No `collegehub_marketplace_listings_total` samples for 30 minutes. The marketplace module may be misconfigured."
+---
+# Source: collegehub/templates/observability/prometheusrules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-cache
+  namespace: "collegehub-staging"
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-cache
+      rules:
+        - alert: CollegeHubCacheDown
+          expr: |
+            min(collegehub_cache_connected) by (service) == 0
+          for: 2m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: "College Hub cache (Redis) unreachable"
+            description: "Service {{ $labels.service }} has lost connectivity to Redis for more than 2 minutes."
+
+        - alert: CollegeHubRedisErrorRateHigh
+          expr: |
+            sum(rate(collegehub_redis_errors_total[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_redis_commands_total[5m])) by (service), 1e-9) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub Redis command error rate above 5%"
+            description: "Service {{ $labels.service }} is failing {{ $value | humanizePercentage }} of Redis commands."
+
+        - alert: CollegeHubRedisCommandLatencyP99High
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(collegehub_redis_command_duration_seconds_bucket[5m])) by (le, service)) > 0.1
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub Redis p99 command latency above 100ms"
+            description: "p99 Redis command latency for {{ $labels.service }} is {{ $value }}s."
+---
+# Source: collegehub/templates/observability/prometheusrules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-database
+  namespace: "collegehub-staging"
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-database
+      rules:
+        - alert: CollegeHubDBQueryErrorRateHigh
+          expr: |
+            sum(rate(collegehub_db_query_errors_total[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_db_query_duration_seconds_count[5m])) by (service), 1e-9) > 0.02
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database query error rate above 2%"
+            description: "Service {{ $labels.service }} is failing {{ $value | humanizePercentage }} of database queries."
+
+        - alert: CollegeHubDBQueryLatencyP99High
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(collegehub_db_query_duration_seconds_bucket[5m])) by (le, service)) > 1
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database p99 query latency above 1s"
+            description: "p99 database query latency for {{ $labels.service }} is {{ $value }}s."
+
+        - alert: CollegeHubDBSlowQuerySpike
+          expr: |
+            sum(rate(collegehub_db_slow_queries_total[5m])) by (service) > 5
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database slow query spike"
+            description: "More than 5 slow queries per second on {{ $labels.service }}. Inspect `collegehub_db_slow_queries_total` for query hashes."
+
+        - alert: CollegeHubDBConnectionPoolExhaustion
+          expr: |
+            max(collegehub_db_pool{state="waiting"}) by (service) > 0
+          for: 10m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: "College Hub database connection pool exhausted"
+            description: "Service {{ $labels.service }} has had {{ $value }} queries waiting for a pooled connection for 10 minutes."
+
+        - alert: CollegeHubDBConnectionPoolSaturation
+          expr: |
+            max(collegehub_db_pool{state="total"}) by (service) > 0
+              and
+            max(collegehub_db_pool{state="idle"}) by (service) == 0
+          for: 15m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database connection pool saturated"
+            description: "All connections in the {{ $labels.service }} pool are in use."
+---
+# Source: collegehub/templates/observability/prometheusrules.yaml
+# ------------------------------------------------------------------------------
+# Database Query SLO (College Hub)
+# ------------------------------------------------------------------------------
+# Objective:   99% of database queries succeed over a 30-day window.
+# Services:    all workloads that touch PostgreSQL (college-hub, college-hub-worker)
+# Error budget = 1 - 0.99 = 0.01
+# ------------------------------------------------------------------------------
+
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-slo-database
+  namespace: "collegehub-staging"
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: slo-rules
+spec:
+  groups:
+    - name: collegehub-slo-database
+      rules:
+        - record: collegehub:slo:db:failure_ratio:rate5m
+          expr: |
+            sum(rate(collegehub_db_query_errors_total[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_db_query_duration_seconds_count[5m])) by (service), 1e-9)
+        - record: collegehub:slo:db:failure_ratio:rate30m
+          expr: |
+            sum(rate(collegehub_db_query_errors_total[30m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_db_query_duration_seconds_count[30m])) by (service), 1e-9)
+        - record: collegehub:slo:db:failure_ratio:rate1h
+          expr: |
+            sum(rate(collegehub_db_query_errors_total[1h])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_db_query_duration_seconds_count[1h])) by (service), 1e-9)
+
+        - record: collegehub:slo:db:error_budget_remaining
+          expr: |
+            1 - (sum(rate(collegehub_db_query_errors_total[30d])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_db_query_duration_seconds_count[30d])) by (service), 1e-9)) / 0.01
+
+        - record: collegehub:slo:db:burn_rate:5m
+          expr: |
+            collegehub:slo:db:failure_ratio:rate5m / 0.01
+        - record: collegehub:slo:db:burn_rate:30m
+          expr: |
+            collegehub:slo:db:failure_ratio:rate30m / 0.01
+        - record: collegehub:slo:db:burn_rate:1h
+          expr: |
+            collegehub:slo:db:failure_ratio:rate1h / 0.01
+
+        - alert: CollegeHubDBErrorBudgetBurnShortWindow
+          expr: |
+            collegehub:slo:db:burn_rate:5m >= 14.4
+          for: 5m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub database SLO burning fast (short window)"
+            description: "Database query failure burn rate is {{ $value }}x over 5m (limit 14.4x)."
+
+        - alert: CollegeHubDBErrorBudgetBurnMediumWindow
+          expr: |
+            collegehub:slo:db:burn_rate:30m >= 6
+          for: 30m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub database SLO burning (medium window)"
+            description: "Database query failure burn rate is {{ $value }}x over 30m (limit 6x)."
+
+        - alert: CollegeHubDBErrorBudgetBurnLongWindow
+          expr: |
+            collegehub:slo:db:burn_rate:1h >= 1
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database SLO burning (long window)"
+            description: "Database query failure burn rate is {{ $value }}x over 1h (limit 1x)."
+
+        - alert: CollegeHubDBErrorBudgetExhausted
+          expr: |
+            collegehub:slo:db:error_budget_remaining <= 0.25
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub database error budget below 25%"
+            description: "{{ $value | humanizePercentage }} of the database error budget remains; the platform will miss its 99% SLO at this rate."
+---
+# Source: collegehub/templates/observability/prometheusrules.yaml
+# ------------------------------------------------------------------------------
+# HTTP API SLO (College Hub)
+# ------------------------------------------------------------------------------
+# Objective:   99.5% of API requests return non-5xx over a 30-day rolling window.
+# Service:     college-hub (apps/api) - the label is applied as a Prometheus
+#              default label by observability.configure({ serviceName }).
+# ------------------------------------------------------------------------------
+# Method:      Google SRE multi-window multi-burn-rate alerting.
+#              Recording rules compute the error ratio over a 5m (short) and 1h
+#              (long) window; alerts fire when the burn rate exceeds the budget.
+#              Error budget = 1 - 0.995 = 0.005.
+# ------------------------------------------------------------------------------
+
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-slo-http-api
+  namespace: "collegehub-staging"
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: slo-rules
+spec:
+  groups:
+    - name: collegehub-slo-http-api
+      rules:
+        # --- SLI error ratios -------------------------------------------------
+        - record: collegehub:slo:http:errors_ratio:rate5m
+          expr: |
+            sum(rate(collegehub_http_requests_total{status=~"5.."}[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_http_requests_total[5m])) by (service), 1e-9)
+        - record: collegehub:slo:http:errors_ratio:rate30m
+          expr: |
+            sum(rate(collegehub_http_requests_total{status=~"5.."}[30m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_http_requests_total[30m])) by (service), 1e-9)
+        - record: collegehub:slo:http:errors_ratio:rate1h
+          expr: |
+            sum(rate(collegehub_http_requests_total{status=~"5.."}[1h])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_http_requests_total[1h])) by (service), 1e-9)
+
+        # --- Error budget (objective = 99.5%, budget = 0.005) -----------------
+        - record: collegehub:slo:http:error_budget_remaining
+          expr: |
+            1 - (sum(rate(collegehub_http_requests_total{status=~"5.."}[30d])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_http_requests_total[30d])) by (service), 1e-9)) / 0.005
+
+        # --- Burn rates -------------------------------------------------------
+        - record: collegehub:slo:http:burn_rate:5m
+          expr: |
+            collegehub:slo:http:errors_ratio:rate5m / 0.005
+        - record: collegehub:slo:http:burn_rate:30m
+          expr: |
+            collegehub:slo:http:errors_ratio:rate30m / 0.005
+        - record: collegehub:slo:http:burn_rate:1h
+          expr: |
+            collegehub:slo:http:errors_ratio:rate1h / 0.005
+
+        # --- Alerting ---------------------------------------------------------
+        # Burn rate >= 14.4 over 5 minutes => >=2% of monthly budget consumed
+        # in 5 minutes. Page immediately.
+        - alert: CollegeHubHTTPErrorBudgetBurnShortWindow
+          expr: |
+            collegehub:slo:http:burn_rate:5m >= 14.4
+          for: 5m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub HTTP SLO burning fast (short window)"
+            description: "HTTP 5xx error budget burn rate is {{ $value }}x over 5m (limit 14.4x)."
+
+        # Burn rate >= 6 over 30 minutes => ~2% of monthly budget consumed in
+        # 30 minutes. Page.
+        - alert: CollegeHubHTTPErrorBudgetBurnMediumWindow
+          expr: |
+            collegehub:slo:http:burn_rate:30m >= 6
+          for: 30m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub HTTP SLO burning (medium window)"
+            description: "HTTP 5xx error budget burn rate is {{ $value }}x over 30m (limit 6x)."
+
+        # Burn rate >= 1 over 1 hour => steady state consumption. Ticket.
+        - alert: CollegeHubHTTPErrorBudgetBurnLongWindow
+          expr: |
+            collegehub:slo:http:burn_rate:1h >= 1
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub HTTP SLO burning (long window)"
+            description: "HTTP 5xx error budget burn rate is {{ $value }}x over 1h (limit 1x)."
+
+        # Budget nearly exhausted => ticket.
+        - alert: CollegeHubHTTPErrorBudgetExhausted
+          expr: |
+            collegehub:slo:http:error_budget_remaining <= 0.25
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub HTTP error budget below 25%"
+            description: "{{ $value | humanizePercentage }} of the HTTP error budget remains; the service will miss its 99.5% SLO at this rate."
+---
+# Source: collegehub/templates/observability/prometheusrules.yaml
+# ------------------------------------------------------------------------------
+# Background Jobs SLO (College Hub)
+# ------------------------------------------------------------------------------
+# Objective:   99% of background jobs complete successfully over a 30-day window.
+# Service:     college-hub-worker (apps/worker)
+# Error budget = 1 - 0.99 = 0.01
+# ------------------------------------------------------------------------------
+
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-slo-jobs
+  namespace: "collegehub-staging"
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: slo-rules
+spec:
+  groups:
+    - name: collegehub-slo-jobs
+      rules:
+        - record: collegehub:slo:jobs:failure_ratio:rate5m
+          expr: |
+            sum(rate(collegehub_jobs_total{result="failure"}[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_jobs_total[5m])) by (service), 1e-9)
+        - record: collegehub:slo:jobs:failure_ratio:rate30m
+          expr: |
+            sum(rate(collegehub_jobs_total{result="failure"}[30m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_jobs_total[30m])) by (service), 1e-9)
+        - record: collegehub:slo:jobs:failure_ratio:rate1h
+          expr: |
+            sum(rate(collegehub_jobs_total{result="failure"}[1h])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_jobs_total[1h])) by (service), 1e-9)
+
+        - record: collegehub:slo:jobs:error_budget_remaining
+          expr: |
+            1 - (sum(rate(collegehub_jobs_total{result="failure"}[30d])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_jobs_total[30d])) by (service), 1e-9)) / 0.01
+
+        - record: collegehub:slo:jobs:burn_rate:5m
+          expr: |
+            collegehub:slo:jobs:failure_ratio:rate5m / 0.01
+        - record: collegehub:slo:jobs:burn_rate:30m
+          expr: |
+            collegehub:slo:jobs:failure_ratio:rate30m / 0.01
+        - record: collegehub:slo:jobs:burn_rate:1h
+          expr: |
+            collegehub:slo:jobs:failure_ratio:rate1h / 0.01
+
+        - alert: CollegeHubJobsErrorBudgetBurnShortWindow
+          expr: |
+            collegehub:slo:jobs:burn_rate:5m >= 14.4
+          for: 5m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub job SLO burning fast (short window)"
+            description: "Job failure burn rate is {{ $value }}x over 5m (limit 14.4x)."
+
+        - alert: CollegeHubJobsErrorBudgetBurnMediumWindow
+          expr: |
+            collegehub:slo:jobs:burn_rate:30m >= 6
+          for: 30m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub job SLO burning (medium window)"
+            description: "Job failure burn rate is {{ $value }}x over 30m (limit 6x)."
+
+        - alert: CollegeHubJobsErrorBudgetBurnLongWindow
+          expr: |
+            collegehub:slo:jobs:burn_rate:1h >= 1
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub job SLO burning (long window)"
+            description: "Job failure burn rate is {{ $value }}x over 1h (limit 1x)."
+
+        - alert: CollegeHubJobsErrorBudgetExhausted
+          expr: |
+            collegehub:slo:jobs:error_budget_remaining <= 0.25
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub job error budget below 25%"
+            description: "{{ $value | humanizePercentage }} of the job error budget remains; the worker will miss its 99% SLO at this rate."
+---
+# Source: collegehub/templates/observability/prometheusrules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-process
+  namespace: "collegehub-staging"
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-process
+      rules:
+        - alert: CollegeHubEventLoopLagHigh
+          expr: |
+            max(nodejs_eventloop_lag_seconds) by (service) > 1
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub event loop lag above 1s"
+            description: "Service {{ $labels.service }} event loop is blocked for {{ $value }}s. Look for synchronous work or unbounded CPU loops."
+
+        - alert: CollegeHubHeapUsageHigh
+          expr: |
+            max(nodejs_heap_size_used_bytes / nodejs_heap_size_total_bytes) by (service) > 0.9
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub Node.js heap usage above 90%"
+            description: "Service {{ $labels.service }} heap is {{ $value | humanizePercentage }} full. Investigate memory leaks or growing caches."
+
+        - alert: CollegeHubProcessRestarting
+          expr: |
+            changes(process_start_time_seconds[15m]) > 2
+          for: 0m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub process restarting repeatedly"
+            description: "Process on {{ $labels.instance }} has restarted more than twice in 15 minutes (crash loop)."
+---
+# Source: collegehub/templates/observability/prometheusrules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-worker
+  namespace: "collegehub-staging"
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-worker
+      rules:
+        - alert: CollegeHubWorkerDown
+          expr: |
+            up{job="collegehub-worker"} == 0
+          for: 1m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: "College Hub worker is down"
+            description: "{{ $labels.instance }} has been unreachable for more than 1 minute."
+
+        - alert: CollegeHubJobFailureRateHigh
+          expr: |
+            sum(rate(collegehub_jobs_total{result="failure"}[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_jobs_total[5m])) by (service), 1e-9) > 0.1
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub job failure rate above 10%"
+            description: "Service {{ $labels.service }} is failing {{ $value | humanizePercentage }} of background jobs. Check `collegehub_jobs_total` by job label."
+
+        - alert: CollegeHubJobDurationP99High
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(collegehub_job_duration_seconds_bucket[5m])) by (le, service)) > 30
+          for: 15m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub job p99 duration above 30s"
+            description: "p99 background job duration for {{ $labels.service }} is {{ $value }}s."
+
+        - alert: CollegeHubJobsStuckInFlight
+          expr: |
+            sum(collegehub_jobs_in_flight) by (service) > 20
+          for: 15m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub background jobs appear stuck"
+            description: "Service {{ $labels.service }} has had {{ $value }} jobs in flight for 15 minutes; the worker may be hung or retrying a poison message."
+---
+# Source: collegehub/templates/observability/servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: collegehub-api
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "api"
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: collegehub
+      app.kubernetes.io/instance: collegehub
+      app.kubernetes.io/component: "api"
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      honorLabels: true
+---
+# Source: collegehub/templates/migrations-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: collegehub-migrations
+  namespace: collegehub-staging
+  labels:
+    
+    helm.sh/chart: collegehub-1.0.0
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/instance: collegehub
+    app.kubernetes.io/version: "staging"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "migrations"
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 4
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        
+        app.kubernetes.io/name: collegehub
+        app.kubernetes.io/instance: collegehub
+        app.kubernetes.io/component: "migrations"
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: collegehub
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+        - name: migrations
+          image: ghcr.io/college-hub/collegehub-api:staging
+          imagePullPolicy: IfNotPresent
+          workingDir: /app/packages/database
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              if [ -d migrations ]; then
+                node dist/migrator.js
+              else
+                echo "No migration artifacts found; skipping database migration."
+              fi
+          envFrom:
+            - configMapRef:
+                name: collegehub-config
+            - secretRef:
+                name: collegehub-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

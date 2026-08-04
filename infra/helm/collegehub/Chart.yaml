@@ -1,0 +1,19 @@
+apiVersion: v2
+name: collegehub
+description: College Hub production deployment platform. Provider-neutral Kubernetes/Helm chart for AWS EKS, GCP GKE, Azure AKS, DigitalOcean and self-hosted clusters.
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+kubeVersion: ">=1.25.0"
+home: https://github.com/college-hub/collegehub
+sources:
+  - https://github.com/college-hub/collegehub
+keywords:
+  - college-hub
+  - modular-monolith
+  - fastify
+  - nextjs
+  - kubernetes
+maintainers:
+  - name: College Hub Engineering
+    email: platform@collegehub.internal

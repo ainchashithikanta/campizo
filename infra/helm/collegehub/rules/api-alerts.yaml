@@ -1,0 +1,72 @@
+﻿apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-api
+  namespace: {{ .Values.global.namespace | quote }}
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: collegehub-api
+      rules:
+        - alert: CollegeHubAPIDown
+          expr: |
+            up{job="collegehub-api"} == 0
+          for: 1m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: "College Hub API is down"
+            description: "{{ $labels.instance }} has been unreachable for more than 1 minute."
+
+        - alert: CollegeHubAPIHigh5xxRate
+          expr: |
+            sum(rate(collegehub_http_requests_total{status=~"5.."}[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_http_requests_total[5m])) by (service), 1e-9) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub API 5xx rate above 5%"
+            description: "Service {{ $labels.service }} is returning 5xx on more than 5% of requests over the last 5 minutes ({{ $value | humanizePercentage }})."
+
+        - alert: CollegeHubAPIHighLatencyP99
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(collegehub_http_request_duration_seconds_bucket[5m])) by (le, service)) > 2
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub API p99 latency above 2s"
+            description: "p99 request latency for {{ $labels.service }} is {{ $value }}s, above the 2s threshold."
+
+        - alert: CollegeHubAPITooManyInFlight
+          expr: |
+            sum(collegehub_http_requests_in_flight) by (service) > 200
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub API has too many in-flight requests"
+            description: "Service {{ $labels.service }} is processing {{ $value }} concurrent requests; the API may be saturating."
+
+        - alert: CollegeHubAPIResponseSizeAnomaly
+          expr: |
+            histogram_quantile(0.95,
+              sum(rate(collegehub_http_response_size_bytes_bucket[5m])) by (le, service)) > 5e6
+          for: 10m
+          labels:
+            severity: info
+            team: platform
+          annotations:
+            summary: "College Hub API p95 response size above 5MB"
+            description: "p95 response payload for {{ $labels.service }} is {{ $value }} bytes."

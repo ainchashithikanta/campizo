@@ -1,0 +1,24 @@
+{
+  "name": "@college-hub/security",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@college-hub/logger": "workspace:*",
+    "@college-hub/observability": "workspace:^",
+    "@college-hub/types": "workspace:*",
+    "argon2": "^0.45.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^1.6.0"
+  }
+}

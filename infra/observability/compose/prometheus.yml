@@ -1,0 +1,23 @@
+# Prometheus config for the College Hub local observability profile (MS-55).
+# Scrapes the API (:4000) and worker (:4100) /metrics endpoints running on the
+# host via Docker Desktop's host.docker.internal, plus its own /metrics.
+#
+# NOTE: alerting/SLO PrometheusRules are Kubernetes PrometheusRule CRDs (see
+# infra/helm/collegehub/rules) and are not loaded here; alerting is a
+# cluster-time concern.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 30s
+
+scrape_configs:
+  - job_name: collegehub-api
+    static_configs:
+      - targets: ['host.docker.internal:4000']
+
+  - job_name: collegehub-worker
+    static_configs:
+      - targets: ['host.docker.internal:4100']
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']

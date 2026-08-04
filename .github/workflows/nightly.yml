@@ -1,0 +1,43 @@
+name: Nightly Test & Maintenance Pipeline
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Every night at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  nightly-build:
+    name: Run Full Workspace Tests & Security Audits
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.0
+
+      - name: Setup Node.js (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Monorepo Type Check
+        run: pnpm run type-check
+
+      - name: Monorepo Vitest Suite
+        run: pnpm test
+
+      - name: Build Monorepo Workspaces
+        run: pnpm run build
+
+      - name: Security Vulnerability Scan
+        run: pnpm audit --audit-level=high
+        continue-on-error: true

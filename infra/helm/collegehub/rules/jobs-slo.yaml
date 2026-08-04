@@ -1,0 +1,97 @@
+﻿# ------------------------------------------------------------------------------
+# Background Jobs SLO (College Hub)
+# ------------------------------------------------------------------------------
+# Objective:   99% of background jobs complete successfully over a 30-day window.
+# Service:     college-hub-worker (apps/worker)
+# Error budget = 1 - 0.99 = 0.01
+# ------------------------------------------------------------------------------
+
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: collegehub-slo-jobs
+  namespace: {{ .Values.global.namespace | quote }}
+  labels:
+    app.kubernetes.io/name: collegehub
+    app.kubernetes.io/part-of: collegehub-observability
+    prometheus: k8s
+    role: slo-rules
+spec:
+  groups:
+    - name: collegehub-slo-jobs
+      rules:
+        - record: collegehub:slo:jobs:failure_ratio:rate5m
+          expr: |
+            sum(rate(collegehub_jobs_total{result="failure"}[5m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_jobs_total[5m])) by (service), 1e-9)
+        - record: collegehub:slo:jobs:failure_ratio:rate30m
+          expr: |
+            sum(rate(collegehub_jobs_total{result="failure"}[30m])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_jobs_total[30m])) by (service), 1e-9)
+        - record: collegehub:slo:jobs:failure_ratio:rate1h
+          expr: |
+            sum(rate(collegehub_jobs_total{result="failure"}[1h])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_jobs_total[1h])) by (service), 1e-9)
+
+        - record: collegehub:slo:jobs:error_budget_remaining
+          expr: |
+            1 - (sum(rate(collegehub_jobs_total{result="failure"}[30d])) by (service)
+              /
+            clamp_min(sum(rate(collegehub_jobs_total[30d])) by (service), 1e-9)) / 0.01
+
+        - record: collegehub:slo:jobs:burn_rate:5m
+          expr: |
+            collegehub:slo:jobs:failure_ratio:rate5m / 0.01
+        - record: collegehub:slo:jobs:burn_rate:30m
+          expr: |
+            collegehub:slo:jobs:failure_ratio:rate30m / 0.01
+        - record: collegehub:slo:jobs:burn_rate:1h
+          expr: |
+            collegehub:slo:jobs:failure_ratio:rate1h / 0.01
+
+        - alert: CollegeHubJobsErrorBudgetBurnShortWindow
+          expr: |
+            collegehub:slo:jobs:burn_rate:5m >= 14.4
+          for: 5m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub job SLO burning fast (short window)"
+            description: "Job failure burn rate is {{ $value }}x over 5m (limit 14.4x)."
+
+        - alert: CollegeHubJobsErrorBudgetBurnMediumWindow
+          expr: |
+            collegehub:slo:jobs:burn_rate:30m >= 6
+          for: 30m
+          labels:
+            severity: page
+            team: platform
+          annotations:
+            summary: "College Hub job SLO burning (medium window)"
+            description: "Job failure burn rate is {{ $value }}x over 30m (limit 6x)."
+
+        - alert: CollegeHubJobsErrorBudgetBurnLongWindow
+          expr: |
+            collegehub:slo:jobs:burn_rate:1h >= 1
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub job SLO burning (long window)"
+            description: "Job failure burn rate is {{ $value }}x over 1h (limit 1x)."
+
+        - alert: CollegeHubJobsErrorBudgetExhausted
+          expr: |
+            collegehub:slo:jobs:error_budget_remaining <= 0.25
+          for: 1h
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "College Hub job error budget below 25%"
+            description: "{{ $value | humanizePercentage }} of the job error budget remains; the worker will miss its 99% SLO at this rate."

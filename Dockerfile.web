@@ -1,0 +1,36 @@
+# Stage 1: Build Workspace
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+RUN npm install -g pnpm@9.1.0
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.json ./
+COPY apps/ ./apps/
+COPY modules/ ./modules/
+COPY packages/ ./packages/
+
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @college-hub/web... build
+
+# Stage 2: Production Runner (Next.js standalone)
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone/ /app/
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static /app/apps/web/.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
+
+CMD ["node", "apps/web/server.js"]

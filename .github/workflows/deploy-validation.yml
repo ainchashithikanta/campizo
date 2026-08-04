@@ -1,0 +1,109 @@
+name: Deploy Validation
+
+# Validates the MS-54 production deployment platform: Helm chart rendering,
+# Kubernetes schema conformance of the rendered manifests, and Docker image
+# builds for every application component.
+#
+# Runs on:
+#   - pull_request: pre-merge gate
+#   - push to main: post-merge confirmation
+
+on:
+  pull_request:
+    paths:
+      - 'Dockerfile.*'
+      - 'apps/**'
+      - 'modules/**'
+      - 'packages/**'
+      - 'infra/**'
+      - '.github/workflows/deploy-validation.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'Dockerfile.*'
+      - 'apps/**'
+      - 'modules/**'
+      - 'packages/**'
+      - 'infra/**'
+      - '.github/workflows/deploy-validation.yml'
+
+jobs:
+  helm-lint:
+    name: Helm lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.16.4
+
+      - name: Helm lint
+        run: helm lint infra/helm/collegehub
+
+      - name: Helm template (dev/staging/prod)
+        run: |
+          for env in dev staging prod; do
+            helm template collegehub infra/helm/collegehub \
+              --namespace "collegehub-${env}" \
+              --include-crds \
+              -f "infra/helm/collegehub/values.${env}.yaml" \
+              --set "global.namespace=collegehub-${env}" \
+              > "/tmp/render-${env}.yaml"
+            echo "Rendered ${env}: $(grep -c '^kind:' /tmp/render-${env}.yaml) resources"
+          done
+
+  kubeconform:
+    name: Manifest schema validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.16.4
+
+      - name: Install kubeconform
+        run: |
+          curl -sSfL https://github.com/yannh/kubeconform/releases/download/v0.6.6/kubeconform-linux-amd64.tar.gz -o kubeconform.tar.gz
+          tar -xzf kubeconform.tar.gz
+          sudo mv kubeconform /usr/local/bin/kubeconform
+          kubeconform -v
+
+      - name: Render all environments
+        run: |
+          for env in dev staging prod; do
+            helm template collegehub infra/helm/collegehub \
+              --namespace "collegehub-${env}" \
+              --include-crds \
+              -f "infra/helm/collegehub/values.${env}.yaml" \
+              --set "global.namespace=collegehub-${env}" \
+              > "/tmp/render-${env}.yaml"
+          done
+
+      - name: Validate rendered manifests
+        run: |
+          # `-ignore-missing-schemas` skips Prometheus Operator CRDs
+          # (ServiceMonitor/PodMonitor/PrometheusRule) rendered by the chart;
+          # native Kubernetes resources are still strictly validated.
+          for env in dev staging prod; do
+            kubeconform -strict -ignore-missing-schemas -summary -n 4 "/tmp/render-${env}.yaml"
+          done
+
+  docker-build:
+    name: Docker image build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: [api, web, worker]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -f "Dockerfile.${{ matrix.component }}" -t "collegehub-${{ matrix.component }}:ci" .

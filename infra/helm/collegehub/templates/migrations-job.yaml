@@ -1,0 +1,54 @@
+{{- if and .Values.migrations.enabled .Values.api.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "collegehub.fullname" . }}-migrations
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.componentLabels" (dict "context" . "component" "migrations") | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: {{ .Values.migrations.backoffLimit }}
+  activeDeadlineSeconds: {{ .Values.migrations.activeDeadlineSeconds }}
+  template:
+    metadata:
+      labels:
+        {{- include "collegehub.componentSelectorLabels" (dict "context" . "component" "migrations") | nindent 8 }}
+    spec:
+      restartPolicy: {{ .Values.migrations.restartPolicy }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+        - name: migrations
+          image: {{ include "collegehub.migrations.image" . }}
+          imagePullPolicy: {{ .Values.api.image.pullPolicy | default .Values.image.pullPolicy }}
+          workingDir: /app/packages/database
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              if [ -d migrations ]; then
+                node dist/migrator.js
+              else
+                echo "No migration artifacts found; skipping database migration."
+              fi
+          envFrom:
+            - configMapRef:
+                name: {{ include "collegehub.fullname" . }}-config
+            - secretRef:
+                name: {{ include "collegehub.fullname" . }}-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+{{- end }}

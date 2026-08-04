@@ -1,0 +1,29 @@
+{{- if and .Values.web.enabled .Values.web.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "collegehub.fullname" . }}-web
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.componentLabels" (dict "context" . "component" "web") | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "collegehub.fullname" . }}-web
+  minReplicas: {{ .Values.web.hpa.minReplicas }}
+  maxReplicas: {{ .Values.web.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.web.hpa.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.web.hpa.targetMemoryUtilizationPercentage }}
+{{- end }}

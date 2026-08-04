@@ -1,0 +1,192 @@
+{{- if .Values.networkPolicies.enabled }}
+{{- $dnsUdpPort := .Values.networkPolicies.dnsUdpPort }}
+{{- $apiPort := .Values.api.containerPort }}
+{{- $webPort := .Values.web.containerPort }}
+{{- $workerPort := .Values.worker.containerPort }}
+{{- $postgresPort := .Values.postgresql.port }}
+{{- $redisPort := .Values.redis.port }}
+---
+# Default-deny ingress for the entire College Hub namespace. Every workload must
+# be explicitly allowed by a subsequent policy.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "collegehub.fullname" . }}-default-deny-ingress
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.labels" . | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+---
+# Allow the ingress controller to reach the web workload.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "collegehub.fullname" . }}-allow-ingress-web
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "collegehub.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              {{- toYaml .Values.networkPolicies.ingressController.matchLabels | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: {{ $webPort }}
+---
+# Allow the ingress controller and the web workload to reach the API.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "collegehub.fullname" . }}-allow-api
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "collegehub.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              {{- toYaml .Values.networkPolicies.ingressController.matchLabels | nindent 14 }}
+        - podSelector:
+            matchLabels:
+              {{- include "collegehub.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: web
+      ports:
+        - protocol: TCP
+          port: {{ $apiPort }}
+---
+# Allow the worker to reach its health server from probes (same pod, any source).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "collegehub.fullname" . }}-allow-worker-health
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "collegehub.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: worker
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "collegehub.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: worker
+      ports:
+        - protocol: TCP
+          port: {{ $workerPort }}
+---
+# API egress: DNS + web/health + PostgreSQL + Redis + HTTP(S) for external providers.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "collegehub.fullname" . }}-api-egress
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "collegehub.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: api
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - protocol: UDP
+          port: {{ $dnsUdpPort }}
+        - protocol: TCP
+          port: {{ $dnsUdpPort }}
+    - ports:
+        - protocol: TCP
+          port: {{ $postgresPort }}
+        - protocol: TCP
+          port: {{ $redisPort }}
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+---
+# Worker egress: DNS + PostgreSQL + Redis + HTTP(S) for external providers.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "collegehub.fullname" . }}-worker-egress
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "collegehub.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: worker
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - protocol: UDP
+          port: {{ $dnsUdpPort }}
+        - protocol: TCP
+          port: {{ $dnsUdpPort }}
+    - ports:
+        - protocol: TCP
+          port: {{ $postgresPort }}
+        - protocol: TCP
+          port: {{ $redisPort }}
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+---
+# Web egress: DNS + API + HTTP(S) for external assets.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "collegehub.fullname" . }}-web-egress
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "collegehub.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - protocol: UDP
+          port: {{ $dnsUdpPort }}
+        - protocol: TCP
+          port: {{ $dnsUdpPort }}
+    - ports:
+        - protocol: TCP
+          port: {{ $apiPort }}
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+{{- end }}

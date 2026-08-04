@@ -1,0 +1,107 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-4);
+}
+
+.ratingSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-2);
+  align-items: center;
+  padding: var(--ch-spacing-4);
+  background-color: var(--ch-color-surface);
+  border: 1px solid var(--ch-color-border);
+  border-radius: var(--ch-radius-md);
+}
+
+.ratingLabel {
+  font-size: var(--ch-font-size-sm);
+  font-weight: var(--ch-font-weight-semibold);
+  color: var(--ch-color-text);
+}
+
+.dimensionsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ch-spacing-3);
+  padding: var(--ch-spacing-4);
+  background-color: var(--ch-color-surface);
+  border-radius: var(--ch-radius-md);
+}
+
+@media (min-width: 640px) {
+  .dimensionsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.dimRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-1);
+}
+
+.dimTitle {
+  font-size: var(--ch-font-size-xs);
+  font-weight: var(--ch-font-weight-medium);
+  color: var(--ch-color-text-muted);
+}
+
+.textareaWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ch-spacing-1);
+}
+
+.textareaLabel {
+  font-size: var(--ch-font-size-xs);
+  font-weight: var(--ch-font-weight-medium);
+  color: var(--ch-color-text);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: var(--ch-spacing-3);
+  font-size: var(--ch-font-size-sm);
+  font-family: var(--ch-font-sans);
+  background-color: var(--ch-color-surface);
+  border: 1px solid var(--ch-color-border);
+  border-radius: var(--ch-radius-md);
+  color: var(--ch-color-text);
+  resize: vertical;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--ch-color-border-focus);
+  box-shadow: 0 0 0 3px var(--ch-color-badge-bg);
+}
+
+.charCounter {
+  font-size: var(--ch-font-size-xs);
+  color: var(--ch-color-text-muted);
+  text-align: right;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ch-spacing-3);
+  background-color: var(--ch-color-surface);
+  border: 1px solid var(--ch-color-border);
+  border-radius: var(--ch-radius-md);
+}
+
+.toggleLabel {
+  font-size: var(--ch-font-size-xs);
+  font-weight: var(--ch-font-weight-medium);
+  color: var(--ch-color-text);
+}
+
+.toggleSub {
+  font-size: 11px;
+  color: var(--ch-color-text-muted);
+}

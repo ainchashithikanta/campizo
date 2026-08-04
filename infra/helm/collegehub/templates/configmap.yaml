@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "collegehub.fullname" . }}-config
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "collegehub.labels" . | nindent 4 }}
+data:
+  NODE_ENV: {{ .Values.global.environment | quote }}
+  HOST: "0.0.0.0"
+  PORT: {{ .Values.api.containerPort | quote }}
+  POSTGRES_HOST: {{ include "collegehub.postgresql.host" . | quote }}
+  REDIS_HOST: {{ include "collegehub.redis.host" . | quote }}
+  {{- if .Values.observability.enabled }}
+  METRICS_ENABLED: {{ .Values.observability.metricsEnabled | quote }}
+  OTEL_TRACES_ENABLED: {{ .Values.observability.tracesEnabled | quote }}
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.observability.otlpEndpoint | quote }}
+  {{- end }}
+  {{- if .Values.errorTracking.enabled }}
+  ERROR_TRACKING_ENABLED: "true"
+  ERROR_TRACKING_DEDUPE_WINDOW_MS: {{ default "86400000" .Values.errorTracking.dedupeWindowMs | quote }}
+  ERROR_TRACKING_TRANSPORTS: {{ default "structured,otel" .Values.errorTracking.transports | quote }}
+  {{- else }}
+  ERROR_TRACKING_ENABLED: "false"
+  {{- end }}
+  {{- $storageHandled := or .Values.minio.enabled (and (eq (default "local" .Values.config.STORAGE_PROVIDER) "s3") (.Values.external.storageEndpoint)) }}
+  {{- if .Values.minio.enabled }}
+  STORAGE_PROVIDER: s3
+  S3_ENDPOINT: {{ include "collegehub.minio.endpoint" . | quote }}
+  {{- else if and (eq (default "local" .Values.config.STORAGE_PROVIDER) "s3") (.Values.external.storageEndpoint) }}
+  S3_ENDPOINT: {{ .Values.external.storageEndpoint | quote }}
+  {{- end }}
+  {{- with .Values.config }}
+  {{- range $key, $value := . }}
+  {{- if not (and $storageHandled (or (eq $key "STORAGE_PROVIDER") (eq $key "S3_ENDPOINT"))) }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- end }}
+  {{- end }}

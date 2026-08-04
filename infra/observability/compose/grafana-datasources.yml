@@ -1,0 +1,12 @@
+# Grafana datasource provisioning for the College Hub observability profile.
+# UID "prometheus" matches the datasource referenced by every dashboard in
+# infra/helm/collegehub/dashboards.
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true

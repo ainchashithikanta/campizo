@@ -1,0 +1,26 @@
+{
+  "name": "@college-hub/mod-rate-my-professor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@college-hub/core": "workspace:*",
+    "@college-hub/database": "workspace:*",
+    "@college-hub/logger": "workspace:*",
+    "@college-hub/types": "workspace:*",
+    "drizzle-orm": "^0.31.2",
+    "fastify": "^4.28.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^1.6.0"
+  }
+}

@@ -1,0 +1,380 @@
+/* Campus Confessions Design System CSS */
+
+:root {
+  --conf-bg: #0f172a;
+  --conf-card-bg: #1e293b;
+  --conf-card-hover: #334155;
+  --conf-border: #334155;
+  --conf-border-accent: #475569;
+  
+  --conf-text-primary: #f8fafc;
+  --conf-text-secondary: #94a3b8;
+  --conf-text-muted: #64748b;
+  
+  --conf-accent-primary: #6366f1;
+  --conf-accent-primary-hover: #4f46e5;
+  --conf-accent-success: #10b981;
+  --conf-accent-warning: #f59e0b;
+  --conf-accent-danger: #ef4444;
+  --conf-accent-info: #06b6d4;
+
+  --conf-badge-trending-bg: rgba(245, 158, 11, 0.15);
+  --conf-badge-trending-fg: #f59e0b;
+  --conf-badge-hot-bg: rgba(239, 68, 68, 0.15);
+  --conf-badge-hot-fg: #f87171;
+  
+  --conf-font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --conf-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --conf-radius-sm: 6px;
+  --conf-radius-md: 12px;
+  --conf-radius-lg: 16px;
+  --conf-radius-full: 9999px;
+
+  --conf-transition-fast: 0.15s ease;
+  --conf-transition-normal: 0.25s ease;
+}
+
+/* Layout Container */
+.conf-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: var(--conf-font-body);
+  color: var(--conf-text-primary);
+  background-color: var(--conf-bg);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Header & Nav */
+.conf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--conf-border);
+  margin-bottom: 1.5rem;
+}
+
+.conf-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--conf-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.conf-nav {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.conf-nav-link {
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--conf-radius-full);
+  background: var(--conf-card-bg);
+  color: var(--conf-text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid var(--conf-border);
+  transition: all var(--conf-transition-fast);
+  white-space: nowrap;
+}
+
+.conf-nav-link:hover,
+.conf-nav-link.active {
+  background: var(--conf-accent-primary);
+  color: #fff;
+  border-color: var(--conf-accent-primary);
+}
+
+/* Confession Card */
+.conf-card {
+  background: var(--conf-card-bg);
+  border: 1px solid var(--conf-border);
+  border-radius: var(--conf-radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  transition: transform var(--conf-transition-fast), border-color var(--conf-transition-fast);
+}
+
+.conf-card:hover {
+  border-color: var(--conf-border-accent);
+}
+
+.conf-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.conf-pseudonym {
+  font-family: var(--conf-font-mono);
+  font-size: 0.85rem;
+  color: var(--conf-accent-info);
+  background: rgba(6, 182, 212, 0.1);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--conf-radius-sm);
+  font-weight: 600;
+}
+
+.conf-badges {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.conf-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--conf-radius-sm);
+  font-weight: 600;
+}
+
+.conf-badge-trending {
+  background: var(--conf-badge-trending-bg);
+  color: var(--conf-badge-trending-fg);
+}
+
+.conf-badge-hot {
+  background: var(--conf-badge-hot-bg);
+  color: var(--conf-badge-hot-fg);
+}
+
+.conf-card-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: var(--conf-text-primary);
+}
+
+.conf-card-content {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--conf-text-secondary);
+  margin-bottom: 1rem;
+  white-space: pre-wrap;
+}
+
+/* Vote & Actions Bar */
+.conf-vote-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.conf-btn-vote {
+  min-width: 48px;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--conf-radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--conf-text-secondary);
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all var(--conf-transition-fast);
+}
+
+.conf-btn-vote:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--conf-text-primary);
+}
+
+.conf-btn-vote.voted-up {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--conf-accent-success);
+  border-color: var(--conf-accent-success);
+}
+
+.conf-btn-vote.voted-down {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--conf-accent-danger);
+  border-color: var(--conf-accent-danger);
+}
+
+.conf-action-btn {
+  min-width: 48px;
+  min-height: 48px;
+  background: transparent;
+  border: none;
+  color: var(--conf-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  border-radius: var(--conf-radius-sm);
+  transition: color var(--conf-transition-fast);
+}
+
+.conf-action-btn:hover {
+  color: var(--conf-text-primary);
+}
+
+/* Create Wizard Form */
+.conf-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.conf-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--conf-text-secondary);
+}
+
+.conf-input,
+.conf-textarea,
+.conf-select {
+  width: 100%;
+  background: var(--conf-card-bg);
+  border: 1px solid var(--conf-border);
+  border-radius: var(--conf-radius-sm);
+  padding: 0.8rem;
+  color: var(--conf-text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.conf-input:focus,
+.conf-textarea:focus,
+.conf-select:focus {
+  outline: none;
+  border-color: var(--conf-accent-primary);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.conf-char-counter {
+  font-size: 0.8rem;
+  color: var(--conf-text-muted);
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+.conf-pii-warning {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid var(--conf-accent-warning);
+  color: #fbbf24;
+  padding: 0.75rem 1rem;
+  border-radius: var(--conf-radius-sm);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Comment Tree */
+.conf-comment-tree {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--conf-border);
+  padding-top: 1.5rem;
+}
+
+.conf-comment-item {
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 2px solid var(--conf-border-accent);
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 0 var(--conf-radius-sm) var(--conf-radius-sm) 0;
+}
+
+.conf-comment-item.depth-2 { margin-left: 1rem; }
+.conf-comment-item.depth-3 { margin-left: 2rem; }
+.conf-comment-item.depth-4 { margin-left: 3rem; }
+
+.conf-comment-pseudonym {
+  font-family: var(--conf-font-mono);
+  font-size: 0.8rem;
+  color: var(--conf-accent-primary);
+  font-weight: 600;
+}
+
+.conf-comment-content {
+  font-size: 0.9rem;
+  margin: 0.4rem 0;
+  color: var(--conf-text-secondary);
+}
+
+/* Floating FAB */
+.conf-fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--conf-radius-full);
+  background: var(--conf-accent-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+  font-size: 1.5rem;
+  transition: transform var(--conf-transition-fast);
+  z-index: 100;
+}
+
+.conf-fab:hover {
+  transform: scale(1.05);
+  background: var(--conf-accent-primary-hover);
+}
+
+/* Skeleton & Empty States */
+.conf-skeleton {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background-size: 200% 100%;
+  animation: confSkeletonLoading 1.5s infinite;
+  border-radius: var(--conf-radius-sm);
+  height: 20px;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes confSkeletonLoading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.conf-empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--conf-text-muted);
+}
+
+.conf-empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Focus Rings & Accessibility */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--conf-accent-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

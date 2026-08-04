@@ -1,0 +1,135 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(collegehub_db_query_duration_seconds_bucket[$__rate_interval])) by (le, result))",
+          "legendFormat": "p50 {{result}}",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(collegehub_db_query_duration_seconds_bucket[$__rate_interval])) by (le, result))",
+          "legendFormat": "p99 {{result}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Query Duration (p50 / p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        {
+          "expr": "sum(rate(collegehub_db_query_duration_seconds_count[$__rate_interval]))",
+          "legendFormat": "queries/s",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(collegehub_db_query_errors_total[$__rate_interval]))",
+          "legendFormat": "errors/s",
+          "refId": "B"
+        }
+      ],
+      "title": "Query Throughput & Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        {
+          "expr": "topk(10, sum by (query_hash, query_prefix) (increase(collegehub_db_slow_queries_total[$__range])))",
+          "legendFormat": "{{query_prefix}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Slow Queries (top 10 by hash)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "line", "fillOpacity": 8, "lineWidth": 2, "showPoints": "never" },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        {
+          "expr": "collegehub_db_pool{state=\"total\"}",
+          "legendFormat": "total",
+          "refId": "A"
+        },
+        {
+          "expr": "collegehub_db_pool{state=\"idle\"}",
+          "legendFormat": "idle",
+          "refId": "B"
+        },
+        {
+          "expr": "collegehub_db_pool{state=\"waiting\"}",
+          "legendFormat": "waiting",
+          "refId": "C"
+        }
+      ],
+      "title": "PostgreSQL Connection Pool",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["collegehub", "observability", "database"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "College Hub — Database",
+  "uid": "collegehub-database",
+  "version": 1,
+  "weekStart": ""
+}

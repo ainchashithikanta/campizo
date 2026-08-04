@@ -1,0 +1,39 @@
+{
+  "name": "@college-hub/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/server.js",
+    "test": "vitest run",
+    "lint": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@college-hub/config": "workspace:*",
+    "@college-hub/core": "workspace:*",
+    "@college-hub/database": "workspace:*",
+    "@college-hub/feature-flags": "workspace:*",
+    "@college-hub/logger": "workspace:*",
+    "@college-hub/mod-rate-my-professor": "workspace:*",
+    "@college-hub/mod-error-tracking": "workspace:*",
+    "@college-hub/observability": "workspace:^",
+    "@college-hub/providers": "workspace:*",
+    "@college-hub/security": "workspace:*",
+    "@college-hub/theme-engine": "workspace:*",
+    "@college-hub/types": "workspace:*",
+    "@fastify/cors": "^8.5.0",
+    "@fastify/helmet": "^11.1.1",
+    "@fastify/rate-limit": "^8.1.1",
+    "fastify": "^4.28.1",
+    "fastify-plugin": "^4.5.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.6",
+    "pg": "^8.12.0",
+    "typescript": "^5.5.4",
+    "vitest": "^1.6.0"
+  }
+}

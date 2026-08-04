@@ -1,0 +1,21 @@
+{
+  "name": "@college-hub/logger",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "pino": "^9.3.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^1.6.0"
+  }
+}

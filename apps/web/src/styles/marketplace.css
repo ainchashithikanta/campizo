@@ -1,0 +1,255 @@
+/* Campus Marketplace CSS Tokens & Components */
+
+:root {
+  --mp-color-emerald: #10b981;
+  --mp-color-emerald-light: #ecfdf5;
+  --mp-color-emerald-dark: #047857;
+  --mp-color-indigo: #4f46e5;
+  --mp-color-amber: #f59e0b;
+  --mp-color-amber-light: #fef3c7;
+  --mp-color-slate-50: #f8fafc;
+  --mp-color-slate-100: #f1f5f9;
+  --mp-color-slate-200: #e2e8f0;
+  --mp-color-slate-300: #cbd5e1;
+  --mp-color-slate-500: #64748b;
+  --mp-color-slate-700: #334155;
+  --mp-color-slate-900: #0f172a;
+
+  --mp-radius-sm: 4px;
+  --mp-radius-md: 8px;
+  --mp-radius-lg: 16px;
+  --mp-radius-full: 9999px;
+
+  --mp-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --mp-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --mp-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.mp-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.mp-hero-banner {
+  background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%);
+  color: #ffffff;
+  border-radius: var(--mp-radius-lg);
+  padding: 2.5rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--mp-shadow-lg);
+}
+
+.mp-hero-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.025em;
+}
+
+.mp-hero-subtitle {
+  font-size: 1.125rem;
+  color: #a7f3d0;
+  margin-bottom: 1.5rem;
+}
+
+/* Category Pill Carousel */
+.mp-category-carousel {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  margin-bottom: 2rem;
+  scrollbar-width: thin;
+}
+
+.mp-category-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: #ffffff;
+  border: 1px solid var(--mp-color-slate-200);
+  border-radius: var(--mp-radius-full);
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--mp-color-slate-700);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.mp-category-pill:hover,
+.mp-category-pill.active {
+  background-color: var(--mp-color-emerald);
+  color: #ffffff;
+  border-color: var(--mp-color-emerald);
+}
+
+/* Listing Grid & Cards */
+.mp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.mp-card {
+  background-color: #ffffff;
+  border: 1px solid var(--mp-color-slate-200);
+  border-radius: var(--mp-radius-md);
+  overflow: hidden;
+  box-shadow: var(--mp-shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.mp-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mp-shadow-md);
+}
+
+/* Fixed 4:3 Image Aspect Ratio */
+.mp-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 75%; /* 4:3 Aspect Ratio */
+  background-color: var(--mp-color-slate-100);
+  overflow: hidden;
+}
+
+.mp-card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mp-card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.mp-card-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.mp-card-price {
+  font-family: monospace;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--mp-color-slate-900);
+}
+
+.mp-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--mp-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.mp-badge-emerald {
+  background-color: var(--mp-color-emerald-light);
+  color: var(--mp-color-emerald-dark);
+}
+
+.mp-badge-amber {
+  background-color: var(--mp-color-amber-light);
+  color: #92400e;
+}
+
+.mp-badge-slate {
+  background-color: var(--mp-color-slate-100);
+  color: var(--mp-color-slate-700);
+}
+
+.mp-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--mp-color-slate-900);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.mp-card-location {
+  font-size: 0.875rem;
+  color: var(--mp-color-slate-500);
+  margin-top: auto;
+}
+
+/* 24-Hour Reservation Banner */
+.mp-reservation-banner {
+  background-color: var(--mp-color-amber-light);
+  border: 1px solid var(--mp-color-amber);
+  border-radius: var(--mp-radius-md);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #78350f;
+  font-weight: 500;
+}
+
+/* Chat Sticky Item Header */
+.mp-chat-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--mp-color-slate-200);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mp-offer-card {
+  border: 2px solid var(--mp-color-emerald);
+  border-radius: var(--mp-radius-md);
+  padding: 1rem;
+  background-color: var(--mp-color-emerald-light);
+  margin: 1rem 0;
+}
+
+.mp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--mp-radius-md);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.mp-btn-primary {
+  background-color: var(--mp-color-emerald);
+  color: #ffffff;
+}
+
+.mp-btn-primary:hover {
+  background-color: var(--mp-color-emerald-dark);
+}
+
+.mp-btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--mp-color-slate-300);
+  color: var(--mp-color-slate-700);
+}
+
+.mp-btn-outline:hover {
+  background-color: var(--mp-color-slate-100);
+}
