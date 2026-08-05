@@ -61,7 +61,7 @@ describe('Provider Abstraction Layer & Plugin Architecture', () => {
     await expect(cb.execute(failingTask)).rejects.toThrow('CircuitBreaker is OPEN');
   });
 
-  it('should execute upload, download, and delete operations on MockStorageProvider', async () => {
+  it('should execute upload, download, exists, signedUrl, list, copy, move, and delete operations on MockStorageProvider', async () => {
     const storage = new MockStorageProvider();
     manager.register(storage);
 
@@ -69,17 +69,52 @@ describe('Provider Abstraction Layer & Plugin Architecture', () => {
     const uploadRes = await activeStorage.upload(
       'documents/syllabus.pdf',
       Buffer.from('Syllabus Content'),
-      'application/pdf'
+      'application/pdf',
+      { bucket: 'documents' }
     );
 
     expect(uploadRes.path).toBe('documents/syllabus.pdf');
     expect(uploadRes.sizeBytes).toBeGreaterThan(0);
 
-    const downloaded = await activeStorage.download('documents/syllabus.pdf');
+    const exists = await activeStorage.exists('documents/syllabus.pdf', { bucket: 'documents' });
+    expect(exists).toBe(true);
+
+    const downloaded = await activeStorage.download('documents/syllabus.pdf', { bucket: 'documents' });
     expect(downloaded.toString()).toBe('Syllabus Content');
 
-    const deleted = await activeStorage.delete('documents/syllabus.pdf');
+    const signedUrl = await activeStorage.signedUrl('documents/syllabus.pdf', 3600, { bucket: 'documents' });
+    expect(signedUrl).toContain('mock-jwt');
+
+    const listItems = await activeStorage.list('documents/', { bucket: 'documents' });
+    expect(listItems.length).toBeGreaterThan(0);
+
+    const copied = await activeStorage.copy('documents/syllabus.pdf', 'documents/syllabus-copy.pdf', { fromBucket: 'documents' });
+    expect(copied).toBe(true);
+
+    const moved = await activeStorage.move('documents/syllabus-copy.pdf', 'documents/syllabus-moved.pdf', { fromBucket: 'documents' });
+    expect(moved).toBe(true);
+
+    const deleted = await activeStorage.delete('documents/syllabus.pdf', { bucket: 'documents' });
     expect(deleted).toBe(true);
+  });
+
+  it('should validate SupabaseStorageProvider options, MIME types, and size limits', async () => {
+    const { SupabaseStorageProvider } = await import('../src/supabase-storage.provider.js');
+    const provider = new SupabaseStorageProvider({
+      supabaseUrl: 'http://localhost:54321',
+      supabaseServiceRoleKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock'
+    });
+
+    expect(provider.name).toBe('supabase-storage');
+    expect(provider.getCapabilities()).toContain('mimeValidation');
+
+    expect(() => provider.validateMimeType('application/pdf')).not.toThrow();
+    expect(() => provider.validateMimeType('image/png')).not.toThrow();
+    expect(() => provider.validateMimeType('video/mp4')).not.toThrow();
+    expect(() => provider.validateMimeType('application/executable-exe')).toThrow();
+
+    expect(() => provider.validateFileSize(100, 500)).not.toThrow();
+    expect(() => provider.validateFileSize(1000, 500)).toThrow();
   });
 
   it('should generate embeddings and text completions on MockAiProvider', async () => {
@@ -94,3 +129,4 @@ describe('Provider Abstraction Layer & Plugin Architecture', () => {
     expect(embeddings.length).toBe(1536);
   });
 });
+

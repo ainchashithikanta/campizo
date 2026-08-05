@@ -1,5 +1,5 @@
 {
-  "name": "@college-hub/providers",
+  "name": "@college-hub/mail",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -8,12 +8,13 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
+    "lint": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@college-hub/config": "workspace:*",
     "@college-hub/logger": "workspace:*",
-    "@college-hub/types": "workspace:*",
-    "@supabase/supabase-js": "^2.49.1"
+    "resend": "^4.1.2"
   },
   "devDependencies": {
     "typescript": "^5.5.4",

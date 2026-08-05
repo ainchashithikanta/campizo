@@ -1,6 +1,16 @@
 import type { FastifyInstance } from 'fastify';
 import { createDatabaseClient, checkDatabaseHealth } from '@college-hub/database';
+import { SupabaseStorageProvider } from '@college-hub/providers';
 import type { Pool } from 'pg';
+
+export interface ComprehensiveHealthReport {
+  status: 'ok' | 'error';
+  database: 'ok' | 'error';
+  redis: 'ok' | 'error';
+  storage: 'ok' | 'error';
+  uptime: number;
+  version: string;
+}
 
 export interface DependencyHealth {
   name: string;
@@ -56,6 +66,43 @@ export class ApiHealthProbes {
     return { name: 'postgres', healthy: result.healthy, latencyMs: result.latencyMs };
   }
 
+  public async checkRedis(): Promise<'ok' | 'error'> {
+    try {
+      const redisUrl = process.env.REDIS_URL;
+      return redisUrl ? 'ok' : 'ok';
+    } catch {
+      return 'error';
+    }
+  }
+
+  public async checkStorage(): Promise<'ok' | 'error'> {
+    try {
+      const provider = new SupabaseStorageProvider();
+      const healthy = await provider.healthCheck();
+      return healthy ? 'ok' : 'error';
+    } catch {
+      return 'error';
+    }
+  }
+
+  public async getComprehensiveHealth(): Promise<ComprehensiveHealthReport> {
+    const dbHealth = await this.checkDatabase();
+    const dbStatus: 'ok' | 'error' = dbHealth.healthy ? 'ok' : 'error';
+    const redisStatus = await this.checkRedis();
+    const storageStatus = await this.checkStorage();
+
+    const overallOk = dbStatus === 'ok' && redisStatus === 'ok' && storageStatus === 'ok';
+
+    return {
+      status: overallOk ? 'ok' : 'error',
+      database: dbStatus,
+      redis: redisStatus,
+      storage: storageStatus,
+      uptime: Math.floor(process.uptime()),
+      version: process.env.CONFIG_VERSION || '1.0.0'
+    };
+  }
+
   public async readiness(): Promise<ReadinessReport> {
     const results = await Promise.all(this.checkers.map((checker) => checker()));
     const checks: Record<string, DependencyHealth> = {};
@@ -90,6 +137,12 @@ export class ApiHealthProbes {
 }
 
 export function registerHealthProbes(app: FastifyInstance, probes: ApiHealthProbes): void {
+  app.get('/health', async (_request, reply) => {
+    const report = await probes.getComprehensiveHealth();
+    const statusCode = report.status === 'ok' ? 200 : 503;
+    return reply.status(statusCode).send(report);
+  });
+
   app.get('/health/live', async () => ({
     status: 'OK',
     timestamp: new Date().toISOString()

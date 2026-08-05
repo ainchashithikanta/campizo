@@ -85,16 +85,22 @@ async function gatewayPipelinePluginFn(fastify: FastifyInstance, opts: PipelineO
   fastify.addHook('onResponse', async (request: FastifyRequest, reply: FastifyReply) => {
     const context = TraceContextStore.getContext();
     const requestId = (request.headers['x-request-id'] as string) || 'unknown';
+    const userId = (request.headers['x-user-id'] as string) || context?.userId || undefined;
+    const collegeId = (request.headers['x-college-id'] as string) || context?.tenantId || undefined;
 
     logger.info(
       {
         requestId,
         traceId: context?.traceId,
-        tenantId: context?.tenantId,
+        tenantId: collegeId,
+        collegeId,
+        userId,
         url: request.url,
         method: request.method,
         statusCode: reply.statusCode,
-        responseTimeMs: reply.elapsedTime
+        responseTimeMs: reply.elapsedTime,
+        ipAddress: request.ip,
+        userAgent: (request.headers['user-agent'] as string) || 'unknown'
       },
       `HTTP ${request.method} ${request.url} - ${reply.statusCode}`
     );
@@ -118,21 +124,31 @@ async function gatewayPipelinePluginFn(fastify: FastifyInstance, opts: PipelineO
     (error: Error & { statusCode?: number; code?: string }, request: FastifyRequest, reply: FastifyReply) => {
       const statusCode = error.statusCode || 500;
       const requestId = (request.headers['x-request-id'] as string) || 'unknown';
+      const userId = (request.headers['x-user-id'] as string) || undefined;
+      const collegeId = (request.headers['x-college-id'] as string) || undefined;
 
-      logger.error(
+      const logFn = statusCode >= 500 ? logger.error.bind(logger) : logger.warn.bind(logger);
+
+      logFn(
         {
           err: error,
+          stack: error.stack,
           requestId,
+          userId,
+          collegeId,
           url: request.url,
-          statusCode
+          method: request.method,
+          statusCode,
+          ipAddress: request.ip,
+          userAgent: (request.headers['user-agent'] as string) || 'unknown'
         },
         `API Exception: ${error.message}`
       );
 
       if (statusCode >= 500) {
         auditLogger.logAction({
-          collegeId: (request.headers['x-college-id'] as string) || 'system',
-          actorUserId: (request.headers['x-user-id'] as string) || 'guest',
+          collegeId: collegeId || 'system',
+          actorUserId: userId || 'guest',
           actorRole: 'SYSTEM',
           severity: 'CRITICAL',
           action: 'UNHANDLED_EXCEPTION',
@@ -148,7 +164,7 @@ async function gatewayPipelinePluginFn(fastify: FastifyInstance, opts: PipelineO
           tracker.captureRequestError(error, {
             requestId,
             traceId: TraceContextStore.getContext()?.traceId,
-            tenantId: (request.headers['x-college-id'] as string) || undefined,
+            tenantId: collegeId || undefined,
             route: request.url,
             method: request.method,
             statusCode,

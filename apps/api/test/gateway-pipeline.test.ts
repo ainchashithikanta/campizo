@@ -16,7 +16,7 @@ describe('API Gateway, Security Middleware & Request Pipeline (MS-17)', () => {
   it('should generate x-request-id and x-correlation-id headers automatically', async () => {
     const res = await app.inject({
       method: 'GET',
-      url: '/health'
+      url: '/health/live'
     });
 
     expect(res.statusCode).toBe(200);
@@ -28,7 +28,7 @@ describe('API Gateway, Security Middleware & Request Pipeline (MS-17)', () => {
   it('should inject security headers (Helmet HSTS, X-Frame-Options, CSP)', async () => {
     const res = await app.inject({
       method: 'GET',
-      url: '/health'
+      url: '/health/live'
     });
 
     expect(res.headers['x-frame-options']).toBeDefined();
@@ -38,7 +38,7 @@ describe('API Gateway, Security Middleware & Request Pipeline (MS-17)', () => {
   it('should process CORS origin validation headers', async () => {
     const res = await app.inject({
       method: 'OPTIONS',
-      url: '/health',
+      url: '/health/live',
       headers: {
         origin: 'https://stanford.collegehub.edu',
         'access-control-request-method': 'GET'
@@ -52,7 +52,7 @@ describe('API Gateway, Security Middleware & Request Pipeline (MS-17)', () => {
   it('should process x-idempotency-key headers on requests', async () => {
     const res = await app.inject({
       method: 'GET',
-      url: '/health',
+      url: '/health/live',
       headers: {
         'x-idempotency-key': 'idempotency-key-uuid-12345'
       }

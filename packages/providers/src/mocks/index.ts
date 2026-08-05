@@ -1,4 +1,13 @@
-import type { StorageProvider, StorageUploadResult } from '../storage.interface.js';
+import type {
+  StorageProvider,
+  StorageUploadResult,
+  StorageBucketOptions,
+  StorageUploadOptions,
+  StorageSignedUrlOptions,
+  StorageListOptions,
+  StorageCopyOptions,
+  StorageListItem
+} from '../storage.interface.js';
 import type { NotificationProvider, NotificationPayload } from '../notification.interface.js';
 import type { EmailProvider } from '../email.interface.js';
 import type { AiProvider, AiOptions } from '../ai.interface.js';
@@ -22,31 +31,102 @@ export class MockStorageProvider implements StorageProvider {
     return { healthy: true, details: { storedFiles: this.files.size } };
   }
   public getCapabilities(): string[] {
-    return ['upload', 'download', 'delete', 'getPublicUrl'];
+    return ['upload', 'download', 'delete', 'exists', 'getPublicUrl', 'signedUrl', 'list', 'copy', 'move'];
   }
 
-  public async upload(path: string, content: Buffer | Uint8Array, _mimeType: string): Promise<StorageUploadResult> {
+  private getKey(path: string, bucket?: string): string {
+    const b = bucket || 'default';
+    return `${b}:${path}`;
+  }
+
+  public async upload(
+    path: string,
+    content: Buffer | Uint8Array,
+    _mimeType: string,
+    options?: StorageUploadOptions
+  ): Promise<StorageUploadResult> {
     const buf = Buffer.isBuffer(content) ? content : Buffer.from(content);
+    const key = this.getKey(path, options?.bucket);
+    this.files.set(key, buf);
     this.files.set(path, buf);
     return {
       path,
-      url: `https://mock-storage.collegehub.internal/${path}`,
+      url: `https://mock-storage.collegehub.internal/${options?.bucket || 'default'}/${path}`,
       sizeBytes: buf.length
     };
   }
 
-  public async download(path: string): Promise<Buffer> {
-    const file = this.files.get(path);
+  public async download(path: string, options?: StorageBucketOptions): Promise<Buffer> {
+    const key = this.getKey(path, options?.bucket);
+    const file = this.files.get(key) || this.files.get(path);
     if (!file) throw new Error(`File not found: ${path}`);
     return file;
   }
 
-  public async delete(path: string): Promise<boolean> {
-    return this.files.delete(path);
+  public async delete(path: string | string[], options?: StorageBucketOptions): Promise<boolean> {
+    const paths = Array.isArray(path) ? path : [path];
+    let deletedAny = false;
+    for (const p of paths) {
+      const key = this.getKey(p, options?.bucket);
+      const res1 = this.files.delete(key);
+      const res2 = this.files.delete(p);
+      if (res1 || res2) deletedAny = true;
+    }
+    return deletedAny;
   }
 
-  public getPublicUrl(path: string): string {
-    return `https://mock-storage.collegehub.internal/${path}`;
+  public async exists(path: string, options?: StorageBucketOptions): Promise<boolean> {
+    const key = this.getKey(path, options?.bucket);
+    return this.files.has(key) || this.files.has(path);
+  }
+
+  public getPublicUrl(path: string, options?: StorageBucketOptions): string {
+    return `https://mock-storage.collegehub.internal/${options?.bucket || 'default'}/${path}`;
+  }
+
+  public async signedUrl(
+    path: string,
+    expiresInSeconds = 3600,
+    options?: StorageSignedUrlOptions
+  ): Promise<string> {
+    return `https://mock-storage.collegehub.internal/signed/${options?.bucket || 'default'}/${path}?token=mock-jwt&expires=${expiresInSeconds}`;
+  }
+
+  public async list(prefix = '', options?: StorageListOptions): Promise<StorageListItem[]> {
+    const b = options?.bucket || 'default';
+    const items: StorageListItem[] = [];
+    for (const [key, buf] of this.files.entries()) {
+      if (key.startsWith(`${b}:`)) {
+        const name = key.replace(`${b}:`, '');
+        if (name.startsWith(prefix)) {
+          items.push({
+            name,
+            sizeBytes: buf.length,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
+      }
+    }
+    return items;
+  }
+
+  public async copy(fromPath: string, toPath: string, options?: StorageCopyOptions): Promise<boolean> {
+    const fromKey = this.getKey(fromPath, options?.fromBucket);
+    const file = this.files.get(fromKey) || this.files.get(fromPath);
+    if (!file) return false;
+    const toKey = this.getKey(toPath, options?.toBucket || options?.fromBucket);
+    this.files.set(toKey, Buffer.from(file));
+    this.files.set(toPath, Buffer.from(file));
+    return true;
+  }
+
+  public async move(fromPath: string, toPath: string, options?: StorageCopyOptions): Promise<boolean> {
+    const copied = await this.copy(fromPath, toPath, options);
+    if (copied) {
+      await this.delete(fromPath, options?.fromBucket ? { bucket: options.fromBucket } : undefined);
+    }
+    return copied;
   }
 }
 

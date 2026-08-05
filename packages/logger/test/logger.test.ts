@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createLogger, createChildLogger, redactSensitiveObject, TraceContextStore } from '../src/index.js';
+import { createLogger, createChildLogger, redactSensitiveObject, TraceContextStore, BetterStackTransportStream } from '../src/index.js';
 
 describe('Logger Package & Context Telemetry', () => {
   it('should initialize a structured logger instance', () => {
@@ -73,5 +73,18 @@ describe('Logger Package & Context Telemetry', () => {
       TraceContextStore.setSpanId(undefined);
       expect(TraceContextStore.getContext()?.spanId).toBeUndefined();
     });
+  });
+
+  it('BetterStackTransportStream handles log chunks non-blockingly without throwing', async () => {
+    const stream = new BetterStackTransportStream({
+      sourceToken: 'test-token',
+      ingestingHost: 'in.logs.betterstack.com',
+      batchSize: 2,
+      flushIntervalMs: 10000
+    });
+
+    expect(stream.isEnabled()).toBe(true);
+    stream.write(JSON.stringify({ level: 'info', msg: 'test log', timestamp: new Date().toISOString() }));
+    await stream.close();
   });
 });

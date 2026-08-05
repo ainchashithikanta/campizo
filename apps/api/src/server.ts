@@ -1,6 +1,6 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import { loadEnv } from '@college-hub/config';
-import { logger } from '@college-hub/logger';
+import { logger, setupProcessErrorHandler } from '@college-hub/logger';
 import { DynamicModuleRegistry, InMemoryEventBus } from '@college-hub/core';
 import { RateMyProfessorModule } from '@college-hub/mod-rate-my-professor';
 import {
@@ -76,17 +76,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   moduleRegistry.register(new RateMyProfessorModule());
   await moduleRegistry.initializeAll(app, eventBus);
 
-  // Module Health Endpoint (backward compatible)
-  app.get('/health', async (_request, reply) => {
-    const moduleHealth = await moduleRegistry.performHealthCheck();
-    return reply.send({
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      modules: moduleHealth
-    });
-  });
-
-  // Kubernetes Liveness, Readiness & Startup Probes
+  // Kubernetes Liveness, Readiness, Startup & Health Probes
   registerHealthProbes(app, healthProbes);
 
   // Release module resources, lazy connection pools and tracing SDK on shutdown
@@ -102,6 +92,7 @@ export async function buildApp(): Promise<FastifyInstance> {
 
 async function bootstrap() {
   const env = loadEnv();
+  setupProcessErrorHandler(logger);
   const app = await buildApp();
 
   const shutdown = (signal: NodeJS.Signals): void => {

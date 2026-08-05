@@ -20,6 +20,16 @@ export const envSchema = z
     OTEL_TRACES_ENABLED: z.coerce.boolean().default(false),
     OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
 
+    // Better Stack Logging & Monitoring Integration
+    BETTERSTACK_SOURCE_TOKEN: z.string().optional(),
+    BETTERSTACK_INGESTING_HOST: z.string().default('in.logs.betterstack.com'),
+
+    // Resend Email Service Integration
+    RESEND_API_KEY: z.string().optional(),
+    MAIL_FROM: z.string().default('noreply@yourdomain.com'),
+    MAIL_FROM_NAME: z.string().default('College Hub'),
+    APP_URL: z.string().url().default('http://localhost:3000'),
+
     // Error Tracking & Incident Response (MS-56)
     ERROR_TRACKING_ENABLED: z.coerce.boolean().default(false),
     ERROR_TRACKING_TRANSPORTS: z
@@ -53,13 +63,24 @@ export const envSchema = z
     ENCRYPTION_KEY_32_BYTES: z.string().length(32, 'ENCRYPTION_KEY_32_BYTES must be exactly 32 characters long'),
 
     // Storage Provider Abstraction
-    STORAGE_PROVIDER: z.enum(['local', 's3', 'r2', 'supabase']).default('local'),
+    STORAGE_PROVIDER: z.enum(['local', 's3', 'r2', 'supabase']).default('supabase'),
     S3_ENDPOINT: z.string().optional(),
     S3_REGION: z.string().default('us-east-1'),
     S3_BUCKET_NAME: z.string().default('collegehub-media'),
     S3_ACCESS_KEY_ID: z.string().optional(),
     S3_SECRET_ACCESS_KEY: z.string().optional(),
     S3_FORCE_PATH_STYLE: z.coerce.boolean().default(true),
+
+    // Supabase Core & Storage Configuration
+    SUPABASE_URL: z.string().url().default('http://localhost:54321'),
+    SUPABASE_ANON_KEY: z.string().default('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder'),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().default('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder'),
+    SUPABASE_STORAGE_BUCKET_AVATARS: z.string().default('avatars'),
+    SUPABASE_STORAGE_BUCKET_MARKETPLACE: z.string().default('marketplace'),
+    SUPABASE_STORAGE_BUCKET_MATERIALS: z.string().default('materials'),
+    SUPABASE_STORAGE_BUCKET_DOCUMENTS: z.string().default('documents'),
+    SUPABASE_STORAGE_BUCKET_EVENTS: z.string().default('events'),
+    SUPABASE_STORAGE_BUCKET_MISC: z.string().default('misc'),
 
     // Notification Provider Abstraction
     NOTIFICATION_PROVIDER: z.enum(['mock', 'firebase', 'expo', 'onesignal']).default('mock'),

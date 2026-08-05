@@ -111,23 +111,27 @@ describe('Unified Notification Engine Suite (MS-40 Production)', () => {
     const app = Fastify();
     await app.register(notificationRoutesPlugin, { useCases });
 
-    const resCategories = await app.inject({
-      method: 'GET',
-      url: '/notifications/categories'
-    });
-    expect(resCategories.statusCode).toBe(200);
-    const bodyCat = JSON.parse(resCategories.payload);
-    expect(bodyCat.data.length).toBeGreaterThanOrEqual(5);
+    try {
+      const resCategories = await app.inject({
+        method: 'GET',
+        url: '/notifications/categories'
+      });
+      expect(resCategories.statusCode).toBe(200);
+      const bodyCat = JSON.parse(resCategories.payload);
+      expect(bodyCat.data.length).toBeGreaterThanOrEqual(5);
 
-    const resDigest = await app.inject({
-      method: 'POST',
-      url: '/notifications/digests/generate',
-      headers: {
-        'x-college-id': 'college_stanford_001',
-        'x-user-id': 'usr_me'
-      },
-      payload: { digestType: 'DAILY' }
-    });
-    expect(resDigest.statusCode).toBe(201);
+      const resDigest = await app.inject({
+        method: 'POST',
+        url: '/notifications/digests/generate',
+        headers: {
+          'x-college-id': 'college_stanford_001',
+          'x-user-id': 'usr_me'
+        },
+        payload: { digestType: 'DAILY' }
+      });
+      expect(resDigest.statusCode).toBe(201);
+    } finally {
+      await app.close();
+    }
   });
 });

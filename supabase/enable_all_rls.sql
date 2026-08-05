@@ -1,0 +1,25 @@
+-- ==============================================================================
+-- Enable Row Level Security (RLS) on all public schema tables
+-- ==============================================================================
+
+ALTER TABLE IF EXISTS college_tenants ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS user_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS email_otps ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS audit_logs ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS academic_schemes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS resource_types ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS academic_resources ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS confession_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS confessions ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS marketplace_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS marketplace_conditions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS marketplace_listings ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS rate_my_professor_departments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS professors ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS report_reasons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS notification_channels ENABLE ROW LEVEL SECURITY;
