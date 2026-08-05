@@ -1,13 +1,29 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   ProviderManager,
   CircuitBreaker,
   MockStorageProvider,
   MockEmailProvider,
   MockAiProvider,
-  MockSearchProvider,
   type EmailProvider
 } from '../src/index.js';
+
+vi.mock('@supabase/supabase-js', () => ({
+  createClient: vi.fn(() => ({
+    storage: {
+      from: vi.fn(() => ({
+        upload: vi.fn(),
+        download: vi.fn(),
+        exists: vi.fn(),
+        list: vi.fn(),
+        remove: vi.fn(),
+        copy: vi.fn(),
+        move: vi.fn(),
+        getSignedUrl: vi.fn()
+      }))
+    }
+  }))
+}));
 
 describe('Provider Abstraction Layer & Plugin Architecture', () => {
   let manager: ProviderManager;
