@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: college-hub-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ENCRYPTION_KEY_32_BYTES
+        value: 0123456789abcdef0123456789abcdef
