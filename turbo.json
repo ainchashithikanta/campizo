@@ -42,7 +42,9 @@
     "SEARCH_PROVIDER",
     "AI_PROVIDER",
     "ALLOWED_ORIGINS",
-    "COOKIE_DOMAIN"
+    "COOKIE_DOMAIN",
+    "MAILPIT_UI_PORT",
+    "MAILPIT_SMTP_PORT"
   ],
   "tasks": {
     "build": {
