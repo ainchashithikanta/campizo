@@ -8,6 +8,7 @@ export interface ComprehensiveHealthReport {
   database: 'ok' | 'error';
   redis: 'ok' | 'error';
   storage: 'ok' | 'error';
+  storageError?: string;
   uptime: number;
   version: string;
 }
@@ -75,13 +76,13 @@ export class ApiHealthProbes {
     }
   }
 
-  public async checkStorage(): Promise<'ok' | 'error'> {
+  public async checkStorage(): Promise<{ status: 'ok' | 'error'; error?: string }> {
     try {
       const provider = new SupabaseStorageProvider();
       const healthy = await provider.healthCheck();
-      return healthy ? 'ok' : 'error';
-    } catch {
-      return 'error';
+      return healthy.healthy ? { status: 'ok' } : { status: 'error', error: healthy.message };
+    } catch (err) {
+      return { status: 'error', error: err instanceof Error ? err.message : String(err) };
     }
   }
 
@@ -91,13 +92,14 @@ export class ApiHealthProbes {
     const redisStatus = await this.checkRedis();
     const storageStatus = await this.checkStorage();
 
-    const overallOk = dbStatus === 'ok' && redisStatus === 'ok' && storageStatus === 'ok';
+    const overallOk = dbStatus === 'ok' && redisStatus === 'ok' && storageStatus.status === 'ok';
 
     return {
       status: overallOk ? 'ok' : 'error',
       database: dbStatus,
       redis: redisStatus,
-      storage: storageStatus,
+      storage: storageStatus.status,
+      ...(storageStatus.error ? { storageError: storageStatus.error } : {}),
       uptime: Math.floor(process.uptime()),
       version: process.env.CONFIG_VERSION || '1.0.0'
     };

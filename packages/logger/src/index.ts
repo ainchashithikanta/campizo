@@ -54,21 +54,22 @@ export function createLogger(config: LoggerConfig = {}): Logger {
   });
 
   if (isDevelopment && process.env.NODE_ENV !== 'test') {
-    pinoOptions.transport = {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
-        ignore: 'pid,hostname'
-      }
-    };
+    try {
+      pinoOptions.transport = {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
+          ignore: 'pid,hostname'
+        }
+      };
 
-    if (bsStream) {
-      const loggerInstance = pino(pinoOptions as PinoOptions, multistream([{ stream: bsStream, level: logLevel }]));
-      return loggerInstance;
+      return pino(pinoOptions as PinoOptions);
+    } catch {
+      // Pretty transport unavailable in this environment (e.g. serverless bundles) —
+      // fall back to plain JSON logging instead of crashing the process.
+      delete pinoOptions.transport;
     }
-
-    return pino(pinoOptions as PinoOptions);
   }
 
   if (bsStream) {
