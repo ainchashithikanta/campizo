@@ -13,7 +13,7 @@ export class ConfessionController {
     private queries: ConfessionQueries
   ) {}
 
-  async createConfession(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+  async createConfession(req: FastifyRequest, reply: FastifyReply): Promise<unknown> {
     const { collegeId, userId, requestId } = req.ctx;
     const body = createConfessionSchema.parse(req.body);
 
@@ -25,14 +25,15 @@ export class ConfessionController {
       content: body.content
     });
 
-    reply.status(201).send({
+    reply.status(201);
+    return {
       success: true,
       data: result,
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 
-  async getConfessionDetail(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply): Promise<void> {
+  async getConfessionDetail(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply): Promise<unknown> {
     const { collegeId, userId, requestId } = req.ctx;
 
     const detail = await this.queries.getConfessionDetail(req.params.id, collegeId, userId);
@@ -45,14 +46,15 @@ export class ConfessionController {
       return;
     }
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: detail,
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 
-  async voteConfession(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply): Promise<void> {
+  async voteConfession(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply): Promise<unknown> {
     const { collegeId, userId, requestId } = req.ctx;
     const body = voteConfessionSchema.parse(req.body);
 
@@ -64,14 +66,15 @@ export class ConfessionController {
       voteType: body.voteType
     });
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: { voted: true },
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 
-  async bookmarkConfession(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply): Promise<void> {
+  async bookmarkConfession(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply): Promise<unknown> {
     const { collegeId, userId, requestId } = req.ctx;
 
     await this.useCases.bookmarkConfession({
@@ -80,14 +83,15 @@ export class ConfessionController {
       userId
     });
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: { bookmarked: true },
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 
-  async reportConfession(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply): Promise<void> {
+  async reportConfession(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply): Promise<unknown> {
     const { collegeId, userId, requestId } = req.ctx;
     const body = reportConfessionSchema.parse(req.body);
 
@@ -99,10 +103,11 @@ export class ConfessionController {
       ...(body.details !== undefined ? { details: body.details } : {})
     });
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: { reported: true },
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 }

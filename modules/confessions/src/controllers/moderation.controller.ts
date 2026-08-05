@@ -9,7 +9,7 @@ export class ModerationController {
     private queries: ConfessionQueries
   ) {}
 
-  async getQueue(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+  async getQueue(req: FastifyRequest, reply: FastifyReply): Promise<unknown> {
     const { collegeId, requestId } = req.ctx;
     const cases = await this.queries.getModerationQueue(collegeId);
 
@@ -26,14 +26,15 @@ export class ModerationController {
       authorIdentity: 'BLIND'
     }));
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: blindCases,
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 
-  async recordDecision(req: FastifyRequest<{ Params: { caseId: string } }>, reply: FastifyReply): Promise<void> {
+  async recordDecision(req: FastifyRequest<{ Params: { caseId: string } }>, reply: FastifyReply): Promise<unknown> {
     const { collegeId, userId: moderatorUserId, requestId } = req.ctx;
     const body = moderationDecisionSchema.parse(req.body);
 
@@ -45,10 +46,11 @@ export class ModerationController {
       ...(body.reasonNote !== undefined ? { reasonNote: body.reasonNote } : {})
     });
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: { caseId: req.params.caseId, action: body.action },
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 }

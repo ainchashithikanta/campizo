@@ -16,10 +16,10 @@ export class PrivacyController {
   ) {}
 
   async getPrivacySettings(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const settings = await this.queryService.getPrivacySettings(request.context.userId, request.context.collegeId);
+    const settings = await this.queryService.getPrivacySettings(request.connectContext.userId, request.connectContext.collegeId);
     reply.send(
       formatApiV1Success(
-        settings || { studentProfileId: request.context.userId, isGhostMode: false, isIncognitoMode: false },
+        settings || { studentProfileId: request.connectContext.userId, isGhostMode: false, isIncognitoMode: false },
         request
       )
     );
@@ -28,12 +28,12 @@ export class PrivacyController {
   async updatePrivacySettings(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const input = updatePrivacySchema.parse(request.body);
     const updated = await this.useCases.updatePrivacy({
-      studentProfileId: request.context.userId,
-      collegeId: request.context.collegeId,
+      studentProfileId: request.connectContext.userId,
+      collegeId: request.connectContext.collegeId,
       isGhostMode: input.isGhostMode,
       isIncognitoMode: input.isIncognitoMode,
       version: input.version,
-      updatedBy: request.context.userId
+      updatedBy: request.connectContext.userId
     });
     reply.send(formatApiV1Success(updated, request));
   }

@@ -102,6 +102,7 @@ export function createIdempotencyMiddleware(store: IIdempotencyStore) {
     const cached = await store.get(compositeKey);
     if (cached) {
       reply.status(200).send(cached);
+      reply.hijack();
       return;
     }
   };

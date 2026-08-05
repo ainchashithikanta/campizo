@@ -45,8 +45,20 @@ async function gatewayPipelinePluginFn(fastify: FastifyInstance, opts: PipelineO
 
   // 3. CORS Configuration
   if (opts.enableCors !== false) {
+    const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean);
+
     await fastify.register(cors, {
-      origin: true,
+      origin: (origin, callback) => {
+        // Allow requests without an Origin header (server-to-server, health checks, curl)
+        if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+        return callback(new Error('Origin not allowed by CORS'), false);
+      },
+      credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: [
         'Content-Type',
@@ -54,6 +66,7 @@ async function gatewayPipelinePluginFn(fastify: FastifyInstance, opts: PipelineO
         'x-college-id',
         'x-college-slug',
         'x-request-id',
+        'x-user-id',
         'x-idempotency-key'
       ]
     });

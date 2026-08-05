@@ -69,7 +69,11 @@ export interface ModerationCaseDTO {
   authorIdentity: string;
 }
 
-const API_BASE = typeof window !== 'undefined' ? '/api/v1/confessions' : 'http://localhost:3000/api/v1/confessions';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL
+  ? `${process.env.NEXT_PUBLIC_API_URL}/api/v1/confessions`
+  : typeof window !== 'undefined'
+    ? '/api/v1/confessions'
+    : 'http://localhost:3001/api/v1/confessions';
 
 export class ConfessionsApiClient {
   private static getHeaders(collegeId: string, idempotencyKey?: string) {

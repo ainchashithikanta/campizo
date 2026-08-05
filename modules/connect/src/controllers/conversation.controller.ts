@@ -20,19 +20,19 @@ export class ConversationController {
     const convId = `conv_${Date.now()}`;
     const result = await this.useCases.createConversation({
       id: convId,
-      collegeId: request.context.collegeId,
+      collegeId: request.connectContext.collegeId,
       conversationType: input.conversationType,
       contextType: input.contextType,
       contextId: input.contextId,
       title: input.title,
-      createdBy: request.context.userId
+      createdBy: request.connectContext.userId
     });
     reply.status(201).send(formatApiV1Success(result, request));
   }
 
   async getConversation(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const { id } = request.params as { id: string };
-    const conv = await this.queryService.getConversation(id, request.context.collegeId);
+    const conv = await this.queryService.getConversation(id, request.connectContext.collegeId);
     reply.send(formatApiV1Success(conv, request));
   }
 }

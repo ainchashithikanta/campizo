@@ -12,19 +12,19 @@ export class ConnectProfileController {
   constructor(private readonly queryService: ConnectQueryService) {}
 
   async getMyProfile(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const profile = await this.queryService.getStudentProfile(request.context.userId, request.context.collegeId);
+    const profile = await this.queryService.getStudentProfile(request.connectContext.userId, request.connectContext.collegeId);
     reply.send(formatApiV1Success(profile, request));
   }
 
   async updateMyProfile(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const body = updateProfileSchema.parse(request.body);
-    reply.send(formatApiV1Success({ profileId: request.context.userId, ...body, status: 'UPDATED' }, request));
+    reply.send(formatApiV1Success({ profileId: request.connectContext.userId, ...body, status: 'UPDATED' }, request));
   }
 
   async getDiscoveryFeed(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const query = discoveryQuerySchema.parse(request.query);
     const feed = await this.queryService.getDiscoveryFeed(
-      request.context.collegeId,
+      request.connectContext.collegeId,
       query.intentType,
       query.limit,
       query.page

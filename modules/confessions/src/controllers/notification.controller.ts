@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 
 export class NotificationController {
-  async getNotifications(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+  async getNotifications(req: FastifyRequest, reply: FastifyReply): Promise<unknown> {
     const { collegeId, requestId } = req.ctx;
 
     const notifications = [
@@ -14,10 +14,11 @@ export class NotificationController {
       }
     ];
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: notifications,
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 }

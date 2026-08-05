@@ -14,13 +14,13 @@ export async function requestLoggerMiddleware(request: FastifyRequest, reply: Fa
       const latency = Date.now() - startTime;
       const logEntry = {
         level: 'info',
-        requestId: request.context?.requestId,
-        traceId: request.context?.traceId,
+        requestId: request.connectContext?.requestId,
+        traceId: request.connectContext?.traceId,
         endpoint: request.url,
         method: request.method,
         latency,
         statusCode: reply.statusCode,
-        collegeId: request.context?.collegeId
+        collegeId: request.connectContext?.collegeId
       };
 
       if (process.env['NODE_ENV'] !== 'test') {

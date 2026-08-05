@@ -20,6 +20,7 @@ import {
 import { gatewayPipelinePlugin } from './plugins/pipeline.plugin.js';
 import { observabilityPlugin } from './plugins/observability.plugin.js';
 import { ApiHealthProbes, registerHealthProbes } from './health.js';
+import { registerFeatureModules } from './modules.registry.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const serviceName = process.env.SERVICE_NAME ?? 'college-hub';
@@ -75,6 +76,26 @@ export async function buildApp(): Promise<FastifyInstance> {
   // Register Canonical Feature Modules
   moduleRegistry.register(new RateMyProfessorModule());
   await moduleRegistry.initializeAll(app, eventBus);
+
+  // Register all feature module REST APIs (confessions, connect, marketplace,
+  // academic-resources, notifications, placement-guidance)
+  await registerFeatureModules(app, eventBus);
+
+  // Root route (200) so the service root is browsable
+  app.get('/', async () => ({
+    success: true,
+    data: {
+      service: 'College Hub API',
+      status: 'online',
+      version: process.env.CONFIG_VERSION || '1.0.0',
+      environment: process.env.NODE_ENV || 'development',
+      uptime: Math.floor(process.uptime()),
+      docs: {
+        health: '/health',
+        metrics: '/metrics'
+      }
+    }
+  }));
 
   // Kubernetes Liveness, Readiness, Startup & Health Probes
   registerHealthProbes(app, healthProbes);

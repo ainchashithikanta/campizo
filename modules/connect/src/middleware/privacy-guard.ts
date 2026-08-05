@@ -11,7 +11,7 @@ import {
 } from '../errors/application-errors.js';
 
 export async function privacyGuardMiddleware(request: FastifyRequest, _reply: FastifyReply): Promise<void> {
-  const collegeId = request.context?.collegeId;
+  const collegeId = request.connectContext?.collegeId;
   if (!collegeId) {
     throw new ForbiddenApplicationError('College tenant isolation error: missing college context.');
   }
@@ -25,7 +25,7 @@ export async function privacyGuardMiddleware(request: FastifyRequest, _reply: Fa
   const targetUserId = (request.params as any)?.userId || (request.query as any)?.targetUserId;
   if (!targetUserId) return;
 
-  const currentUserId = request.context?.userId;
+  const currentUserId = request.connectContext?.userId;
   if (targetUserId === currentUserId) return; // Self access permitted
 
   // Ghost Mode Check

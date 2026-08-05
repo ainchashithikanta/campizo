@@ -15,9 +15,9 @@ export class ModerationController {
     const caseId = `case_${Date.now()}`;
     await this.useCases.reportUser({
       caseId,
-      collegeId: request.context.collegeId,
+      collegeId: request.connectContext.collegeId,
       reportedUserId: body?.reportedUserId || 'usr_target',
-      reporterUserId: request.context.userId,
+      reporterUserId: request.connectContext.userId,
       reason: body?.reason || 'POLICY_VIOLATION'
     });
     reply.status(201).send(formatApiV1Success({ caseId, status: 'OPEN' }, request));
@@ -27,9 +27,9 @@ export class ModerationController {
     const body = request.body as any;
     await this.useCases.recordModerationDecision({
       caseId: body?.caseId || 'case_default',
-      collegeId: request.context.collegeId,
+      collegeId: request.connectContext.collegeId,
       actionTaken: body?.actionTaken || 'WARN',
-      moderatorId: request.context.userId
+      moderatorId: request.connectContext.userId
     });
     reply.send(formatApiV1Success({ status: 'ACTION_RECORDED' }, request));
   }

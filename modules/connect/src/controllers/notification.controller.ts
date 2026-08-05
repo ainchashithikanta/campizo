@@ -11,7 +11,7 @@ export class NotificationController {
   constructor(private readonly queryService: ConnectQueryService) {}
 
   async getNotifications(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const notifications = await this.queryService.getNotifications(request.context.userId, request.context.collegeId);
+    const notifications = await this.queryService.getNotifications(request.connectContext.userId, request.connectContext.collegeId);
     reply.send(formatApiV1Success(notifications, request));
   }
 }

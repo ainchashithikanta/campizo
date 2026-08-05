@@ -17,10 +17,10 @@ export async function idempotencyMiddleware(request: FastifyRequest, reply: Fast
   const isWriteMethod = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method);
   if (!isWriteMethod) return;
 
-  const idempotencyKey = request.context?.idempotencyKey || (request.headers['idempotency-key'] as string | undefined);
+  const idempotencyKey = request.connectContext?.idempotencyKey || (request.headers['idempotency-key'] as string | undefined);
   if (!idempotencyKey) return;
 
-  const collegeId = request.context?.collegeId || 'global';
+  const collegeId = request.connectContext?.collegeId || 'global';
   const cacheKey = `${collegeId}:${idempotencyKey}:${request.url}`;
 
   const cached = idempotencyCache.get(cacheKey);

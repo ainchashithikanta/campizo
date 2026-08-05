@@ -17,7 +17,7 @@ export interface RequestContext {
 
 declare module 'fastify' {
   interface FastifyRequest {
-    context: RequestContext;
+    connectContext: RequestContext;
   }
 }
 
@@ -32,7 +32,7 @@ export async function requestContextMiddleware(request: FastifyRequest, _reply: 
   const roles = rolesHeader.split(',').map((r) => r.trim());
   const idempotencyKey = (request.headers['idempotency-key'] as string) || undefined;
 
-  request.context = {
+  request.connectContext = {
     requestId,
     traceId,
     collegeId,

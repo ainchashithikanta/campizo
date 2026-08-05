@@ -9,7 +9,7 @@ import { ForbiddenApplicationError } from '../errors/application-errors.js';
 
 export function rbacMiddleware(allowedRoles: string[]) {
   return async (request: FastifyRequest, _reply: FastifyReply): Promise<void> => {
-    const userRoles = request.context?.roles || ['STUDENT'];
+    const userRoles = request.connectContext?.roles || ['STUDENT'];
 
     // SUPER_ADMIN & PLATFORM_ADMIN bypass specific role restrictions
     if (userRoles.includes('SUPER_ADMIN') || userRoles.includes('PLATFORM_ADMIN')) {

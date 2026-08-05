@@ -20,9 +20,9 @@ export class IntentController {
     const intentId = `int_${Date.now()}`;
     const result = await this.intentService.createIntent({
       id: intentId,
-      collegeId: request.context.collegeId,
-      studentProfileId: request.context.userId,
-      createdBy: request.context.userId,
+      collegeId: request.connectContext.collegeId,
+      studentProfileId: request.connectContext.userId,
+      createdBy: request.connectContext.userId,
       ...input
     });
     reply.status(201).send(formatApiV1Success(result, request));
@@ -33,10 +33,10 @@ export class IntentController {
     const input = updateIntentSchema.parse(request.body);
     const result = await this.intentService.updateIntent({
       id,
-      collegeId: request.context.collegeId,
+      collegeId: request.connectContext.collegeId,
       title: input.title,
       version: input.version,
-      updatedBy: request.context.userId
+      updatedBy: request.connectContext.userId
     });
     reply.send(formatApiV1Success(result, request));
   }
@@ -44,21 +44,21 @@ export class IntentController {
   async pauseIntent(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const { id } = request.params as { id: string };
     const { version } = intentStateTransitionSchema.parse(request.body || { version: 1 });
-    await this.intentService.pauseIntent(id, request.context.collegeId, version);
+    await this.intentService.pauseIntent(id, request.connectContext.collegeId, version);
     reply.send(formatApiV1Success({ status: 'PAUSED', intentId: id }, request));
   }
 
   async fulfillIntent(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const { id } = request.params as { id: string };
     const { version } = intentStateTransitionSchema.parse(request.body || { version: 1 });
-    await this.intentService.fulfillIntent(id, request.context.collegeId, version);
+    await this.intentService.fulfillIntent(id, request.connectContext.collegeId, version);
     reply.send(formatApiV1Success({ status: 'FULFILLED', intentId: id }, request));
   }
 
   async archiveIntent(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const { id } = request.params as { id: string };
     const { version } = intentStateTransitionSchema.parse(request.body || { version: 1 });
-    await this.intentService.archiveIntent(id, request.context.collegeId, version);
+    await this.intentService.archiveIntent(id, request.connectContext.collegeId, version);
     reply.send(formatApiV1Success({ status: 'ARCHIVED', intentId: id }, request));
   }
 }

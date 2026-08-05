@@ -16,18 +16,18 @@ export class MessageController {
     const msgId = `msg_${Date.now()}`;
     const result = await this.useCases.sendMessage({
       id: msgId,
-      collegeId: request.context.collegeId,
+      collegeId: request.connectContext.collegeId,
       conversationId: input.conversationId,
-      senderProfileId: request.context.userId,
+      senderProfileId: request.connectContext.userId,
       content: input.content,
-      createdBy: request.context.userId
+      createdBy: request.connectContext.userId
     });
     reply.status(201).send(formatApiV1Success(result, request));
   }
 
   async markRead(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const input = markReadSchema.parse(request.body);
-    await this.useCases.markRead(input.conversationId, request.context.userId, request.context.collegeId);
+    await this.useCases.markRead(input.conversationId, request.connectContext.userId, request.connectContext.collegeId);
     reply.send(formatApiV1Success({ status: 'READ', conversationId: input.conversationId }, request));
   }
 }

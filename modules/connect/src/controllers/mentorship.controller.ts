@@ -19,16 +19,16 @@ export class MentorshipController {
     const mId = `m_${Date.now()}`;
     const result = await this.useCases.createMentorship({
       id: mId,
-      collegeId: request.context.collegeId,
-      mentorId: body?.mentorId || request.context.userId,
+      collegeId: request.connectContext.collegeId,
+      mentorId: body?.mentorId || request.connectContext.userId,
       menteeId: body?.menteeId || 'usr_mentee',
-      createdBy: request.context.userId
+      createdBy: request.connectContext.userId
     });
     reply.status(201).send(formatApiV1Success(result, request));
   }
 
   async getMentorships(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const mentorships = await this.queryService.getMentorships(request.context.userId, request.context.collegeId);
+    const mentorships = await this.queryService.getMentorships(request.connectContext.userId, request.connectContext.collegeId);
     reply.send(formatApiV1Success(mentorships, request));
   }
 }

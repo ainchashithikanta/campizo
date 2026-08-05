@@ -1,10 +1,11 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 
 export class UploadController {
-  async createUploadSession(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+  async createUploadSession(req: FastifyRequest, reply: FastifyReply): Promise<unknown> {
     const { collegeId, requestId } = req.ctx;
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: {
         uploadId: `up-${Date.now()}`,
@@ -12,6 +13,6 @@ export class UploadController {
         presignedUrl: 'https://storage.collegehub.edu/media-placeholder'
       },
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 }

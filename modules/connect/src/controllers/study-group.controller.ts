@@ -19,17 +19,17 @@ export class StudyGroupController {
     const sgId = `sg_${Date.now()}`;
     const result = await this.useCases.createStudyGroup({
       id: sgId,
-      collegeId: request.context.collegeId,
+      collegeId: request.connectContext.collegeId,
       courseCode: body?.courseCode || 'CS101',
       title: body?.title || 'Study Pod',
-      createdBy: request.context.userId
+      createdBy: request.connectContext.userId
     });
     reply.status(201).send(formatApiV1Success(result, request));
   }
 
   async getStudyGroups(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const { courseCode } = request.query as { courseCode?: string };
-    const groups = await this.queryService.getStudyGroups(request.context.collegeId, courseCode);
+    const groups = await this.queryService.getStudyGroups(request.connectContext.collegeId, courseCode);
     reply.send(formatApiV1Success(groups, request));
   }
 }

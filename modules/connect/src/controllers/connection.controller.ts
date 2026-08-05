@@ -24,12 +24,12 @@ export class ConnectionController {
     const reqId = `req_${Date.now()}`;
     const result = await this.useCases.sendConnectionRequest({
       id: reqId,
-      collegeId: request.context.collegeId,
-      senderProfileId: request.context.userId,
+      collegeId: request.connectContext.collegeId,
+      senderProfileId: request.connectContext.userId,
       receiverProfileId: input.receiverProfileId,
       originatingIntentId: input.originatingIntentId,
       note: input.note,
-      createdBy: request.context.userId
+      createdBy: request.connectContext.userId
     });
     reply.status(201).send(formatApiV1Success(result, request));
   }
@@ -37,25 +37,25 @@ export class ConnectionController {
   async acceptConnection(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const { id } = request.params as { id: string };
     const { version } = connectionDecisionSchema.parse(request.body || { version: 1 });
-    const connection = await this.useCases.acceptConnection(id, request.context.collegeId, version);
+    const connection = await this.useCases.acceptConnection(id, request.connectContext.collegeId, version);
     reply.send(formatApiV1Success(connection, request));
   }
 
   async rejectConnection(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const { id } = request.params as { id: string };
     const { version } = connectionDecisionSchema.parse(request.body || { version: 1 });
-    await this.useCases.rejectConnection(id, request.context.collegeId, version);
+    await this.useCases.rejectConnection(id, request.connectContext.collegeId, version);
     reply.send(formatApiV1Success({ status: 'REJECTED', requestId: id }, request));
   }
 
   async blockConnection(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const input = blockConnectionSchema.parse(request.body);
-    await this.useCases.blockConnection(request.context.userId, input.blockedId, request.context.collegeId);
+    await this.useCases.blockConnection(request.connectContext.userId, input.blockedId, request.connectContext.collegeId);
     reply.send(formatApiV1Success({ status: 'BLOCKED', blockedId: input.blockedId }, request));
   }
 
   async getNetwork(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const network = await this.queryService.getStudentNetwork(request.context.userId, request.context.collegeId);
+    const network = await this.queryService.getStudentNetwork(request.connectContext.userId, request.connectContext.collegeId);
     reply.send(formatApiV1Success(network, request));
   }
 }

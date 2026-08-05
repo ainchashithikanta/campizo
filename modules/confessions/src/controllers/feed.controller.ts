@@ -5,7 +5,7 @@ import { feedQuerySchema, searchQuerySchema } from '../validators/confession.val
 export class FeedController {
   constructor(private queries: ConfessionQueries) {}
 
-  async getFeed(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+  async getFeed(req: FastifyRequest, reply: FastifyReply): Promise<unknown> {
     const { collegeId, requestId } = req.ctx;
     const parsed = feedQuerySchema.parse(req.query);
 
@@ -17,14 +17,15 @@ export class FeedController {
 
     const items = await this.queries.getFeed(collegeId, options);
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: items,
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 
-  async searchConfessions(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+  async searchConfessions(req: FastifyRequest, reply: FastifyReply): Promise<unknown> {
     const { collegeId, requestId } = req.ctx;
     const parsed = searchQuerySchema.parse(req.query);
 
@@ -38,14 +39,15 @@ export class FeedController {
         i.content.toLowerCase().includes(parsed.q.toLowerCase())
     );
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: filtered,
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 
-  async getCategories(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+  async getCategories(req: FastifyRequest, reply: FastifyReply): Promise<unknown> {
     const { collegeId, requestId } = req.ctx;
 
     const categories = [
@@ -57,10 +59,11 @@ export class FeedController {
       { code: 'confession', name: '💭 Confession', displayOrder: 6 }
     ];
 
-    reply.status(200).send({
+    reply.status(200);
+    return {
       success: true,
       data: categories,
       metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
-    });
+    };
   }
 }

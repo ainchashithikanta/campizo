@@ -30,9 +30,9 @@ export function formatApiV1Success<T>(data: T, request: FastifyRequest): ApiV1Re
     data,
     error: null,
     metadata: {
-      requestId: request.context?.requestId || 'req_unknown',
-      traceId: request.context?.traceId || 'trace_unknown',
-      collegeId: request.context?.collegeId || 'global',
+      requestId: request.connectContext?.requestId || 'req_unknown',
+      traceId: request.connectContext?.traceId || 'trace_unknown',
+      collegeId: request.connectContext?.collegeId || 'global',
       timestamp: new Date().toISOString()
     }
   };
@@ -50,9 +50,9 @@ export function httpErrorHandler(error: FastifyError | Error, request: FastifyRe
       httpStatus: appError.statusCode
     },
     metadata: {
-      requestId: request.context?.requestId || 'req_unknown',
-      traceId: request.context?.traceId || 'trace_unknown',
-      collegeId: request.context?.collegeId || 'global',
+      requestId: request.connectContext?.requestId || 'req_unknown',
+      traceId: request.connectContext?.traceId || 'trace_unknown',
+      collegeId: request.connectContext?.collegeId || 'global',
       timestamp: new Date().toISOString()
     }
   };

@@ -19,15 +19,15 @@ export class ProjectController {
     const projId = `proj_${Date.now()}`;
     const result = await this.useCases.createProjectTeam({
       id: projId,
-      collegeId: request.context.collegeId,
+      collegeId: request.connectContext.collegeId,
       title: body?.title || 'Project Team',
-      createdBy: request.context.userId
+      createdBy: request.connectContext.userId
     });
     reply.status(201).send(formatApiV1Success(result, request));
   }
 
   async getProjects(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const projects = await this.queryService.getProjectTeams(request.context.collegeId);
+    const projects = await this.queryService.getProjectTeams(request.connectContext.collegeId);
     reply.send(formatApiV1Success(projects, request));
   }
 }
