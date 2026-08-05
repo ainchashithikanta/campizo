@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { createLogger, createChildLogger, redactSensitiveObject, TraceContextStore, BetterStackTransportStream } from '../src/index.js';
+import {
+  createLogger,
+  createChildLogger,
+  redactSensitiveObject,
+  TraceContextStore,
+  BetterStackTransportStream
+} from '../src/index.js';
 
 describe('Logger Package & Context Telemetry', () => {
   it('should initialize a structured logger instance', () => {

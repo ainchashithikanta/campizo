@@ -20,12 +20,8 @@ export class BetterStackTransportStream extends Writable {
   constructor(options: BetterStackTransportOptions = {}) {
     super({ objectMode: false });
 
-    this.sourceToken =
-      options.sourceToken || process.env.BETTERSTACK_SOURCE_TOKEN || '';
-    this.ingestingHost =
-      options.ingestingHost ||
-      process.env.BETTERSTACK_INGESTING_HOST ||
-      'in.logs.betterstack.com';
+    this.sourceToken = options.sourceToken || process.env.BETTERSTACK_SOURCE_TOKEN || '';
+    this.ingestingHost = options.ingestingHost || process.env.BETTERSTACK_INGESTING_HOST || 'in.logs.betterstack.com';
     this.batchSize = options.batchSize ?? 50;
     this.flushIntervalMs = options.flushIntervalMs ?? 1000;
 
@@ -48,11 +44,7 @@ export class BetterStackTransportStream extends Writable {
     }
   }
 
-  override _write(
-    chunk: any,
-    _encoding: BufferEncoding,
-    callback: (error?: Error | null) => void
-  ): void {
+  override _write(chunk: any, _encoding: BufferEncoding, callback: (error?: Error | null) => void): void {
     if (!this.sourceToken) {
       callback();
       return;
@@ -70,8 +62,8 @@ export class BetterStackTransportStream extends Writable {
         typeof sanitized.time === 'number'
           ? new Date(sanitized.time).toISOString()
           : typeof sanitized.timestamp === 'string'
-          ? sanitized.timestamp
-          : new Date().toISOString();
+            ? sanitized.timestamp
+            : new Date().toISOString();
 
       const logRecord: Record<string, unknown> = {
         dt,
@@ -138,9 +130,7 @@ export class BetterStackTransportStream extends Writable {
   }
 }
 
-export function createBetterStackStream(
-  options?: BetterStackTransportOptions
-): BetterStackTransportStream | undefined {
+export function createBetterStackStream(options?: BetterStackTransportOptions): BetterStackTransportStream | undefined {
   const stream = new BetterStackTransportStream(options);
   return stream.isEnabled() ? stream : undefined;
 }

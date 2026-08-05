@@ -64,10 +64,7 @@ export function createLogger(config: LoggerConfig = {}): Logger {
     };
 
     if (bsStream) {
-      const loggerInstance = pino(
-        pinoOptions as PinoOptions,
-        multistream([{ stream: bsStream, level: logLevel }])
-      );
+      const loggerInstance = pino(pinoOptions as PinoOptions, multistream([{ stream: bsStream, level: logLevel }]));
       return loggerInstance;
     }
 
