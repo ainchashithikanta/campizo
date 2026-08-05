@@ -119,8 +119,10 @@ async function bootstrap() {
   process.once('SIGINT', () => shutdown('SIGINT'));
 
   try {
-    await app.listen({ port: env.PORT, host: env.HOST });
-    logger.info(`🚀 College Hub API Monolith Server running at http://${env.HOST}:${env.PORT}`);
+    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : env.PORT;
+    const host = process.env.HOST || env.HOST || '0.0.0.0';
+    await app.listen({ port, host });
+    logger.info(`🚀 College Hub API Monolith Server running at http://${host}:${port}`);
   } catch (err) {
     logger.fatal({ err }, 'Failed to start Fastify server');
     process.exit(1);

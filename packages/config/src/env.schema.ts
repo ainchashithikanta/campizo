@@ -8,7 +8,7 @@ export const envSchema = z
     // Configuration Version & Mode
     CONFIG_VERSION: z.string().default('1.0.0'),
     NODE_ENV: EnvironmentMode.default('development'),
-    PORT: z.coerce.number().int().min(1024).max(65535).default(4000),
+    PORT: z.coerce.number().int().min(1).max(65535).default(4000),
     HOST: z.string().default('0.0.0.0'),
     LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
     GRACEFUL_SHUTDOWN_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120000).default(30000),
