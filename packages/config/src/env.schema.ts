@@ -47,7 +47,7 @@ export const envSchema = z.object({
   POSTGRES_PASSWORD: z.string().default('collegehub_password'),
   POSTGRES_DB: z.string().default('collegehub_db'),
   POSTGRES_PORT: z.coerce.number().int().default(5432),
-  DATABASE_URL: z.string().url().default('postgresql://postgres:postgres@db.supabase.co:5432/postgres'),
+  DATABASE_URL: z.string().url(),
   DATABASE_MAX_CONNECTIONS: z.coerce.number().int().min(1).max(100).default(20),
 
   // Redis Cache, Session Store & Queue Cluster
@@ -104,6 +104,21 @@ export const envSchema = z.object({
     .transform((val) => val.split(',').map((s) => s.trim()))
     .default('http://localhost:3000,http://localhost:3001'),
   COOKIE_DOMAIN: z.string().default('localhost')
+}).superRefine((data, ctx) => {
+  if (data.NODE_ENV === 'production') {
+    const dummySecrets = [
+      'super-secret-jwt-token-key-minimum-32-characters-long',
+      'production-default-jwt-secret-key-32-chars-minimum!',
+      'prod_secret_token_key_9876543210_auth_key!'
+    ];
+    if (dummySecrets.some((s) => data.JWT_SECRET.includes(s) || data.JWT_SECRET === s)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['JWT_SECRET'],
+        message: 'CRITICAL SECURITY RISK: Dummy or default JWT_SECRET used in production mode.'
+      });
+    }
+  }
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;
