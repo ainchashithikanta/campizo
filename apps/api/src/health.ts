@@ -80,7 +80,9 @@ export class ApiHealthProbes {
     try {
       const provider = new SupabaseStorageProvider();
       const healthy = await provider.healthCheck();
-      return healthy.healthy ? { status: 'ok' } : { status: 'error', error: healthy.message };
+      return healthy.healthy
+        ? { status: 'ok' }
+        : { status: 'error', ...(healthy.message ? { error: healthy.message } : {}) };
     } catch (err) {
       return { status: 'error', error: err instanceof Error ? err.message : String(err) };
     }
