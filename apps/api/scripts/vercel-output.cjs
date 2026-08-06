@@ -26,7 +26,11 @@ fs.writeFileSync(
 
 fs.writeFileSync(
   path.join(funcDir, '.vc-config.json'),
-  JSON.stringify({ runtime: 'nodejs22.x', maxDuration: 10, handler: 'index.js' }, null, 2)
+  JSON.stringify(
+    { runtime: 'nodejs22.x', handler: 'index.js', launcherType: 'Nodejs', maxDuration: 10 },
+    null,
+    2
+  )
 );
 
 fs.mkdirSync(path.join(outDir, 'static'), { recursive: true });
