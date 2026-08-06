@@ -16,7 +16,7 @@ fs.mkdirSync(funcDir, { recursive: true });
 
 fs.writeFileSync(
   path.join(funcDir, 'index.js'),
-  `module.exports = async function handler(req, res) {
+  `export default async function handler(req, res) {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify({ ok: true, time: Date.now() }));
@@ -27,7 +27,7 @@ fs.writeFileSync(
 fs.writeFileSync(
   path.join(funcDir, '.vc-config.json'),
   JSON.stringify(
-    { runtime: 'nodejs22.x', handler: 'index.js', launcherType: 'Nodejs', maxDuration: 10 },
+    { runtime: 'nodejs20.x', handler: 'index.js', launcherType: 'Nodejs', maxDuration: 10 },
     null,
     2
   )
