@@ -1,17 +1,16 @@
 {
   "version": 2,
   "installCommand": "pnpm install --prod=false",
-  "buildCommand": "pnpm --filter @college-hub/api build",
-  "outputDirectory": "dist",
+  "buildCommand": "pnpm exec turbo run build --filter=@college-hub/api...",
   "functions": {
-    "dist/api/index.js": {
+    "api/index.ts": {
       "maxDuration": 10
     }
   },
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/dist/api/index.js"
+      "destination": "/api/index"
     }
   ]
 }
