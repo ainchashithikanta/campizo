@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "test": "vitest run",
     "lint": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "clean": "rimraf dist"
@@ -37,7 +37,9 @@
     "fastify-plugin": "^4.5.1"
   },
   "devDependencies": {
+    "@types/node": "^24.0.0",
     "@types/pg": "^8.11.6",
+    "@vercel/node": "^5.1.7",
     "pg": "^8.12.0",
     "typescript": "^5.5.4",
     "vitest": "^3.0.6"

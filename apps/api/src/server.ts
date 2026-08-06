@@ -1,4 +1,5 @@
 import Fastify, { type FastifyInstance } from 'fastify';
+import { pathToFileURL } from 'node:url';
 import { loadEnv } from '@college-hub/config';
 import { logger, setupProcessErrorHandler } from '@college-hub/logger';
 import { DynamicModuleRegistry, InMemoryEventBus } from '@college-hub/core';
@@ -24,7 +25,7 @@ import { registerFeatureModules } from './modules.registry.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const serviceName = process.env.SERVICE_NAME ?? 'college-hub';
-  const environment = process.env.NODE_ENV ?? 'development';
+  const environment = process.env.NODE_ENV ?? 'production';
 
   observability.configure({ serviceName, environment });
 
@@ -88,7 +89,7 @@ export async function buildApp(): Promise<FastifyInstance> {
       service: 'College Hub API',
       status: 'online',
       version: process.env.CONFIG_VERSION || '1.0.0',
-      environment: process.env.NODE_ENV || 'development',
+      environment: process.env.NODE_ENV || 'production',
       uptime: Math.floor(process.uptime()),
       docs: {
         health: '/health',
@@ -150,6 +151,7 @@ async function bootstrap() {
   }
 }
 
-if (process.env['NODE_ENV'] !== 'test' && import.meta.url === `file://${process.argv[1]}`) {
+const entryPath = process.argv[1];
+if (process.env['NODE_ENV'] !== 'test' && entryPath !== undefined && pathToFileURL(entryPath).href === import.meta.url) {
   bootstrap();
 }
