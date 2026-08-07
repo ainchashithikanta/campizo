@@ -286,6 +286,12 @@ ol {
   padding-inline: var(--ch-spacing-4);
 }
 
+/* ---------- Main Content (below fixed header) ---------- */
+#main-content {
+  padding-top: var(--ch-header-height);
+  min-height: 100dvh;
+}
+
 @media (min-width: 768px) {
   .container {
     padding-inline: var(--ch-spacing-6);

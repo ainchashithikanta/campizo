@@ -48,55 +48,27 @@ export default function AcademicResourceHubHomePage() {
   return (
     <div className="arh-container">
       <ResourceHero
-        title="Academic Resource Hub"
-        subtitle="Find verified lecture notes, previous year question papers, lab manuals, and syllabus copies in under 10 seconds."
+        title="Study Materials"
+        subtitle="Verified lecture notes, previous year question papers, lab manuals and syllabus copies — ready in under 10 seconds."
       />
 
-      <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', flexWrap: 'wrap' }}>
-        <Link
-          href="/academic-resources/upload"
-          style={{
-            padding: '12px 20px',
-            backgroundColor: 'var(--ch-color-primary)',
-            color: '#FFF',
-            borderRadius: 'var(--ch-radius-md)',
-            fontWeight: 600
-          }}
-        >
+      <div className="arh-toolbar">
+        <Link href="/academic-resources/upload" className="arh-btn arh-btn-primary">
           + Upload Resource
         </Link>
-        <Link
-          href="/academic-resources/collections"
-          style={{
-            padding: '12px 20px',
-            backgroundColor: 'var(--ch-color-surface)',
-            color: 'var(--ch-color-text)',
-            border: '1px solid var(--ch-color-border)',
-            borderRadius: 'var(--ch-radius-md)',
-            fontWeight: 600
-          }}
-        >
+        <Link href="/academic-resources/collections" className="arh-btn">
           📚 Study Collections
         </Link>
-        <Link
-          href="/academic-resources/bookmarks"
-          style={{
-            padding: '12px 20px',
-            backgroundColor: 'var(--ch-color-surface)',
-            color: 'var(--ch-color-text)',
-            border: '1px solid var(--ch-color-border)',
-            borderRadius: 'var(--ch-radius-md)',
-            fontWeight: 600
-          }}
-        >
+        <Link href="/academic-resources/bookmarks" className="arh-btn">
           ⭐ Saved Bookmarks
         </Link>
       </div>
 
-      <section style={{ marginBottom: '40px' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--ch-color-text)', marginBottom: '16px' }}>
-          Trending Resources
-        </h2>
+      <section className="arh-section">
+        <div className="arh-section-head">
+          <h2>Trending Resources</h2>
+          <span className="arh-section-meta">1.8k verified resources this semester</span>
+        </div>
         <ResourceGrid resources={resources} />
       </section>
     </div>

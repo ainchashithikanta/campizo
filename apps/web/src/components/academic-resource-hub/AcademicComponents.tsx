@@ -26,67 +26,26 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onBookmark
   return (
     <div className="arh-card" data-testid={`resource-card-${resource.id}`}>
       <div>
-        <div
-          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}
-        >
-          <span
-            style={{
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              color: 'var(--ch-color-primary)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}
-          >
-            {resource.resourceTypeId.replace('type-', '')}
-          </span>
+        <div className="arh-card-top">
+          <span className="arh-card-type">{resource.resourceTypeId.replace('type-', '')}</span>
+          <span className="arh-card-verified">✓ Verified</span>
           <button
             onClick={handleBookmark}
             aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark resource'}
-            style={{
-              color: isBookmarked ? 'var(--ch-color-primary)' : 'var(--ch-color-text-muted)',
-              fontSize: '1.25rem'
-            }}
+            className="arh-card-bookmark"
           >
             {isBookmarked ? '★' : '☆'}
           </button>
         </div>
-        <h3
-          style={{
-            fontSize: '1.125rem',
-            fontWeight: 600,
-            color: 'var(--ch-color-text)',
-            marginBottom: '8px',
-            lineHeight: 1.3
-          }}
-        >
-          {resource.title}
-        </h3>
-        <p style={{ fontSize: '0.875rem', color: 'var(--ch-color-text-muted)', marginBottom: '16px' }}>
-          Sem {resource.semesterNumber} • {resource.academicYear}
-        </p>
+        <h3 className="arh-card-title">{resource.title}</h3>
+        <p className="arh-card-meta">Sem {resource.semesterNumber} • {resource.academicYear}</p>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingTop: '12px',
-          borderTop: '1px solid var(--ch-color-border)'
-        }}
-      >
+      <div className="arh-card-footer">
         <span className="arh-badge-clean">CLEAN</span>
         <button
           onClick={() => onDownload && onDownload(resource.id)}
-          style={{
-            padding: '6px 14px',
-            backgroundColor: 'var(--ch-color-primary)',
-            color: 'var(--ch-color-text-inverse)',
-            borderRadius: 'var(--ch-radius-md)',
-            fontSize: '0.875rem',
-            fontWeight: 500
-          }}
+          className="arh-card-download"
         >
           Download PDF
         </button>

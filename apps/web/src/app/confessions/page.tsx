@@ -71,6 +71,40 @@ export default function ConfessionsFeedPage() {
         </Link>
       </header>
 
+      <section className="conf-hero">
+        <div className="conf-hero-glow" />
+        <div className="conf-hero-copy">
+          <p className="conf-hero-kicker">Your campus. Your secrets. 100% anonymous.</p>
+          <h2 className="conf-hero-title">Say it. Vent it. <span>Confess it.</span></h2>
+          <p className="conf-hero-sub">
+            Share what you really think about lectures, hostels, exams and campus life —
+            behind a pseudonym, always.
+          </p>
+          <div className="conf-hero-actions">
+            <Link href="/confessions/create" className="conf-hero-btn">
+              ✍️ Write a confession
+            </Link>
+            <Link href="/confessions/notifications" className="conf-hero-btn conf-hero-btn-ghost">
+              🔔 Stay in the loop
+            </Link>
+          </div>
+        </div>
+        <div className="conf-hero-stats">
+          <div className="conf-stat">
+            <span className="conf-stat-value">2.4k</span>
+            <span className="conf-stat-label">confessions this week</span>
+          </div>
+          <div className="conf-stat">
+            <span className="conf-stat-value">98%</span>
+            <span className="conf-stat-label">stay anonymous</span>
+          </div>
+          <div className="conf-stat">
+            <span className="conf-stat-value">4.5k+</span>
+            <span className="conf-stat-label">reactions shared</span>
+          </div>
+        </div>
+      </section>
+
       <nav className="conf-nav">
         <button className={`conf-nav-link ${tab === 'trending' ? 'active' : ''}`} onClick={() => setTab('trending')}>
           🔥 Trending

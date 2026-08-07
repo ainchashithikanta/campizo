@@ -10,21 +10,38 @@ export default async function MarketplaceHomePage() {
   return (
     <div className="mp-container">
       <div className="mp-hero-banner">
-        <h1 className="mp-hero-title">Campus Marketplace 🛍️</h1>
-        <p className="mp-hero-subtitle">
-          Buy, sell, rent, and exchange textbooks, calculators, cycles, and hostel gear with verified campus peers.
-        </p>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <Link href="/marketplace/upload" className="mp-btn mp-btn-primary">
-            + Post a Listing
-          </Link>
-          <Link
-            href="/marketplace/search"
-            className="mp-btn mp-btn-outline"
-            style={{ color: '#ffffff', borderColor: '#a7f3d0' }}
-          >
-            🔍 Search Items
-          </Link>
+        <div className="mp-hero-glow" />
+        <div className="mp-hero-copy">
+          <p className="mp-hero-kicker">For students, by students</p>
+          <h1 className="mp-hero-title">Campus Marketplace 🛍️</h1>
+          <p className="mp-hero-subtitle">
+            Buy, sell, rent, and exchange textbooks, calculators, cycles, and hostel gear with verified campus peers.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <Link href="/marketplace/upload" className="mp-btn mp-btn-primary">
+              + Post a Listing
+            </Link>
+            <Link
+              href="/marketplace/search"
+              className="mp-btn mp-btn-ghost"
+            >
+              🔍 Search Items
+            </Link>
+          </div>
+        </div>
+        <div className="mp-hero-stats">
+          <div className="mp-hero-stat">
+            <span className="mp-hero-stat-value">320</span>
+            <span className="mp-hero-stat-label">live listings</span>
+          </div>
+          <div className="mp-hero-stat">
+            <span className="mp-hero-stat-value">1.2k+</span>
+            <span className="mp-hero-stat-label">deals completed</span>
+          </div>
+          <div className="mp-hero-stat">
+            <span className="mp-hero-stat-value">100%</span>
+            <span className="mp-hero-stat-label">verified students</span>
+          </div>
         </div>
       </div>
 
@@ -36,8 +53,11 @@ export default async function MarketplaceHomePage() {
         ))}
       </div>
 
-      <section style={{ marginBottom: '2.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>🔥 Trending Campus Deals</h2>
+      <section className="mp-section">
+        <div className="mp-section-head">
+          <h2>🔥 Trending Campus Deals</h2>
+          <Link href="/marketplace/search" className="mp-see-all">See all →</Link>
+        </div>
         <ListingGrid listings={homeData.featured} />
       </section>
     </div>
