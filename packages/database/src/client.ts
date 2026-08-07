@@ -24,7 +24,10 @@ export function createDatabaseClient(options: DatabaseClientOptions = {}): {
     connectionString,
     max: options.maxConnections || 20,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 5000
+    connectionTimeoutMillis: 5000,
+    ssl: connectionString.includes('supabase') || connectionString.includes('sslmode')
+      ? { rejectUnauthorized: false }
+      : undefined
   });
 
   pool.on('error', (err) => {
