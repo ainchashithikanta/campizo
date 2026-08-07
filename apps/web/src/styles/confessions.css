@@ -1,31 +1,27 @@
-/* Campus Confessions Design System CSS — Arcade Confession Machine Theme
-   A mid-tone dusk-indigo arcade cabinet / visual-novel hybrid.
-   Unique from the home page: neon HUD, dialogue-box cards, XP bars, coin FAB. */
+/* Campus Confessions Design System CSS — Light Toon "Secret Notes" Theme */
 
 :root {
-  --conf-bg: #241f4e;
-  --conf-bg-deep: #1c1840;
-  --conf-card-bg: #fff7ea;
-  --conf-card-hover: #fff1df;
-  --conf-border: rgba(255, 247, 234, 0.35);
-  --conf-border-accent: #35c8f2;
+  --conf-bg: #fff7ea;
+  --conf-card-bg: #ffffff;
+  --conf-card-hover: #fff0f6;
+  --conf-border: rgba(43, 35, 71, 0.9);
+  --conf-border-accent: #ff5ca8;
 
-  --conf-text-primary: #fdf6ff;
-  --conf-text-secondary: #d3cdf2;
-  --conf-text-muted: #9790c9;
+  --conf-text-primary: var(--toon-ink);
+  --conf-text-secondary: #5a5370;
+  --conf-text-muted: #8a82a3;
 
   --conf-accent-primary: #ff5ca8;
-  --conf-accent-primary-hover: #ff7ab9;
+  --conf-accent-primary-hover: #f04996;
   --conf-accent-success: #2fdd94;
   --conf-accent-warning: #ffb020;
   --conf-accent-danger: #ff6b6b;
   --conf-accent-info: #35c8f2;
-  --conf-accent-violet: #7c5cff;
 
-  --conf-badge-trending-bg: rgba(255, 176, 32, 0.22);
-  --conf-badge-trending-fg: #ffce6e;
-  --conf-badge-hot-bg: rgba(255, 107, 107, 0.22);
-  --conf-badge-hot-fg: #ff9b9b;
+  --conf-badge-trending-bg: #fff3d6;
+  --conf-badge-trending-fg: #b06f00;
+  --conf-badge-hot-bg: #ffe4e4;
+  --conf-badge-hot-fg: #d93838;
 
   --conf-font-body: var(--ch-font-sans);
   --conf-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -39,7 +35,7 @@
   --conf-transition-normal: 0.25s ease;
 }
 
-/* Layout Container — dusk arcade floor */
+/* Layout Container */
 .conf-container {
   max-width: 800px;
   margin: 0 auto;
@@ -47,55 +43,25 @@
   font-family: var(--conf-font-body);
   color: var(--conf-text-primary);
   background:
-    radial-gradient(700px 320px at 88% -5%, rgba(124, 92, 255, 0.32), transparent 60%),
-    radial-gradient(600px 280px at 0% 22%, rgba(53, 200, 242, 0.18), transparent 60%),
-    radial-gradient(500px 300px at 60% 110%, rgba(255, 92, 168, 0.16), transparent 60%),
-    linear-gradient(180deg, var(--conf-bg) 0%, var(--conf-bg-deep) 100%);
+    radial-gradient(600px 280px at 90% 0%, rgba(255, 92, 168, 0.12), transparent 60%),
+    radial-gradient(500px 240px at 5% 30%, rgba(53, 200, 242, 0.1), transparent 60%),
+    var(--conf-bg);
   min-height: 100vh;
   box-sizing: border-box;
-  position: relative;
 }
 
-.conf-container::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(2px 2px at 12% 18%, rgba(255, 217, 61, 0.5), transparent 60%),
-    radial-gradient(2px 2px at 82% 8%, rgba(53, 200, 242, 0.5), transparent 60%),
-    radial-gradient(1.5px 1.5px at 46% 34%, rgba(255, 92, 168, 0.5), transparent 60%),
-    radial-gradient(2px 2px at 68% 62%, rgba(124, 92, 255, 0.5), transparent 60%),
-    radial-gradient(1.5px 1.5px at 26% 74%, rgba(47, 221, 148, 0.4), transparent 60%),
-    radial-gradient(2px 2px at 92% 44%, rgba(255, 176, 32, 0.4), transparent 60%);
-  z-index: 0;
-  animation: conf-star-drift 9s ease-in-out infinite alternate;
-}
-
-@keyframes conf-star-drift {
-  from {
-    opacity: 0.55;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-14px);
-  }
-}
-
-/* Hero — arcade cabinet */
+/* Hero */
 .conf-hero {
   position: relative;
-  z-index: 1;
   overflow: hidden;
   border: 3px solid var(--toon-ink);
   border-radius: var(--conf-radius-lg);
   background:
-    radial-gradient(900px 360px at 85% -10%, rgba(53, 200, 242, 0.28), transparent 60%),
-    radial-gradient(700px 300px at 5% 120%, rgba(255, 92, 168, 0.25), transparent 60%),
-    linear-gradient(160deg, #332b6b 0%, #272157 55%, #201b4a);
+    radial-gradient(1200px 400px at 85% -20%, rgba(255, 92, 168, 0.28), transparent 60%),
+    radial-gradient(800px 300px at 10% 120%, rgba(53, 200, 242, 0.2), transparent 60%),
+    linear-gradient(160deg, #fff0f6, #fff7ea 60%, #fdf0ff);
   box-shadow: var(--toon-shadow);
-  padding: 2.75rem 2rem 1.9rem;
+  padding: 2.5rem 2rem 1.75rem;
   margin-bottom: 1.75rem;
   display: flex;
   align-items: flex-start;
@@ -103,66 +69,34 @@
   gap: 2rem;
 }
 
-/* Neon marquee strip on top of cabinet */
 .conf-hero::before {
-  content: '★ CONFESSION ZONE ★';
+  content: '💭';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 0.35rem 0;
-  text-align: center;
-  font-family: var(--conf-font-mono);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.35em;
-  color: #120e2e;
-  background: linear-gradient(90deg, var(--toon-cyan), var(--toon-pink), var(--toon-lemon), var(--toon-cyan));
-  background-size: 300% 100%;
-  animation: conf-marquee-sweep 5s linear infinite;
-  border-bottom: 2px solid var(--toon-ink);
-}
-
-@keyframes conf-marquee-sweep {
-  0% {
-    background-position: 0% 0;
-  }
-  100% {
-    background-position: 300% 0;
-  }
-}
-
-/* Screen bezel glow blobs */
-.conf-hero::after {
-  content: '📢';
-  position: absolute;
-  top: 44px;
-  right: 20px;
-  font-size: 1.7rem;
-  filter: drop-shadow(0 0 8px rgba(53, 200, 242, 0.8));
+  top: 14px;
+  right: 22px;
+  font-size: 1.6rem;
   animation: toon-bob 3s ease-in-out infinite;
+}
+
+.conf-hero::after {
+  content: '✧';
+  position: absolute;
+  bottom: 12px;
+  left: 20px;
+  font-size: 1.1rem;
+  color: var(--toon-pink);
+  animation: toon-sparkle 2.6s ease-in-out infinite;
+  animation-delay: -1.2s;
 }
 
 .conf-hero-glow {
   position: absolute;
   top: -60%;
   right: -10%;
-  width: 340px;
-  height: 340px;
-  background: radial-gradient(circle, rgba(124, 92, 255, 0.55), transparent 65%);
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(255, 92, 168, 0.35), transparent 65%);
   pointer-events: none;
-  animation: conf-glow-pulse 4.5s ease-in-out infinite alternate;
-}
-
-@keyframes conf-glow-pulse {
-  from {
-    opacity: 0.6;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1.12);
-  }
 }
 
 .conf-hero-copy {
@@ -175,54 +109,33 @@
   display: inline-block;
   font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #ffd93d;
-  background: rgba(255, 217, 61, 0.12);
-  border: 2px solid #ffd93d;
+  color: #c2146d;
+  background: var(--toon-lemon);
+  border: 2px solid var(--toon-ink);
   border-radius: var(--conf-radius-full);
-  box-shadow: 0 0 14px rgba(255, 217, 61, 0.45);
-  padding: 0.3rem 0.95rem;
-  margin: 0 0 0.8rem;
-  font-family: var(--conf-font-mono);
-  animation: conf-kicker-flicker 3.5s ease-in-out infinite;
-}
-
-@keyframes conf-kicker-flicker {
-  0%, 100% {
-    box-shadow: 0 0 8px rgba(255, 217, 61, 0.35);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(255, 217, 61, 0.75);
-  }
+  box-shadow: 2px 2px 0 var(--toon-ink);
+  padding: 0.3rem 0.9rem;
+  margin: 0 0 0.7rem;
+  transform: rotate(-1.5deg);
 }
 
 .conf-hero-title {
   font-family: var(--ch-font-display);
-  font-size: 2.1rem;
-  line-height: 1.08;
+  font-size: 2rem;
+  line-height: 1.1;
   font-weight: 800;
   margin: 0 0 0.7rem;
   letter-spacing: -0.01em;
-  color: #ffffff;
-  text-shadow: 0 3px 0 var(--toon-ink), 0 0 26px rgba(124, 92, 255, 0.6);
+  color: var(--toon-ink);
 }
 
 .conf-hero-title span {
-  background: linear-gradient(90deg, var(--toon-cyan), var(--toon-pink), var(--toon-lemon));
+  background: linear-gradient(90deg, var(--toon-pink), #ff8fc0);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: conf-title-hue 6s linear infinite;
-}
-
-@keyframes conf-title-hue {
-  0% {
-    filter: hue-rotate(0deg);
-  }
-  100% {
-    filter: hue-rotate(360deg);
-  }
 }
 
 .conf-hero-sub {
@@ -239,31 +152,26 @@
   gap: 0.75rem;
 }
 
-/* Game buttons — skewed chip-style */
 .conf-hero-btn {
-  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.72rem 1.35rem;
-  border-radius: 6px;
-  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
-  font-family: var(--conf-font-mono);
-  font-size: 0.88rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  padding: 0.7rem 1.3rem;
+  border-radius: var(--conf-radius-full);
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.92rem;
+  font-weight: 600;
   text-decoration: none;
-  background: linear-gradient(180deg, #ff7ab9, var(--conf-accent-primary));
-  color: #ffffff;
+  background: linear-gradient(90deg, var(--conf-accent-primary), #ff8fc0);
+  color: #fff;
   border: 2.5px solid var(--toon-ink);
-  box-shadow: 4px 5px 0 var(--toon-ink);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  box-shadow: 3px 4px 0 var(--toon-ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .conf-hero-btn:hover {
   transform: translateY(-3px) rotate(-1deg);
-  box-shadow: 6px 8px 0 var(--toon-ink);
-  filter: brightness(1.08);
+  box-shadow: 5px 7px 0 var(--toon-ink);
 }
 
 .conf-hero-btn:active {
@@ -272,27 +180,25 @@
 }
 
 .conf-hero-btn-ghost {
-  background: linear-gradient(180deg, #3a3470, #2c2759);
-  color: var(--conf-text-secondary);
-  box-shadow: 4px 5px 0 var(--toon-ink);
+  background: #ffffff;
+  color: var(--toon-ink);
+  box-shadow: 3px 4px 0 var(--toon-ink);
 }
 
 .conf-hero-btn-ghost:hover {
-  color: #ffffff;
-  background: linear-gradient(180deg, #4a438a, #352f68);
+  background: var(--toon-lemon);
+  box-shadow: 5px 7px 0 var(--toon-ink);
 }
 
-/* Stats — HUD readouts */
 .conf-hero-stats {
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
-  min-width: 170px;
+  min-width: 160px;
   padding-left: 1.5rem;
-  border-left: 3px solid var(--conf-accent-info);
-  box-shadow: inset 6px 0 12px -10px rgba(53, 200, 242, 0.7);
+  border-left: 3px solid var(--toon-pink);
 }
 
 .conf-stat {
@@ -301,34 +207,24 @@
 }
 
 .conf-stat-value {
-  font-family: var(--conf-font-mono);
-  font-size: 1.45rem;
+  font-family: var(--ch-font-display);
+  font-size: 1.5rem;
   font-weight: 800;
-  color: #ffffff;
-  text-shadow: 0 0 16px rgba(53, 200, 242, 0.9);
-}
-
-.conf-stat-value::after {
-  content: '▲';
-  margin-left: 0.4rem;
-  font-size: 0.75rem;
-  color: var(--toon-mint);
-  animation: toon-bob 1.8s ease-in-out infinite;
+  color: var(--toon-pink);
+  text-shadow: 2px 2px 0 rgba(255, 92, 168, 0.15);
 }
 
 .conf-stat-label {
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 0.78rem;
   color: var(--conf-text-muted);
-  margin-top: 0.15rem;
-  font-family: var(--conf-font-mono);
+  margin-top: 0.1rem;
+  font-family: var(--ch-font-cartoon);
 }
 
 @media (max-width: 640px) {
   .conf-hero {
     flex-direction: column;
-    padding: 2.5rem 1.4rem 1.6rem;
+    padding: 1.75rem 1.4rem;
   }
 
   .conf-hero-stats {
@@ -339,45 +235,35 @@
     padding-left: 0;
     padding-top: 1rem;
     border-left: none;
-    border-top: 3px solid var(--conf-accent-info);
-    box-shadow: inset 0 6px 12px -10px rgba(53, 200, 242, 0.7);
+    border-top: 3px solid var(--toon-pink);
   }
 
   .conf-hero-title {
-    font-size: 1.65rem;
+    font-size: 1.6rem;
   }
 }
 
-/* Header & Nav — game HUD bar */
+/* Header & Nav */
 .conf-header {
-  position: relative;
-  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.9rem 1.1rem;
-  background: rgba(255, 247, 234, 0.06);
-  border: 2px solid rgba(255, 247, 234, 0.22);
-  border-radius: var(--conf-radius-md);
-  box-shadow: 2px 3px 0 var(--toon-ink);
+  padding: 1rem 0;
+  border-bottom: 2px dashed rgba(43, 35, 71, 0.2);
   margin-bottom: 1.5rem;
-  backdrop-filter: blur(6px);
 }
 
 .conf-title {
   font-family: var(--ch-font-display);
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--conf-text-primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  text-shadow: 0 2px 0 var(--toon-ink);
 }
 
 .conf-nav {
-  position: relative;
-  z-index: 1;
   display: flex;
   gap: 0.75rem;
   overflow-x: auto;
@@ -387,32 +273,29 @@
 
 .conf-nav-link {
   padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%);
-  background: rgba(255, 247, 234, 0.08);
+  border-radius: var(--conf-radius-full);
+  background: #ffffff;
   color: var(--conf-text-secondary);
   text-decoration: none;
-  font-family: var(--conf-font-mono);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  border: 2px solid rgba(255, 247, 234, 0.3);
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 2.5px solid var(--toon-ink);
   box-shadow: 2px 3px 0 var(--toon-ink);
   transition: all var(--conf-transition-fast);
   white-space: nowrap;
 }
 
 .conf-nav-link:hover {
-  background: rgba(53, 200, 242, 0.25);
-  border-color: var(--toon-cyan);
-  color: #ffffff;
+  background: var(--toon-lemon);
+  color: var(--toon-ink);
   transform: translateY(-2px);
   box-shadow: 3px 5px 0 var(--toon-ink);
 }
 
 .conf-nav-link.active {
-  background: linear-gradient(180deg, #ffd93d, #ffb020);
-  color: #3d2b00;
+  background: var(--toon-pink);
+  color: #fff;
   border-color: var(--toon-ink);
   box-shadow: 2px 3px 0 var(--toon-ink);
 }
@@ -420,24 +303,23 @@
 .conf-chip {
   flex-shrink: 0;
   padding: 0.4rem 0.9rem;
-  border-radius: 6px;
-  clip-path: polygon(6px 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0 50%);
-  background: rgba(255, 247, 234, 0.08);
-  border: 2px solid rgba(255, 247, 234, 0.3);
+  border-radius: var(--conf-radius-full);
+  background: #ffffff;
+  border: 2px solid var(--toon-ink);
+  box-shadow: 1.5px 2px 0 var(--toon-ink);
   color: var(--conf-text-secondary);
-  font-family: var(--conf-font-mono);
-  font-size: 0.76rem;
-  font-weight: 600;
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all var(--conf-transition-fast);
 }
 
 .conf-chip:hover {
   background: var(--toon-lemon);
-  border-color: var(--toon-ink);
-  color: #3d2b00;
+  color: var(--toon-ink);
   transform: translateY(-2px) rotate(-1.5deg);
-  box-shadow: 0 0 14px rgba(255, 217, 61, 0.5);
+  box-shadow: 2px 3px 0 var(--toon-ink);
 }
 
 .conf-reaction-chip {
@@ -446,8 +328,9 @@
   gap: 0.35rem;
   padding: 0.3rem 0.75rem;
   border-radius: var(--conf-radius-full);
-  background: rgba(255, 247, 234, 0.08);
-  border: 2px solid rgba(255, 247, 234, 0.3);
+  background: #ffffff;
+  border: 2px solid var(--toon-ink);
+  box-shadow: 1.5px 2px 0 var(--toon-ink);
   color: var(--conf-text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
@@ -456,79 +339,60 @@
 }
 
 .conf-reaction-chip:hover {
-  background: rgba(255, 92, 168, 0.2);
-  border-color: var(--conf-accent-primary);
-  color: #ffb9d8;
-  transform: translateY(-2px);
-  box-shadow: 0 0 12px rgba(255, 92, 168, 0.4);
+  background: #fff0f6;
+  color: var(--conf-text-primary);
+  transform: translateY(-2px) rotate(-1deg);
 }
 
 .conf-reaction-chip-active {
-  background: rgba(255, 92, 168, 0.28);
+  background: rgba(255, 92, 168, 0.2);
   border-color: var(--conf-accent-primary);
-  color: #ffffff;
-  box-shadow: 0 0 14px rgba(255, 92, 168, 0.5);
+  color: #c2146d;
 }
 
-/* Confession Card — visual-novel dialogue box */
+/* Confession Card */
 .conf-card {
-  position: relative;
-  z-index: 1;
   background: var(--conf-card-bg);
-  border: 3px solid var(--toon-ink);
+  border: 2.5px solid var(--toon-ink);
   border-radius: var(--conf-radius-md);
-  box-shadow: 5px 6px 0 var(--toon-ink), 0 0 0 1px rgba(255, 247, 234, 0.1);
-  padding: 1.25rem 1.25rem 1.1rem;
+  box-shadow: 4px 5px 0 var(--toon-ink);
+  padding: 1.25rem;
   margin-bottom: 1.5rem;
-  color: var(--toon-ink);
+  position: relative;
   transition:
     transform var(--conf-transition-fast),
     box-shadow var(--conf-transition-fast),
     background-color var(--conf-transition-fast);
-  animation: conf-dialogue-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
-@keyframes conf-dialogue-in {
-  from {
-    opacity: 0;
-    transform: translateY(22px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+.conf-card::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 16px;
+  width: 90px;
+  height: 22px;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 92, 168, 0.75) 0 8px,
+      rgba(255, 255, 255, 0.75) 8px 16px
+    );
+  border: 2px solid var(--toon-ink);
+  border-radius: 4px;
+  transform: rotate(-2deg);
+  pointer-events: none;
 }
 
 .conf-card:hover {
   background: var(--conf-card-hover);
   transform: translateY(-4px) rotate(-0.4deg);
-  box-shadow: 7px 9px 0 var(--toon-ink);
+  box-shadow: 6px 8px 0 var(--toon-ink);
 }
 
 .conf-card:active {
   transform: translateY(2px);
   box-shadow: 1px 1px 0 var(--toon-ink);
-}
-
-/* Blinking typewriter cursor */
-.conf-card::after {
-  content: '▌';
-  position: absolute;
-  right: 1.1rem;
-  bottom: 0.9rem;
-  font-size: 0.85rem;
-  color: var(--conf-accent-violet);
-  animation: conf-cursor-blink 1.1s steps(1) infinite;
-  pointer-events: none;
-}
-
-@keyframes conf-cursor-blink {
-  0%, 49% {
-    opacity: 1;
-  }
-  50%, 100% {
-    opacity: 0;
-  }
 }
 
 .conf-card-header {
@@ -538,19 +402,15 @@
   margin-bottom: 0.75rem;
 }
 
-/* VN name-tag bar */
 .conf-pseudonym {
   font-family: var(--conf-font-mono);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: #ffffff;
-  background: linear-gradient(135deg, var(--conf-accent-violet), #9b7bff);
-  border: 2.5px solid var(--toon-ink);
+  font-size: 0.85rem;
+  color: #c2146d;
+  background: rgba(255, 92, 168, 0.12);
+  border: 2px solid var(--toon-ink);
+  padding: 0.25rem 0.6rem;
   border-radius: var(--conf-radius-full);
-  box-shadow: 2px 3px 0 var(--toon-ink);
-  padding: 0.3rem 0.85rem;
-  transform: rotate(-1.5deg);
+  font-weight: 600;
 }
 
 .conf-badges {
@@ -558,15 +418,13 @@
   gap: 0.5rem;
 }
 
-/* Game rank badges */
 .conf-badge {
   font-size: 0.75rem;
-  padding: 0.25rem 0.65rem;
+  padding: 0.2rem 0.6rem;
   border-radius: var(--conf-radius-full);
-  font-weight: 700;
-  font-family: var(--conf-font-mono);
+  font-weight: 600;
+  font-family: var(--ch-font-cartoon);
   border: 2px solid var(--toon-ink);
-  box-shadow: 1.5px 2px 0 var(--toon-ink);
 }
 
 .conf-badge-trending {
@@ -581,26 +439,27 @@
 
 .conf-card-title {
   font-size: 1.15rem;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0 0 0.5rem 0;
+  color: var(--conf-text-primary);
   font-family: var(--ch-font-display);
 }
 
 .conf-card-content {
   font-size: 0.95rem;
   line-height: 1.6;
-  color: #4a4370;
+  color: var(--conf-text-secondary);
   margin-bottom: 1rem;
   white-space: pre-wrap;
 }
 
-/* Vote & Actions Bar — game controls */
+/* Vote & Actions Bar */
 .conf-vote-bar {
   display: flex;
   align-items: center;
   gap: 1rem;
   padding-top: 0.75rem;
-  border-top: 2px dashed rgba(43, 35, 71, 0.18);
+  border-top: 2px dashed rgba(43, 35, 71, 0.15);
 }
 
 .conf-btn-vote {
@@ -611,11 +470,11 @@
   justify-content: center;
   gap: 0.4rem;
   padding: 0.5rem 1.1rem;
-  border-radius: 8px;
-  background: linear-gradient(180deg, #ffffff, #f0e9d8);
-  color: var(--toon-ink);
+  border-radius: var(--conf-radius-full);
+  background: #ffffff;
+  color: var(--conf-text-secondary);
   border: 2.5px solid var(--toon-ink);
-  box-shadow: 3px 4px 0 var(--toon-ink);
+  box-shadow: 2px 3px 0 var(--toon-ink);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 700;
@@ -623,8 +482,10 @@
 }
 
 .conf-btn-vote:hover {
+  background: var(--toon-lemon);
+  color: var(--toon-ink);
   transform: translateY(-2px);
-  box-shadow: 4px 6px 0 var(--toon-ink);
+  box-shadow: 3px 5px 0 var(--toon-ink);
 }
 
 .conf-btn-vote:active {
@@ -633,17 +494,17 @@
 }
 
 .conf-btn-vote.voted-up {
-  background: linear-gradient(180deg, #4cf2a8, var(--conf-accent-success));
+  background: var(--conf-accent-success);
   color: #075c38;
   border-color: var(--toon-ink);
-  box-shadow: 3px 4px 0 var(--toon-ink), 0 0 14px rgba(47, 221, 148, 0.5);
+  box-shadow: 2px 3px 0 var(--toon-ink);
 }
 
 .conf-btn-vote.voted-down {
-  background: linear-gradient(180deg, #ff8f8f, var(--conf-accent-danger));
+  background: var(--conf-accent-danger);
   color: #ffffff;
   border-color: var(--toon-ink);
-  box-shadow: 3px 4px 0 var(--toon-ink), 0 0 14px rgba(255, 107, 107, 0.5);
+  box-shadow: 2px 3px 0 var(--toon-ink);
 }
 
 .conf-action-btn {
@@ -659,30 +520,25 @@
   gap: 0.3rem;
   font-size: 0.85rem;
   border-radius: var(--conf-radius-sm);
-  transition: color var(--conf-transition-fast), text-shadow var(--conf-transition-fast);
+  transition: color var(--conf-transition-fast);
 }
 
 .conf-action-btn:hover {
   color: var(--conf-accent-primary);
-  text-shadow: 0 0 12px rgba(255, 92, 168, 0.6);
 }
 
-/* Create Wizard Form — console panels */
+/* Create Wizard Form */
 .conf-form-group {
-  position: relative;
-  z-index: 1;
   margin-bottom: 1.25rem;
 }
 
 .conf-label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: var(--conf-text-secondary);
-  font-family: var(--conf-font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-family: var(--ch-font-cartoon);
 }
 
 .conf-input,
@@ -692,9 +548,9 @@
   background: #ffffff;
   border: 2.5px solid var(--toon-ink);
   border-radius: var(--conf-radius-sm);
-  box-shadow: 3px 4px 0 var(--toon-ink);
+  box-shadow: 2px 2px 0 var(--toon-ink);
   padding: 0.8rem;
-  color: var(--toon-ink);
+  color: var(--conf-text-primary);
   font-size: 0.95rem;
   font-family: inherit;
   box-sizing: border-box;
@@ -706,8 +562,8 @@
 .conf-select:focus {
   outline: none;
   transform: translateY(-2px);
-  box-shadow: 4px 6px 0 var(--toon-ink), 0 0 0 3px rgba(53, 200, 242, 0.4);
-  border-color: var(--conf-accent-info);
+  box-shadow: 3px 4px 0 var(--toon-ink);
+  border-color: var(--conf-accent-primary);
 }
 
 .conf-char-counter {
@@ -715,16 +571,13 @@
   color: var(--conf-text-muted);
   text-align: right;
   margin-top: 0.25rem;
-  font-family: var(--conf-font-mono);
 }
 
 .conf-pii-warning {
-  position: relative;
-  z-index: 1;
-  background: rgba(255, 176, 32, 0.14);
-  border: 2px solid var(--conf-accent-warning);
-  box-shadow: 0 0 16px rgba(255, 176, 32, 0.3);
-  color: #ffce6e;
+  background: #fff3d6;
+  border: 2.5px solid var(--toon-ink);
+  box-shadow: 2px 3px 0 var(--toon-ink);
+  color: #8a5a00;
   padding: 0.75rem 1rem;
   border-radius: var(--conf-radius-sm);
   font-size: 0.85rem;
@@ -736,24 +589,21 @@
   gap: 0.5rem;
 }
 
-/* Comment Tree — dialogue replies */
+/* Comment Tree */
 .conf-comment-tree {
-  position: relative;
-  z-index: 1;
   margin-top: 1.5rem;
-  border-top: 2px dashed rgba(255, 247, 234, 0.25);
+  border-top: 2px dashed rgba(43, 35, 71, 0.2);
   padding-top: 1.5rem;
 }
 
 .conf-comment-item {
-  background: rgba(255, 247, 234, 0.07);
-  border: 2px solid rgba(255, 247, 234, 0.22);
-  box-shadow: 2px 3px 0 var(--toon-ink);
-  border-left: 4px solid var(--conf-accent-info);
+  background: #ffffff;
+  border: 2px solid var(--toon-ink);
+  box-shadow: 2px 2px 0 var(--toon-ink);
+  border-left: 5px solid var(--conf-border-accent);
   padding: 0.75rem 1rem;
   margin-bottom: 0.75rem;
   border-radius: 0 var(--conf-radius-sm) var(--conf-radius-sm) 0;
-  animation: conf-dialogue-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 .conf-comment-item.depth-2 {
@@ -769,8 +619,8 @@
 .conf-comment-pseudonym {
   font-family: var(--conf-font-mono);
   font-size: 0.8rem;
-  color: var(--conf-accent-info);
-  font-weight: 700;
+  color: var(--conf-accent-primary);
+  font-weight: 600;
 }
 
 .conf-comment-content {
@@ -779,52 +629,31 @@
   color: var(--conf-text-secondary);
 }
 
-/* Floating FAB — coin slot / insert button */
+/* Floating FAB */
 .conf-fab {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 30%, #ff9dc9, transparent 55%),
-    linear-gradient(145deg, #ff7ab9, #e23f8f);
-  color: #ffffff;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--conf-radius-full);
+  background: linear-gradient(135deg, var(--toon-violet), var(--toon-pink));
+  color: #fff;
   border: 3px solid var(--toon-ink);
-  box-shadow: 4px 5px 0 var(--toon-ink), 0 0 26px rgba(255, 92, 168, 0.55);
+  box-shadow: 4px 5px 0 var(--toon-ink);
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   transition: transform var(--conf-transition-fast), box-shadow var(--conf-transition-fast);
   z-index: 100;
   animation: toon-float 2.6s ease-in-out infinite;
 }
 
-.conf-fab::before {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border: 2px dashed rgba(255, 217, 61, 0.7);
-  border-radius: 50%;
-  animation: conf-coin-spin 8s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes conf-coin-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .conf-fab:hover {
-  transform: scale(1.14) rotate(8deg);
-  box-shadow: 6px 8px 0 var(--toon-ink), 0 0 36px rgba(255, 92, 168, 0.8);
+  transform: scale(1.12) rotate(6deg);
+  box-shadow: 6px 8px 0 var(--toon-ink);
 }
 
 .conf-fab:active {
@@ -834,12 +663,10 @@
 
 /* Skeleton & Empty States */
 .conf-skeleton {
-  position: relative;
-  z-index: 1;
-  background: linear-gradient(90deg, rgba(255, 247, 234, 0.08) 25%, rgba(255, 247, 234, 0.18) 50%, rgba(255, 247, 234, 0.08) 75%);
+  background: linear-gradient(90deg, #f1eadb 25%, #fdf6e9 50%, #f1eadb 75%);
   background-size: 200% 100%;
   animation: confSkeletonLoading 1.5s infinite;
-  border: 2px solid rgba(255, 247, 234, 0.25);
+  border: 2px solid var(--toon-ink);
   border-radius: var(--conf-radius-sm);
   height: 20px;
   margin-bottom: 0.5rem;
@@ -855,8 +682,6 @@
 }
 
 .conf-empty-state {
-  position: relative;
-  z-index: 1;
   text-align: center;
   padding: 3rem 1rem;
   color: var(--conf-text-muted);
@@ -867,13 +692,12 @@
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
   animation: toon-bob 2.8s ease-in-out infinite;
-  filter: drop-shadow(0 0 12px rgba(124, 92, 255, 0.7));
 }
 
 /* Focus Rings & Accessibility */
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--conf-accent-info);
+  outline: 2px solid var(--conf-accent-primary);
   outline-offset: 2px;
 }
 
