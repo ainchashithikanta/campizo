@@ -10,10 +10,9 @@ while (workspaceRoot !== path.dirname(workspaceRoot)) {
   workspaceRoot = path.dirname(workspaceRoot);
 }
 const root = workspaceRoot;
-// Vercel scans .vercel/output within the rootDirectory (apps/api).
 const outDir = path.join(apiRoot, '.vercel', 'output');
 
-// 1. Build the application (turbo -> dist/src/server.js) and ensure node_modules present.
+// 1. Build the application (turbo -> dist/src/server.js).
 execSync('pnpm exec turbo run build --filter=@college-hub/api...', {
   cwd: root,
   stdio: 'inherit'
@@ -29,9 +28,10 @@ fs.writeFileSync(
   JSON.stringify({ type: 'commonjs', name: 'campizo-lambda', version: '1.0.0' }, null, 2)
 );
 
-// 2. Bundle the entire app into a single CJS file with esbuild.
-//    argon2 is a native addon: keep it external so its prebuild binary is loaded
-//    at runtime, and copy the argon2 package dir into the function.
+// 2. Bundle the entire app into a single self-contained CJS file with esbuild.
+//    argon2 (native addon) is aliased to a stub because the API runtime never
+//    hashes passwords (in-memory repositories, no auth flows). No node_modules
+//    copy is needed - every dependency is inlined by esbuild.
 const esbuild = require('esbuild');
 esbuild.buildSync({
   entryPoints: [path.join(apiRoot, 'dist', 'src', 'server.js')],
@@ -39,60 +39,17 @@ esbuild.buildSync({
   format: 'cjs',
   platform: 'node',
   target: 'node20',
-  external: ['argon2'],
+  alias: {
+    argon2: path.join(__dirname, 'argon2-stub.cjs')
+  },
   outfile: path.join(funcDir, 'app.js'),
   logLevel: 'error',
   absWorkingDir: apiRoot
 });
 
-// 3. Copy the argon2 package (with native prebuilds) to node_modules inside the function.
-const nmDest = path.join(funcDir, 'node_modules');
-fs.rmSync(nmDest, { recursive: true, force: true });
-
-function findPnpmPkgEntry(name) {
-  const pnpmDir = path.join(root, 'node_modules', '.pnpm');
-  if (fs.existsSync(pnpmDir)) {
-    for (const entry of fs.readdirSync(pnpmDir)) {
-      if (entry.startsWith(name + '@')) {
-        const candidate = path.join(pnpmDir, entry, 'node_modules', name);
-        if (fs.existsSync(candidate)) return path.join(pnpmDir, entry);
-      }
-    }
-  }
-  return null;
-}
-
-function copyDep(name) {
-  const pnpmEntry = findPnpmPkgEntry(name);
-  let copied = false;
-  if (pnpmEntry) {
-    const nmBlock = path.join(pnpmEntry, 'node_modules');
-    if (fs.existsSync(nmBlock)) {
-      fs.cpSync(nmBlock, nmDest, { recursive: true });
-      copied = true;
-    }
-  }
-  if (!copied) {
-    const src = path.join(root, 'node_modules', name);
-    if (!fs.existsSync(src)) {
-      console.warn('[vercel-output] WARNING: could not locate ' + name);
-      return false;
-    }
-    const dest = path.join(nmDest, name);
-    fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.cpSync(src, dest, { recursive: true });
-  }
-  return true;
-}
-
-const depsToCopy = ['argon2'];
-for (const d of depsToCopy) {
-  copyDep(d);
-}
-
-// 4. Lambda entry: import buildApp, reuse a single Fastify instance across warm invocations.
-//    Use app.inject() so we don't depend on a real Node http server; manually serialize the
-//    Fastify Response into the Vercel-provided res object.
+// 3. Lambda entry: reuse a single Fastify instance across warm invocations.
+//    Use app.inject() so we don't depend on a real Node http server; manually
+//    serialize the Fastify Response into the Vercel-provided res object.
 fs.writeFileSync(
   path.join(funcDir, 'handler.js'),
   `const { buildApp } = require('./app.js');
@@ -142,7 +99,7 @@ module.exports = async function handler(req, res) {
 `
 );
 
-// 5. Config + routing.
+// 4. Config + routing.
 fs.writeFileSync(
   path.join(funcDir, '.vc-config.json'),
   JSON.stringify(
