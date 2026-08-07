@@ -40,7 +40,7 @@ export function createDatabaseClient(options: DatabaseClientOptions = {}): {
 
 export async function checkDatabaseHealth(
   pool: InstanceType<typeof Pool>
-): Promise<{ healthy: boolean; latencyMs: number }> {
+): Promise<{ healthy: boolean; latencyMs: number; error?: string }> {
   const startTime = Date.now();
   try {
     const client = await pool.connect();
@@ -53,6 +53,10 @@ export async function checkDatabaseHealth(
     }
   } catch (error) {
     logger.error({ error }, 'Database health check query failed');
-    return { healthy: false, latencyMs: Date.now() - startTime };
+    return {
+      healthy: false,
+      latencyMs: Date.now() - startTime,
+      error: error instanceof Error ? `${error.name}: ${error.message.split('\n')[0]}` : String(error)
+    };
   }
 }

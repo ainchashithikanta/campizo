@@ -6,6 +6,7 @@ import type { Pool } from 'pg';
 export interface ComprehensiveHealthReport {
   status: 'ok' | 'error';
   database: 'ok' | 'error';
+  databaseError?: string;
   redis: 'ok' | 'error';
   storage: 'ok' | 'error';
   storageError?: string;
@@ -62,9 +63,9 @@ export class ApiHealthProbes {
     this.checkers.push(checker);
   }
 
-  public async checkDatabase(): Promise<DependencyHealth> {
+  public async checkDatabase(): Promise<DependencyHealth & { error?: string }> {
     const result = await checkDatabaseHealth(this.getPool());
-    return { name: 'postgres', healthy: result.healthy, latencyMs: result.latencyMs };
+    return { name: 'postgres', healthy: result.healthy, latencyMs: result.latencyMs, ...(result.error ? { error: result.error } : {}) };
   }
 
   public async checkRedis(): Promise<'ok' | 'error'> {
@@ -99,6 +100,7 @@ export class ApiHealthProbes {
     return {
       status: overallOk ? 'ok' : 'error',
       database: dbStatus,
+      ...(dbHealth.error ? { databaseError: dbHealth.error } : {}),
       redis: redisStatus,
       storage: storageStatus.status,
       ...(storageStatus.error ? { storageError: storageStatus.error } : {}),
