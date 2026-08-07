@@ -34,6 +34,7 @@
     "load:test": "node scripts/run-load-test.js"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/node": "^20.14.9",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
@@ -52,6 +53,5 @@
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
-  },
-  "dependencies": {}
+  }
 }

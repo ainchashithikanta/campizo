@@ -36,3 +36,6 @@ Thumbs.db
 .docker-data
 koyeb.exe
 
+
+test-results/
+playwright-report/
