@@ -103,7 +103,7 @@ module.exports = async function handler(req, res) {
 fs.writeFileSync(
   path.join(funcDir, '.vc-config.json'),
   JSON.stringify(
-    { runtime: 'nodejs20.x', handler: 'handler.js', launcherType: 'Nodejs', maxDuration: 30 },
+    { runtime: 'nodejs22.x', handler: 'handler.js', launcherType: 'Nodejs', maxDuration: 30 },
     null,
     2
   )
