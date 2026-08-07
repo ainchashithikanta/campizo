@@ -1,6 +1,7 @@
 .footer {
-  background: var(--ch-color-surface);
-  border-top: 1px solid var(--ch-color-border);
+  background: var(--toon-cream);
+  border-top: var(--toon-border);
+  box-shadow: 0 -3px 0 rgba(43, 35, 71, 0.12);
   margin-top: 3rem;
   padding-top: 3rem;
 }
@@ -24,16 +25,19 @@
 }
 
 .logo {
-  width: 30px;
-  height: 30px;
-  background: linear-gradient(135deg, var(--ch-color-primary), #7c3aed);
-  color: var(--ch-color-text-inverse);
-  border-radius: var(--ch-radius-md);
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--toon-violet), var(--toon-pink));
+  color: #fff;
+  border: 2.5px solid var(--toon-ink);
+  border-radius: 10px;
+  box-shadow: 2px 2px 0 var(--toon-ink);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: var(--ch-font-weight-bold);
+  font-weight: 800;
   font-size: var(--ch-font-size-sm);
+  transform: rotate(-4deg);
 }
 
 .brandName {
@@ -79,9 +83,10 @@
   gap: 1rem;
   flex-wrap: wrap;
   padding-block: 1.25rem;
-  border-top: 1px solid var(--ch-color-border);
+  border-top: 2px dashed rgba(43, 35, 71, 0.2);
   font-size: var(--ch-font-size-xs);
-  color: var(--ch-color-text-muted);
+  color: #6b6482;
+  font-family: var(--ch-font-cartoon);
 }
 
 .legal {

@@ -1,34 +1,34 @@
-/* Campus Confessions Design System CSS */
+/* Campus Confessions Design System CSS — Anime Night Theme */
 
 :root {
-  --conf-bg: #0f172a;
-  --conf-card-bg: #1e293b;
-  --conf-card-hover: #334155;
-  --conf-border: #334155;
-  --conf-border-accent: #475569;
+  --conf-bg: #1b1740;
+  --conf-card-bg: #2b2560;
+  --conf-card-hover: #3a3390;
+  --conf-border: #453c96;
+  --conf-border-accent: #7c6bf0;
 
-  --conf-text-primary: #f8fafc;
-  --conf-text-secondary: #94a3b8;
-  --conf-text-muted: #64748b;
+  --conf-text-primary: #fdf6ff;
+  --conf-text-secondary: #c9c2f0;
+  --conf-text-muted: #8f86c8;
 
-  --conf-accent-primary: #6366f1;
-  --conf-accent-primary-hover: #4f46e5;
-  --conf-accent-success: #10b981;
-  --conf-accent-warning: #f59e0b;
-  --conf-accent-danger: #ef4444;
-  --conf-accent-info: #06b6d4;
+  --conf-accent-primary: #7c5cff;
+  --conf-accent-primary-hover: #6a4ae8;
+  --conf-accent-success: #2fdd94;
+  --conf-accent-warning: #ffb020;
+  --conf-accent-danger: #ff6b6b;
+  --conf-accent-info: #35c8f2;
 
-  --conf-badge-trending-bg: rgba(245, 158, 11, 0.15);
-  --conf-badge-trending-fg: #f59e0b;
-  --conf-badge-hot-bg: rgba(239, 68, 68, 0.15);
-  --conf-badge-hot-fg: #f87171;
+  --conf-badge-trending-bg: rgba(255, 176, 32, 0.2);
+  --conf-badge-trending-fg: #ffce6e;
+  --conf-badge-hot-bg: rgba(255, 107, 107, 0.2);
+  --conf-badge-hot-fg: #ff9b9b;
 
-  --conf-font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --conf-font-body: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --conf-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --conf-radius-sm: 6px;
-  --conf-radius-md: 12px;
-  --conf-radius-lg: 16px;
+  --conf-radius-sm: 10px;
+  --conf-radius-md: 18px;
+  --conf-radius-lg: 26px;
   --conf-radius-full: 9999px;
 
   --conf-transition-fast: 0.15s ease;
@@ -42,7 +42,10 @@
   padding: 1rem;
   font-family: var(--conf-font-body);
   color: var(--conf-text-primary);
-  background-color: var(--conf-bg);
+  background:
+    radial-gradient(600px 280px at 90% 0%, rgba(124, 92, 255, 0.2), transparent 60%),
+    radial-gradient(500px 240px at 5% 30%, rgba(53, 200, 242, 0.12), transparent 60%),
+    var(--conf-bg);
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -51,18 +54,40 @@
 .conf-hero {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--conf-border);
+  border: 3px solid var(--toon-ink);
   border-radius: var(--conf-radius-lg);
   background:
-    radial-gradient(1200px 400px at 85% -20%, rgba(99, 102, 241, 0.25), transparent 60%),
-    radial-gradient(800px 300px at 10% 120%, rgba(6, 182, 212, 0.18), transparent 60%),
-    linear-gradient(160deg, #171e33, #131a2e 55%, #101527);
-  padding: 2.25rem 2rem 1.75rem;
-  margin-bottom: 1.5rem;
+    radial-gradient(1200px 400px at 85% -20%, rgba(124, 92, 255, 0.4), transparent 60%),
+    radial-gradient(800px 300px at 10% 120%, rgba(53, 200, 242, 0.3), transparent 60%),
+    linear-gradient(160deg, #332b73, #251f58 55%, #1b1740);
+  box-shadow: var(--toon-shadow);
+  padding: 2.5rem 2rem 1.75rem;
+  margin-bottom: 1.75rem;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 2rem;
+}
+
+.conf-hero::before {
+  content: '✦';
+  position: absolute;
+  top: 14px;
+  right: 22px;
+  font-size: 1.2rem;
+  color: rgba(255, 217, 61, 0.6);
+  animation: toon-sparkle 2.5s ease-in-out infinite;
+}
+
+.conf-hero::after {
+  content: '✧';
+  position: absolute;
+  bottom: 12px;
+  left: 20px;
+  font-size: 1rem;
+  color: rgba(53, 200, 242, 0.5);
+  animation: toon-sparkle 3s ease-in-out infinite;
+  animation-delay: -1.2s;
 }
 
 .conf-hero-glow {
@@ -71,7 +96,7 @@
   right: -10%;
   width: 320px;
   height: 320px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.35), transparent 65%);
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.5), transparent 65%);
   pointer-events: none;
 }
 
@@ -83,8 +108,8 @@
 
 .conf-hero-kicker {
   font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--conf-accent-info);
   margin: 0 0 0.6rem;
@@ -92,15 +117,15 @@
 
 .conf-hero-title {
   font-family: var(--ch-font-display);
-  font-size: 1.85rem;
-  line-height: 1.15;
+  font-size: 2rem;
+  line-height: 1.1;
   font-weight: 800;
   margin: 0 0 0.7rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .conf-hero-title span {
-  background: linear-gradient(90deg, #818cf8, #22d3ee);
+  background: linear-gradient(90deg, #a78bfa, #35c8f2);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -123,32 +148,38 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.65rem 1.15rem;
+  padding: 0.7rem 1.3rem;
   border-radius: var(--conf-radius-full);
-  font-size: 0.9rem;
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.92rem;
   font-weight: 600;
   text-decoration: none;
-  background: linear-gradient(90deg, var(--conf-accent-primary), #8b5cf6);
+  background: linear-gradient(90deg, var(--conf-accent-primary), #a78bfa);
   color: #fff;
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
-  transition: transform var(--conf-transition-fast), box-shadow var(--conf-transition-fast);
+  border: 2.5px solid var(--toon-ink);
+  box-shadow: 3px 4px 0 var(--toon-ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .conf-hero-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.45);
+  transform: translateY(-3px) rotate(-1deg);
+  box-shadow: 5px 7px 0 var(--toon-ink);
+}
+
+.conf-hero-btn:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 var(--toon-ink);
 }
 
 .conf-hero-btn-ghost {
-  background: rgba(148, 163, 184, 0.12);
-  box-shadow: none;
+  background: rgba(148, 163, 184, 0.15);
   color: var(--conf-text-secondary);
-  border: 1px solid var(--conf-border);
+  box-shadow: 3px 4px 0 var(--toon-ink);
 }
 
 .conf-hero-btn-ghost:hover {
   color: var(--conf-text-primary);
-  box-shadow: none;
+  box-shadow: 5px 7px 0 var(--toon-ink);
 }
 
 .conf-hero-stats {
@@ -159,7 +190,7 @@
   gap: 0.9rem;
   min-width: 160px;
   padding-left: 1.5rem;
-  border-left: 1px solid var(--conf-border);
+  border-left: 3px solid rgba(124, 92, 255, 0.45);
 }
 
 .conf-stat {
@@ -168,10 +199,11 @@
 }
 
 .conf-stat-value {
-  font-size: 1.35rem;
+  font-family: var(--ch-font-display);
+  font-size: 1.5rem;
   font-weight: 800;
   color: #fff;
-  background: linear-gradient(90deg, #818cf8, #22d3ee);
+  background: linear-gradient(90deg, #a78bfa, #35c8f2);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -197,11 +229,11 @@
     padding-left: 0;
     padding-top: 1rem;
     border-left: none;
-    border-top: 1px solid var(--conf-border);
+    border-top: 3px solid rgba(124, 92, 255, 0.45);
   }
 
   .conf-hero-title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
 }
 
@@ -239,98 +271,100 @@
   background: var(--conf-card-bg);
   color: var(--conf-text-secondary);
   text-decoration: none;
+  font-family: var(--ch-font-cartoon);
   font-size: 0.9rem;
   font-weight: 500;
-  border: 1px solid var(--conf-border);
+  border: 2.5px solid var(--toon-ink);
+  box-shadow: 2px 3px 0 var(--toon-ink);
   transition: all var(--conf-transition-fast);
   white-space: nowrap;
 }
 
-.conf-nav-link:hover,
-.conf-nav-link.active {
+.conf-nav-link:hover {
   background: var(--conf-accent-primary);
   color: #fff;
-  border-color: var(--conf-accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 3px 5px 0 var(--toon-ink);
 }
 
-.conf-category-chips {
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1.5rem;
-  scrollbar-width: thin;
+.conf-nav-link.active {
+  background: var(--toon-lemon);
+  color: var(--toon-ink);
+  border-color: var(--toon-ink);
+  box-shadow: 2px 3px 0 var(--toon-ink);
 }
 
 .conf-chip {
   flex-shrink: 0;
   padding: 0.4rem 0.9rem;
   border-radius: var(--conf-radius-full);
-  background: rgba(148, 163, 184, 0.08);
-  border: 1px solid var(--conf-border);
+  background: var(--conf-card-bg);
+  border: 2px solid var(--conf-border);
   color: var(--conf-text-secondary);
+  font-family: var(--ch-font-cartoon);
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: all var(--conf-transition-fast);
 }
 
 .conf-chip:hover {
-  background: rgba(99, 102, 241, 0.15);
-  border-color: rgba(99, 102, 241, 0.5);
-  color: var(--conf-text-primary);
-}
-
-.conf-reactions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.9rem;
-  padding-top: 0.75rem;
-  border-top: 1px dashed rgba(255, 255, 255, 0.07);
+  background: var(--toon-lemon);
+  border-color: var(--toon-ink);
+  color: var(--toon-ink);
+  transform: translateY(-2px) rotate(-1.5deg);
 }
 
 .conf-reaction-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.3rem 0.7rem;
+  padding: 0.3rem 0.75rem;
   border-radius: var(--conf-radius-full);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid var(--conf-border);
   color: var(--conf-text-secondary);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all var(--conf-transition-fast);
 }
 
 .conf-reaction-chip:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.14);
   color: var(--conf-text-primary);
+  transform: translateY(-2px);
 }
 
 .conf-reaction-chip-active {
-  background: rgba(99, 102, 241, 0.18);
-  border-color: rgba(99, 102, 241, 0.6);
-  color: #a5b4fc;
+  background: rgba(124, 92, 255, 0.3);
+  border-color: var(--conf-accent-primary);
+  color: #fff;
 }
 
 /* Confession Card */
 .conf-card {
   background: var(--conf-card-bg);
-  border: 1px solid var(--conf-border);
+  border: 2.5px solid var(--toon-ink);
   border-radius: var(--conf-radius-md);
+  box-shadow: 4px 5px 0 var(--toon-ink);
   padding: 1.25rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
   transition:
     transform var(--conf-transition-fast),
-    border-color var(--conf-transition-fast);
+    box-shadow var(--conf-transition-fast),
+    background-color var(--conf-transition-fast);
 }
 
 .conf-card:hover {
-  border-color: var(--conf-border-accent);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.45);
+  background: var(--conf-card-hover);
+  transform: translateY(-4px) rotate(-0.4deg);
+  box-shadow: 6px 8px 0 var(--toon-ink);
+}
+
+.conf-card:active {
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0 var(--toon-ink);
 }
 
 .conf-card-header {
@@ -403,32 +437,42 @@
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.1rem;
   border-radius: var(--conf-radius-full);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--conf-text-secondary);
-  border: 1px solid transparent;
+  border: 2px solid var(--conf-border);
+  box-shadow: 2px 3px 0 var(--toon-ink);
   cursor: pointer;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
   transition: all var(--conf-transition-fast);
 }
 
 .conf-btn-vote:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.14);
   color: var(--conf-text-primary);
+  transform: translateY(-2px);
+  box-shadow: 3px 5px 0 var(--toon-ink);
+}
+
+.conf-btn-vote:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 var(--toon-ink);
 }
 
 .conf-btn-vote.voted-up {
-  background: rgba(16, 185, 129, 0.2);
+  background: rgba(47, 221, 148, 0.25);
   color: var(--conf-accent-success);
   border-color: var(--conf-accent-success);
+  box-shadow: 2px 3px 0 var(--toon-ink);
 }
 
 .conf-btn-vote.voted-down {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(255, 107, 107, 0.25);
   color: var(--conf-accent-danger);
   border-color: var(--conf-accent-danger);
+  box-shadow: 2px 3px 0 var(--toon-ink);
 }
 
 .conf-action-btn {
@@ -550,24 +594,31 @@
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: var(--conf-radius-full);
-  background: var(--conf-accent-primary);
+  background: linear-gradient(135deg, var(--toon-violet), var(--toon-pink));
   color: #fff;
+  border: 3px solid var(--toon-ink);
+  box-shadow: 4px 5px 0 var(--toon-ink);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   text-decoration: none;
   font-size: 1.5rem;
-  transition: transform var(--conf-transition-fast);
+  transition: transform var(--conf-transition-fast), box-shadow var(--conf-transition-fast);
   z-index: 100;
+  animation: toon-float 2.6s ease-in-out infinite;
 }
 
 .conf-fab:hover {
-  transform: scale(1.05);
-  background: var(--conf-accent-primary-hover);
+  transform: scale(1.12) rotate(6deg);
+  box-shadow: 6px 8px 0 var(--toon-ink);
+}
+
+.conf-fab:active {
+  transform: scale(0.95);
+  box-shadow: 1px 1px 0 var(--toon-ink);
 }
 
 /* Skeleton & Empty States */
