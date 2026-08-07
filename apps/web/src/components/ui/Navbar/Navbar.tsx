@@ -1,12 +1,41 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styles from './Navbar.module.css';
 import { useTheme } from '@web/hooks/use-theme';
 
+const NAV_ITEMS = [
+  { href: '/confessions', label: 'Confessions', icon: '💭' },
+  { href: '/academic-resources', label: 'Materials', icon: '📚' },
+  { href: '/marketplace', label: 'Marketplace', icon: '🛍️' },
+  { href: '/connect', label: 'Connect', icon: '🤝' },
+  { href: '/placements', label: 'Placements', icon: '💼' },
+  { href: '/notifications', label: 'Alerts', icon: '🔔' }
+];
+
 export function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, []);
+
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <header className={styles.header}>
@@ -17,39 +46,24 @@ export function Navbar() {
         <div className={styles.left}>
           <Link href="/" className={styles.brand} aria-label="College Hub Home">
             <span className={styles.logoIcon}>CH</span>
-            <span>College Hub</span>
+            <span className={styles.brandText}>College Hub</span>
           </Link>
-          <span className={styles.moduleBadge}>Platform Console</span>
+
+          <nav className={styles.moduleNav} aria-label="Module navigation">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`${styles.moduleLink} ${isActive(item.href) ? styles.moduleLinkActive : ''}`}
+              >
+                <span aria-hidden="true">{item.icon}</span>
+                <span>{item.label}</span>
+              </Link>
+            ))}
+          </nav>
         </div>
 
         <div className={styles.right}>
-          <Link
-            href="/admin/feature-flags"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: 'linear-gradient(135deg, #6366F1, #4F46E5)',
-              color: '#FFFFFF',
-              fontWeight: 700,
-              fontSize: '12px',
-              padding: '6px 12px',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              boxShadow: '0 0 12px rgba(99, 102, 241, 0.3)'
-            }}
-          >
-            <span>⚡ Ops Console</span>
-          </Link>
-
-          <div className={styles.tenantSelector} title="Active College Tenant">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-              <path d="M6 12v5c3 3 9 3 12 0v-5" />
-            </svg>
-            <span>Stanford University</span>
-          </div>
-
           <button
             type="button"
             className={styles.themeToggle}
@@ -81,8 +95,43 @@ export function Navbar() {
               ST
             </div>
           </div>
+
+          <button
+            type="button"
+            className={styles.menuToggle}
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label="Toggle module menu"
+            aria-expanded={menuOpen}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              {menuOpen ? <path d="M18 6L6 18M6 6l12 12" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
+            </svg>
+          </button>
         </div>
       </div>
+
+      {menuOpen && (
+        <div ref={menuRef} className={styles.mobileNav}>
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`${styles.mobileLink} ${isActive(item.href) ? styles.mobileLinkActive : ''}`}
+            >
+              <span aria-hidden="true">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          ))}
+          <Link href="/professors" className={styles.mobileLink}>
+            <span aria-hidden="true">⭐</span>
+            <span>Professor Ratings</span>
+          </Link>
+          <Link href="/" className={styles.mobileLink}>
+            <span aria-hidden="true">🏠</span>
+            <span>Home</span>
+          </Link>
+        </div>
+      )}
     </header>
   );
 }

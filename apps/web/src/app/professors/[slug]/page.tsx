@@ -2,6 +2,7 @@
 
 import React, { useState, use } from 'react';
 import Link from 'next/link';
+import '@web/styles/rate-my-professor.css';
 import { ProfessorHero } from '@web/components/rate-my-professor/ProfessorHero';
 import { RatingStatsCard } from '@web/components/rate-my-professor/RatingStatsCard';
 import { ReviewCard } from '@web/components/rate-my-professor/ReviewCard';
