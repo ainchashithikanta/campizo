@@ -8,7 +8,7 @@ import '@web/styles/feature-flags.css';
 export default function EvaluationPlaygroundPage() {
   const [flagKey, setFlagKey] = useState('marketplace.p2p_chat');
   const [userId, setUserId] = useState('user_101');
-  const [collegeId, setCollegeId] = useState('college_stanford_001');
+  const [collegeId, setCollegeId] = useState('college_campus_001');
   const [result, setResult] = useState<EvaluationResultDto | null>(null);
 
   const handleEvaluate = async () => {

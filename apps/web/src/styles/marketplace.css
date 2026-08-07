@@ -74,6 +74,7 @@
 }
 
 .mp-hero-title {
+  font-family: var(--ch-font-display);
   font-size: 2.25rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
@@ -229,9 +230,11 @@
 }
 
 .mp-section-head h2 {
+  font-family: var(--ch-font-display);
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0;
+  letter-spacing: -0.02em;
   color: var(--mp-color-slate-900);
 }
 
@@ -259,6 +262,32 @@
 
 .mp-card:hover .mp-card-image {
   transform: scale(1.05);
+}
+
+.mp-card-save {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  box-shadow: var(--mp-shadow-md);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.mp-card-save:hover {
+  transform: scale(1.1);
+}
+
+.mp-card-save-active {
+  background: #fef2f2;
 }
 
 .mp-card-body {

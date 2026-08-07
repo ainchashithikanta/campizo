@@ -82,7 +82,7 @@ const FALLBACK_REVIEWS: ReviewDto[] = [
     authorDisplayName: null,
     gradeReceived: 'A+',
     reviewText:
-      'Dr. Turing is easily one of the best professors at Stanford. His lectures on Turing machines and algorithm complexity are legendary. Viva questions are tough, but if you study his PPTs, you will get an A+!',
+      'Dr. Turing is easily one of the best professors on campus. His lectures on Turing machines and algorithm complexity are legendary. Viva questions are tough, but if you study his PPTs, you will get an A+!',
     overallRating: 5.0,
     dimensions: {
       teachingClarity: 5.0,

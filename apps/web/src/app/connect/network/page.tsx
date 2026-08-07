@@ -28,15 +28,15 @@ export default function NetworkPage() {
           res.items || [
             {
               id: 'conn_1',
-              studentAId: 'usr_stanford_101',
-              studentBId: 'usr_stanford_202',
+              studentAId: 'usr_campus_101',
+              studentBId: 'usr_campus_202',
               status: 'PENDING',
               createdAt: new Date().toISOString()
             },
             {
               id: 'conn_2',
-              studentAId: 'usr_stanford_101',
-              studentBId: 'usr_stanford_303',
+              studentAId: 'usr_campus_101',
+              studentBId: 'usr_campus_303',
               status: 'ACCEPTED',
               createdAt: new Date().toISOString()
             }

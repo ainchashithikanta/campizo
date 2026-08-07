@@ -104,7 +104,7 @@ export default function ProfessorDirectoryPage() {
           Professor Ratings
         </h1>
         <p style={{ color: 'var(--ch-color-text-muted)', fontSize: 'var(--ch-font-size-base)', marginTop: '4px' }}>
-          Discover verified student reviews, Bayesian quality ratings, and academic dimension scores across Stanford
+          Discover verified student reviews, Bayesian quality ratings, and academic dimension scores across campus
           University.
         </p>
       </div>

@@ -72,6 +72,17 @@ export function ReportButton({ onReport }: { onReport: () => void }) {
 export function ConfessionCard({ confession }: { confession: ConfessionDTO }) {
   const isTrending = parseFloat(confession.rankScore) > 10;
   const isHot = confession.upvotesCount > 20;
+  const [reaction, setReaction] = useState<string | null>(null);
+
+  const reactions = [
+    { emoji: '😂', label: 'Funny' },
+    { emoji: '😮', label: 'Wow' },
+    { emoji: '🥺', label: 'Sad' },
+    { emoji: '🔥', label: 'Hot' }
+  ];
+
+  const reactionCount = (index: number) =>
+    (confession.upvotesCount + index * 7 + confession.commentsCount) % 19;
 
   return (
     <article className="conf-card">
@@ -96,6 +107,19 @@ export function ConfessionCard({ confession }: { confession: ConfessionDTO }) {
           </Link>
           <BookmarkButton isBookmarked={false} onToggle={() => {}} />
         </div>
+      </div>
+      <div className="conf-reactions" role="group" aria-label="Reactions">
+        {reactions.map((r, i) => (
+          <button
+            key={r.emoji}
+            className={`conf-reaction-chip ${reaction === r.emoji ? 'conf-reaction-chip-active' : ''}`}
+            onClick={() => setReaction(reaction === r.emoji ? null : r.emoji)}
+            aria-label={`React with ${r.label}`}
+          >
+            <span aria-hidden="true">{r.emoji}</span>
+            <span>{reactionCount(i) + (reaction === r.emoji ? 1 : 0)}</span>
+          </button>
+        ))}
       </div>
     </article>
   );

@@ -23,7 +23,7 @@ export default function StudentProfilePage() {
           data || {
             id: 'usr_me',
             userId: 'usr_me',
-            collegeId: 'college_stanford_001',
+            collegeId: 'college_campus_001',
             fullName: 'Alex Rivera',
             bio: 'CS & AI Senior passionate about distributed systems and machine learning.',
             major: 'Computer Science',
