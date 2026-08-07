@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "installCommand": "pnpm install --prod=false",
+  "buildCommand": "pnpm exec turbo run build --filter=@college-hub/api...",
+  "framework": null
+}
