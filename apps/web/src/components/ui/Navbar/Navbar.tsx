@@ -44,9 +44,9 @@ export function Navbar() {
       </a>
       <div className={`container ${styles.container}`}>
         <div className={styles.left}>
-          <Link href="/" className={styles.brand} aria-label="College Hub Home">
-            <span className={styles.logoIcon}>CH</span>
-            <span className={styles.brandText}>College Hub</span>
+          <Link href="/" className={styles.brand} aria-label="Campizo Home">
+            <span className={styles.logoIcon}>CZ</span>
+            <span className={styles.brandText}>Campizo</span>
           </Link>
 
           <nav className={styles.moduleNav} aria-label="Module navigation">
@@ -92,7 +92,7 @@ export function Navbar() {
 
           <div className={styles.userBadge}>
             <div className={styles.userAvatar} aria-label="Student profile avatar">
-              ST
+              CA
             </div>
           </div>
 

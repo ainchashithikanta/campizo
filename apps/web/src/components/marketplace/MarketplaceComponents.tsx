@@ -1,8 +1,12 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { ListingSummary } from '../../lib/api-marketplace';
 
 export function ListingCard({ listing }: { listing: ListingSummary }) {
+  const [saved, setSaved] = useState(false);
+
   return (
     <div className="mp-card" data-testid="marketplace-card">
       <div className="mp-card-image-wrapper">
@@ -11,6 +15,14 @@ export function ListingCard({ listing }: { listing: ListingSummary }) {
           alt={listing.title}
           className="mp-card-image"
         />
+        <button
+          type="button"
+          className={`mp-card-save ${saved ? 'mp-card-save-active' : ''}`}
+          onClick={() => setSaved(!saved)}
+          aria-label={saved ? 'Remove from saved' : 'Save listing'}
+        >
+          {saved ? '❤️' : '🤍'}
+        </button>
         <div style={{ position: 'absolute', top: '8px', left: '8px' }}>
           <span className="mp-badge mp-badge-emerald">{listing.listingType}</span>
         </div>

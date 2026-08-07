@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import React from 'react';
 import '@web/styles/home.css';
 
 interface ModuleCard {
@@ -86,7 +87,7 @@ export default function HomePage() {
       <section className="hub-hero">
         <div className="hub-hero-bg" aria-hidden="true" />
         <div className="container hub-hero-inner">
-          <span className="hub-hero-kicker">Stanford University · Student Platform</span>
+          <span className="hub-hero-kicker">Campizo · Your Campus, One Platform</span>
           <h1 className="hub-hero-title">
             Your campus, <span className="hub-hero-title-grad">all in one place.</span>
           </h1>
@@ -116,6 +117,21 @@ export default function HomePage() {
               <span>Anonymous &amp; safe</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="hub-marquee" aria-label="Campus pulse">
+        <div className="hub-marquee-track">
+          {[0, 1].map((dup) => (
+            <React.Fragment key={dup}>
+              <span className="hub-marquee-item">💭 <strong>2.4k</strong> confessions this week</span>
+              <span className="hub-marquee-item">📚 <strong>1.8k</strong> verified study resources</span>
+              <span className="hub-marquee-item">🛍️ <strong>320</strong> live marketplace listings</span>
+              <span className="hub-marquee-item">⭐ <strong>4.5</strong> avg professor rating</span>
+              <span className="hub-marquee-item">🤝 <strong>1.2k</strong> campus connections</span>
+              <span className="hub-marquee-item">💼 <strong>40+</strong> companies hiring</span>
+            </React.Fragment>
+          ))}
         </div>
       </section>
 

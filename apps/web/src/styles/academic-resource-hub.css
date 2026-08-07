@@ -24,10 +24,12 @@
 }
 
 .arh-hero-title {
+  font-family: var(--ch-font-display);
   font-size: var(--ch-font-size-4xl);
   font-weight: var(--ch-font-weight-bold);
   color: var(--ch-color-text);
   margin-bottom: var(--ch-spacing-2);
+  letter-spacing: -0.02em;
 }
 
 .arh-hero-subtitle {
@@ -130,10 +132,12 @@
 }
 
 .arh-section-head h2 {
+  font-family: var(--ch-font-display);
   font-size: var(--ch-font-size-2xl);
   font-weight: var(--ch-font-weight-bold);
   color: var(--ch-color-text);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .arh-section-meta {

@@ -111,8 +111,7 @@ export default function ConfessionsFeedPage() {
         </button>
         <button className={`conf-nav-link ${tab === 'latest' ? 'active' : ''}`} onClick={() => setTab('latest')}>
           ✨ Latest
-        </button>
-        <Link href="/confessions/bookmarks" className="conf-nav-link">
+        </button>        <Link href="/confessions/bookmarks" className="conf-nav-link">
           🔖 Bookmarks
         </Link>
         <Link href="/confessions/activity" className="conf-nav-link">
@@ -125,6 +124,14 @@ export default function ConfessionsFeedPage() {
           🛡️ Moderation
         </Link>
       </nav>
+
+      <div className="conf-category-chips" role="group" aria-label="Confession categories">
+        {['💭 All', '❤️ Crush', '🎓 Academic', '😂 Funny', '😤 Rant', '🍕 Food', '🏠 Hostel'].map((c) => (
+          <button key={c} type="button" className="conf-chip">
+            {c}
+          </button>
+        ))}
+      </div>
 
       {error && <ErrorState message={error} />}
       {loading ? <LoadingSkeleton /> : <FeedList confessions={confessions} />}
