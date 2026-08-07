@@ -1,9 +1,9 @@
 /* ==========================================================================
-   College Hub — Global Design System
+   Campizo — Global Design System
    Design Tokens, Reset, Typography, Utilities
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Fredoka:wght@400;500;600&family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ---------- CSS Reset ---------- */
 *,
@@ -33,6 +33,80 @@ body {
   transition:
     background-color var(--ch-motion-normal) var(--ch-motion-easing),
     color var(--ch-motion-normal) var(--ch-motion-easing);
+}
+
+/* ==========================================================================
+   Cartoon Animations & Utilities
+   ========================================================================== */
+
+@keyframes toon-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(2deg);
+  }
+}
+
+@keyframes toon-wiggle {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes toon-pop {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes toon-sparkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.6) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(20deg);
+  }
+}
+
+@keyframes toon-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.toon-sparkle {
+  position: absolute;
+  font-size: 1.4rem;
+  pointer-events: none;
+  animation: toon-sparkle 2.4s ease-in-out infinite;
+  user-select: none;
+}
+
+.toon-sticker {
+  border: var(--toon-border);
+  border-radius: var(--toon-radius);
+  box-shadow: var(--toon-shadow);
 }
 
 img,
@@ -102,9 +176,29 @@ ol {
   --ch-color-rating-poor: #ef4444;
 
   /* Typography */
-  --ch-font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --ch-font-display: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+  --ch-font-sans: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ch-font-display: 'Baloo 2', 'Nunito', system-ui, sans-serif;
+  --ch-font-cartoon: 'Fredoka', 'Nunito', sans-serif;
   --ch-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Cartoon / Toon Design Tokens */
+  --toon-ink: #2b2347;
+  --toon-ink-soft: rgba(43, 35, 71, 0.08);
+  --toon-cream: #fff7ea;
+  --toon-paper: #ffffff;
+  --toon-violet: #7c5cff;
+  --toon-pink: #ff5ca8;
+  --toon-cyan: #35c8f2;
+  --toon-mango: #ffb020;
+  --toon-mint: #2fdd94;
+  --toon-lemon: #ffd93d;
+  --toon-coral: #ff6b6b;
+  --toon-radius: 22px;
+  --toon-radius-sm: 14px;
+  --toon-border: 3px solid var(--toon-ink);
+  --toon-shadow: 0 6px 0 var(--toon-ink);
+  --toon-shadow-lg: 0 10px 0 var(--toon-ink);
+  --toon-shadow-sm: 0 4px 0 var(--toon-ink);
 
   --ch-font-size-xs: 0.75rem;
   --ch-font-size-sm: 0.875rem;

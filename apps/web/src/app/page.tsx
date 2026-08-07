@@ -85,11 +85,17 @@ export default function HomePage() {
   return (
     <div className="hub-page">
       <section className="hub-hero">
-        <div className="hub-hero-bg" aria-hidden="true" />
+        <span className="hub-char hub-char-1" aria-hidden="true">🎓</span>
+        <span className="hub-char hub-char-2" aria-hidden="true">💬</span>
+        <span className="hub-char hub-char-3" aria-hidden="true">📚</span>
+        <span className="hub-char hub-char-4" aria-hidden="true">🛍️</span>
+        <span className="toon-sparkle" style={{ top: '14%', left: '24%' }} aria-hidden="true">✨</span>
+        <span className="toon-sparkle" style={{ top: '22%', right: '22%', animationDelay: '-1.2s' }} aria-hidden="true">⭐</span>
+        <span className="toon-sparkle" style={{ bottom: '24%', left: '30%', animationDelay: '-0.6s' }} aria-hidden="true">✨</span>
         <div className="container hub-hero-inner">
           <span className="hub-hero-kicker">Campizo · Your Campus, One Platform</span>
           <h1 className="hub-hero-title">
-            Your campus, <span className="hub-hero-title-grad">all in one place.</span>
+            Your campus, <span className="hub-hero-title-grad">all in one place!</span>
           </h1>
           <p className="hub-hero-subtitle">
             Confessions, study materials, marketplace deals, connections and placements — built by students, for
