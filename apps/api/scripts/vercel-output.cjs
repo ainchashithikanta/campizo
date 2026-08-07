@@ -34,7 +34,7 @@ fs.writeFileSync(
 //    copy is needed - every dependency is inlined by esbuild.
 const esbuild = require('esbuild');
 esbuild.buildSync({
-  entryPoints: [path.join(apiRoot, 'dist', 'src', 'server.js')],
+  entryPoints: [path.join(apiRoot, 'dist', 'server.js')],
   bundle: true,
   format: 'cjs',
   platform: 'node',

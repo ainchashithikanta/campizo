@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "start": "node dist/src/server.js",
+    "start": "node dist/server.js",
     "test": "vitest run",
     "lint": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "clean": "rimraf dist"
