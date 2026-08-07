@@ -15,17 +15,19 @@ export function createDatabaseClient(options: DatabaseClientOptions = {}): {
   db: DatabaseClient;
   pool: InstanceType<typeof Pool>;
 } {
-  const connectionString =
+  const rawConnectionString =
     options.connectionString ||
     process.env.DATABASE_URL ||
     'postgresql://collegehub_user:collegehub_password@localhost:5432/collegehub_db';
+
+  const connectionString = rawConnectionString.replace(/[?&]sslmode=[^&]*/i, '').replace(/[?&]$/, '');
 
   const pool = new Pool({
     connectionString,
     max: options.maxConnections || 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
-    ssl: connectionString.includes('supabase') || connectionString.includes('sslmode')
+    ssl: /supabase|pooler\.supabase/i.test(rawConnectionString) || rawConnectionString.includes('sslmode')
       ? { rejectUnauthorized: false }
       : undefined
   });
