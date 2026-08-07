@@ -41,7 +41,7 @@ test('connect page renders', async ({ page }) => {
 test('admin area is protected and requires PIN login', async ({ page }) => {
   await page.goto('/admin/feature-flags');
   await expect(page).toHaveURL(/\/admin\/login/);
-  await expect(page.getByText(/Admin Console/i)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Admin Console' })).toBeVisible();
 
   await page.fill('#admin-pin', ADMIN_PIN);
   await page.click('button[type="submit"]');
