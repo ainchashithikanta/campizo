@@ -10,7 +10,8 @@ export const updateProfileSchema = z.object({
   major: z.string().max(100).optional(),
   classYear: z.number().int().min(2020).max(2035).optional(),
   skills: z.array(z.string()).optional(),
-  courses: z.array(z.string()).optional()
+  courses: z.array(z.string()).optional(),
+  gender: z.enum(['MALE', 'FEMALE']).optional()
 });
 
 export const discoveryQuerySchema = z.object({

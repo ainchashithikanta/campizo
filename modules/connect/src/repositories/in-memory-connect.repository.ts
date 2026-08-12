@@ -141,6 +141,32 @@ export class InMemoryConversationRepository {
     return res;
   }
 
+  async findActiveRandomByParticipant(userId: string, collegeId: string): Promise<any | null> {
+    for (const c of this.conversations.values()) {
+      if (
+        c.collegeId === collegeId &&
+        c.conversationType === 'RANDOM' &&
+        !c.closedAt &&
+        c.participantIds?.includes(userId)
+      ) {
+        return { ...c };
+      }
+    }
+    return null;
+  }
+
+  async findLatestRandomByParticipant(userId: string, collegeId: string): Promise<any | null> {
+    let latest: any = null;
+    for (const c of this.conversations.values()) {
+      if (c.collegeId === collegeId && c.conversationType === 'RANDOM' && c.participantIds?.includes(userId)) {
+        if (!latest || new Date(c.createdAt).getTime() > new Date(latest.createdAt).getTime()) {
+          latest = { ...c };
+        }
+      }
+    }
+    return latest;
+  }
+
   async save(conversation: any): Promise<void> {
     this.conversations.set(conversation.id, { ...conversation, version: conversation.version || 1 });
   }
@@ -225,4 +251,10 @@ export class InMemoryConnectRepositoryProvider {
   public messageRepo = new InMemoryMessageRepository();
   public recommendationRepo = new InMemoryRecommendationSnapshotRepository();
   public privacyRepo = new InMemoryPrivacySettingsRepository();
+  /** FIFO waiting room for random chats (only opposite genders are matched). */
+  public randomQueue: Array<{ userId: string; collegeId: string; gender: string; joinedAt: string }> = [];
+
+  clearRandomQueue(): void {
+    this.randomQueue = [];
+  }
 }

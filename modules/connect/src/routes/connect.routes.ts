@@ -17,6 +17,8 @@ import { PrivacyController } from '../controllers/privacy.controller.js';
 import { NotificationController } from '../controllers/notification.controller.js';
 import { ModerationController } from '../controllers/moderation.controller.js';
 import { ActivityController } from '../controllers/activity.controller.js';
+import { AuthController } from '../controllers/auth.controller.js';
+import { RandomChatController } from '../controllers/random-chat.controller.js';
 
 import { requestContextMiddleware } from '../middleware/request-context.js';
 import { privacyGuardMiddleware } from '../middleware/privacy-guard.js';
@@ -38,7 +40,7 @@ export async function connectRoutesPlugin(fastify: FastifyInstance, _opts: Fasti
   const queryService = new ConnectQueryService(repoProvider);
 
   // Instantiating controllers
-  const profileCtrl = new ConnectProfileController(queryService);
+  const profileCtrl = new ConnectProfileController(queryService, useCases);
   const intentCtrl = new IntentController(intentService);
   const connectionCtrl = new ConnectionController(useCases, queryService);
   const conversationCtrl = new ConversationController(useCases, queryService);
@@ -51,6 +53,8 @@ export async function connectRoutesPlugin(fastify: FastifyInstance, _opts: Fasti
   const notificationCtrl = new NotificationController(queryService);
   const moderationCtrl = new ModerationController(useCases);
   const activityCtrl = new ActivityController(queryService);
+  const authCtrl = new AuthController(useCases);
+  const randomChatCtrl = new RandomChatController(useCases);
 
   // Global error handler for this plugin scope
   fastify.setErrorHandler(httpErrorHandler);
@@ -84,6 +88,28 @@ export async function connectRoutesPlugin(fastify: FastifyInstance, _opts: Fasti
     '/connect/recommendations',
     { preHandler: [rbacMiddleware(studentRoles)] },
     recommendationCtrl.getRecommendations.bind(recommendationCtrl)
+  );
+
+  // 1a. Student Authentication (public endpoints — no RBAC)
+  fastify.post('/connect/auth/register', authCtrl.register.bind(authCtrl));
+  fastify.post('/connect/auth/login', authCtrl.login.bind(authCtrl));
+  fastify.get('/connect/auth/me', { preHandler: [rbacMiddleware(studentRoles)] }, authCtrl.me.bind(authCtrl));
+
+  // 1b. Random (Omegle-style) Anonymous Chat — opposite genders only
+  fastify.post(
+    '/connect/random/join',
+    { preHandler: [rbacMiddleware(studentRoles)] },
+    randomChatCtrl.join.bind(randomChatCtrl)
+  );
+  fastify.get(
+    '/connect/random/status',
+    { preHandler: [rbacMiddleware(studentRoles)] },
+    randomChatCtrl.status.bind(randomChatCtrl)
+  );
+  fastify.post(
+    '/connect/random/leave',
+    { preHandler: [rbacMiddleware(studentRoles)] },
+    randomChatCtrl.leave.bind(randomChatCtrl)
   );
 
   // 2. Intent Lifecycle

@@ -28,7 +28,10 @@ export class MentorshipController {
   }
 
   async getMentorships(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const mentorships = await this.queryService.getMentorships(request.connectContext.userId, request.connectContext.collegeId);
+    const mentorships = await this.queryService.getMentorships(
+      request.connectContext.userId,
+      request.connectContext.collegeId
+    );
     reply.send(formatApiV1Success(mentorships, request));
   }
 }

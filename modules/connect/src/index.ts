@@ -13,6 +13,7 @@ export * from './repositories/drizzle-connect.repository.js';
 export * from './repositories/in-memory-connect.repository.js';
 export * from './queries/connect.queries.js';
 export * from './use-cases/connect.use-cases.js';
+export * from './services/student-auth.service.js';
 
 export * from './middleware/request-context.js';
 export * from './middleware/request-logger.js';
@@ -34,6 +35,8 @@ export * from './controllers/privacy.controller.js';
 export * from './controllers/notification.controller.js';
 export * from './controllers/moderation.controller.js';
 export * from './controllers/activity.controller.js';
+export * from './controllers/auth.controller.js';
+export * from './controllers/random-chat.controller.js';
 
 export * from './routes/connect.routes.js';
 

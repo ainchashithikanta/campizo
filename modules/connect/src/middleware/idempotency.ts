@@ -17,7 +17,8 @@ export async function idempotencyMiddleware(request: FastifyRequest, reply: Fast
   const isWriteMethod = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method);
   if (!isWriteMethod) return;
 
-  const idempotencyKey = request.connectContext?.idempotencyKey || (request.headers['idempotency-key'] as string | undefined);
+  const idempotencyKey =
+    request.connectContext?.idempotencyKey || (request.headers['idempotency-key'] as string | undefined);
   if (!idempotencyKey) return;
 
   const collegeId = request.connectContext?.collegeId || 'global';

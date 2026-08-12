@@ -13,7 +13,10 @@ export const createConversationSchema = z.object({
 
 export const sendMessageSchema = z.object({
   conversationId: z.string().min(1),
-  content: z.string().min(1).max(2000)
+  content: z.string().min(1).max(2000).optional(),
+  ciphertext: z.string().min(1).optional(),
+  iv: z.string().min(1).optional(),
+  algorithm: z.enum(['AES-256-GCM']).optional()
 });
 
 export const markReadSchema = z.object({

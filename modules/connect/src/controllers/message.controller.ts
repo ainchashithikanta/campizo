@@ -20,6 +20,9 @@ export class MessageController {
       conversationId: input.conversationId,
       senderProfileId: request.connectContext.userId,
       content: input.content,
+      ciphertext: input.ciphertext,
+      iv: input.iv,
+      algorithm: input.algorithm,
       createdBy: request.connectContext.userId
     });
     reply.status(201).send(formatApiV1Success(result, request));

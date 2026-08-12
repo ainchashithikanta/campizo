@@ -121,6 +121,16 @@ export type FeatureEnabledEvent = EventEnvelopeHeader & {
   payload: { flagKey: string };
 };
 
+export type RandomChatMatchedEvent = EventEnvelopeHeader & {
+  eventType: 'RandomChatMatched';
+  payload: { conversationId: string; participantIds: string[] };
+};
+
+export type RandomChatLeftEvent = EventEnvelopeHeader & {
+  eventType: 'RandomChatLeft';
+  payload: { conversationId: string; leftBy: string };
+};
+
 export type CampusConnectDomainEvent =
   | ProfileCreatedEvent
   | IntentCreatedEvent
@@ -143,4 +153,6 @@ export type CampusConnectDomainEvent =
   | NotificationQueuedEvent
   | ActivityRecordedEvent
   | FeatureDisabledEvent
-  | FeatureEnabledEvent;
+  | FeatureEnabledEvent
+  | RandomChatMatchedEvent
+  | RandomChatLeftEvent;

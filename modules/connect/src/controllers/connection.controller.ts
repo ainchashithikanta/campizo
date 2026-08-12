@@ -50,12 +50,19 @@ export class ConnectionController {
 
   async blockConnection(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const input = blockConnectionSchema.parse(request.body);
-    await this.useCases.blockConnection(request.connectContext.userId, input.blockedId, request.connectContext.collegeId);
+    await this.useCases.blockConnection(
+      request.connectContext.userId,
+      input.blockedId,
+      request.connectContext.collegeId
+    );
     reply.send(formatApiV1Success({ status: 'BLOCKED', blockedId: input.blockedId }, request));
   }
 
   async getNetwork(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const network = await this.queryService.getStudentNetwork(request.connectContext.userId, request.connectContext.collegeId);
+    const network = await this.queryService.getStudentNetwork(
+      request.connectContext.userId,
+      request.connectContext.collegeId
+    );
     reply.send(formatApiV1Success(network, request));
   }
 }

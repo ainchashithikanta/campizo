@@ -6,6 +6,18 @@
 
 import { assertMandatoryConversationContext } from '../domain/invariants.js';
 import { CampusConnectDomainEvent } from '../domain/events.js';
+import {
+  ConflictApplicationError,
+  ForbiddenApplicationError,
+  NotFoundApplicationError,
+  ValidationApplicationError
+} from '../errors/application-errors.js';
+import { randomBytes } from 'node:crypto';
+
+/** How long a random chat stays open before it closes itself. */
+export function randomChatTtlMs(): number {
+  return Number(process.env.RANDOM_CHAT_TTL_MS ?? 15 * 60 * 1000);
+}
 
 export class EventPublisher {
   private publishedEvents: CampusConnectDomainEvent[] = [];
@@ -136,7 +148,7 @@ export class StudentIntentService {
 
 export class ConnectUseCases {
   constructor(
-    private readonly repoProvider: any,
+    public readonly repoProvider: any,
     private readonly eventPublisher: EventPublisher,
     public readonly intentService: StudentIntentService
   ) {}
@@ -284,11 +296,41 @@ export class ConnectUseCases {
     collegeId: string;
     conversationId: string;
     senderProfileId: string;
-    content: string;
+    content?: string | undefined;
+    ciphertext?: string | undefined;
+    iv?: string | undefined;
+    algorithm?: string | undefined;
     createdBy: string;
   }): Promise<any> {
-    const msg = {
-      ...input,
+    const conversation = await this.repoProvider.conversationRepo.findById(input.conversationId, input.collegeId);
+    if (!conversation) throw new NotFoundApplicationError('Conversation', input.conversationId);
+    if (conversation.participantIds && !conversation.participantIds.includes(input.senderProfileId)) {
+      throw new ForbiddenApplicationError('You are not a participant of this conversation.');
+    }
+    if (conversation.closedAt) throw new ConflictApplicationError('Conversation already closed.');
+    if (conversation.expiresAt && Date.now() >= new Date(conversation.expiresAt).getTime()) {
+      conversation.closedAt = conversation.expiresAt;
+      conversation.closeReason = 'TIMEOUT';
+      conversation.lifecycleState = 'CLOSED';
+      await this.repoProvider.conversationRepo.update(conversation, conversation.version);
+      throw new ConflictApplicationError('Conversation expired.');
+    }
+
+    // Random chats only accept client-side AES-256-GCM ciphertext (end-to-end
+    // encrypted): the server stores ciphertext alone and never sees plaintext.
+    if (conversation.conversationType === 'RANDOM' && !input.ciphertext) {
+      throw new ValidationApplicationError('Encrypted content (ciphertext, iv) required for random chat.');
+    }
+
+    const msg: any = {
+      id: input.id,
+      collegeId: input.collegeId,
+      conversationId: input.conversationId,
+      senderProfileId: input.senderProfileId,
+      content: input.content ?? null,
+      ciphertext: input.ciphertext ?? null,
+      iv: input.iv ?? null,
+      algorithm: input.algorithm ?? (input.ciphertext ? 'AES-256-GCM' : null),
       isSoftDeleted: false,
       version: 1,
       createdAt: new Date(),
@@ -313,6 +355,171 @@ export class ConnectUseCases {
     });
 
     return msg;
+  }
+
+  /**
+   * Join (or get matched in) the anonymous random chat.
+   * Only opposite-gender students are ever matched together.
+   */
+  async joinRandomChat(input: { userId: string; collegeId: string; gender: string }): Promise<any> {
+    const active = await this.repoProvider.conversationRepo.findActiveRandomByParticipant(
+      input.userId,
+      input.collegeId
+    );
+    if (active) return this.getRandomChatStatus({ userId: input.userId, collegeId: input.collegeId });
+
+    const alreadyWaiting = this.repoProvider.randomQueue.find((w: { userId: string }) => w.userId === input.userId);
+    if (alreadyWaiting) {
+      return { status: 'WAITING', joinedAt: alreadyWaiting.joinedAt };
+    }
+
+    const opposite = input.gender === 'MALE' ? 'FEMALE' : 'MALE';
+    const waitingIndex = this.repoProvider.randomQueue.findIndex(
+      (w: { gender: string; collegeId: string }) => w.gender === opposite && w.collegeId === input.collegeId
+    );
+
+    if (waitingIndex === -1) {
+      this.repoProvider.randomQueue.push({
+        userId: input.userId,
+        collegeId: input.collegeId,
+        gender: input.gender,
+        joinedAt: new Date().toISOString()
+      });
+      return { status: 'WAITING', joinedAt: new Date().toISOString() };
+    }
+
+    const [waitingPeer] = this.repoProvider.randomQueue.splice(waitingIndex, 1);
+    return this.matchRandomChat(input.userId, input.collegeId, input.gender, waitingPeer);
+  }
+
+  private async matchRandomChat(
+    userId: string,
+    collegeId: string,
+    _gender: string,
+    peer: { userId: string; collegeId: string; gender: string }
+  ): Promise<any> {
+    const now = new Date();
+    const conversationKey = randomBytes(32).toString('base64url');
+    const conversation = {
+      id: `conv_${Date.now()}_${randomBytes(4).toString('hex')}`,
+      collegeId,
+      conversationType: 'RANDOM',
+      contextType: 'RANDOM_CHAT',
+      contextId: 'random',
+      title: null,
+      participantIds: [userId, peer.userId],
+      lifecycleState: 'ACTIVE',
+      expiresAt: new Date(now.getTime() + randomChatTtlMs()).toISOString(),
+      closedAt: null,
+      closeReason: null,
+      closedBy: null,
+      matchedAt: now.toISOString(),
+      conversationKey,
+      version: 1,
+      createdAt: now,
+      updatedAt: now,
+      createdBy: userId
+    };
+    await this.repoProvider.conversationRepo.save(conversation);
+
+    this.eventPublisher.publish({
+      eventId: `evt_${Date.now()}`,
+      requestId: `req_${Date.now()}`,
+      traceId: `trace_${Date.now()}`,
+      collegeId,
+      timestamp: now.toISOString(),
+      eventType: 'RandomChatMatched',
+      payload: { conversationId: conversation.id, participantIds: conversation.participantIds }
+    });
+
+    return {
+      status: 'MATCHED',
+      conversationId: conversation.id,
+      peerGender: peer.gender,
+      expiresAt: conversation.expiresAt,
+      matchedAt: conversation.matchedAt,
+      conversationKey
+    };
+  }
+
+  /** Poll the random chat state. Auto-closes the conversation once it expires. */
+  async getRandomChatStatus(input: { userId: string; collegeId: string }): Promise<any> {
+    const waiting = this.repoProvider.randomQueue.find((w: { userId: string }) => w.userId === input.userId);
+    if (waiting) return { status: 'WAITING', joinedAt: waiting.joinedAt };
+
+    const conversation = await this.repoProvider.conversationRepo.findLatestRandomByParticipant(
+      input.userId,
+      input.collegeId
+    );
+    if (!conversation) return { status: 'IDLE' };
+
+    if (conversation.closedAt) {
+      return {
+        status: 'CLOSED',
+        conversationId: conversation.id,
+        reason: conversation.closeReason || 'LEFT',
+        closedBy: conversation.closedBy,
+        closedAt: conversation.closedAt
+      };
+    }
+
+    if (conversation.expiresAt && Date.now() >= new Date(conversation.expiresAt).getTime()) {
+      conversation.closedAt = conversation.expiresAt;
+      conversation.closeReason = 'TIMEOUT';
+      conversation.lifecycleState = 'CLOSED';
+      await this.repoProvider.conversationRepo.update(conversation, conversation.version);
+      return {
+        status: 'CLOSED',
+        conversationId: conversation.id,
+        reason: 'TIMEOUT',
+        closedAt: conversation.closedAt
+      };
+    }
+
+    const peerId = conversation.participantIds.find((p: string) => p !== input.userId);
+    const peerProfile = peerId ? await this.repoProvider.profileRepo.findById(peerId, input.collegeId) : null;
+
+    return {
+      status: 'MATCHED',
+      conversationId: conversation.id,
+      peerGender: peerProfile?.gender ?? null,
+      expiresAt: conversation.expiresAt,
+      matchedAt: conversation.matchedAt,
+      conversationKey: conversation.conversationKey
+    };
+  }
+
+  /** Leave the random chat (or cancel the waiting room). Closes it for BOTH sides. */
+  async leaveRandomChat(input: { userId: string; collegeId: string }): Promise<any> {
+    const queueIndex = this.repoProvider.randomQueue.findIndex((w: { userId: string }) => w.userId === input.userId);
+    if (queueIndex !== -1) {
+      const [removed] = this.repoProvider.randomQueue.splice(queueIndex, 1);
+      return { status: 'LEFT_QUEUE', joinedAt: removed?.joinedAt };
+    }
+
+    const conversation = await this.repoProvider.conversationRepo.findActiveRandomByParticipant(
+      input.userId,
+      input.collegeId
+    );
+    if (!conversation) return { status: 'IDLE' };
+
+    conversation.closedAt = new Date().toISOString();
+    conversation.closeReason = 'LEFT';
+    conversation.closedBy = input.userId;
+    conversation.lifecycleState = 'CLOSED';
+    await this.repoProvider.conversationRepo.update(conversation, conversation.version);
+
+    this.eventPublisher.publish({
+      eventId: `evt_${Date.now()}`,
+      requestId: `req_${Date.now()}`,
+      traceId: `trace_${Date.now()}`,
+      collegeId: input.collegeId,
+      timestamp: new Date().toISOString(),
+      eventType: 'RandomChatLeft',
+      payload: { conversationId: conversation.id, leftBy: input.userId }
+    });
+
+    return { status: 'CLOSED', conversationId: conversation.id, reason: 'LEFT', closedAt: conversation.closedAt };
   }
 
   async markRead(_conversationId: string, _studentProfileId: string, _collegeId: string): Promise<void> {
