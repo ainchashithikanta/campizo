@@ -19,7 +19,7 @@ describe('Placement Knowledge Base & Community Q&A Suite (MS-36)', () => {
 
   it('1. Question Bank: Creates question, searches with filters, and increments helpful votes', async () => {
     const q = await useCases.createQuestion({
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       authorId: 'usr_senior_99',
       companyName: 'Google',
       roleTitle: 'Software Engineer',
@@ -33,20 +33,20 @@ describe('Placement Knowledge Base & Community Q&A Suite (MS-36)', () => {
     expect(q.topic).toBe('Data Structures');
 
     const searchRes = await useCases.listQuestions({
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       query: 'LRU Cache'
     });
 
     expect(searchRes.items.length).toBe(1);
     expect(searchRes.items[0]!.questionText).toContain('LRU Cache');
 
-    const helpful = await useCases.markQuestionHelpful(q.id, 'college_stanford_001');
+    const helpful = await useCases.markQuestionHelpful(q.id, 'college-stanford-001');
     expect(helpful?.helpfulCount).toBe(1);
   });
 
   it('2. Community Q&A: Creates discussion thread, replies, and handles upvoting/downvoting', async () => {
     const thread = await useCases.createDiscussionThread({
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       authorId: 'usr_student_12',
       title: 'How to practice Graphs for Meta?',
       content: 'Which topics are most common for telephone technical rounds?',
@@ -64,16 +64,16 @@ describe('Placement Knowledge Base & Community Q&A Suite (MS-36)', () => {
 
     expect(reply.id).toBeDefined();
 
-    const updatedThread = await useCases.getDiscussionById(thread.id, 'college_stanford_001');
+    const updatedThread = await useCases.getDiscussionById(thread.id, 'college-stanford-001');
     expect(updatedThread?.repliesCount).toBe(1);
     expect(updatedThread?.replies?.length).toBe(1);
 
-    const voted = await useCases.voteDiscussion(thread.id, 'college_stanford_001', 'UPVOTE');
+    const voted = await useCases.voteDiscussion(thread.id, 'college-stanford-001', 'UPVOTE');
     expect(voted?.upvotesCount).toBe(1);
   });
 
   it('3. Pure SQL Statistics: Computes database-driven company statistics without any AI', async () => {
-    const stats = await useCases.getCompanyStatistics('google', 'college_stanford_001');
+    const stats = await useCases.getCompanyStatistics('google', 'college-stanford-001');
 
     expect(stats).toBeDefined();
     expect(stats?.avgCtcLpa).toBeGreaterThan(0);
@@ -81,7 +81,7 @@ describe('Placement Knowledge Base & Community Q&A Suite (MS-36)', () => {
   });
 
   it('4. Admin Roadmaps: Queries structured preparation steps', async () => {
-    const roadmaps = await useCases.getAdminRoadmaps('college_stanford_001');
+    const roadmaps = await useCases.getAdminRoadmaps('college-stanford-001');
 
     expect(roadmaps.length).toBe(1);
     expect(roadmaps[0]!.steps.length).toBeGreaterThan(0);
@@ -94,7 +94,7 @@ describe('Placement Knowledge Base & Community Q&A Suite (MS-36)', () => {
     const resQuestions = await app.inject({
       method: 'GET',
       url: '/placements/questions',
-      headers: { 'x-college-id': 'college_stanford_001' }
+      headers: { 'x-college-id': 'college-stanford-001' }
     });
 
     expect(resQuestions.statusCode).toBe(200);
@@ -105,7 +105,7 @@ describe('Placement Knowledge Base & Community Q&A Suite (MS-36)', () => {
     const resDiscussions = await app.inject({
       method: 'GET',
       url: '/placements/discussions',
-      headers: { 'x-college-id': 'college_stanford_001' }
+      headers: { 'x-college-id': 'college-stanford-001' }
     });
 
     expect(resDiscussions.statusCode).toBe(200);

@@ -20,7 +20,7 @@ describe('Placement Guidance Module Suite (MS-35)', () => {
 
   it('1. Repository & Versioning: Creates placement experience and records immutable Version 1 audit history', async () => {
     const exp = await useCases.submitExperience({
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       authorId: 'usr_student_555',
       companyName: 'Meta',
       roleTitle: 'Software Engineer',
@@ -51,28 +51,28 @@ describe('Placement Guidance Module Suite (MS-35)', () => {
   });
 
   it('2. AI Summary Cache: Caches generated company AI summaries and avoids redundant compute', async () => {
-    const companyData = await useCases.getCompanyBySlug('google', 'college_stanford_001');
+    const companyData = await useCases.getCompanyBySlug('google', 'college-stanford-001');
 
     expect(companyData?.aiSummary).toBeDefined();
     expect(companyData?.aiSummary?.topTopics).toContain('Graphs');
 
     // Second fetch hits cache
-    const secondFetch = await useCases.getCompanyBySlug('google', 'college_stanford_001');
+    const secondFetch = await useCases.getCompanyBySlug('google', 'college-stanford-001');
     expect(secondFetch?.aiSummary?.id).toBe(companyData?.aiSummary?.id);
   });
 
   it('3. Bookmarking & Analytics: Saves, queries, and removes student bookmarks while recording trending metrics', async () => {
-    const bookmark = await useCases.bookmarkItem('usr_student_777', 'COMPANY', 'comp_google', 'college_stanford_001');
+    const bookmark = await useCases.bookmarkItem('usr_student_777', 'COMPANY', 'comp_google', 'college-stanford-001');
     expect(bookmark.id).toBeDefined();
 
-    const userBookmarks = await useCases.getUserBookmarks('usr_student_777', 'college_stanford_001');
+    const userBookmarks = await useCases.getUserBookmarks('usr_student_777', 'college-stanford-001');
     expect(userBookmarks.length).toBe(1);
     expect(userBookmarks[0]!.targetId).toBe('comp_google');
 
-    const trending = await useCases.getTrendingCompanies('college_stanford_001', 5);
+    const trending = await useCases.getTrendingCompanies('college-stanford-001', 5);
     expect(trending.length).toBeGreaterThan(0);
 
-    const removed = await useCases.removeBookmark('usr_student_777', 'COMPANY', 'comp_google', 'college_stanford_001');
+    const removed = await useCases.removeBookmark('usr_student_777', 'COMPANY', 'comp_google', 'college-stanford-001');
     expect(removed).toBe(true);
   });
 
@@ -85,7 +85,7 @@ describe('Placement Guidance Module Suite (MS-35)', () => {
       method: 'GET',
       url: '/placements/trending',
       headers: {
-        'x-college-id': 'college_stanford_001'
+        'x-college-id': 'college-stanford-001'
       }
     });
 
@@ -99,7 +99,7 @@ describe('Placement Guidance Module Suite (MS-35)', () => {
       method: 'POST',
       url: '/placements/bookmarks',
       headers: {
-        'x-college-id': 'college_stanford_001',
+        'x-college-id': 'college-stanford-001',
         'x-user-id': 'usr_test_user'
       },
       payload: {

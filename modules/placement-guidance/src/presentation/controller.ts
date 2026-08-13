@@ -18,7 +18,7 @@ export class PlacementController {
   constructor(private readonly useCases: PlacementUseCases) {}
 
   async submitExperience(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const authorId = (req.headers['x-user-id'] as string) || 'usr_anonymous';
     const body = SubmitExperienceSchema.parse(req.body);
 
@@ -29,7 +29,7 @@ export class PlacementController {
   }
 
   async listExperiences(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const query = ExperienceFilterQuerySchema.parse(req.query);
 
     const result = await this.useCases.listExperiences({ ...query, collegeId });
@@ -39,7 +39,7 @@ export class PlacementController {
   }
 
   async getCompanyBySlug(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const studentProfileId = (req.headers['x-user-id'] as string) || 'usr_me';
     const { slug } = req.params as { slug: string };
 
@@ -56,7 +56,7 @@ export class PlacementController {
   }
 
   async getCompanyStatistics(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const { slug } = req.params as { slug: string };
 
     const stats = await this.useCases.getCompanyStatistics(slug, collegeId);
@@ -71,7 +71,7 @@ export class PlacementController {
   }
 
   async getExperienceById(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const studentProfileId = (req.headers['x-user-id'] as string) || 'usr_me';
     const { id } = req.params as { id: string };
 
@@ -96,7 +96,7 @@ export class PlacementController {
 
   // Question Bank Endpoints
   async createQuestion(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const authorId = (req.headers['x-user-id'] as string) || 'usr_anonymous';
     const body = CreateQuestionSchema.parse(req.body);
 
@@ -105,7 +105,7 @@ export class PlacementController {
   }
 
   async getQuestionById(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const { id } = req.params as { id: string };
 
     const question = await this.useCases.getQuestionById(id, collegeId);
@@ -119,7 +119,7 @@ export class PlacementController {
   }
 
   async listQuestions(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const query = QuestionFilterQuerySchema.parse(req.query);
 
     const result = await this.useCases.listQuestions({ ...query, collegeId });
@@ -127,7 +127,7 @@ export class PlacementController {
   }
 
   async markQuestionHelpful(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const { id } = req.params as { id: string };
 
     const result = await this.useCases.markQuestionHelpful(id, collegeId);
@@ -135,7 +135,7 @@ export class PlacementController {
   }
 
   async reportQuestion(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const { id } = req.params as { id: string };
 
     const result = await this.useCases.reportQuestion(id, collegeId);
@@ -144,7 +144,7 @@ export class PlacementController {
 
   // Community Q&A Endpoints
   async createDiscussion(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const authorId = (req.headers['x-user-id'] as string) || 'usr_anonymous';
     const body = CreateDiscussionSchema.parse(req.body);
 
@@ -153,7 +153,7 @@ export class PlacementController {
   }
 
   async getDiscussionById(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const { id } = req.params as { id: string };
 
     const thread = await this.useCases.getDiscussionById(id, collegeId);
@@ -167,7 +167,7 @@ export class PlacementController {
   }
 
   async listDiscussions(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const query = req.query as { topic?: string; companySlug?: string; query?: string };
 
     const result = await this.useCases.listDiscussions({ ...query, collegeId });
@@ -184,7 +184,7 @@ export class PlacementController {
   }
 
   async voteDiscussion(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const { id } = req.params as { id: string };
     const body = VoteSchema.parse(req.body);
 
@@ -203,13 +203,13 @@ export class PlacementController {
 
   // Admin Roadmaps Endpoint
   async getAdminRoadmaps(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const roadmaps = await this.useCases.getAdminRoadmaps(collegeId);
     reply.status(200).send({ success: true, data: roadmaps });
   }
 
   async saveBookmark(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const studentProfileId = (req.headers['x-user-id'] as string) || 'usr_me';
     const body = req.body as { targetType: 'COMPANY' | 'EXPERIENCE' | 'QUESTION' | 'THREAD'; targetId: string };
 
@@ -218,7 +218,7 @@ export class PlacementController {
   }
 
   async removeBookmark(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const studentProfileId = (req.headers['x-user-id'] as string) || 'usr_me';
     const { targetType, targetId } = req.params as {
       targetType: 'COMPANY' | 'EXPERIENCE' | 'QUESTION' | 'THREAD';
@@ -230,7 +230,7 @@ export class PlacementController {
   }
 
   async getUserBookmarks(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const studentProfileId = (req.headers['x-user-id'] as string) || 'usr_me';
 
     const bookmarks = await this.useCases.getUserBookmarks(studentProfileId, collegeId);
@@ -238,13 +238,13 @@ export class PlacementController {
   }
 
   async getTrendingCompanies(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const trending = await this.useCases.getTrendingCompanies(collegeId, 5);
     reply.status(200).send({ success: true, data: trending });
   }
 
   async markHelpful(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const studentProfileId = (req.headers['x-user-id'] as string) || 'usr_me';
     const { id } = req.params as { id: string };
 
@@ -262,7 +262,7 @@ export class PlacementController {
   }
 
   async reportExperience(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const collegeId = (req.headers['x-college-id'] as string) || 'college_stanford_001';
+    const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
     const body = (req.body as { id: string; reason?: string }) || {};
 
     if (!body.id) {

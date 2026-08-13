@@ -46,7 +46,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
   constructor() {
     const google: CompanyEntity = {
       id: 'comp_google',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       name: 'Google',
       slug: 'google',
       website: 'https://careers.google.com',
@@ -63,7 +63,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const microsoft: CompanyEntity = {
       id: 'comp_microsoft',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       name: 'Microsoft',
       slug: 'microsoft',
       website: 'https://careers.microsoft.com',
@@ -85,7 +85,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const exp1: PlacementExperienceEntity = {
       id: 'exp_google_swe_001',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       companyId: 'comp_google',
       authorId: 'usr_student_101',
       roleTitle: 'Software Engineer',
@@ -137,7 +137,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const exp2: PlacementExperienceEntity = {
       id: 'exp_msft_swe_002',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       companyId: 'comp_microsoft',
       authorId: 'usr_student_102',
       roleTitle: 'Software Engineering Intern',
@@ -166,7 +166,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const exp3: PlacementExperienceEntity = {
       id: 'exp_google_pm_003',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       companyId: 'comp_google',
       authorId: 'usr_student_103',
       roleTitle: 'Product Manager, New Grad',
@@ -195,7 +195,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const amazon: CompanyEntity = {
       id: 'comp_amazon',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       name: 'Amazon',
       slug: 'amazon',
       website: 'https://www.amazon.jobs',
@@ -214,7 +214,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const exp4: PlacementExperienceEntity = {
       id: 'exp_amzn_sde_004',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       companyId: 'comp_amazon',
       authorId: 'usr_student_104',
       roleTitle: 'Software Development Engineer',
@@ -267,7 +267,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const exp5: PlacementExperienceEntity = {
       id: 'exp_meta_dse_005',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       companyId: 'comp_microsoft',
       authorId: 'usr_student_105',
       roleTitle: 'Data Engineer, University Graduate',
@@ -309,7 +309,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const salaryInsight: SalaryInsightEntity = {
       id: 'sal_google_swe_2026',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       companyId: 'comp_google',
       roleTitle: 'Software Engineer',
       batchYear: 2026,
@@ -326,7 +326,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const q1: QuestionBankEntity = {
       id: 'q_word_ladder_2',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       companyId: 'comp_google',
       companyName: 'Google',
       roleTitle: 'Software Engineer',
@@ -348,7 +348,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const disc1: DiscussionThreadEntity = {
       id: 'disc_sys_design_01',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       title: 'How to approach Google System Design for L4?',
       content: 'Should I focus more on API design or database sharding strategies?',
       authorId: 'usr_student_99',
@@ -382,7 +382,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     const r1: AdminRoadmapEntity = {
       id: 'rd_swe_2026',
-      collegeId: 'college_stanford_001',
+      collegeId: 'college-stanford-001',
       title: 'Complete Software Engineering Placement Preparation Roadmap',
       description: 'Step-by-step master plan curated by senior alumni.',
       steps: [

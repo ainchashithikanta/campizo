@@ -15,7 +15,7 @@ export class AuthController {
 
   async register(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const input = registerSchema.parse(request.body);
-    const collegeId = input.collegeId || request.headers['x-college-id'] || 'college_stanford_001';
+    const collegeId = input.collegeId || request.headers['x-college-id'] || 'college-stanford-001';
 
     let session;
     try {

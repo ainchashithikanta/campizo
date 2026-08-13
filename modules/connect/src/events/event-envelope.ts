@@ -30,7 +30,7 @@ export function buildEventEnvelope<T>(
     eventId: header.eventId || `evt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     requestId: header.requestId || `req_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     traceId: header.traceId || `trace_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-    collegeId: header.collegeId || 'college_stanford_001',
+    collegeId: header.collegeId || 'college-stanford-001',
     timestamp: header.timestamp || new Date().toISOString(),
     eventType,
     version: header.version || 1,
