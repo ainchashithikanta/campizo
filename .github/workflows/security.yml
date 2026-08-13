@@ -52,7 +52,7 @@ jobs:
 
       - name: Secrets Scan
         run: |
-          trufflehog git file://. --no-update --fail --only-verified --severity=high
+          trufflehog git file://. --no-update --fail --only-verified
 
       - name: Generate Software Bill of Materials (SBOM)
         run: node scripts/generate-sbom.js
