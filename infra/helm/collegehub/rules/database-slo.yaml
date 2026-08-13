@@ -10,7 +10,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: collegehub-slo-database
-  namespace: { { .Values.global.namespace | quote } }
+  namespace: {{ .Values.global.namespace | quote }}
   labels:
     app.kubernetes.io/name: collegehub
     app.kubernetes.io/part-of: collegehub-observability
