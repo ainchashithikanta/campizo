@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
     // rewrites below translate those into whatever prefix the API actually serves.
     return [
       // Root-mounted feature modules (no /api/v1 prefix on the API side).
+      // Exact bare paths first: `:path*` with an empty segment yields a
+      // trailing slash on the destination, which the gateway does not serve.
+      { source: '/api/connect', destination: `${apiUrl}/connect` },
+      { source: '/api/placements', destination: `${apiUrl}/placements` },
+      { source: '/api/notifications', destination: `${apiUrl}/notifications` },
+      { source: '/api/errors', destination: `${apiUrl}/errors` },
+      { source: '/api/incidents', destination: `${apiUrl}/incidents` },
       { source: '/api/connect/:path*', destination: `${apiUrl}/connect/:path*` },
       { source: '/api/placements/:path*', destination: `${apiUrl}/placements/:path*` },
       { source: '/api/notifications/:path*', destination: `${apiUrl}/notifications/:path*` },
