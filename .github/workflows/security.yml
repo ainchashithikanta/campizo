@@ -2,9 +2,9 @@ name: Security Audit & Compliance
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   schedule:
     - cron: '0 2 * * *' # Daily at 2 AM UTC
 
@@ -12,7 +12,7 @@ jobs:
   security-scan:
     name: Dependency Audit & Secret Scanning
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout Code
@@ -32,9 +32,24 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run pnpm Audit
-        run: pnpm audit --audit-level=high
-        continue-on-error: true
+      # -------------------------------------------------------------------
+      # Dependency & vulnerability scan (REAL — fails the build on high/critical)
+      # -------------------------------------------------------------------
+      - name: Run MS-58 Security Audit Script
+        run: node scripts/run-security-audit.js
+        env:
+          FAIL_ON_LEVEL: high
+
+      # -------------------------------------------------------------------
+      # TruffleHog secret scanning (git history + working tree)
+      # -------------------------------------------------------------------
+      - name: Download TruffleHog
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install_linux.sh | sh -s -- -b /usr/local/bin
+
+      - name: Secrets Scan
+        run: |
+          trufflehog git file://. --no-update --fail --only-verified --severity=high
 
       - name: Generate Software Bill of Materials (SBOM)
         run: node scripts/generate-sbom.js

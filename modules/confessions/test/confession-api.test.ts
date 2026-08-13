@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 import Fastify, { FastifyInstance } from 'fastify';
+import { signJwt } from '@college-hub/security';
 import {
   InMemoryConfessionRepository,
   InMemoryCommentRepository,
@@ -25,6 +26,12 @@ describe('Campus Confessions Fastify REST API Integration Suite', () => {
     'x-request-id': 'req-test-001',
     'x-user-id': 'user-student-101'
   };
+
+  beforeAll(() => {
+    // Secrets required by the JWT middleware (fail-closed when missing).
+    process.env.JWT_SECRET = 'test-jwt-secret-0123456789abcdef0123456789abcdef';
+    process.env.ANONYMOUS_TOKEN_SALT = 'test-anonymous-token-salt-0123456789';
+  });
 
   beforeEach(async () => {
     const confessionRepo = new InMemoryConfessionRepository();
@@ -75,14 +82,14 @@ describe('Campus Confessions Fastify REST API Integration Suite', () => {
     expect(JSON.parse(res.body).error.code).toBe('MISSING_TENANT_HEADER');
   });
 
-  it('should reject malformed JWT token with HTTP 401 MALFORMED_JWT', async () => {
+  it('should reject malformed JWT token with HTTP 401 INVALID_JWT', async () => {
     const res = await app.inject({
       method: 'GET',
       url: '/api/v1/confessions/feed',
       headers: { ...HEADERS, authorization: 'Bearer invalid-malformed-token' }
     });
     expect(res.statusCode).toBe(401);
-    expect(JSON.parse(res.body).error.code).toBe('MALFORMED_JWT');
+    expect(JSON.parse(res.body).error.code).toBe('INVALID_JWT');
   });
 
   it('should reject non-moderator trying to access moderation queue with HTTP 403 MODERATION_ACCESS_DENIED', async () => {
@@ -95,11 +102,16 @@ describe('Campus Confessions Fastify REST API Integration Suite', () => {
     expect(JSON.parse(res.body).error.code).toBe('MODERATION_ACCESS_DENIED');
   });
 
-  it('should allow MODERATOR role to access moderation queue', async () => {
+  it('should allow MODERATOR role to access moderation queue via verified JWT', async () => {
+    const moderatorToken = signJwt({
+      sub: 'user-mod-001',
+      collegeId: COLLEGE,
+      roles: ['MODERATOR']
+    });
     const res = await app.inject({
       method: 'GET',
       url: '/api/v1/confessions/moderation/queue',
-      headers: { ...HEADERS, 'x-user-role': 'MODERATOR' }
+      headers: { ...HEADERS, authorization: `Bearer ${moderatorToken}` }
     });
     expect(res.statusCode).toBe(200);
   });

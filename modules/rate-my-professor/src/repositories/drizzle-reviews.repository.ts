@@ -1,7 +1,27 @@
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, inArray } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { professorReviews } from '../schema/rate-my-professor.schema.js';
+import { professorReviews, reviewRatingDimensions } from '../schema/rate-my-professor.schema.js';
 import type { ReviewEntity, ReviewRepository } from '../domain/repository.interface.js';
+
+const PENDING_MODERATION_STATUSES = ['PENDING_MODERATION', 'HIDDEN', 'REJECTED'];
+
+function mapRow(row: any): ReviewEntity {
+  return {
+    id: row.id,
+    collegeId: row.collegeId,
+    professorId: row.professorId,
+    courseAssignmentId: row.courseAssignmentId,
+    authorUserId: row.authorUserId,
+    authorAnonymousToken: row.authorAnonymousToken,
+    isAnonymous: row.isAnonymous,
+    reviewText: row.reviewText,
+    overallRating: Number.parseFloat(row.overallRating),
+    moderationStatus: row.moderationStatus,
+    helpfulCount: row.helpfulCount,
+    unhelpfulCount: row.unhelpfulCount,
+    createdAt: row.createdAt
+  };
+}
 
 export class DrizzleReviewRepository implements ReviewRepository {
   constructor(private readonly db: NodePgDatabase<any>) {}
@@ -15,22 +35,7 @@ export class DrizzleReviewRepository implements ReviewRepository {
 
     if (rows.length === 0) return null;
     const row = rows[0]!;
-
-    return {
-      id: row.id,
-      collegeId: row.collegeId,
-      professorId: row.professorId,
-      courseAssignmentId: row.courseAssignmentId,
-      authorUserId: row.authorUserId,
-      authorAnonymousToken: row.authorAnonymousToken,
-      isAnonymous: row.isAnonymous,
-      reviewText: row.reviewText,
-      overallRating: Number.parseFloat(row.overallRating),
-      moderationStatus: row.moderationStatus,
-      helpfulCount: row.helpfulCount,
-      unhelpfulCount: row.unhelpfulCount,
-      createdAt: row.createdAt
-    };
+    return mapRow(row);
   }
 
   public async findAlreadyReviewed(
@@ -77,21 +82,29 @@ export class DrizzleReviewRepository implements ReviewRepository {
       .limit(limit)
       .offset(offset);
 
-    return rows.map((row) => ({
-      id: row.id,
-      collegeId: row.collegeId,
-      professorId: row.professorId,
-      courseAssignmentId: row.courseAssignmentId,
-      authorUserId: row.authorUserId,
-      authorAnonymousToken: row.authorAnonymousToken,
-      isAnonymous: row.isAnonymous,
-      reviewText: row.reviewText,
-      overallRating: Number.parseFloat(row.overallRating),
-      moderationStatus: row.moderationStatus,
-      helpfulCount: row.helpfulCount,
-      unhelpfulCount: row.unhelpfulCount,
-      createdAt: row.createdAt
-    }));
+    return rows.map(mapRow);
+  }
+
+  public async listPendingModeration(collegeId: string): Promise<ReviewEntity[]> {
+    const rows = await this.db
+      .select()
+      .from(professorReviews)
+      .where(
+        and(
+          eq(professorReviews.collegeId, collegeId),
+          inArray(professorReviews.moderationStatus, PENDING_MODERATION_STATUSES)
+        )
+      )
+      .orderBy(desc(professorReviews.createdAt));
+
+    return rows.map(mapRow);
+  }
+
+  public async updateModerationStatus(id: string, collegeId: string, status: string): Promise<void> {
+    await this.db
+      .update(professorReviews)
+      .set({ moderationStatus: status, updatedAt: new Date() })
+      .where(and(eq(professorReviews.id, id), eq(professorReviews.collegeId, collegeId)));
   }
 
   public async save(review: ReviewEntity): Promise<ReviewEntity> {
@@ -123,6 +136,18 @@ export class DrizzleReviewRepository implements ReviewRepository {
           updatedAt: new Date()
         }
       });
+
+    if (review.dimensions && Object.keys(review.dimensions).length > 0) {
+      await this.db.delete(reviewRatingDimensions).where(eq(reviewRatingDimensions.reviewId, review.id));
+      await this.db.insert(reviewRatingDimensions).values(
+        Object.entries(review.dimensions).map(([dimensionKey, score]) => ({
+          reviewId: review.id,
+          dimensionKey,
+          score: score.toFixed(2),
+          collegeId: review.collegeId
+        }))
+      );
+    }
 
     return review;
   }

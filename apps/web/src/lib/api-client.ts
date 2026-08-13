@@ -33,8 +33,10 @@ function buildHeaders(custom?: Record<string, string>): HeadersInit {
   if (typeof window !== 'undefined') {
     const collegeId = localStorage.getItem('ch_college_id');
     const userId = localStorage.getItem('ch_user_id');
+    const authToken = localStorage.getItem('ch_auth_token');
     if (collegeId) headers['x-college-id'] = collegeId;
     if (userId) headers['x-user-id'] = userId;
+    if (authToken) headers['x-auth-token'] = authToken;
   }
 
   if (custom) Object.assign(headers, custom);

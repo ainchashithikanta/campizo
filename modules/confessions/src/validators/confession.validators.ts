@@ -3,7 +3,8 @@ import { z } from 'zod';
 export const createConfessionSchema = z.object({
   categoryCode: z.string().min(2).max(32),
   title: z.string().min(5).max(256),
-  content: z.string().min(10).max(1000)
+  content: z.string().min(10).max(1000),
+  isAnonymous: z.boolean().optional().default(true)
 });
 
 export const createCommentSchema = z.object({

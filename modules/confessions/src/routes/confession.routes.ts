@@ -59,26 +59,42 @@ export async function confessionRoutes(fastify: FastifyInstance, opts: Confessio
   });
 
   // ── Confession Endpoints ───────────────────────────────────────────
-  fastify.post('/api/v1/confessions', async (req: FastifyRequest, reply: FastifyReply) => {
-    return confCtrl.createConfession(req, reply);
-  });
+  fastify.post(
+    '/api/v1/confessions',
+    { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } },
+    async (req: FastifyRequest, reply: FastifyReply) => {
+      return confCtrl.createConfession(req, reply);
+    }
+  );
   fastify.get<{ Params: { id: string } }>('/api/v1/confessions/:id', async (req, reply) => {
     return confCtrl.getConfessionDetail(req, reply);
   });
-  fastify.post<{ Params: { id: string } }>('/api/v1/confessions/:id/vote', async (req, reply) => {
-    return confCtrl.voteConfession(req, reply);
-  });
+  fastify.post<{ Params: { id: string } }>(
+    '/api/v1/confessions/:id/vote',
+    { config: { rateLimit: { max: 20, timeWindow: '1 minute' } } },
+    async (req, reply) => {
+      return confCtrl.voteConfession(req, reply);
+    }
+  );
   fastify.post<{ Params: { id: string } }>('/api/v1/confessions/:id/bookmark', async (req, reply) => {
     return confCtrl.bookmarkConfession(req, reply);
   });
-  fastify.post<{ Params: { id: string } }>('/api/v1/confessions/:id/report', async (req, reply) => {
-    return confCtrl.reportConfession(req, reply);
-  });
+  fastify.post<{ Params: { id: string } }>(
+    '/api/v1/confessions/:id/report',
+    { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } },
+    async (req, reply) => {
+      return confCtrl.reportConfession(req, reply);
+    }
+  );
 
   // ── Comment Endpoints ──────────────────────────────────────────────
-  fastify.post<{ Params: { id: string } }>('/api/v1/confessions/:id/comments', async (req, reply) => {
-    return commentCtrl.createComment(req, reply);
-  });
+  fastify.post<{ Params: { id: string } }>(
+    '/api/v1/confessions/:id/comments',
+    { config: { rateLimit: { max: 20, timeWindow: '1 minute' } } },
+    async (req, reply) => {
+      return commentCtrl.createComment(req, reply);
+    }
+  );
   fastify.post<{ Params: { commentId: string } }>('/api/v1/comments/:commentId/soft-delete', async (req, reply) => {
     return commentCtrl.softDeleteComment(req, reply);
   });
@@ -89,6 +105,7 @@ export async function confessionRoutes(fastify: FastifyInstance, opts: Confessio
   });
   fastify.post<{ Params: { caseId: string } }>(
     '/api/v1/confessions/moderation/:caseId/decision',
+    { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } },
     async (req, reply) => {
       return modCtrl.recordDecision(req, reply);
     }

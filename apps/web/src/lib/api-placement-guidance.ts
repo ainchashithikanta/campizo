@@ -181,12 +181,10 @@ export async function fetchPlacements(
   } = {}
 ): Promise<{ items: PlacementExperience[]; total: number; hasMore: boolean }> {
   const qs = buildQueryString(params);
-  return apiGet<{ items: PlacementExperience[]; total: number; hasMore: boolean }>(`/placements${qs}`);
+  return apiGet<{ items: PlacementExperience[]; total: number; hasMore: boolean }>(`/api/placements${qs}`);
 }
 
-export async function fetchCompanyBySlug(
-  slug: string
-): Promise<{
+export async function fetchCompanyBySlug(slug: string): Promise<{
   company: Company;
   experiences: PlacementExperience[];
   salaryInsights: SalaryInsight[];
@@ -197,19 +195,19 @@ export async function fetchCompanyBySlug(
     experiences: PlacementExperience[];
     salaryInsights: SalaryInsight[];
     aiSummary?: CompanyAISummary | null;
-  }>(`/placements/company/${slug}`);
+  }>(`/api/placements/company/${slug}`);
 }
 
 export async function fetchCompanyStatistics(slug: string): Promise<CompanyStatistics> {
-  return apiGet<CompanyStatistics>(`/placements/company/${slug}/statistics`);
+  return apiGet<CompanyStatistics>(`/api/placements/company/${slug}/statistics`);
 }
 
 export async function fetchExperienceById(id: string): Promise<PlacementExperience> {
-  return apiGet<PlacementExperience>(`/placements/experience/${id}`);
+  return apiGet<PlacementExperience>(`/api/placements/experience/${id}`);
 }
 
 export async function submitPlacementExperience(data: any): Promise<PlacementExperience> {
-  return apiPost<PlacementExperience>('/placements/experience', data);
+  return apiPost<PlacementExperience>('/api/placements/experience', data);
 }
 
 /* Question Bank API Methods */
@@ -225,11 +223,11 @@ export async function fetchQuestions(
   } = {}
 ): Promise<{ items: QuestionBankItem[]; total: number; hasMore: boolean }> {
   const qs = buildQueryString(params);
-  return apiGet<{ items: QuestionBankItem[]; total: number; hasMore: boolean }>(`/placements/questions${qs}`);
+  return apiGet<{ items: QuestionBankItem[]; total: number; hasMore: boolean }>(`/api/placements/questions${qs}`);
 }
 
 export async function fetchQuestionById(id: string): Promise<QuestionBankItem> {
-  return apiGet<QuestionBankItem>(`/placements/questions/${id}`);
+  return apiGet<QuestionBankItem>(`/api/placements/questions/${id}`);
 }
 
 export async function createQuestion(data: {
@@ -241,11 +239,11 @@ export async function createQuestion(data: {
   roundType?: string;
   jobType?: string;
 }): Promise<QuestionBankItem> {
-  return apiPost<QuestionBankItem>('/placements/questions', data);
+  return apiPost<QuestionBankItem>('/api/placements/questions', data);
 }
 
 export async function markQuestionHelpful(id: string): Promise<QuestionBankItem> {
-  return apiPatch<QuestionBankItem>(`/placements/questions/${id}/helpful`, {});
+  return apiPatch<QuestionBankItem>(`/api/placements/questions/${id}/helpful`, {});
 }
 
 /* Community Q&A API Methods */
@@ -253,11 +251,11 @@ export async function fetchDiscussions(
   params: { topic?: string; companySlug?: string; query?: string } = {}
 ): Promise<{ items: DiscussionThread[]; total: number; hasMore: boolean }> {
   const qs = buildQueryString(params);
-  return apiGet<{ items: DiscussionThread[]; total: number; hasMore: boolean }>(`/placements/discussions${qs}`);
+  return apiGet<{ items: DiscussionThread[]; total: number; hasMore: boolean }>(`/api/placements/discussions${qs}`);
 }
 
 export async function fetchDiscussionById(id: string): Promise<DiscussionThread> {
-  return apiGet<DiscussionThread>(`/placements/discussions/${id}`);
+  return apiGet<DiscussionThread>(`/api/placements/discussions/${id}`);
 }
 
 export async function createDiscussion(data: {
@@ -266,15 +264,15 @@ export async function createDiscussion(data: {
   topic: string;
   companySlug?: string;
 }): Promise<DiscussionThread> {
-  return apiPost<DiscussionThread>('/placements/discussions', data);
+  return apiPost<DiscussionThread>('/api/placements/discussions', data);
 }
 
 export async function createReply(threadId: string, content: string): Promise<DiscussionReply> {
-  return apiPost<DiscussionReply>(`/placements/discussions/${threadId}/reply`, { content });
+  return apiPost<DiscussionReply>(`/api/placements/discussions/${threadId}/reply`, { content });
 }
 
 export async function voteDiscussion(id: string, direction: 'UPVOTE' | 'DOWNVOTE'): Promise<DiscussionThread> {
-  return apiPatch<DiscussionThread>(`/placements/discussions/${id}/vote`, { direction });
+  return apiPatch<DiscussionThread>(`/api/placements/discussions/${id}/vote`, { direction });
 }
 
 export async function voteReply(
@@ -282,44 +280,44 @@ export async function voteReply(
   threadId: string,
   direction: 'UPVOTE' | 'DOWNVOTE'
 ): Promise<DiscussionReply> {
-  return apiPatch<DiscussionReply>(`/placements/replies/${replyId}/vote`, { threadId, direction });
+  return apiPatch<DiscussionReply>(`/api/placements/replies/${replyId}/vote`, { threadId, direction });
 }
 
 /* Roadmaps & Bookmarks & Trending */
 export async function fetchAdminRoadmaps(): Promise<AdminRoadmap[]> {
-  return apiGet<AdminRoadmap[]>('/placements/roadmaps');
+  return apiGet<AdminRoadmap[]>('/api/placements/roadmaps');
 }
 
 export async function saveBookmark(
   targetType: 'COMPANY' | 'EXPERIENCE' | 'QUESTION' | 'THREAD',
   targetId: string
 ): Promise<PlacementBookmark> {
-  return apiPost<PlacementBookmark>('/placements/bookmarks', { targetType, targetId });
+  return apiPost<PlacementBookmark>('/api/placements/bookmarks', { targetType, targetId });
 }
 
 export async function removeBookmark(
   targetType: 'COMPANY' | 'EXPERIENCE' | 'QUESTION' | 'THREAD',
   targetId: string
 ): Promise<{ removed: boolean }> {
-  return apiDelete<{ removed: boolean }>(`/placements/bookmarks/${targetType}/${targetId}`);
+  return apiDelete<{ removed: boolean }>(`/api/placements/bookmarks/${targetType}/${targetId}`);
 }
 
 export async function fetchUserBookmarks(): Promise<PlacementBookmark[]> {
-  return apiGet<PlacementBookmark[]>('/placements/bookmarks');
+  return apiGet<PlacementBookmark[]>('/api/placements/bookmarks');
 }
 
 export async function fetchTrendingCompanies(): Promise<
   Array<{ companyId: string; name: string; slug: string; activityCount: number }>
 > {
   return apiGet<Array<{ companyId: string; name: string; slug: string; activityCount: number }>>(
-    '/placements/trending'
+    '/api/placements/trending'
   );
 }
 
 export async function markExperienceHelpful(id: string): Promise<PlacementExperience> {
-  return apiPost<PlacementExperience>(`/placements/${id}/helpful`, {});
+  return apiPost<PlacementExperience>(`/api/placements/${id}/helpful`, {});
 }
 
 export async function reportExperience(id: string, reason?: string): Promise<{ status: string }> {
-  return apiPost<{ status: string }>('/placements/report', { id, reason });
+  return apiPost<{ status: string }>('/api/placements/report', { id, reason });
 }

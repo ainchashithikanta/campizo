@@ -33,6 +33,11 @@ export class AnonymousIdentityService {
     const userIdHash = `hash-${userId}`;
     return this.identityRepo.findOrCreatePseudonym(confessionId, userIdHash, collegeId);
   }
+
+  getVerifiedIdentityLabel(userId: string): string {
+    const shortId = userId.length > 12 ? userId.slice(0, 12) : userId;
+    return `Verified Student #${shortId}`;
+  }
 }
 
 export class ConfessionUseCases {
@@ -57,9 +62,17 @@ export class ConfessionUseCases {
     categoryCode: string;
     title: string;
     content: string;
+    isAnonymous?: boolean;
   }): Promise<ConfessionEntity> {
     const tempId = `draft-${Date.now()}`;
-    const pseudonym = await this.identityService.getThreadPseudonym(tempId, params.userId, params.collegeId);
+    const isAnonymous = params.isAnonymous !== false;
+
+    let pseudonym: string;
+    if (isAnonymous) {
+      pseudonym = await this.identityService.getThreadPseudonym(tempId, params.userId, params.collegeId);
+    } else {
+      pseudonym = this.identityService.getVerifiedIdentityLabel(params.userId);
+    }
 
     const confession = await this.confessionRepo.save({
       collegeId: params.collegeId,
@@ -67,6 +80,7 @@ export class ConfessionUseCases {
       title: params.title,
       content: params.content,
       authorThreadPseudonym: pseudonym,
+      isAnonymous,
       status: 'PUBLISHED'
     });
 
@@ -78,6 +92,7 @@ export class ConfessionUseCases {
       categoryCode: confession.categoryCode,
       title: confession.title,
       authorThreadPseudonym: pseudonym,
+      isAnonymous,
       occurredAt: new Date().toISOString()
     });
 

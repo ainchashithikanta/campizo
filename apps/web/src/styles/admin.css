@@ -6,8 +6,7 @@
   padding: 2rem 1.25rem;
   background:
     radial-gradient(1000px 500px at 85% -10%, rgba(124, 92, 255, 0.18), transparent 60%),
-    radial-gradient(800px 400px at 0% 110%, rgba(47, 221, 148, 0.14), transparent 60%),
-    var(--toon-cream);
+    radial-gradient(800px 400px at 0% 110%, rgba(47, 221, 148, 0.14), transparent 60%), var(--toon-cream);
   position: relative;
   overflow: hidden;
 }
@@ -131,7 +130,9 @@
   background: #fffdf8;
   box-shadow: 2px 2px 0 var(--toon-ink);
   margin-bottom: 0.9rem;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .adl-input:focus {
@@ -159,7 +160,10 @@
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .adl-btn:hover:not(:disabled) {
@@ -231,7 +235,10 @@
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .adx-logout:hover:not(:disabled) {
@@ -266,7 +273,10 @@
   background: #ffffff;
   border: 2.5px solid var(--toon-ink);
   box-shadow: 3px 4px 0 var(--toon-ink);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
 }
 
 .adx-card:hover {
@@ -298,6 +308,72 @@
 
 .adx-card-red .adx-card-icon {
   background: rgba(255, 107, 107, 0.2);
+}
+
+.adx-card-green .adx-card-icon {
+  background: rgba(47, 221, 148, 0.2);
+}
+
+.adx-back {
+  display: inline-block;
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b6482;
+  text-decoration: none;
+  margin-bottom: 1rem;
+  transition: color 0.15s ease;
+}
+
+.adx-back:hover {
+  color: var(--toon-violet);
+}
+
+.adx-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.adx-card-kicker {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--toon-violet);
+  font-family: var(--ch-font-cartoon);
+}
+
+.adx-btn {
+  padding: 9px 14px;
+  border: 2px solid var(--toon-ink);
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 2px 2px 0 var(--toon-ink);
+  color: var(--toon-ink);
+  font-family: var(--ch-font-cartoon);
+  font-weight: 600;
+  font-size: 0.83rem;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.adx-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 3px 4px 0 var(--toon-ink);
+}
+
+.adx-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 var(--toon-ink);
+}
+
+.adx-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .adx-card-title {

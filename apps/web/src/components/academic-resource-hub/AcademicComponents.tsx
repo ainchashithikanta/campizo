@@ -38,15 +38,14 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onBookmark
           </button>
         </div>
         <h3 className="arh-card-title">{resource.title}</h3>
-        <p className="arh-card-meta">Sem {resource.semesterNumber} • {resource.academicYear}</p>
+        <p className="arh-card-meta">
+          Sem {resource.semesterNumber} • {resource.academicYear}
+        </p>
       </div>
 
       <div className="arh-card-footer">
         <span className="arh-badge-clean">CLEAN</span>
-        <button
-          onClick={() => onDownload && onDownload(resource.id)}
-          className="arh-card-download"
-        >
+        <button onClick={() => onDownload && onDownload(resource.id)} className="arh-card-download">
           Download PDF
         </button>
       </div>

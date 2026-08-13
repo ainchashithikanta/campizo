@@ -73,6 +73,7 @@ export class DrizzleConfessionRepository implements ConfessionRepository {
         slug,
         content: data.content,
         authorThreadPseudonym: data.authorThreadPseudonym || 'Curious Panda #402',
+        isAnonymous: data.isAnonymous !== false,
         status: data.status || 'PUBLISHED'
       })
       .returning();

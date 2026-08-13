@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import type { TenantContext } from '@college-hub/types';
+import { resolveApiIdentity, isModerator, generateAnonymousToken } from '@college-hub/security';
 import {
   SearchProfessorsUseCase,
   GetProfessorProfileUseCase,
@@ -14,15 +15,29 @@ import {
   ReportReviewUseCase,
   AddFacultyResponseUseCase,
   UpdateFacultyResponseUseCase,
+  ModerateReviewUseCase,
+  GetReviewModerationQueueUseCase,
   EntityNotFoundError,
   DuplicateReviewError,
   EditWindowExpiredError,
   ProfessorInactiveError,
   DuplicateVoteError,
-  DuplicateReportError
+  DuplicateReportError,
+  UnauthorizedReviewError
 } from '../index.js';
 
 // Input Zod Validation Schemas
+type ResolvedIdentity =
+  | { error: string }
+  | {
+      userId: string;
+      collegeId: string;
+      roles: string[];
+      isAuthenticated: boolean;
+      displayName?: string;
+      anonymousToken: string;
+    };
+
 export const SearchQuerySchema = z.object({
   query: z.string().optional(),
   dept: z.string().optional(),
@@ -30,12 +45,27 @@ export const SearchQuerySchema = z.object({
   limit: z.coerce.number().optional().default(20)
 });
 
+export const RatingDimensionsSchema = z
+  .object({
+    teachingClarity: z.number().min(1).max(5),
+    gradingFairness: z.number().min(1).max(5),
+    punctuality: z.number().min(1).max(5),
+    approachability: z.number().min(1).max(5)
+  })
+  .partial();
+
 export const ReviewCreateSchema = z.object({
   courseAssignmentId: z.string().uuid(),
   reviewText: z.string().min(20).max(1000),
   overallRating: z.number().min(1.0).max(5.0),
   isAnonymous: z.boolean().optional().default(true),
-  gradeReceived: z.string().optional()
+  gradeReceived: z.string().optional(),
+  dimensions: RatingDimensionsSchema.optional()
+});
+
+export const ReviewModerationDecisionSchema = z.object({
+  action: z.enum(['APPROVE', 'HIDE', 'REJECT', 'RESTORE']),
+  reasonNote: z.string().max(500).optional()
 });
 
 export const ReviewEditSchema = z.object({
@@ -71,8 +101,40 @@ export function registerProfessorRoutes(
     reportReview: ReportReviewUseCase;
     addFacultyResponse: AddFacultyResponseUseCase;
     updateFacultyResponse?: UpdateFacultyResponseUseCase;
+    getModerationQueue?: GetReviewModerationQueueUseCase;
+    moderateReview?: ModerateReviewUseCase;
   }
 ): void {
+  const resolveIdentity = (request: FastifyRequest): ResolvedIdentity => {
+    const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+    const resolution = resolveApiIdentity({
+      authorizationHeader: request.headers['authorization'] as string | undefined,
+      collegeIdHeader: (request.headers['x-college-id'] as string) || tenantContext.collegeId,
+      userIdHeader: request.headers['x-user-id'] as string | undefined
+    });
+
+    if (resolution.status === 'invalid_token' || resolution.status === 'config_error') {
+      return { error: resolution.message };
+    }
+
+    const identity = resolution.identity;
+    return {
+      userId: identity.userId,
+      collegeId: (identity.collegeId || tenantContext.collegeId) as string,
+      roles: identity.roles,
+      isAuthenticated: identity.isAuthenticated,
+      anonymousToken: generateAnonymousToken(identity.userId, tenantContext.collegeId),
+      ...(identity.displayName !== undefined ? { displayName: identity.displayName } : {})
+    };
+  };
+
+  const denyModeration = (reply: FastifyReply) => {
+    reply.status(403).send({
+      success: false,
+      error: { code: 'MODERATION_ACCESS_DENIED', message: 'Moderation privileges required to access this endpoint.' }
+    });
+  };
+
   // 1. Search Professors Directory
   app.get('/api/v1/professors', async (request: FastifyRequest, reply: FastifyReply) => {
     const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
@@ -207,6 +269,7 @@ export function registerProfessorRoutes(
   // 5. Submit Student Review (409 for duplicate review / inactive professor)
   app.post(
     '/api/v1/professors/:slug/reviews',
+    { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } },
     async (request: FastifyRequest<{ Params: { slug: string } }>, reply: FastifyReply) => {
       const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
       const bodyResult = ReviewCreateSchema.safeParse(request.body);
@@ -224,19 +287,33 @@ export function registerProfessorRoutes(
           collegeId: tenantContext.collegeId
         });
 
-        const authorUserId = (request.headers['x-user-id'] as string) || 'guest-user-101';
-        const authorAnonymousToken = (request.headers['x-anon-token'] as string) || `anon-${authorUserId}`;
+        const identity = resolveIdentity(request);
+        if ('error' in identity) {
+          return reply.status(401).send({
+            success: false,
+            error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+          });
+        }
 
         const review = await useCases.submitReview.execute({
           collegeId: tenantContext.collegeId,
           professorId: profile.id,
           courseAssignmentId: bodyResult.data.courseAssignmentId,
-          authorUserId,
-          authorAnonymousToken,
+          authorUserId: identity.userId,
+          authorAnonymousToken: identity.anonymousToken,
           isAnonymous: bodyResult.data.isAnonymous,
           ...(bodyResult.data.gradeReceived !== undefined ? { gradeReceived: bodyResult.data.gradeReceived } : {}),
           reviewText: bodyResult.data.reviewText,
-          overallRating: bodyResult.data.overallRating
+          overallRating: bodyResult.data.overallRating,
+          ...(bodyResult.data.dimensions
+            ? {
+                dimensions: Object.fromEntries(
+                  Object.entries(bodyResult.data.dimensions).filter(
+                    (entry): entry is [string, number] => entry[1] !== undefined
+                  )
+                )
+              }
+            : {})
         });
 
         return reply.status(201).send({
@@ -280,11 +357,17 @@ export function registerProfessorRoutes(
       }
 
       try {
-        const authorUserId = (request.headers['x-user-id'] as string) || 'guest-user-101';
+        const identity = resolveIdentity(request);
+        if ('error' in identity) {
+          return reply.status(401).send({
+            success: false,
+            error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+          });
+        }
 
         const updated = await useCases.editReview.execute({
           reviewId: request.params.reviewId,
-          authorUserId,
+          authorUserId: identity.userId,
           collegeId: tenantContext.collegeId,
           newReviewText: bodyResult.data.newReviewText,
           newOverallRating: bodyResult.data.newOverallRating
@@ -299,7 +382,7 @@ export function registerProfessorRoutes(
           }
         });
       } catch (err: any) {
-        if (err instanceof EditWindowExpiredError) {
+        if (err instanceof EditWindowExpiredError || err instanceof UnauthorizedReviewError) {
           return reply.status(403).send({
             success: false,
             error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
@@ -331,11 +414,17 @@ export function registerProfessorRoutes(
       }
 
       try {
-        const voterUserId = (request.headers['x-user-id'] as string) || 'guest-voter-101';
+        const identity = resolveIdentity(request);
+        if ('error' in identity) {
+          return reply.status(401).send({
+            success: false,
+            error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+          });
+        }
 
         await useCases.voteHelpful.execute({
           reviewId: request.params.reviewId,
-          voterUserId,
+          voterUserId: identity.userId,
           collegeId: tenantContext.collegeId,
           voteType: bodyResult.data.voteType
         });
@@ -369,6 +458,7 @@ export function registerProfessorRoutes(
   // 8. Report Student Review
   app.post(
     '/api/v1/professors/:slug/reviews/:reviewId/reports',
+    { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } },
     async (request: FastifyRequest<{ Params: { slug: string; reviewId: string } }>, reply: FastifyReply) => {
       const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
       const bodyResult = ReportSchema.safeParse(request.body);
@@ -381,11 +471,17 @@ export function registerProfessorRoutes(
       }
 
       try {
-        const reporterUserId = (request.headers['x-user-id'] as string) || 'guest-reporter-101';
+        const identity = resolveIdentity(request);
+        if ('error' in identity) {
+          return reply.status(401).send({
+            success: false,
+            error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+          });
+        }
 
         await useCases.reportReview.execute({
           reviewId: request.params.reviewId,
-          reporterUserId,
+          reporterUserId: identity.userId,
           collegeId: tenantContext.collegeId,
           reason: bodyResult.data.reason,
           ...(bodyResult.data.details !== undefined ? { _details: bodyResult.data.details } : {})
@@ -432,11 +528,17 @@ export function registerProfessorRoutes(
       }
 
       try {
-        const professorUserId = (request.headers['x-user-id'] as string) || 'prof-user-101';
+        const identity = resolveIdentity(request);
+        if ('error' in identity) {
+          return reply.status(401).send({
+            success: false,
+            error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+          });
+        }
 
         const result = await useCases.addFacultyResponse.execute({
           reviewId: request.params.reviewId,
-          professorUserId,
+          professorUserId: identity.userId,
           collegeId: tenantContext.collegeId,
           responseText: bodyResult.data.responseText
         });
@@ -467,12 +569,18 @@ export function registerProfessorRoutes(
     async (request: FastifyRequest<{ Params: { slug: string; reviewId: string } }>, reply: FastifyReply) => {
       const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
       try {
-        const authorUserId = (request.headers['x-user-id'] as string) || 'guest-user-101';
+        const identity = resolveIdentity(request);
+        if ('error' in identity) {
+          return reply.status(401).send({
+            success: false,
+            error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+          });
+        }
 
         if (useCases.deleteReview) {
           await useCases.deleteReview.execute({
             reviewId: request.params.reviewId,
-            authorUserId,
+            authorUserId: identity.userId,
             collegeId: tenantContext.collegeId
           });
         }
@@ -486,7 +594,7 @@ export function registerProfessorRoutes(
           }
         });
       } catch (err: any) {
-        if (err instanceof EditWindowExpiredError) {
+        if (err instanceof EditWindowExpiredError || err instanceof UnauthorizedReviewError) {
           return reply.status(403).send({
             success: false,
             error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
@@ -509,12 +617,18 @@ export function registerProfessorRoutes(
     async (request: FastifyRequest<{ Params: { slug: string; reviewId: string } }>, reply: FastifyReply) => {
       const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
       try {
-        const voterUserId = (request.headers['x-user-id'] as string) || 'guest-voter-101';
+        const identity = resolveIdentity(request);
+        if ('error' in identity) {
+          return reply.status(401).send({
+            success: false,
+            error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+          });
+        }
 
         if (useCases.removeVote) {
           await useCases.removeVote.execute({
             reviewId: request.params.reviewId,
-            voterUserId,
+            voterUserId: identity.userId,
             collegeId: tenantContext.collegeId
           });
         }
@@ -554,13 +668,19 @@ export function registerProfessorRoutes(
       }
 
       try {
-        const professorUserId = (request.headers['x-user-id'] as string) || 'prof-user-101';
+        const identity = resolveIdentity(request);
+        if ('error' in identity) {
+          return reply.status(401).send({
+            success: false,
+            error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+          });
+        }
 
         let result = { responseId: request.params.responseId };
         if (useCases.updateFacultyResponse) {
           result = await useCases.updateFacultyResponse.execute({
             responseId: request.params.responseId,
-            professorUserId,
+            professorUserId: identity.userId,
             collegeId: tenantContext.collegeId,
             responseText: bodyResult.data.responseText
           });
@@ -569,6 +689,115 @@ export function registerProfessorRoutes(
         return reply.send({
           success: true,
           data: result,
+          meta: {
+            requestId: request.headers['x-request-id'] || 'unknown',
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (err: any) {
+        if (err instanceof EntityNotFoundError) {
+          return reply.status(404).send({
+            success: false,
+            error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
+          });
+        }
+        throw err;
+      }
+    }
+  );
+
+  // 13. Review Moderation Queue (ADMIN / MODERATOR only — blind identity)
+  app.get('/api/v1/professors/moderation/queue', async (request: FastifyRequest, reply: FastifyReply) => {
+    const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+    const identity = resolveIdentity(request);
+
+    if ('error' in identity) {
+      return reply.status(401).send({
+        success: false,
+        error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+      });
+    }
+
+    if (!isModerator(identity as any)) {
+      return denyModeration(reply);
+    }
+
+    if (!useCases.getModerationQueue) {
+      return reply.status(404).send({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Moderation queue is not available on this server.' }
+      });
+    }
+
+    const queue = await useCases.getModerationQueue.execute({ collegeId: tenantContext.collegeId });
+
+    // Blind moderation — strip all author identity fields before returning.
+    const blindQueue = queue.map((r) => ({
+      ...r,
+      authorUserId: 'BLIND',
+      authorAnonymousToken: 'BLIND'
+    }));
+
+    return reply.send({
+      success: true,
+      data: blindQueue,
+      meta: {
+        requestId: request.headers['x-request-id'] || 'unknown',
+        timestamp: new Date().toISOString()
+      }
+    });
+  });
+
+  // 14. Review Moderation Decision (ADMIN / MODERATOR only)
+  app.post(
+    '/api/v1/professors/moderation/reviews/:reviewId/decision',
+    { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } },
+    async (request: FastifyRequest<{ Params: { reviewId: string } }>, reply: FastifyReply) => {
+      const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+      const identity = resolveIdentity(request);
+
+      if ('error' in identity) {
+        return reply.status(401).send({
+          success: false,
+          error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+        });
+      }
+
+      if (!isModerator(identity as any)) {
+        return denyModeration(reply);
+      }
+
+      if (!useCases.moderateReview) {
+        return reply.status(404).send({
+          success: false,
+          error: { code: 'NOT_FOUND', message: 'Moderation decisions are not available on this server.' }
+        });
+      }
+
+      const bodyResult = ReviewModerationDecisionSchema.safeParse(request.body);
+      if (!bodyResult.success) {
+        return reply.status(400).send({
+          success: false,
+          error: { code: 'INVALID_INPUT', message: bodyResult.error.message }
+        });
+      }
+
+      try {
+        const result = await useCases.moderateReview.execute({
+          reviewId: request.params.reviewId,
+          collegeId: tenantContext.collegeId,
+          moderatorUserId: identity.userId,
+          action: bodyResult.data.action,
+          ...(bodyResult.data.reasonNote !== undefined ? { reasonNote: bodyResult.data.reasonNote } : {})
+        });
+
+        return reply.send({
+          success: true,
+          data: {
+            reviewId: result.id,
+            moderationStatus: result.moderationStatus,
+            action: bodyResult.data.action
+          },
           meta: {
             requestId: request.headers['x-request-id'] || 'unknown',
             timestamp: new Date().toISOString()

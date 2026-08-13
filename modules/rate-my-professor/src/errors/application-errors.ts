@@ -44,6 +44,12 @@ export class UnauthorizedFacultyResponseError extends ApplicationError {
   }
 }
 
+export class UnauthorizedReviewError extends ApplicationError {
+  constructor(message = 'You are not authorized to modify this review.') {
+    super(message, 'UNAUTHORIZED_REVIEW_ACCESS');
+  }
+}
+
 export class EntityNotFoundError extends ApplicationError {
   constructor(entityName: string, id: string) {
     super(`${entityName} with ID '${id}' was not found.`, 'ENTITY_NOT_FOUND');

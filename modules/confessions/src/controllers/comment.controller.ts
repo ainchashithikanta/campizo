@@ -25,7 +25,10 @@ export class CommentController {
     };
   }
 
-  async softDeleteComment(req: FastifyRequest<{ Params: { commentId: string } }>, reply: FastifyReply): Promise<unknown> {
+  async softDeleteComment(
+    req: FastifyRequest<{ Params: { commentId: string } }>,
+    reply: FastifyReply
+  ): Promise<unknown> {
     const { collegeId, requestId } = req.ctx;
 
     reply.status(200);

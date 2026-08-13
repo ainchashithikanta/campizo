@@ -10,6 +10,7 @@ export interface StudentProfile {
   userId: string;
   collegeId: string;
   fullName: string;
+  gender?: 'MALE' | 'FEMALE';
   bio?: string;
   major: string;
   classYear: number;
@@ -123,24 +124,24 @@ export interface ActivityEntry {
 /* API Methods */
 
 export async function fetchMyProfile(): Promise<StudentProfile> {
-  return apiGet<StudentProfile>('/connect/profile');
+  return apiGet<StudentProfile>('/api/connect/profile');
 }
 
 export async function updateMyProfile(data: Partial<StudentProfile>): Promise<StudentProfile> {
-  return apiPut<StudentProfile>('/connect/profile', data);
+  return apiPut<StudentProfile>('/api/connect/profile', data);
 }
 
 export async function fetchDiscoveryFeed(
   params: { intentType?: string; courseCode?: string; limit?: number; page?: number } = {}
 ): Promise<{ items: any[]; total: number; hasMore: boolean }> {
   const qs = buildQueryString(params);
-  return apiGet<{ items: any[]; total: number; hasMore: boolean }>(`/connect/discovery${qs}`);
+  return apiGet<{ items: any[]; total: number; hasMore: boolean }>(`/api/connect/discovery${qs}`);
 }
 
 export async function fetchRecommendations(
   limit: number = 10
 ): Promise<{ items: RecommendationItem[]; total: number }> {
-  return apiGet<{ items: RecommendationItem[]; total: number }>(`/connect/recommendations?limit=${limit}`);
+  return apiGet<{ items: RecommendationItem[]; total: number }>(`/api/connect/recommendations?limit=${limit}`);
 }
 
 export async function createIntent(data: {
@@ -150,19 +151,19 @@ export async function createIntent(data: {
   courseCode?: string;
   priority?: number;
 }): Promise<StudentIntent> {
-  return apiPost<StudentIntent>('/connect/intents', data);
+  return apiPost<StudentIntent>('/api/connect/intents', data);
 }
 
 export async function pauseIntent(id: string, version: number = 1): Promise<{ status: string }> {
-  return apiPost<{ status: string }>(`/connect/intents/${id}/pause`, { version });
+  return apiPost<{ status: string }>(`/api/connect/intents/${id}/pause`, { version });
 }
 
 export async function fulfillIntent(id: string, version: number = 1): Promise<{ status: string }> {
-  return apiPost<{ status: string }>(`/connect/intents/${id}/fulfill`, { version });
+  return apiPost<{ status: string }>(`/api/connect/intents/${id}/fulfill`, { version });
 }
 
 export async function archiveIntent(id: string, version: number = 1): Promise<{ status: string }> {
-  return apiPost<{ status: string }>(`/connect/intents/${id}/archive`, { version });
+  return apiPost<{ status: string }>(`/api/connect/intents/${id}/archive`, { version });
 }
 
 export async function sendConnectionRequest(data: {
@@ -170,23 +171,23 @@ export async function sendConnectionRequest(data: {
   originatingIntentId: string;
   note?: string;
 }): Promise<ConnectionItem> {
-  return apiPost<ConnectionItem>('/connect/connections/request', data);
+  return apiPost<ConnectionItem>('/api/connect/connections/request', data);
 }
 
 export async function acceptConnection(id: string, version: number = 1): Promise<ConnectionItem> {
-  return apiPost<ConnectionItem>(`/connect/connections/${id}/accept`, { version });
+  return apiPost<ConnectionItem>(`/api/connect/connections/${id}/accept`, { version });
 }
 
 export async function rejectConnection(id: string, version: number = 1): Promise<{ status: string }> {
-  return apiPost<{ status: string }>(`/connect/connections/${id}/reject`, { version });
+  return apiPost<{ status: string }>(`/api/connect/connections/${id}/reject`, { version });
 }
 
 export async function blockConnection(blockedId: string): Promise<{ status: string }> {
-  return apiPost<{ status: string }>('/connect/connections/block', { blockedId });
+  return apiPost<{ status: string }>('/api/connect/connections/block', { blockedId });
 }
 
 export async function fetchNetwork(): Promise<{ items: ConnectionItem[]; total: number }> {
-  return apiGet<{ items: ConnectionItem[]; total: number }>('/connect/network');
+  return apiGet<{ items: ConnectionItem[]; total: number }>('/api/connect/network');
 }
 
 export async function createConversation(data: {
@@ -195,44 +196,44 @@ export async function createConversation(data: {
   contextId: string;
   title?: string;
 }): Promise<ConversationItem> {
-  return apiPost<ConversationItem>('/connect/conversations', data);
+  return apiPost<ConversationItem>('/api/connect/conversations', data);
 }
 
 export async function fetchConversation(id: string): Promise<ConversationItem> {
-  return apiGet<ConversationItem>(`/connect/conversations/${id}`);
+  return apiGet<ConversationItem>(`/api/connect/conversations/${id}`);
 }
 
 export async function sendMessage(data: { conversationId: string; content: string }): Promise<MessageItem> {
-  return apiPost<MessageItem>('/connect/messages', data);
+  return apiPost<MessageItem>('/api/connect/messages', data);
 }
 
 export async function createStudyGroup(data: { courseCode: string; title: string }): Promise<StudyGroupItem> {
-  return apiPost<StudyGroupItem>('/connect/study-groups', data);
+  return apiPost<StudyGroupItem>('/api/connect/study-groups', data);
 }
 
 export async function fetchStudyGroups(courseCode?: string): Promise<StudyGroupItem[]> {
   const qs = courseCode ? `?courseCode=${encodeURIComponent(courseCode)}` : '';
-  return apiGet<StudyGroupItem[]>(`/connect/study-groups${qs}`);
+  return apiGet<StudyGroupItem[]>(`/api/connect/study-groups${qs}`);
 }
 
 export async function createProjectTeam(data: { title: string; description?: string }): Promise<ProjectTeamItem> {
-  return apiPost<ProjectTeamItem>('/connect/projects', data);
+  return apiPost<ProjectTeamItem>('/api/connect/projects', data);
 }
 
 export async function fetchProjectTeams(): Promise<ProjectTeamItem[]> {
-  return apiGet<ProjectTeamItem[]>('/connect/projects');
+  return apiGet<ProjectTeamItem[]>('/api/connect/projects');
 }
 
 export async function createMentorship(data: { mentorId: string; menteeId: string }): Promise<MentorshipItem> {
-  return apiPost<MentorshipItem>('/connect/mentorship', data);
+  return apiPost<MentorshipItem>('/api/connect/mentorship', data);
 }
 
 export async function fetchMentorships(): Promise<MentorshipItem[]> {
-  return apiGet<MentorshipItem[]>('/connect/mentorship');
+  return apiGet<MentorshipItem[]>('/api/connect/mentorship');
 }
 
 export async function fetchPrivacySettings(): Promise<PrivacySettings> {
-  return apiGet<PrivacySettings>('/connect/privacy');
+  return apiGet<PrivacySettings>('/api/connect/privacy');
 }
 
 export async function updatePrivacySettings(data: {
@@ -240,9 +241,65 @@ export async function updatePrivacySettings(data: {
   isIncognitoMode: boolean;
   version?: number;
 }): Promise<PrivacySettings> {
-  return apiPut<PrivacySettings>('/connect/privacy', data);
+  return apiPut<PrivacySettings>('/api/connect/privacy', data);
 }
 
 export async function fetchActivityFeed(): Promise<ActivityEntry[]> {
-  return apiGet<ActivityEntry[]>('/connect/activity');
+  return apiGet<ActivityEntry[]>('/api/connect/activity');
+}
+
+/* ---------- Random Chat (E2E encrypted, opposite gender) ---------- */
+
+export interface RandomChatStatus {
+  status: 'WAITING' | 'MATCHED' | 'CLOSED' | 'IDLE';
+  joinedAt?: string;
+  conversationId?: string;
+  peerGender?: string | null;
+  expiresAt?: string;
+  matchedAt?: string;
+  conversationKey?: string;
+  reason?: string;
+  closedBy?: string;
+  closedAt?: string;
+}
+
+/**
+ * Join the random chat pool. Resolves with one of:
+ *  - { status: 'WAITING', joinedAt } — no opposite-gender peer available yet.
+ *  - { status: 'MATCHED', conversationId, peerGender, expiresAt, conversationKey } — matched now.
+ * The conversationKey is an AES-256-GCM key delivered only to the two matched
+ * participants; messages are encrypted client-side before hitting the server.
+ */
+export async function joinRandomChat(): Promise<RandomChatStatus> {
+  return apiPost<RandomChatStatus>('/api/connect/random/join', {});
+}
+
+export async function fetchRandomChatStatus(): Promise<RandomChatStatus> {
+  return apiGet<RandomChatStatus>('/api/connect/random/status');
+}
+
+export async function leaveRandomChat(): Promise<RandomChatStatus> {
+  return apiPost<RandomChatStatus>('/api/connect/random/leave', {});
+}
+
+export interface EncryptedMessage {
+  id: string;
+  conversationId: string;
+  senderProfileId: string;
+  ciphertext: string | null;
+  iv: string | null;
+  algorithm: string | null;
+  createdAt: string;
+}
+
+/** Send a message already encrypted client-side (ciphertext + iv). */
+export async function sendEncryptedMessage(data: {
+  conversationId: string;
+  ciphertext: string;
+  iv: string;
+}): Promise<EncryptedMessage> {
+  return apiPost<EncryptedMessage>('/api/connect/messages', {
+    ...data,
+    algorithm: 'AES-256-GCM'
+  });
 }

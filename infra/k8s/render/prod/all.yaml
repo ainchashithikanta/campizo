@@ -375,14 +375,25 @@ metadata:
     app.kubernetes.io/instance: collegehub
     app.kubernetes.io/version: "prod"
     app.kubernetes.io/managed-by: Helm
-type: Opaque
-stringData:
-  DATABASE_URL: "postgresql://collegehub_user:REPLACE-ME@collegehub-prod-postgres:5432/collegehub_db"
-  REDIS_URL: "redis://:REPLACE-ME@collegehub-prod-redis:6379"
-  ENCRYPTION_KEY_32_BYTES: "A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P"
-  JWT_SECRET: "REPLACE-WITH-SECURE-JWT-SECRET-32-CHARACTERS"
-  POSTGRES_PASSWORD: "REPLACE-ME"
-  REDIS_PASSWORD: "REPLACE-ME"
+  annotations:
+    # Sensitive values in this Secret are NOT committed from source — they are
+    # injected at deploy time from a managed secret store (External Secrets Operator
+    # / Sealed Secrets / cloud KMS). The placeholder strings below are templates
+    # only and MUST be replaced before a production rollout; the application
+    # additionally refuses to boot with these exact values (see env.schema.ts
+    # production placeholder guard).
+    collegehub.dev/secret-source: external-secrets
+  type: Opaque
+  stringData:
+    DATABASE_URL: "postgresql://collegehub_user:REPLACE-ME@collegehub-prod-postgres:5432/collegehub_db"
+    REDIS_URL: "redis://:REPLACE-ME@collegehub-prod-redis:6379"
+    ENCRYPTION_KEY_32_BYTES: "A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6"
+    JWT_SECRET: "REPLACE-WITH-SECURE-JWT-SECRET-32-CHARACTERS"
+    POSTGRES_PASSWORD: "REPLACE-ME"
+    REDIS_PASSWORD: "REPLACE-ME"
+    BACKUP_S3_ENDPOINT: "REPLACE-WITH-S3-COMPATIBLE-ENDPOINT"
+    BACKUP_POSTGRES_URL: "postgresql://collegehub_user:REPLACE-ME@collegehub-prod-postgres:5432/collegehub_db"
+    BACKUP_REDIS_URL: "redis://:REPLACE-ME@collegehub-prod-redis:6379"
 ---
 # Source: collegehub/templates/configmap.yaml
 apiVersion: v1
@@ -1772,6 +1783,19 @@ spec:
         - name: api
           image: ghcr.io/college-hub/collegehub-api:prod
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           ports:
             - name: http
               containerPort: 4000
@@ -1807,6 +1831,9 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 # Source: collegehub/templates/web-deployment.yaml
 apiVersion: apps/v1
@@ -1853,6 +1880,19 @@ spec:
         - name: web
           image: ghcr.io/college-hub/collegehub-web:prod
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           ports:
             - name: http
               containerPort: 3000
@@ -1884,6 +1924,9 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 # Source: collegehub/templates/worker-deployment.yaml
 apiVersion: apps/v1
@@ -1930,6 +1973,19 @@ spec:
         - name: worker
           image: ghcr.io/college-hub/collegehub-worker:prod
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           ports:
             - name: http
               containerPort: 4100
@@ -1965,6 +2021,9 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 # Source: collegehub/templates/api-hpa.yaml
 apiVersion: autoscaling/v2
@@ -2118,12 +2177,28 @@ spec:
             - name: backup
               image: ghcr.io/college-hub/collegehub-backup:prod
               imagePullPolicy: IfNotPresent
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 1001
+                runAsGroup: 1001
+                capabilities:
+                  drop: ["ALL"]
+                seccompProfile:
+                  type: RuntimeDefault
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
               args: ["run-all"]
               env:
                 - name: BACKUP_PROVIDER
                   value: "s3"
                 - name: BACKUP_S3_ENDPOINT
-                  value: "REPLACE-WITH-S3-COMPATIBLE-ENDPOINT"
+                  valueFrom:
+                    secretKeyRef:
+                      name: collegehub-secret
+                      key: BACKUP_S3_ENDPOINT
                 - name: BACKUP_S3_REGION
                   value: "us-east-1"
                 - name: BACKUP_S3_BUCKET
@@ -2139,9 +2214,15 @@ spec:
                       name: collegehub-secret
                       key: S3_SECRET_ACCESS_KEY
                 - name: BACKUP_POSTGRES_URL
-                  value: "postgresql://collegehub_user:REPLACE-ME@collegehub-prod-postgres:5432/collegehub_db"
+                  valueFrom:
+                    secretKeyRef:
+                      name: collegehub-secret
+                      key: BACKUP_POSTGRES_URL
                 - name: BACKUP_REDIS_URL
-                  value: "redis://:REPLACE-ME@collegehub-prod-redis:6379"
+                  valueFrom:
+                    secretKeyRef:
+                      name: collegehub-secret
+                      key: BACKUP_REDIS_URL
                 - name: BACKUP_PREFIX
                   value: "collegehub-prod"
                 - name: BACKUP_VERIFY_AFTER_CREATE
@@ -2161,6 +2242,9 @@ spec:
                 requests:
                   cpu: 100m
                   memory: 256Mi
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 # Source: collegehub/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -3044,6 +3128,19 @@ spec:
         - name: migrations
           image: ghcr.io/college-hub/collegehub-api:prod
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           workingDir: /app/packages/database
           command:
             - /bin/sh
@@ -3066,3 +3163,6 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+      volumes:
+        - name: tmp
+          emptyDir: {}

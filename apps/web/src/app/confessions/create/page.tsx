@@ -11,11 +11,12 @@ export default function CreateConfessionPage() {
   const router = useRouter();
   const COLLEGE = 'college-stanford-001';
 
-  const handleSubmit = async (title: string, content: string, categoryCode: string) => {
+  const handleSubmit = async (title: string, content: string, categoryCode: string, isAnonymous: boolean) => {
     const res = await ConfessionsApiClient.createConfession(COLLEGE, {
       title,
       content,
-      categoryCode
+      categoryCode,
+      isAnonymous
     });
 
     if (res.success) {

@@ -2,9 +2,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import styles from './Navbar.module.css';
 import { useTheme } from '@web/hooks/use-theme';
+import { useAuth } from '@web/components/auth/AuthContext';
 
 const NAV_ITEMS = [
   { href: '/confessions', label: 'Confessions', icon: '💭' },
@@ -15,9 +16,13 @@ const NAV_ITEMS = [
   { href: '/notifications', label: 'Alerts', icon: '🔔' }
 ];
 
+const ADMIN_LINK = { href: '/admin', label: 'Admin', icon: '🛡️' };
+
 export function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -90,11 +95,44 @@ export function Navbar() {
             )}
           </button>
 
-          <div className={styles.userBadge}>
-            <div className={styles.userAvatar} aria-label="Student profile avatar">
-              CA
-            </div>
-          </div>
+          {user ? (
+            <>
+              <span className={styles.userBadge} title={user.email}>
+                <span className={styles.userAvatar}>{user.fullName?.charAt(0) ?? 'S'}</span>
+                <span className="hidden sm:inline text-xs font-medium">{user.fullName || 'Student'}</span>
+                <span className="text-xs opacity-60" title={user.gender}>
+                  {user.gender === 'MALE' ? '♂️' : user.gender === 'FEMALE' ? '♀️' : ''}
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={() => router.push('/admin')}
+                className={styles.themeToggle}
+                aria-label="Admin console"
+                title="Admin console"
+              >
+                🛡️
+              </button>
+              <button
+                type="button"
+                onClick={logout}
+                className={styles.themeToggle}
+                aria-label="Log out"
+                title="Log out"
+              >
+                ⤧
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/admin" className={styles.themeToggle} aria-label="Admin" title="Admin">
+                🛡️
+              </Link>
+              <Link href="/login" className={styles.themeToggle} aria-label="Sign in" title="Sign in">
+                🔐
+              </Link>
+            </>
+          )}
 
           <button
             type="button"
@@ -108,30 +146,37 @@ export function Navbar() {
             </svg>
           </button>
         </div>
-      </div>
 
-      {menuOpen && (
-        <div ref={menuRef} className={styles.mobileNav}>
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`${styles.mobileLink} ${isActive(item.href) ? styles.mobileLinkActive : ''}`}
-            >
-              <span aria-hidden="true">{item.icon}</span>
-              <span>{item.label}</span>
+        {menuOpen && (
+          <div ref={menuRef} className={styles.mobileNav}>
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`${styles.mobileLink} ${isActive(item.href) ? styles.mobileLinkActive : ''}`}
+              >
+                <span aria-hidden="true">{item.icon}</span>
+                <span>{item.label}</span>
+              </Link>
+            ))}
+            <Link href={ADMIN_LINK.href} className={styles.mobileLink}>
+              <span aria-hidden="true">{ADMIN_LINK.icon}</span>
+              <span>{ADMIN_LINK.label}</span>
             </Link>
-          ))}
-          <Link href="/professors" className={styles.mobileLink}>
-            <span aria-hidden="true">⭐</span>
-            <span>Professor Ratings</span>
-          </Link>
-          <Link href="/" className={styles.mobileLink}>
-            <span aria-hidden="true">🏠</span>
-            <span>Home</span>
-          </Link>
-        </div>
-      )}
+            {user ? (
+              <button type="button" onClick={logout} className={styles.mobileLink}>
+                <span>🙋</span>
+                <span>Log out</span>
+              </button>
+            ) : (
+              <Link href="/login" className={styles.mobileLink}>
+                <span>🔐</span>
+                <span>Sign in</span>
+              </Link>
+            )}
+          </div>
+        )}
+      </div>
     </header>
   );
 }

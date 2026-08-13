@@ -65,7 +65,12 @@ export class ApiHealthProbes {
 
   public async checkDatabase(): Promise<DependencyHealth & { error?: string }> {
     const result = await checkDatabaseHealth(this.getPool());
-    return { name: 'postgres', healthy: result.healthy, latencyMs: result.latencyMs, ...(result.error ? { error: result.error } : {}) };
+    return {
+      name: 'postgres',
+      healthy: result.healthy,
+      latencyMs: result.latencyMs,
+      ...(result.error ? { error: result.error } : {})
+    };
   }
 
   public async checkRedis(): Promise<'ok' | 'error'> {

@@ -42,6 +42,7 @@ export default function ConfessionDetailPage({ params }: { params: Promise<{ con
             slug: 'casio-fx-991es-usage',
             content: 'How to clear memory before entering exam hall? Press Shift + 9 + 3 + =',
             authorThreadPseudonym: 'Curious Panda #402',
+            isAnonymous: true,
             status: 'PUBLISHED',
             upvotesCount: 42,
             commentsCount: 1,

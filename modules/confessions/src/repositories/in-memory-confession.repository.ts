@@ -50,6 +50,7 @@ export class InMemoryConfessionRepository implements ConfessionRepository {
           .replace(/(^-|-$)+/g, ''),
       content: data.content,
       authorThreadPseudonym: data.authorThreadPseudonym || 'Curious Panda #402',
+      isAnonymous: data.isAnonymous !== false,
       status: data.status || 'PUBLISHED',
       upvotesCount: data.upvotesCount || 0,
       commentsCount: data.commentsCount || 0,

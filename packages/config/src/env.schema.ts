@@ -108,17 +108,31 @@ export const envSchema = z
   })
   .superRefine((data, ctx) => {
     if (data.NODE_ENV === 'production') {
-      const dummySecrets = [
-        'super-secret-jwt-token-key-minimum-32-characters-long',
-        'production-default-jwt-secret-key-32-chars-minimum!',
-        'prod_secret_token_key_9876543210_auth_key!'
-      ];
-      if (dummySecrets.some((s) => data.JWT_SECRET.includes(s) || data.JWT_SECRET === s)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['JWT_SECRET'],
-          message: 'CRITICAL SECURITY RISK: Dummy or default JWT_SECRET used in production mode.'
-        });
+      // Known placeholder/default secrets that must NEVER reach production.
+      // Each scanner-readable entry is also enforced here so a misconfigured
+      // deploy fails fast at config load rather than running with a guessable key.
+      const placeholderSecrets: Record<string, string[]> = {
+        JWT_SECRET: [
+          'super-secret-jwt-token-key-minimum-32-characters-long',
+          'production-default-jwt-secret-key-32-chars-minimum!',
+          'prod_secret_token_key_9876543210_auth_key!'
+        ],
+        ENCRYPTION_KEY_32_BYTES: ['0123456789abcdef0123456789abcdef', 'A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6'],
+        POSTGRES_PASSWORD: ['collegehub_password', 'changeme-postgres-password', 'REPLACE-ME'],
+        REDIS_PASSWORD: ['changeme-redis-password'],
+        SUPABASE_ANON_KEY: ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder'],
+        SUPABASE_SERVICE_ROLE_KEY: ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder']
+      };
+
+      for (const [key, placeholders] of Object.entries(placeholderSecrets)) {
+        const value = (data as Record<string, unknown>)[key] as string | undefined;
+        if (value && placeholders.some((p) => value === p || value.includes(p))) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [key],
+            message: `CRITICAL SECURITY RISK: placeholder/default value for ${key} used in production mode.`
+          });
+        }
       }
     }
   });

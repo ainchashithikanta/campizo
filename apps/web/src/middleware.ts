@@ -3,7 +3,7 @@ import { isSessionValid, ADMIN_COOKIE_NAME } from './lib/admin-auth';
 
 const ADMIN_PATHS = ['/admin'];
 
-export default async function proxy(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const isAdminPath = ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));

@@ -145,7 +145,9 @@ export class SupabaseStorageProvider implements StorageProvider {
 
   public validateMimeType(mimeType: string): void {
     if (!ALLOWED_MIME_TYPES.has(mimeType.toLowerCase())) {
-      throw new Error(`Unsupported content type / MIME type: '${mimeType}'. Allowed types: images, pdf, zip, video, documents.`);
+      throw new Error(
+        `Unsupported content type / MIME type: '${mimeType}'. Allowed types: images, pdf, zip, video, documents.`
+      );
     }
   }
 
@@ -232,22 +234,16 @@ export class SupabaseStorageProvider implements StorageProvider {
     return data.publicUrl;
   }
 
-  public async signedUrl(
-    path: string,
-    expiresInSeconds = 3600,
-    options?: StorageSignedUrlOptions
-  ): Promise<string> {
+  public async signedUrl(path: string, expiresInSeconds = 3600, options?: StorageSignedUrlOptions): Promise<string> {
     const bucket = this.resolveBucket(options?.bucket);
     const signedOptions: { download?: string | boolean } = {};
     if (options?.download !== undefined) {
       signedOptions.download = options.download;
     }
 
-    const { data, error } = await this.supabase.storage.from(bucket).createSignedUrl(
-      path,
-      expiresInSeconds,
-      Object.keys(signedOptions).length > 0 ? signedOptions : undefined
-    );
+    const { data, error } = await this.supabase.storage
+      .from(bucket)
+      .createSignedUrl(path, expiresInSeconds, Object.keys(signedOptions).length > 0 ? signedOptions : undefined);
 
     if (error || !data) {
       throw new Error(`Failed to generate signed URL for '${path}': ${error?.message || 'Unknown error'}`);
@@ -263,10 +259,9 @@ export class SupabaseStorageProvider implements StorageProvider {
     if (options?.offset !== undefined) listOpts.offset = options.offset;
     if (options?.sortBy !== undefined) listOpts.sortBy = options.sortBy;
 
-    const { data, error } = await this.supabase.storage.from(bucket).list(
-      prefix,
-      Object.keys(listOpts).length > 0 ? listOpts : undefined
-    );
+    const { data, error } = await this.supabase.storage
+      .from(bucket)
+      .list(prefix, Object.keys(listOpts).length > 0 ? listOpts : undefined);
 
     if (error || !data) {
       throw new Error(`Failed to list objects in bucket '${bucket}': ${error?.message || 'Unknown error'}`);

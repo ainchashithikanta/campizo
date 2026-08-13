@@ -9,7 +9,5 @@ export default defineConfig({
     baseURL: 'https://campizo-web.vercel.app',
     trace: 'on-first-retry'
   },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } }
-  ]
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]
 });

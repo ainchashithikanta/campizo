@@ -23,6 +23,7 @@ export interface ReviewEntity {
   moderationStatus: string;
   helpfulCount: number;
   unhelpfulCount: number;
+  dimensions?: Record<string, number> | null;
   createdAt: Date;
 }
 
@@ -49,7 +50,11 @@ export interface ProfessorRepository {
 
 export interface ReviewRepository {
   findById(id: string, collegeId: string): Promise<ReviewEntity | null>;
-  findByProfessorId(professorId: string, collegeId: string): Promise<ReviewEntity[]>;
+  findByProfessorId(
+    professorId: string,
+    collegeId: string,
+    options?: { limit?: number; offset?: number }
+  ): Promise<ReviewEntity[]>;
   findAlreadyReviewed(
     authorUserId: string,
     professorId: string,
@@ -57,6 +62,8 @@ export interface ReviewRepository {
     collegeId: string
   ): Promise<boolean>;
   save(review: ReviewEntity): Promise<ReviewEntity>;
+  listPendingModeration(collegeId: string): Promise<ReviewEntity[]>;
+  updateModerationStatus(id: string, collegeId: string, status: string): Promise<void>;
 }
 
 export interface ProfessorStatisticsRepository {

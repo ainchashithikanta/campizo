@@ -7,6 +7,13 @@ import '@web/styles/admin.css';
 
 const ADMIN_MODULES = [
   {
+    href: '/admin/moderation',
+    icon: '🛡️',
+    title: 'Moderation Center',
+    desc: 'Blind moderation queues for confessions and professor reviews: restore, hide, delete, escalate.',
+    accent: 'green'
+  },
+  {
     href: '/admin/feature-flags',
     icon: '🚩',
     title: 'Feature Flags Console',

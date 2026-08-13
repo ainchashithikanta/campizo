@@ -17,14 +17,17 @@ graph TD
 ```
 
 ### 1. `functions.sql`
+
 - **Purpose**: Creates helper functions for multi-tenant Row Level Security (`set_tenant_context`, `current_tenant_id`, `is_super_admin`) and trigger functions (`trigger_update_updated_at`).
 - **Execution**: Paste the contents of `supabase/functions.sql` into the SQL Editor and click **Run**.
 
 ### 2. `schema.sql`
+
 - **Purpose**: Enables PostgreSQL extensions (`uuid-ossp`, `pgcrypto`, `vector`), creates all database tables across all platform modules (Core Database, Feature Flags, Academic Resource Hub, Confessions, Campus Connect, Marketplace, Notifications, Placement Guidance, Rate My Professor), and creates all primary and secondary indexes.
 - **Execution**: Paste the contents of `supabase/schema.sql` into the SQL Editor and click **Run**.
 
 ### 3. `storage.sql`
+
 - **Purpose**: Initializes the 6 production storage buckets in `storage.buckets` with appropriate public visibility, maximum file size limits, and MIME type restrictions:
   - `avatars` (Public, 10MB limit, image formats)
   - `marketplace` (Public, 20MB limit, image/video formats)
@@ -35,10 +38,12 @@ graph TD
 - **Execution**: Paste the contents of `supabase/storage.sql` into the SQL Editor and click **Run**.
 
 ### 4. `policies.sql`
+
 - **Purpose**: Configures Row Level Security (RLS) policies on `storage.objects` for bucket access and translates multi-tenant isolation policies (`college_id`) for database tables.
 - **Execution**: Paste the contents of `supabase/policies.sql` into the SQL Editor and click **Run**.
 
 ### 5. `seed.sql`
+
 - **Purpose**: Populates initial core foundation tenants (Stanford University, MIT), default confession categories, marketplace categories, conditions, report reasons, and notification channels.
 - **Execution**: Paste the contents of `supabase/seed.sql` into the SQL Editor and click **Run**.
 

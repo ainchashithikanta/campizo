@@ -244,6 +244,9 @@ importers:
 
   modules/confessions:
     dependencies:
+      '@college-hub/security':
+        specifier: workspace:*
+        version: link:../../packages/security
       drizzle-orm:
         specifier: ^0.38.3
         version: 0.38.4(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.3)(@types/react@19.2.18)(pg@8.22.0)(react@19.2.4)
@@ -412,17 +415,20 @@ importers:
       '@college-hub/logger':
         specifier: workspace:*
         version: link:../../packages/logger
+      '@college-hub/security':
+        specifier: workspace:*
+        version: link:../../packages/security
       '@college-hub/types':
         specifier: workspace:*
         version: link:../../packages/types
       drizzle-orm:
-        specifier: ^0.31.2
-        version: 0.31.4(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.3)(@types/react@19.2.18)(pg@8.22.0)(react@19.2.4)
+        specifier: ^0.38.3
+        version: 0.38.4(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.3)(@types/react@19.2.18)(pg@8.22.0)(react@19.2.4)
       fastify:
         specifier: ^4.28.1
         version: 4.29.1
       zod:
-        specifier: ^3.23.8
+        specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
       typescript:

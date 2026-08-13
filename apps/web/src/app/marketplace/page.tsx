@@ -21,10 +21,7 @@ export default async function MarketplaceHomePage() {
             <Link href="/marketplace/upload" className="mp-btn mp-btn-primary">
               + Post a Listing
             </Link>
-            <Link
-              href="/marketplace/search"
-              className="mp-btn mp-btn-ghost"
-            >
+            <Link href="/marketplace/search" className="mp-btn mp-btn-ghost">
               🔍 Search Items
             </Link>
           </div>
@@ -56,7 +53,9 @@ export default async function MarketplaceHomePage() {
       <section className="mp-section">
         <div className="mp-section-head">
           <h2>🔥 Trending Campus Deals</h2>
-          <Link href="/marketplace/search" className="mp-see-all">See all →</Link>
+          <Link href="/marketplace/search" className="mp-see-all">
+            See all →
+          </Link>
         </div>
         <ListingGrid listings={homeData.featured} />
       </section>

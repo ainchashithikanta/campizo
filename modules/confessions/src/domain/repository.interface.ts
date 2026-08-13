@@ -6,6 +6,7 @@ export interface ConfessionEntity {
   slug: string;
   content: string;
   authorThreadPseudonym: string;
+  isAnonymous: boolean;
   status: 'DRAFT' | 'PUBLISHED' | 'QUARANTINED' | 'ARCHIVED' | 'DELETED';
   upvotesCount: number;
   commentsCount: number;

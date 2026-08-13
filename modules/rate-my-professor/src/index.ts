@@ -14,6 +14,8 @@ import {
   ReportReviewUseCase,
   AddFacultyResponseUseCase,
   UpdateFacultyResponseUseCase,
+  ModerateReviewUseCase,
+  GetReviewModerationQueueUseCase,
   ProfessorRepository,
   ReviewRepository,
   ProfessorStatisticsRepository,
@@ -118,7 +120,28 @@ class InMemoryReviewRepo implements ReviewRepository {
   }
 
   public async findByProfessorId(professorId: string, collegeId: string): Promise<ReviewEntity[]> {
-    return Array.from(this.reviews.values()).filter((r) => r.professorId === professorId && r.collegeId === collegeId);
+    return Array.from(this.reviews.values()).filter(
+      (r) => r.professorId === professorId && r.collegeId === collegeId && r.moderationStatus === 'APPROVED'
+    );
+  }
+
+  public async listPendingModeration(collegeId: string): Promise<ReviewEntity[]> {
+    return Array.from(this.reviews.values())
+      .filter(
+        (r) =>
+          r.collegeId === collegeId &&
+          (r.moderationStatus === 'PENDING_MODERATION' ||
+            r.moderationStatus === 'HIDDEN' ||
+            r.moderationStatus === 'REJECTED')
+      )
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  public async updateModerationStatus(id: string, collegeId: string, status: string): Promise<void> {
+    const r = this.reviews.get(id);
+    if (r && r.collegeId === collegeId) {
+      r.moderationStatus = status;
+    }
   }
 
   public async save(review: ReviewEntity): Promise<ReviewEntity> {
@@ -177,6 +200,8 @@ export class RateMyProfessorModule implements PlatformModule {
     const reportReview = new ReportReviewUseCase(reviewRepo, eventBus);
     const addFacultyResponse = new AddFacultyResponseUseCase(reviewRepo, eventBus);
     const updateFacultyResponse = new UpdateFacultyResponseUseCase(eventBus);
+    const getModerationQueue = new GetReviewModerationQueueUseCase(reviewRepo);
+    const moderateReview = new ModerateReviewUseCase(reviewRepo, eventBus);
 
     registerProfessorRoutes(app, {
       searchProfessors,
@@ -190,7 +215,9 @@ export class RateMyProfessorModule implements PlatformModule {
       removeVote,
       reportReview,
       addFacultyResponse,
-      updateFacultyResponse
+      updateFacultyResponse,
+      getModerationQueue,
+      moderateReview
     });
 
     const statsWorker = new StatsEngineWorker(reviewRepo, statsRepo, eventBus);

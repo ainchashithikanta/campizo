@@ -7,7 +7,12 @@ import {
   assertValidRatingScore,
   BusinessInvariantError
 } from '../domain/invariants.js';
-import { EntityNotFoundError, DuplicateReviewError, EditWindowExpiredError } from '../errors/application-errors.js';
+import {
+  EntityNotFoundError,
+  DuplicateReviewError,
+  EditWindowExpiredError,
+  UnauthorizedReviewError
+} from '../errors/application-errors.js';
 
 export interface SubmitReviewCommand {
   collegeId: string;
@@ -19,6 +24,7 @@ export interface SubmitReviewCommand {
   gradeReceived?: string;
   reviewText: string;
   overallRating: number;
+  dimensions?: Record<string, number> | null;
 }
 
 export class SubmitReviewUseCase {
@@ -66,6 +72,7 @@ export class SubmitReviewUseCase {
       moderationStatus: 'APPROVED',
       helpfulCount: 0,
       unhelpfulCount: 0,
+      dimensions: command.dimensions ?? null,
       createdAt: new Date()
     };
 
@@ -125,7 +132,7 @@ export class EditReviewUseCase {
     }
 
     if (existing.authorUserId !== params.authorUserId) {
-      throw new Error('Unauthorized to edit review.');
+      throw new UnauthorizedReviewError('You are not authorized to edit this review.');
     }
 
     try {
@@ -186,7 +193,7 @@ export class DeleteReviewUseCase {
     }
 
     if (existing.authorUserId !== params.authorUserId) {
-      throw new Error('Unauthorized to delete review.');
+      throw new UnauthorizedReviewError('You are not authorized to delete this review.');
     }
 
     try {
@@ -213,5 +220,63 @@ export class DeleteReviewUseCase {
         collegeId: existing.collegeId
       }
     });
+  }
+}
+
+export class GetReviewModerationQueueUseCase {
+  constructor(private readonly reviewRepo: ReviewRepository) {}
+
+  public async execute(params: { collegeId: string }): Promise<ReviewEntity[]> {
+    return this.reviewRepo.listPendingModeration(params.collegeId);
+  }
+}
+
+export type ReviewModerationAction = 'APPROVE' | 'HIDE' | 'REJECT' | 'RESTORE';
+
+export class ModerateReviewUseCase {
+  constructor(
+    private readonly reviewRepo: ReviewRepository,
+    private readonly eventBus: EventBus
+  ) {}
+
+  public async execute(params: {
+    reviewId: string;
+    collegeId: string;
+    moderatorUserId: string;
+    action: ReviewModerationAction;
+    reasonNote?: string;
+  }): Promise<ReviewEntity> {
+    const existing = await this.reviewRepo.findById(params.reviewId, params.collegeId);
+    if (!existing) {
+      throw new EntityNotFoundError('Review', params.reviewId);
+    }
+
+    const statusByAction: Record<ReviewModerationAction, string> = {
+      APPROVE: 'APPROVED',
+      HIDE: 'HIDDEN',
+      REJECT: 'REJECTED',
+      RESTORE: 'APPROVED'
+    };
+
+    existing.moderationStatus = statusByAction[params.action];
+    const saved = await this.reviewRepo.save(existing);
+
+    await this.eventBus.publish('ReviewModerationDecisionRecorded', {
+      eventId: randomUUID(),
+      eventName: 'ReviewModerationDecisionRecorded',
+      collegeId: saved.collegeId,
+      aggregateId: saved.id,
+      timestamp: new Date(),
+      payload: {
+        reviewId: saved.id,
+        professorId: saved.professorId,
+        collegeId: saved.collegeId,
+        action: params.action,
+        moderatorUserId: params.moderatorUserId,
+        reasonNote: params.reasonNote
+      }
+    });
+
+    return saved;
   }
 }

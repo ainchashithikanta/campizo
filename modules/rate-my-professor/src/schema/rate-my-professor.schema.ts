@@ -10,7 +10,19 @@ import {
   index,
   uniqueIndex
 } from 'drizzle-orm/pg-core';
-import { baseColumns, auditColumns } from '@college-hub/database';
+
+// Shared column fragments (defined locally to stay compatible with the
+// workspace's drizzle-orm version — see packages/database base.ts)
+const baseColumns = {
+  id: uuid('id').defaultRandom().primaryKey(),
+  version: integer('version').default(1).notNull() // Optimistic concurrency control counter
+};
+
+const auditColumns = {
+  createdAt: timestamp('created_at', { mode: 'date', precision: 3 }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date', precision: 3 }).defaultNow().notNull(),
+  deletedAt: timestamp('deleted_at', { mode: 'date', precision: 3 }) // Nullable for soft deletes
+};
 
 // 1. Departments Table
 export const departments = pgTable(

@@ -81,29 +81,29 @@ export async function fetchNotifications(
 ): Promise<{ items: NotificationItem[]; total: number; unreadCount: number; hasMore: boolean }> {
   const qs = buildQueryString(params);
   return apiGet<{ items: NotificationItem[]; total: number; unreadCount: number; hasMore: boolean }>(
-    `/notifications${qs}`
+    `/api/notifications${qs}`
   );
 }
 
 export async function fetchUnreadCount(): Promise<number> {
-  const res = await apiGet<{ unreadCount: number }>('/notifications/unread-count');
+  const res = await apiGet<{ unreadCount: number }>('/api/notifications/unread-count');
   return res.unreadCount;
 }
 
 export async function markNotificationAsRead(id: string): Promise<NotificationItem> {
-  return apiPatch<NotificationItem>(`/notifications/${id}/read`, {});
+  return apiPatch<NotificationItem>(`/api/notifications/${id}/read`, {});
 }
 
 export async function markAllNotificationsAsRead(): Promise<{ count: number }> {
-  return apiPatch<{ count: number }>('/notifications/read-all', {});
+  return apiPatch<{ count: number }>('/api/notifications/read-all', {});
 }
 
 export async function deleteNotification(id: string): Promise<{ deleted: boolean }> {
-  return apiDelete<{ deleted: boolean }>(`/notifications/${id}`);
+  return apiDelete<{ deleted: boolean }>(`/api/notifications/${id}`);
 }
 
 export async function fetchNotificationPreferences(): Promise<NotificationPreference[]> {
-  return apiGet<NotificationPreference[]>('/notifications/preferences');
+  return apiGet<NotificationPreference[]>('/api/notifications/preferences');
 }
 
 export async function updateNotificationPreferences(data: {
@@ -111,27 +111,27 @@ export async function updateNotificationPreferences(data: {
   enabledEventTypes?: string[];
   isMuted?: boolean;
 }): Promise<NotificationPreference> {
-  return apiPatch<NotificationPreference>('/notifications/preferences', data);
+  return apiPatch<NotificationPreference>('/api/notifications/preferences', data);
 }
 
 export async function fetchNotificationCategories(): Promise<NotificationCategoryInfo[]> {
-  return apiGet<NotificationCategoryInfo[]>('/notifications/categories');
+  return apiGet<NotificationCategoryInfo[]>('/api/notifications/categories');
 }
 
 export async function fetchNotificationRules(): Promise<NotificationUserRule | null> {
-  return apiGet<NotificationUserRule | null>('/notifications/rules');
+  return apiGet<NotificationUserRule | null>('/api/notifications/rules');
 }
 
 export async function updateNotificationRules(data: Partial<NotificationUserRule>): Promise<NotificationUserRule> {
-  return apiPatch<NotificationUserRule>('/notifications/rules', data);
+  return apiPatch<NotificationUserRule>('/api/notifications/rules', data);
 }
 
 export async function fetchNotificationDigests(): Promise<NotificationDigestJob[]> {
-  return apiGet<NotificationDigestJob[]>('/notifications/digests');
+  return apiGet<NotificationDigestJob[]>('/api/notifications/digests');
 }
 
 export async function generateNotificationDigest(
   digestType: 'DAILY' | 'WEEKLY' = 'DAILY'
 ): Promise<NotificationDigestJob> {
-  return apiPost<NotificationDigestJob>('/notifications/digests/generate', { digestType });
+  return apiPost<NotificationDigestJob>('/api/notifications/digests/generate', { digestType });
 }

@@ -21,6 +21,7 @@ export interface ConfessionDTO {
   slug: string;
   content: string;
   authorThreadPseudonym: string;
+  isAnonymous: boolean;
   status: 'PUBLISHED' | 'QUARANTINED' | 'DELETED';
   upvotesCount: number;
   commentsCount: number;
@@ -127,7 +128,7 @@ export class ConfessionsApiClient {
 
   static async createConfession(
     collegeId: string,
-    payload: { categoryCode: string; title: string; content: string },
+    payload: { categoryCode: string; title: string; content: string; isAnonymous?: boolean },
     idempotencyKey?: string
   ): Promise<ApiV1Response<ConfessionDTO>> {
     try {

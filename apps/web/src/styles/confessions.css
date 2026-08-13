@@ -44,8 +44,7 @@
   color: var(--conf-text-primary);
   background:
     radial-gradient(600px 280px at 90% 0%, rgba(255, 92, 168, 0.12), transparent 60%),
-    radial-gradient(500px 240px at 5% 30%, rgba(53, 200, 242, 0.1), transparent 60%),
-    var(--conf-bg);
+    radial-gradient(500px 240px at 5% 30%, rgba(53, 200, 242, 0.1), transparent 60%), var(--conf-bg);
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -166,7 +165,9 @@
   color: #fff;
   border: 2.5px solid var(--toon-ink);
   box-shadow: 3px 4px 0 var(--toon-ink);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .conf-hero-btn:hover {
@@ -372,12 +373,7 @@
   left: 16px;
   width: 90px;
   height: 22px;
-  background:
-    repeating-linear-gradient(
-      45deg,
-      rgba(255, 92, 168, 0.75) 0 8px,
-      rgba(255, 255, 255, 0.75) 8px 16px
-    );
+  background: repeating-linear-gradient(45deg, rgba(255, 92, 168, 0.75) 0 8px, rgba(255, 255, 255, 0.75) 8px 16px);
   border: 2px solid var(--toon-ink);
   border-radius: 4px;
   transform: rotate(-2deg);
@@ -435,6 +431,12 @@
 .conf-badge-hot {
   background: var(--conf-badge-hot-bg);
   color: var(--conf-badge-hot-fg);
+}
+
+.conf-badge-verified {
+  background: #dff7e5;
+  color: #1a7f37;
+  border-color: #4ade80;
 }
 
 .conf-card-title {
@@ -554,7 +556,9 @@
   font-size: 0.95rem;
   font-family: inherit;
   box-sizing: border-box;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .conf-input:focus,
@@ -646,7 +650,9 @@
   justify-content: center;
   text-decoration: none;
   font-size: 1.5rem;
-  transition: transform var(--conf-transition-fast), box-shadow var(--conf-transition-fast);
+  transition:
+    transform var(--conf-transition-fast),
+    box-shadow var(--conf-transition-fast);
   z-index: 100;
   animation: toon-float 2.6s ease-in-out infinite;
 }

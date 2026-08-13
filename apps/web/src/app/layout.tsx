@@ -6,6 +6,7 @@ import '@web/styles/marketplace.css';
 import '@web/styles/academic-resource-hub.css';
 import { Navbar } from '@web/components/ui/Navbar/Navbar';
 import { Footer } from '@web/components/ui/Footer/Footer';
+import { AuthProvider } from '@web/components/auth/AuthContext';
 
 export const metadata: Metadata = {
   title: 'Campizo — Your Campus, All in One Place',
@@ -21,9 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="light">
       <body>
-        <Navbar />
-        <main id="main-content">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Navbar />
+          <main id="main-content">{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

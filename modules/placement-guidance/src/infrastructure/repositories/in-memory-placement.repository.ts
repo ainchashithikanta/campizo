@@ -135,6 +135,195 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     this.experiences.set(`${exp1.collegeId}:${exp1.id}`, exp1);
 
+    const exp2: PlacementExperienceEntity = {
+      id: 'exp_msft_swe_002',
+      collegeId: 'college_stanford_001',
+      companyId: 'comp_microsoft',
+      authorId: 'usr_student_102',
+      roleTitle: 'Software Engineering Intern',
+      jobType: 'INTERNSHIP',
+      branch: 'Computer Science',
+      cgpa: 3.72,
+      ctcOfferedLpa: null,
+      stipendMonthly: 8200,
+      offerStatus: 'ACCEPTED',
+      difficultyRating: 3,
+      overallRating: 4,
+      summary:
+        'Cleared a 1-hour online coding round followed by 2 technical interviews focused on Arrays and a System Design primer.',
+      preparationTips: 'Practice Top Interview Questions on LeetCode and read the Microsoft system design primer.',
+      versionNumber: 1,
+      helpfulCount: 8,
+      reportsCount: 0,
+      isAnonymous: true,
+      status: 'APPROVED',
+      companyName: 'Microsoft',
+      companySlug: 'microsoft',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.experiences.set(`${exp2.collegeId}:${exp2.id}`, exp2);
+
+    const exp3: PlacementExperienceEntity = {
+      id: 'exp_google_pm_003',
+      collegeId: 'college_stanford_001',
+      companyId: 'comp_google',
+      authorId: 'usr_student_103',
+      roleTitle: 'Product Manager, New Grad',
+      jobType: 'FULL_TIME',
+      branch: 'Computer Science',
+      cgpa: 3.9,
+      ctcOfferedLpa: 220.0,
+      stipendMonthly: null,
+      offerStatus: 'ACCEPTED',
+      difficultyRating: 5,
+      overallRating: 5,
+      summary:
+        '4 rounds: AA online, two technical interviews, and a cross-functional PM interview. Heavy on estimation and trade-offs.',
+      preparationTips: 'Study "Decode and Conquer" and practice estimation problems end to end.',
+      versionNumber: 1,
+      helpfulCount: 5,
+      reportsCount: 0,
+      isAnonymous: true,
+      status: 'APPROVED',
+      companyName: 'Google',
+      companySlug: 'google',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.experiences.set(`${exp3.collegeId}:${exp3.id}`, exp3);
+
+    const amazon: CompanyEntity = {
+      id: 'comp_amazon',
+      collegeId: 'college_stanford_001',
+      name: 'Amazon',
+      slug: 'amazon',
+      website: 'https://www.amazon.jobs',
+      officialWebsite: 'https://www.amazon.com',
+      logoUrl: 'https://logo.clearbit.com/amazon.com',
+      bannerUrl: 'https://images.unsplash.com/photo-amazon',
+      careerUrl: 'https://www.amazon.jobs',
+      glassdoorUrl: 'https://glassdoor.com/amazon',
+      industry: 'Technology / E-Commerce',
+      tier: 'TIER_1',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.companies.set(`${amazon.collegeId}:${amazon.id}`, amazon);
+    this.companies.set(`${amazon.collegeId}:slug:${amazon.slug}`, amazon);
+
+    const exp4: PlacementExperienceEntity = {
+      id: 'exp_amzn_sde_004',
+      collegeId: 'college_stanford_001',
+      companyId: 'comp_amazon',
+      authorId: 'usr_student_104',
+      roleTitle: 'Software Development Engineer',
+      jobType: 'FULL_TIME',
+      branch: 'Computer Science',
+      cgpa: 3.78,
+      ctcOfferedLpa: 42.0,
+      stipendMonthly: null,
+      offerStatus: 'ACCEPTED',
+      difficultyRating: 4,
+      overallRating: 4,
+      summary:
+        'Cleared a 45-minute online assessment (2 coding questions), then 4 rounds: LP + 2 technical interviews (DSA + System Design primer) and a Bar Raiser.',
+      preparationTips:
+        "Grind Amazon's 150+ tagged LeetCode questions and practice leadership-principles stories out loud.",
+      versionNumber: 1,
+      helpfulCount: 9,
+      reportsCount: 0,
+      isAnonymous: false,
+      status: 'APPROVED',
+      companyName: 'Amazon',
+      companySlug: 'amazon',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      rounds: [
+        {
+          id: 'rnd_amzn_1',
+          experienceId: 'exp_amzn_sde_004',
+          roundNumber: 1,
+          roundName: 'Online Assessment',
+          roundType: 'ONLINE_ASSESSMENT',
+          durationMinutes: 45,
+          description: 'Workplace code pair: 2 algorithmic questions.',
+          topicsCovered: ['Arrays', 'Two Pointers'],
+          createdAt: new Date(),
+          questions: [
+            {
+              id: 'q_amzn_1',
+              roundId: 'rnd_amzn_1',
+              questionText: 'Given a string, find the longest substring without repeating characters.',
+              questionCategory: 'ALGORITHMS',
+              difficulty: 'MEDIUM',
+              createdAt: new Date()
+            }
+          ]
+        }
+      ]
+    };
+    this.experiences.set(`${exp4.collegeId}:${exp4.id}`, exp4);
+
+    const exp5: PlacementExperienceEntity = {
+      id: 'exp_meta_dse_005',
+      collegeId: 'college_stanford_001',
+      companyId: 'comp_microsoft',
+      authorId: 'usr_student_105',
+      roleTitle: 'Data Engineer, University Graduate',
+      jobType: 'INTERNSHIP',
+      branch: 'Computer Science',
+      cgpa: 3.81,
+      ctcOfferedLpa: null,
+      stipendMonthly: 6000,
+      offerStatus: 'ACCEPTED',
+      difficultyRating: 3,
+      overallRating: 4,
+      summary:
+        '2-stage process: a 90-min technical screen (SQL + Python) and a take-home data-pipeline design reviewed in a follow-up loop.',
+      preparationTips: 'Brush up on pandas, SQL window functions, and partitioning/ sort keys for Redshift.',
+      versionNumber: 1,
+      helpfulCount: 6,
+      reportsCount: 0,
+      isAnonymous: true,
+      status: 'APPROVED',
+      companyName: 'Microsoft',
+      companySlug: 'microsoft',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.experiences.set(`${exp5.collegeId}:${exp5.id}`, exp5);
+
+    this.salaryInsights.set(`${amazon.collegeId}:${amazon.id}:Software Development Engineer:2026`, {
+      id: 'sal_amzn_sde_2026',
+      collegeId: amazon.collegeId,
+      companyId: amazon.id,
+      roleTitle: 'Software Development Engineer',
+      batchYear: 2026,
+      avgCtcLpa: 42.0,
+      minCtcLpa: 36.0,
+      maxCtcLpa: 50.0,
+      sampleSize: 9,
+      updatedAt: new Date()
+    });
+
+    const salaryInsight: SalaryInsightEntity = {
+      id: 'sal_google_swe_2026',
+      collegeId: 'college_stanford_001',
+      companyId: 'comp_google',
+      roleTitle: 'Software Engineer',
+      batchYear: 2026,
+      avgCtcLpa: 45.0,
+      minCtcLpa: 39.0,
+      maxCtcLpa: 52.0,
+      sampleSize: 12,
+      updatedAt: new Date()
+    };
+    this.salaryInsights.set(
+      `${salaryInsight.collegeId}:${salaryInsight.companyId}:${salaryInsight.roleTitle}:${salaryInsight.batchYear}`,
+      salaryInsight
+    );
+
     const q1: QuestionBankEntity = {
       id: 'q_word_ladder_2',
       collegeId: 'college_stanford_001',

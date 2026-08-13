@@ -114,23 +114,25 @@ export interface IncidentQuery {
 }
 
 export async function fetchErrors(query: ErrorQuery = {}): Promise<PaginatedResultDto<TrackedErrorDto>> {
-  return apiGet<PaginatedResultDto<TrackedErrorDto>>(`/errors${buildQueryString(query as Record<string, unknown>)}`);
+  return apiGet<PaginatedResultDto<TrackedErrorDto>>(
+    `/api/errors${buildQueryString(query as Record<string, unknown>)}`
+  );
 }
 
 export async function fetchError(id: string): Promise<TrackedErrorDto> {
-  return apiGet<TrackedErrorDto>(`/errors/${id}`);
+  return apiGet<TrackedErrorDto>(`/api/errors/${id}`);
 }
 
 export async function fetchErrorsStatistics(): Promise<ErrorsStatisticsDto> {
-  return apiGet<ErrorsStatisticsDto>('/errors/statistics');
+  return apiGet<ErrorsStatisticsDto>('/api/errors/statistics');
 }
 
 export async function fetchIncidents(query: IncidentQuery = {}): Promise<PaginatedResultDto<IncidentDto>> {
-  return apiGet<PaginatedResultDto<IncidentDto>>(`/incidents${buildQueryString(query as Record<string, unknown>)}`);
+  return apiGet<PaginatedResultDto<IncidentDto>>(`/api/incidents${buildQueryString(query as Record<string, unknown>)}`);
 }
 
 export async function fetchIncident(id: string): Promise<IncidentDto> {
-  return apiGet<IncidentDto>(`/incidents/${id}`);
+  return apiGet<IncidentDto>(`/api/incidents/${id}`);
 }
 
 export async function updateIncidentStatus(
@@ -139,5 +141,5 @@ export async function updateIncidentStatus(
   actor: string,
   note?: string
 ): Promise<IncidentDto> {
-  return apiPatch<IncidentDto>(`/incidents/${id}/status`, { status, actor, note });
+  return apiPatch<IncidentDto>(`/api/incidents/${id}/status`, { status, actor, note });
 }

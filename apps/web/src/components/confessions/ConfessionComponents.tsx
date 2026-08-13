@@ -81,13 +81,17 @@ export function ConfessionCard({ confession }: { confession: ConfessionDTO }) {
     { emoji: '🔥', label: 'Hot' }
   ];
 
-  const reactionCount = (index: number) =>
-    (confession.upvotesCount + index * 7 + confession.commentsCount) % 19;
+  const reactionCount = (index: number) => (confession.upvotesCount + index * 7 + confession.commentsCount) % 19;
 
   return (
     <article className="conf-card">
       <div className="conf-card-header">
         <AnonymousIdentity pseudonym={confession.authorThreadPseudonym} />
+        {!confession.isAnonymous && (
+          <span className="conf-badge conf-badge-verified" aria-label="Verified author">
+            ✔ Verified
+          </span>
+        )}
         <div className="conf-badges">
           {isTrending && <TrendingBadge />}
           {isHot && <HotBadge />}
@@ -172,11 +176,12 @@ export function PublishProgress({ step }: { step: 'EDIT' | 'SCAN' | 'PUBLISHING'
 export function CreateWizard({
   onSubmit
 }: {
-  onSubmit: (title: string, content: string, category: string) => Promise<void>;
+  onSubmit: (title: string, content: string, category: string, isAnonymous: boolean) => Promise<void>;
 }) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('confession');
+  const [isAnonymous, setIsAnonymous] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const hasPii = /(?:\+91[\s-]?)?[6-9]\d{9}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|@[a-zA-Z0-9_]{3,}/.test(
@@ -187,7 +192,7 @@ export function CreateWizard({
     e.preventDefault();
     if (!title || !content) return;
     setIsSubmitting(true);
-    await onSubmit(title, content, category);
+    await onSubmit(title, content, category, isAnonymous);
     setIsSubmitting(false);
   };
 
@@ -254,6 +259,35 @@ export function CreateWizard({
         <CharacterCounter current={content.length} max={1000} />
       </div>
 
+      <div
+        className="conf-form-group"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '0.6rem 0.8rem',
+          background: 'rgba(0, 0, 0, 0.04)',
+          borderRadius: 'var(--conf-radius-sm)',
+          border: '1px solid var(--conf-border)'
+        }}
+      >
+        <div>
+          <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>Post Anonymously</div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--conf-text-muted)' }}>
+            {isAnonymous
+              ? 'Your identity is hidden behind a random pseudonym.'
+              : 'Your identity will be visible to other students.'}
+          </div>
+        </div>
+        <input
+          type="checkbox"
+          checked={isAnonymous}
+          onChange={(e) => setIsAnonymous(e.target.checked)}
+          style={{ width: '22px', height: '22px', cursor: 'pointer' }}
+          aria-label="Post Anonymously"
+        />
+      </div>
+
       <PiiWarning detected={hasPii} />
 
       <button
@@ -271,7 +305,7 @@ export function CreateWizard({
           cursor: isSubmitting ? 'not-allowed' : 'pointer'
         }}
       >
-        {isSubmitting ? 'Publishing...' : 'Publish Confession'}
+        {isSubmitting ? 'Publishing...' : isAnonymous ? 'Publish Anonymously' : 'Publish'}
       </button>
     </form>
   );

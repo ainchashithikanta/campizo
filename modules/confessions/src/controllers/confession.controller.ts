@@ -22,7 +22,8 @@ export class ConfessionController {
       userId,
       categoryCode: body.categoryCode,
       title: body.title,
-      content: body.content
+      content: body.content,
+      isAnonymous: body.isAnonymous
     });
 
     reply.status(201);

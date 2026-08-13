@@ -126,7 +126,9 @@
   border: 2.5px solid var(--toon-ink);
   background-color: var(--toon-paper);
   box-shadow: 2px 2px 0 var(--toon-ink);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .themeToggle:hover {

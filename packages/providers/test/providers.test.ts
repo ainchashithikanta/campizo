@@ -104,10 +104,14 @@ describe('Provider Abstraction Layer & Plugin Architecture', () => {
     const listItems = await activeStorage.list('documents/', { bucket: 'documents' });
     expect(listItems.length).toBeGreaterThan(0);
 
-    const copied = await activeStorage.copy('documents/syllabus.pdf', 'documents/syllabus-copy.pdf', { fromBucket: 'documents' });
+    const copied = await activeStorage.copy('documents/syllabus.pdf', 'documents/syllabus-copy.pdf', {
+      fromBucket: 'documents'
+    });
     expect(copied).toBe(true);
 
-    const moved = await activeStorage.move('documents/syllabus-copy.pdf', 'documents/syllabus-moved.pdf', { fromBucket: 'documents' });
+    const moved = await activeStorage.move('documents/syllabus-copy.pdf', 'documents/syllabus-moved.pdf', {
+      fromBucket: 'documents'
+    });
     expect(moved).toBe(true);
 
     const deleted = await activeStorage.delete('documents/syllabus.pdf', { bucket: 'documents' });
@@ -145,4 +149,3 @@ describe('Provider Abstraction Layer & Plugin Architecture', () => {
     expect(embeddings.length).toBe(1536);
   });
 });
-

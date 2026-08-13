@@ -1,0 +1,143 @@
+/* ==========================================================================
+   Auth Pages — Student login / register (professional, non-cartoonish)
+   ========================================================================== */
+
+.ch-auth-page {
+  min-height: calc(100dvh - var(--ch-header-height));
+  padding-top: var(--ch-header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: var(--ch-spacing-8);
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  dark: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.ch-auth-card {
+  width: 100%;
+  max-width: 384px;
+  background: var(--ch-color-surface-elevated);
+  border: 1px solid var(--ch-color-border);
+  border-radius: var(--ch-radius-xl);
+  box-shadow: var(--ch-shadow-sm);
+  padding: var(--ch-spacing-8);
+  position: relative;
+}
+
+.ch-auth-back {
+  font-size: var(--ch-font-size-sm);
+  color: var(--ch-color-text-muted);
+  text-decoration: none;
+}
+.ch-auth-back:hover {
+  color: var(--ch-color-text);
+  text-decoration: underline;
+}
+
+.ch-auth-logo {
+  width: 44px;
+  height: 44px;
+  margin: var(--ch-spacing-4) auto 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: 2px solid #1e293b;
+  box-shadow: 2px 3px 0 #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ch-font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.ch-auth-title {
+  font-family: var(--ch-font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ch-color-text);
+  text-align: center;
+  margin-block: var(--ch-spacing-3);
+}
+
+.ch-auth-subtitle {
+  color: var(--ch-color-text-muted);
+  font-size: var(--ch-font-size-sm);
+  text-align: center;
+  margin-bottom: var(--ch-spacing-6);
+}
+
+.ch-auth-form {
+  display: grid;
+  gap: var(--ch-spacing-3);
+}
+
+.ch-auth-form label {
+  font-size: var(--ch-font-size-xs);
+  font-weight: 600;
+  color: var(--ch-color-text);
+}
+
+.ch-auth-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--ch-radius-md);
+  border: 1px solid var(--ch-color-border);
+  background: var(--ch-color-surface);
+  color: var(--ch-color-text);
+  font-size: 0.95rem;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.ch-auth-input:focus-within {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 245, 0.2);
+}
+
+.ch-auth-error {
+  color: #ef4444;
+  font-size: var(--ch-font-size-sm);
+  font-weight: 500;
+}
+
+.ch-auth-btn {
+  margin-top: var(--ch-spacing-2);
+  min-height: 44px;
+  width: 100%;
+  border-radius: var(--ch-radius-md);
+  border: 2px solid #1e293b;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+.ch-auth-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 245, 0.3);
+}
+.ch-auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ch-auth-footer {
+  margin-top: var(--ch-spacing-6);
+  font-size: var(--ch-font-size-sm);
+  text-align: center;
+  color: var(--ch-color-text-muted);
+}
+
+.ch-auth-link {
+  color: #6366f1;
+  font-weight: 600;
+  text-decoration: none;
+}
+.ch-auth-link:hover {
+  text-decoration: underline;
+}

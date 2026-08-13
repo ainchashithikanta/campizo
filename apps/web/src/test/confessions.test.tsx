@@ -25,6 +25,7 @@ describe('Campus Confessions Next.js Frontend Component Suite', () => {
     slug: 'casio-fx-991es-usage',
     content: 'How to clear memory before entering exam hall? Press Shift + 9 + 3 + =',
     authorThreadPseudonym: 'Curious Panda #402',
+    isAnonymous: true,
     status: 'PUBLISHED' as const,
     upvotesCount: 42,
     commentsCount: 5,

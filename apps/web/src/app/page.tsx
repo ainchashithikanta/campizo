@@ -85,13 +85,31 @@ export default function HomePage() {
   return (
     <div className="hub-page">
       <section className="hub-hero">
-        <span className="hub-char hub-char-1" aria-hidden="true">🎓</span>
-        <span className="hub-char hub-char-2" aria-hidden="true">💬</span>
-        <span className="hub-char hub-char-3" aria-hidden="true">📚</span>
-        <span className="hub-char hub-char-4" aria-hidden="true">🛍️</span>
-        <span className="toon-sparkle" style={{ top: '14%', left: '24%' }} aria-hidden="true">✨</span>
-        <span className="toon-sparkle" style={{ top: '22%', right: '22%', animationDelay: '-1.2s' }} aria-hidden="true">⭐</span>
-        <span className="toon-sparkle" style={{ bottom: '24%', left: '30%', animationDelay: '-0.6s' }} aria-hidden="true">✨</span>
+        <span className="hub-char hub-char-1" aria-hidden="true">
+          🎓
+        </span>
+        <span className="hub-char hub-char-2" aria-hidden="true">
+          💬
+        </span>
+        <span className="hub-char hub-char-3" aria-hidden="true">
+          📚
+        </span>
+        <span className="hub-char hub-char-4" aria-hidden="true">
+          🛍️
+        </span>
+        <span className="toon-sparkle" style={{ top: '14%', left: '24%' }} aria-hidden="true">
+          ✨
+        </span>
+        <span className="toon-sparkle" style={{ top: '22%', right: '22%', animationDelay: '-1.2s' }} aria-hidden="true">
+          ⭐
+        </span>
+        <span
+          className="toon-sparkle"
+          style={{ bottom: '24%', left: '30%', animationDelay: '-0.6s' }}
+          aria-hidden="true"
+        >
+          ✨
+        </span>
         <div className="container hub-hero-inner">
           <span className="hub-hero-kicker">Campizo · Your Campus, One Platform</span>
           <h1 className="hub-hero-title">
@@ -130,12 +148,24 @@ export default function HomePage() {
         <div className="hub-marquee-track">
           {[0, 1].map((dup) => (
             <React.Fragment key={dup}>
-              <span className="hub-marquee-item">💭 <strong>2.4k</strong> confessions this week</span>
-              <span className="hub-marquee-item">📚 <strong>1.8k</strong> verified study resources</span>
-              <span className="hub-marquee-item">🛍️ <strong>320</strong> live marketplace listings</span>
-              <span className="hub-marquee-item">⭐ <strong>4.5</strong> avg professor rating</span>
-              <span className="hub-marquee-item">🤝 <strong>1.2k</strong> campus connections</span>
-              <span className="hub-marquee-item">💼 <strong>40+</strong> companies hiring</span>
+              <span className="hub-marquee-item">
+                💭 <strong>2.4k</strong> confessions this week
+              </span>
+              <span className="hub-marquee-item">
+                📚 <strong>1.8k</strong> verified study resources
+              </span>
+              <span className="hub-marquee-item">
+                🛍️ <strong>320</strong> live marketplace listings
+              </span>
+              <span className="hub-marquee-item">
+                ⭐ <strong>4.5</strong> avg professor rating
+              </span>
+              <span className="hub-marquee-item">
+                🤝 <strong>1.2k</strong> campus connections
+              </span>
+              <span className="hub-marquee-item">
+                💼 <strong>40+</strong> companies hiring
+              </span>
             </React.Fragment>
           ))}
         </div>

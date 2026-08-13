@@ -706,6 +706,7 @@ CREATE TABLE IF NOT EXISTS confessions (
   slug VARCHAR(300) NOT NULL,
   content TEXT NOT NULL,
   author_thread_pseudonym VARCHAR(64) NOT NULL,
+  is_anonymous BOOLEAN NOT NULL DEFAULT TRUE,
   status VARCHAR(32) NOT NULL DEFAULT 'PUBLISHED',
   upvotes_count INT NOT NULL DEFAULT 0,
   comments_count INT NOT NULL DEFAULT 0,

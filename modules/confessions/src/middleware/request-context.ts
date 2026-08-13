@@ -1,4 +1,5 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { resolveApiIdentity, isModerator } from '@college-hub/security';
 
 // ── RequestContext ───────────────────────────────────────────────────
 export interface RequestContext {
@@ -6,6 +7,7 @@ export interface RequestContext {
   collegeId: string;
   requestId: string;
   roles: string[];
+  isAuthenticated: boolean;
   idempotencyKey: string | null;
 }
 
@@ -17,11 +19,24 @@ declare module 'fastify' {
 }
 
 /**
- * Tenant Middleware — Rejects requests missing x-college-id.
- * Must run before auth middleware.
+ * Tenant Middleware — Resolves the collegeId from the verified identity
+ * first, falling back to the x-college-id header for guest requests.
+ * Rejects requests where no tenant can be established.
  */
 export async function tenantMiddleware(req: FastifyRequest, reply: FastifyReply): Promise<void> {
-  const collegeId = req.headers['x-college-id'] as string | undefined;
+  const headerCollegeId = req.headers['x-college-id'] as string | undefined;
+  const authHeader = req.headers['authorization'] as string | undefined;
+  const resolution = resolveApiIdentity({
+    authorizationHeader: authHeader,
+    collegeIdHeader: headerCollegeId,
+    userIdHeader: req.headers['x-user-id'] as string | undefined
+  });
+
+  const collegeId =
+    resolution.status === 'ok' && resolution.identity.isAuthenticated
+      ? resolution.identity.collegeId || headerCollegeId
+      : headerCollegeId;
+
   if (!collegeId || collegeId.trim().length === 0) {
     reply.status(403).send({
       success: false,
@@ -37,52 +52,68 @@ export async function tenantMiddleware(req: FastifyRequest, reply: FastifyReply)
 }
 
 /**
- * Auth & RBAC Middleware — Resolves user identity, validates JWT if provided,
- * enforces moderation RBAC rules, and builds RequestContext.
+ * Auth & RBAC Middleware — Verifies JWTs cryptographically, derives
+ * identity/roles exclusively from verified token claims, and enforces
+ * moderation RBAC. Client-supplied x-user-id / x-user-role headers are
+ * never trusted for roles.
  */
 export async function authMiddleware(req: FastifyRequest, reply: FastifyReply): Promise<void> {
   const authHeader = req.headers['authorization'] as string | undefined;
+  const headerCollegeId = req.headers['x-college-id'] as string | undefined;
 
-  // Validate JWT if Authorization header is supplied
-  if (authHeader !== undefined) {
-    if (!authHeader.startsWith('Bearer ') || authHeader.includes('invalid') || authHeader.includes('malformed')) {
-      reply.status(401).send({
-        success: false,
-        error: { code: 'MALFORMED_JWT', message: 'Authorization header contains a malformed or invalid JWT token.' },
-        metadata: {
-          requestId: req.headers['x-request-id'] || 'req-unknown',
-          collegeId: (req.headers['x-college-id'] as string) || 'unknown',
-          timestamp: new Date().toISOString()
-        }
-      });
-      return;
-    }
+  const resolution = resolveApiIdentity({
+    authorizationHeader: authHeader,
+    collegeIdHeader: headerCollegeId,
+    userIdHeader: req.headers['x-user-id'] as string | undefined
+  });
+
+  if (resolution.status === 'config_error') {
+    reply.status(500).send({
+      success: false,
+      error: { code: 'AUTH_CONFIG_ERROR', message: 'Server authentication configuration is incomplete.' },
+      metadata: {
+        requestId: req.headers['x-request-id'] || 'req-unknown',
+        collegeId: headerCollegeId || 'unknown',
+        timestamp: new Date().toISOString()
+      }
+    });
+    return;
   }
 
-  const collegeId = req.headers['x-college-id'] as string;
-  const userId = (req.headers['x-user-id'] as string) || 'anonymous';
+  if (resolution.status === 'invalid_token') {
+    reply.status(401).send({
+      success: false,
+      error: { code: 'INVALID_JWT', message: resolution.message },
+      metadata: {
+        requestId: req.headers['x-request-id'] || 'req-unknown',
+        collegeId: headerCollegeId || 'unknown',
+        timestamp: new Date().toISOString()
+      }
+    });
+    return;
+  }
+
+  const identity = resolution.identity;
   const requestId = (req.headers['x-request-id'] as string) || `req-${Date.now()}`;
   const idempotencyKey = (req.headers['x-idempotency-key'] as string) || null;
 
-  const roleHeader = req.headers['x-user-role'] as string | undefined;
-  const roles: string[] = roleHeader ? roleHeader.split(',').map((r) => r.trim()) : ['STUDENT'];
-
   req.ctx = {
-    userId,
-    collegeId,
+    userId: identity.userId,
+    collegeId: (identity.collegeId || headerCollegeId || 'unknown') as string,
     requestId,
-    roles,
+    roles: identity.roles,
+    isAuthenticated: identity.isAuthenticated,
     idempotencyKey
   };
 
-  // RBAC Enforcement for Moderation Endpoints
+  // RBAC Enforcement for Moderation Endpoints — role must come from a
+  // cryptographically verified JWT; guest/header roles can never moderate.
   if (req.url.startsWith('/api/v1/confessions/moderation')) {
-    const isModerator = roles.includes('MODERATOR') || roles.includes('ADMIN');
-    if (!isModerator) {
+    if (!isModerator(identity)) {
       reply.status(403).send({
         success: false,
         error: { code: 'MODERATION_ACCESS_DENIED', message: 'Moderation privileges required to access this endpoint.' },
-        metadata: { requestId, collegeId, timestamp: new Date().toISOString() }
+        metadata: { requestId, collegeId: req.ctx.collegeId, timestamp: new Date().toISOString() }
       });
       return;
     }

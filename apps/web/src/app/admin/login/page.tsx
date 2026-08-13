@@ -71,7 +71,11 @@ function AdminLoginForm() {
             autoFocus
             autoComplete="current-password"
           />
-          {error && <p className="adl-error" role="alert">⛔ {error}</p>}
+          {error && (
+            <p className="adl-error" role="alert">
+              ⛔ {error}
+            </p>
+          )}
           <button type="submit" className="adl-btn" disabled={loading || pin.length === 0}>
             {loading ? 'Verifying…' : 'Unlock Admin Console'}
           </button>

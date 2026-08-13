@@ -113,8 +113,15 @@ export class IdentityKernelService {
       userAgent: 'IdentityKernel'
     });
 
-    logger.info({ email, collegeId }, `Generated EDU verification OTP: ${otpCode}`);
-    return { success: true, message: 'OTP sent to EDU email', otpCode };
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (!isProduction) {
+      logger.debug({ email, collegeId }, 'EDU verification OTP generated');
+    }
+    return {
+      success: true,
+      message: 'OTP sent to EDU email',
+      ...(isProduction ? {} : { otpCode })
+    };
   }
 
   public async verifyOtpAndRegister(params: {

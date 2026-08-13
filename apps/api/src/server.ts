@@ -152,6 +152,10 @@ async function bootstrap() {
 }
 
 const entryPath = process.argv[1];
-if (process.env['NODE_ENV'] !== 'test' && entryPath !== undefined && pathToFileURL(entryPath).href === import.meta.url) {
+if (
+  process.env['NODE_ENV'] !== 'test' &&
+  entryPath !== undefined &&
+  pathToFileURL(entryPath).href === import.meta.url
+) {
   bootstrap();
 }

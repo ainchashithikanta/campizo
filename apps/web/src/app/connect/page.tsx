@@ -9,6 +9,13 @@ import Link from 'next/link';
 export default function ConnectHubPage() {
   const navLinks = [
     {
+      title: 'Random Chat',
+      href: '/connect/random',
+      desc: 'Anonymous end-to-end encrypted chat matched with the opposite gender',
+      icon: '🎲',
+      accent: 'indigo'
+    },
+    {
       title: 'Discover Students',
       href: '/connect/discover',
       desc: 'Find study pods and project collaborators',
@@ -33,7 +40,7 @@ export default function ConnectHubPage() {
     <main className="max-w-6xl mx-auto p-6 font-sans">
       <header className="mb-8">
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Campus Connect Hub</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
           Connect with student peers for study pods, hackathons, projects, and mentorship.
         </p>
       </header>
@@ -50,7 +57,7 @@ export default function ConnectHubPage() {
               <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 transition-colors">
                 {item.title}
               </h2>
-              <p className="text-xs text-slate-500 mt-1">{item.desc}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{item.desc}</p>
             </div>
             <div className="mt-4 pt-3 flex items-center text-xs font-semibold text-indigo-600 dark:text-indigo-400">
               Open Section →

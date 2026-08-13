@@ -84,11 +84,7 @@ export class MockStorageProvider implements StorageProvider {
     return `https://mock-storage.collegehub.internal/${options?.bucket || 'default'}/${path}`;
   }
 
-  public async signedUrl(
-    path: string,
-    expiresInSeconds = 3600,
-    options?: StorageSignedUrlOptions
-  ): Promise<string> {
+  public async signedUrl(path: string, expiresInSeconds = 3600, options?: StorageSignedUrlOptions): Promise<string> {
     return `https://mock-storage.collegehub.internal/signed/${options?.bucket || 'default'}/${path}?token=mock-jwt&expires=${expiresInSeconds}`;
   }
 

@@ -74,7 +74,9 @@
   color: var(--toon-ink);
   font-size: 1rem;
   box-shadow: 2px 3px 0 var(--toon-ink);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .arh-hero form input:focus {
@@ -94,7 +96,9 @@
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .arh-hero form button:hover {
@@ -328,7 +332,9 @@
   font-size: var(--ch-font-size-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .arh-card-download:hover {

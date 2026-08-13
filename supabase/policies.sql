@@ -208,3 +208,109 @@ CREATE POLICY "tenant_isolation_policy" ON professors
     current_setting('app.is_super_admin', true) = 'true' OR
     college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
   );
+
+
+-- ==============================================================================
+-- PART 3: SENSITIVE CONTENT TABLES — TENANT-ISOLATED RLS
+-- (confession moderation, anonymity boundary, professor reviews)
+-- ==============================================================================
+
+-- 12. Professor Reviews — reviewers must never read each other's identity.
+ALTER TABLE professor_reviews ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation_policy" ON professor_reviews;
+CREATE POLICY "tenant_isolation_policy" ON professor_reviews
+  AS RESTRICTIVE
+  USING (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  )
+  WITH CHECK (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  );
+
+-- 13. Confession Comments
+ALTER TABLE confession_comments ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation_policy" ON confession_comments;
+CREATE POLICY "tenant_isolation_policy" ON confession_comments
+  AS RESTRICTIVE
+  USING (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  )
+  WITH CHECK (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  );
+
+-- 14. Confession Reports — moderation-only visibility within the tenant
+ALTER TABLE confession_reports ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation_policy" ON confession_reports;
+CREATE POLICY "tenant_isolation_policy" ON confession_reports
+  AS RESTRICTIVE
+  USING (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  )
+  WITH CHECK (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  );
+
+-- 15. Moderation Cases — moderation-only visibility
+ALTER TABLE moderation_cases ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation_policy" ON moderation_cases;
+CREATE POLICY "tenant_isolation_policy" ON moderation_cases
+  AS RESTRICTIVE
+  USING (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  )
+  WITH CHECK (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  );
+
+-- 16. Moderation Actions — immutable moderation audit trail
+ALTER TABLE moderation_actions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation_policy" ON moderation_actions;
+CREATE POLICY "tenant_isolation_policy" ON moderation_actions
+  AS RESTRICTIVE
+  USING (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  )
+  WITH CHECK (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  );
+
+-- 17. Moderator Notes — internal to moderators only
+ALTER TABLE moderator_notes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation_policy" ON moderator_notes;
+CREATE POLICY "tenant_isolation_policy" ON moderator_notes
+  AS RESTRICTIVE
+  USING (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  )
+  WITH CHECK (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  );
+
+-- 18. Anonymous Thread Identities — the anonymity security boundary.
+-- Access must be restricted to super admins and the tenant context; ordinary
+-- users must never read this table (would deanonymize pseudonyms).
+ALTER TABLE anonymous_thread_identities ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation_policy" ON anonymous_thread_identities;
+CREATE POLICY "tenant_isolation_policy" ON anonymous_thread_identities
+  AS RESTRICTIVE
+  USING (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  )
+  WITH CHECK (
+    current_setting('app.is_super_admin', true) = 'true' OR
+    college_id::text = COALESCE(NULLIF(current_setting('app.current_college_id', true), ''), (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'college_id'))
+  );

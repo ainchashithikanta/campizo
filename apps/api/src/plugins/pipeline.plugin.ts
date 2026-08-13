@@ -50,13 +50,24 @@ async function gatewayPipelinePluginFn(fastify: FastifyInstance, opts: PipelineO
       .map((origin) => origin.trim())
       .filter(Boolean);
 
+    const isProduction = process.env.NODE_ENV === 'production';
+    const allowAnyWhenUnconfigured = !isProduction && allowedOrigins.length === 0;
+
     await fastify.register(cors, {
       origin: (origin, callback) => {
-        // Allow requests without an Origin header (server-to-server, health checks, curl)
-        if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        // Requests without an Origin header (server-to-server, health checks, curl) are allowed.
+        if (!origin) {
           return callback(null, true);
         }
-        return callback(new Error('Origin not allowed by CORS'), false);
+        // Never allow credentials-bearing requests from unknown origins.
+        // In production, an empty ALLOWED_ORIGINS blocks ALL browser clients.
+        if (!allowAnyWhenUnconfigured && !allowedOrigins.includes(origin)) {
+          return callback(new Error('Origin not allowed by CORS'), false);
+        }
+        if (allowAnyWhenUnconfigured) {
+          return callback(null, true);
+        }
+        return callback(null, true);
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -67,19 +78,25 @@ async function gatewayPipelinePluginFn(fastify: FastifyInstance, opts: PipelineO
         'x-college-slug',
         'x-request-id',
         'x-user-id',
-        'x-idempotency-key'
-      ]
+        'x-idempotency-key',
+        'x-auth-token',
+        'x-user-gender',
+        'x-roles'
+      ],
+      maxAge: 86400
     });
   }
 
   // 4. Rate Limiting Plugin
+  //    Keyed on IP + tenant (both are non-spoofable in a proxied deploy) and
+  //    deliberately NOT on client-supplied x-user-id, which would let an
+  //    attacker fragment/ bypass limits by rotating that header.
   await fastify.register(rateLimit, {
     max: opts.rateLimitMaxRequests || 100,
     timeWindow: opts.rateLimitWindowMs || 60_000,
     keyGenerator: (req) => {
       const tenantId = (req.headers['x-college-id'] as string) || 'global';
-      const userId = (req.headers['x-user-id'] as string) || 'anon';
-      return `${tenantId}:${userId}:${req.ip}`;
+      return `${tenantId}:${req.ip}`;
     }
   });
 

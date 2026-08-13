@@ -32,6 +32,7 @@ export default function ConfessionsFeedPage() {
             slug: 'casio-fx-991es-usage',
             content: 'How to clear memory before entering exam hall? Press Shift + 9 + 3 + =',
             authorThreadPseudonym: 'Curious Panda #402',
+            isAnonymous: true,
             status: 'PUBLISHED',
             upvotesCount: 42,
             commentsCount: 5,
@@ -47,6 +48,7 @@ export default function ConfessionsFeedPage() {
             slug: 'hostel-4-cat',
             content: 'Hostel 4 cat attended morning OS lecture and slept on first bench.',
             authorThreadPseudonym: 'Witty Owl #108',
+            isAnonymous: true,
             status: 'PUBLISHED',
             upvotesCount: 88,
             commentsCount: 12,
@@ -75,10 +77,11 @@ export default function ConfessionsFeedPage() {
         <div className="conf-hero-glow" />
         <div className="conf-hero-copy">
           <p className="conf-hero-kicker">Your campus. Your secrets. 100% anonymous.</p>
-          <h2 className="conf-hero-title">Say it. Vent it. <span>Confess it.</span></h2>
+          <h2 className="conf-hero-title">
+            Say it. Vent it. <span>Confess it.</span>
+          </h2>
           <p className="conf-hero-sub">
-            Share what you really think about lectures, hostels, exams and campus life —
-            behind a pseudonym, always.
+            Share what you really think about lectures, hostels, exams and campus life — behind a pseudonym, always.
           </p>
           <div className="conf-hero-actions">
             <Link href="/confessions/create" className="conf-hero-btn">
@@ -111,7 +114,8 @@ export default function ConfessionsFeedPage() {
         </button>
         <button className={`conf-nav-link ${tab === 'latest' ? 'active' : ''}`} onClick={() => setTab('latest')}>
           ✨ Latest
-        </button>        <Link href="/confessions/bookmarks" className="conf-nav-link">
+        </button>{' '}
+        <Link href="/confessions/bookmarks" className="conf-nav-link">
           🔖 Bookmarks
         </Link>
         <Link href="/confessions/activity" className="conf-nav-link">
@@ -119,9 +123,6 @@ export default function ConfessionsFeedPage() {
         </Link>
         <Link href="/confessions/notifications" className="conf-nav-link">
           🔔 Notifications
-        </Link>
-        <Link href="/confessions/moderation" className="conf-nav-link">
-          🛡️ Moderation
         </Link>
       </nav>
 

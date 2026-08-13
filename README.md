@@ -35,7 +35,6 @@ go install github.com/koyeb/koyeb-cli/cmd/koyeb
 
 If you need a go environment, follow the [official Go installation documentation](https://golang.org/doc/install).
 
-
 ## Getting started
 
 ### Initial configuration
@@ -92,7 +91,6 @@ Flags:
 Use "koyeb [command] --help" for more information about a command.
 ```
 
-
 ### Enabling shell auto-completion
 
 `koyeb` has auto-completion support for `bash`, `zsh` and `fish`.
@@ -119,7 +117,7 @@ You will need to start a new shell for this setup to take effect.
 
 #### Zsh
 
-If shell completion is not already enabled in your environment you will need to enable it.  You can execute the following once:
+If shell completion is not already enabled in your environment you will need to enable it. You can execute the following once:
 
 ```shell
 echo "autoload -U compinit; compinit" >> ~/.zshrc
@@ -146,4 +144,3 @@ koyeb completion fish > ~/.config/fish/completions/koyeb.fish
 ## Contribute
 
 Checkout [CONTRIBUTING.md](CONTRIBUTING.md)
-
