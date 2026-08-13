@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { clerkMiddleware } from '@clerk/nextjs/server';
 import { isSessionValid, ADMIN_COOKIE_NAME } from './lib/admin-auth';
 
 const ADMIN_PATHS = ['/admin'];
 
-export default async function middleware(req: NextRequest) {
+export default clerkMiddleware(async (_auth, req) => {
   const { pathname } = req.nextUrl;
-
   const isAdminPath = ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
   if (isAdminPath) {
@@ -25,8 +25,12 @@ export default async function middleware(req: NextRequest) {
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: ['/admin/:path*']
+  matcher: [
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
+    '/__clerk/:path*'
+  ]
 };

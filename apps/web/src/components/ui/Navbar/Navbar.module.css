@@ -136,6 +136,43 @@
   box-shadow: 3px 4px 0 var(--toon-ink);
 }
 
+.authButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 var(--ch-spacing-3);
+  border-radius: 12px;
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--toon-ink);
+  border: 2.5px solid var(--toon-ink);
+  background-color: var(--toon-lemon);
+  box-shadow: 2px 2px 0 var(--toon-ink);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.authButton:hover {
+  transform: translateY(-2px) rotate(-2deg);
+  box-shadow: 3px 4px 0 var(--toon-ink);
+}
+
+.clerkUserButton {
+  display: flex;
+  align-items: center;
+}
+
+.clerkUserButton :global(.cl-avatarBox) {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 2.5px solid var(--toon-ink);
+}
+
 .userBadge {
   display: flex;
   align-items: center;
