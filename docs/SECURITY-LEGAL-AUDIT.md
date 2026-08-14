@@ -70,12 +70,15 @@ Referrer-Policy.
 `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`,
 `Permissions-Policy`.
 
-> **2026-08-14 follow-up:** HSTS (`max-age=63072000; includeSubDomains; preload`) and CSP
-> `upgrade-insecure-requests` were **removed** because NITK's campus gateway does SSL
-> inspection/transparent proxying: cached HSTS made the browser hard-block every gateway-intercepted
-> response, so campus users could no longer load the site at all. Re-enable HSTS (without `preload`,
-> `max-age=300`) once campus access is confirmed working, then step it up over weeks. Re-add
-> `upgrade-insecure-requests` only if no campus regressions.
+> **2026-08-14 follow-up:** the NITK campus gateway (UTM SSL inspection / interstitial injection)
+> blocked the site once a strict CSP (`default-src 'self'`, `frame-ancestors 'none'`) and
+> `X-Frame-Options: DENY` were served — the gateway injects scripts/banners into pages and shows
+> interstitials, which the strict policy hard-blocks for the whole campus network. CSP was relaxed
+> to a gateway-tolerant policy (`script-src ... https:`, `frame-src https:`, no `frame-ancestors`)
+> so campus users can load the site again. HSTS on `.vercel.app` is injected by Vercel's edge
+> platform itself and cannot be removed per-app; it predates these changes and is not the blocker.
+> Re-tighten CSP (`frame-ancestors 'none'`, drop blanket `https:` sources) once campus access is
+> confirmed, or move to a custom domain where HSTS is controllable.
 
 #### A2.2 Open redirect (FIXED)
 `apps/web/src/app/college/page.tsx:16,31` — `next` query param pushed into `router.push` unvalidated;

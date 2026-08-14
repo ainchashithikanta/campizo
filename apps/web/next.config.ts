@@ -19,16 +19,16 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://*.clerk.accounts.dev",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "font-src 'self' data: https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https://*.supabase.co https://*.clerk.accounts.dev",
-              "connect-src 'self' https://*.clerk.accounts.dev https://*.supabase.co https://*.onrender.com",
-              "frame-src https://*.clerk.accounts.dev",
+              "script-src 'self' 'unsafe-inline' https://*.clerk.accounts.dev https:",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https:",
+              "font-src 'self' data: https://fonts.gstatic.com https:",
+              "img-src 'self' data: blob: https:",
+              "connect-src 'self' https:",
+              "frame-src https:",
+              "media-src 'self' https:",
               "object-src 'none'",
               "base-uri 'self'",
-              "form-action 'self'",
-              "frame-ancestors 'none'"
+              "form-action 'self'"
             ].join('; ')
           },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
