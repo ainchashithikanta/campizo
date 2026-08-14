@@ -5,6 +5,7 @@ import { SignIn } from '@clerk/nextjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCollegeById, College } from '@/lib/colleges';
 import { COLLEGE_KEY } from '@/lib/auth';
+import '@web/styles/auth-clerk.css';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,49 +34,66 @@ export default function SignInPage() {
 
   if (!college) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center p-8">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-            Select your college first
-          </h2>
-          <p className="text-slate-600 dark:text-slate-400 mb-6">
-            Please choose your institution before signing in.
-          </p>
-          <a
-            href="/college?next=sign-in"
-            className="inline-flex items-center px-5 py-2.5 text-sm font-semibold rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
-          >
-            Choose College
-          </a>
+      <main className="ck-auth-page">
+        <div className="ck-auth-wrap">
+          <div className="ck-auth-empty">
+            <span className="ck-auth-empty-emoji" aria-hidden="true">🎓</span>
+            <h2>Select your college first</h2>
+            <p>Please choose your institution before signing in.</p>
+            <a href="/college?next=sign-in" className="ck-btn">
+              Choose College →
+            </a>
+          </div>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="mb-6 text-center">
-          <span className="text-4xl" aria-hidden="true">{college.logo}</span>
-          <h2 className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">
-            Sign in to {college.shortName}
-          </h2>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            Use your official <code className="font-mono text-indigo-600 dark:text-indigo-400">@{college.emailDomain}</code> email
+    <main className="ck-auth-page">
+      <div className="ck-auth-wrap">
+        <header className="ck-auth-hero">
+          <div className="ck-auth-logo" aria-hidden="true">{college.logo}</div>
+          <p className="ck-auth-kicker">Welcome back</p>
+          <h1 className="ck-auth-title">
+            Sign in to <span>{college.shortName}</span>
+          </h1>
+          <p className="ck-auth-sub">
+            Continue where you left off — your campus is waiting for you.
           </p>
+          <span className="ck-auth-chip">
+            🔒 Official email required <code>@{college.emailDomain}</code>
+          </span>
+        </header>
+
+        <div className="ck-auth-card">
+          <SignIn
+            appearance={{
+              variables: {
+                colorPrimary: '#7c5cff',
+                borderRadius: '12px'
+              }
+            }}
+            forceRedirectUrl="/college-verified"
+            signUpUrl={`/sign-up?college=${college.id}`}
+          />
         </div>
 
-        <SignIn
-          appearance={{
-            elements: {
-              formButtonPrimary: 'bg-indigo-600 hover:bg-indigo-700 text-white',
-              card: 'shadow-xl border border-slate-200 dark:border-slate-700',
-            },
-          }}
-          forceRedirectUrl="/college-verified"
-          signUpUrl={`/sign-up?college=${college.id}`}
-        />
+        <div className="ck-auth-stats">
+          <div className="ck-auth-stat">
+            <span className="ck-auth-stat-value">2.4k</span>
+            <span className="ck-auth-stat-label">confessions this week</span>
+          </div>
+          <div className="ck-auth-stat">
+            <span className="ck-auth-stat-value">320</span>
+            <span className="ck-auth-stat-label">live listings</span>
+          </div>
+          <div className="ck-auth-stat">
+            <span className="ck-auth-stat-value">40+</span>
+            <span className="ck-auth-stat-label">companies hiring</span>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

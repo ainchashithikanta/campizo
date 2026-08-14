@@ -1,0 +1,371 @@
+/* ==========================================================================
+   Placement Guidance — Toon Theme (matches confessions / home design)
+   ========================================================================== */
+
+.pl-page {
+  min-height: 100dvh;
+  padding: 1rem 1rem 3rem;
+  box-sizing: border-box;
+  font-family: var(--ch-font-sans);
+  color: var(--toon-ink);
+  background:
+    radial-gradient(600px 280px at 90% 0%, rgba(124, 92, 255, 0.12), transparent 60%),
+    radial-gradient(500px 240px at 5% 30%, rgba(53, 200, 242, 0.1), transparent 60%),
+    radial-gradient(700px 320px at 50% 110%, rgba(255, 92, 168, 0.08), transparent 60%),
+    var(--toon-cream);
+}
+
+.pl-container {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* ---------- Hero Banner ---------- */
+.pl-hero {
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--toon-ink);
+  border-radius: var(--toon-radius);
+  background:
+    radial-gradient(1200px 400px at 85% -20%, rgba(124, 92, 255, 0.22), transparent 60%),
+    radial-gradient(800px 300px at 10% 120%, rgba(53, 200, 242, 0.18), transparent 60%),
+    linear-gradient(160deg, #f3f0ff, #fff7ea 60%, #fff0f6);
+  box-shadow: var(--toon-shadow);
+  padding: 2.25rem 1.75rem 1.75rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.pl-hero::before {
+  content: '💼';
+  position: absolute;
+  top: 14px;
+  right: 22px;
+  font-size: 1.6rem;
+  animation: toon-bob 3s ease-in-out infinite;
+}
+
+.pl-hero::after {
+  content: '✧';
+  position: absolute;
+  bottom: 12px;
+  left: 20px;
+  font-size: 1.1rem;
+  color: var(--toon-violet);
+  animation: toon-sparkle 2.6s ease-in-out infinite;
+  animation-delay: -1.2s;
+}
+
+.pl-hero-glow {
+  position: absolute;
+  top: -60%;
+  right: -10%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.3), transparent 65%);
+  pointer-events: none;
+}
+
+.pl-hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+}
+
+.pl-hero-kicker {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7a2fa0;
+  background: var(--toon-lemon);
+  border: 2px solid var(--toon-ink);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--toon-ink);
+  padding: 0.3rem 0.9rem;
+  margin: 0 0 0.7rem;
+  transform: rotate(-1.5deg);
+}
+
+.pl-hero-title {
+  font-family: var(--ch-font-display);
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--toon-ink);
+  margin: 0 0 0.6rem;
+}
+
+.pl-hero-title span {
+  background: linear-gradient(90deg, var(--toon-violet), var(--toon-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.pl-hero-sub {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #5a5370;
+  margin: 0 0 1.25rem;
+  font-family: var(--ch-font-cartoon);
+  max-width: 480px;
+}
+
+.pl-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.pl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1.3rem;
+  border-radius: 999px;
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: linear-gradient(90deg, var(--toon-violet), #9b7bff);
+  color: #fff;
+  border: 2.5px solid var(--toon-ink);
+  box-shadow: 3px 4px 0 var(--toon-ink);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.pl-btn:hover {
+  transform: translateY(-3px) rotate(-1deg);
+  box-shadow: 5px 7px 0 var(--toon-ink);
+}
+
+.pl-btn:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 var(--toon-ink);
+}
+
+.pl-btn-ghost {
+  background: #ffffff;
+  color: var(--toon-ink);
+}
+
+.pl-btn-ghost:hover {
+  background: var(--toon-lemon);
+}
+
+.pl-hero-stats {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 150px;
+  padding-left: 1.5rem;
+  border-left: 3px solid var(--toon-violet);
+}
+
+.pl-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.pl-stat-value {
+  font-family: var(--ch-font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--toon-violet);
+  text-shadow: 2px 2px 0 rgba(124, 92, 255, 0.15);
+}
+
+.pl-stat-label {
+  font-size: 0.78rem;
+  color: #5a5370;
+  margin-top: 0.1rem;
+  font-family: var(--ch-font-cartoon);
+}
+
+@media (max-width: 640px) {
+  .pl-hero {
+    flex-direction: column;
+    padding: 1.75rem 1.4rem;
+  }
+
+  .pl-hero-stats {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 0;
+    padding-left: 0;
+    padding-top: 1rem;
+    border-left: none;
+    border-top: 3px solid var(--toon-violet);
+  }
+}
+
+/* ---------- Toolbar: search + filters ---------- */
+.pl-toolbar {
+  background: #ffffff;
+  border: 3px solid var(--toon-ink);
+  border-radius: var(--toon-radius-sm);
+  box-shadow: 3px 4px 0 var(--toon-ink);
+  padding: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.pl-toolbar input[type='search'] {
+  border: 2.5px solid var(--toon-ink);
+  border-radius: 999px;
+  background: var(--toon-cream);
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.9rem;
+}
+
+.pl-toolbar input[type='search']:focus {
+  border-color: var(--toon-violet);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.18);
+}
+
+.pl-filter {
+  min-height: 44px;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 2.5px solid var(--toon-ink);
+  box-shadow: 2px 3px 0 var(--toon-ink);
+  background: #ffffff;
+  color: var(--toon-ink);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.pl-filter:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 5px 0 var(--toon-ink);
+  background: var(--toon-lemon);
+}
+
+.pl-filter-active {
+  background: linear-gradient(90deg, var(--toon-violet), #9b7bff);
+  color: #ffffff;
+}
+
+.pl-filter-active:hover {
+  background: linear-gradient(90deg, var(--toon-violet), #9b7bff);
+}
+
+/* ---------- Cards ---------- */
+.pl-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .pl-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .pl-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.pl-card {
+  background: #ffffff;
+  border: 3px solid var(--toon-ink);
+  border-radius: var(--toon-radius-sm);
+  box-shadow: 3px 5px 0 var(--toon-ink);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.pl-card:hover {
+  transform: translateY(-4px) rotate(-0.5deg);
+  box-shadow: 6px 8px 0 var(--toon-ink);
+}
+
+.pl-card h3 a {
+  color: var(--toon-ink);
+  text-decoration: none;
+}
+
+.pl-card h3 a:hover {
+  color: var(--toon-violet);
+}
+
+.pl-card-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  border: 2px solid var(--toon-ink);
+  box-shadow: 1.5px 2px 0 var(--toon-ink);
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--toon-lemon);
+  color: var(--toon-ink);
+}
+
+.pl-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  background: var(--toon-cream);
+  color: var(--toon-ink);
+  border: 2.5px solid var(--toon-ink);
+  box-shadow: 2px 3px 0 var(--toon-ink);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.pl-card-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 5px 0 var(--toon-ink);
+  background: var(--toon-lemon);
+}
+
+/* ---------- Section header ---------- */
+.pl-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pl-section-head h2 {
+  font-family: var(--ch-font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--toon-ink);
+  margin: 0;
+}

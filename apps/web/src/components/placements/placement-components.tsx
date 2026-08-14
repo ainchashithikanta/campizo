@@ -125,7 +125,7 @@ export function CompanyAISummaryCard({ summary }: { summary: CompanyAISummary })
 
 export function PlacementCard({ experience }: { experience: PlacementExperience }) {
   return (
-    <article className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+    <article className="pl-card">
       <div>
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
@@ -161,7 +161,7 @@ export function PlacementCard({ experience }: { experience: PlacementExperience 
         </span>
         <Link
           href={`/placements/experience/${experience.id}`}
-          className="min-h-[44px] px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 transition-colors flex items-center"
+          className="pl-card-cta"
         >
           View Full Breakdown →
         </Link>

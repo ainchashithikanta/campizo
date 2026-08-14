@@ -1,0 +1,298 @@
+/* ==========================================================================
+   Campus Connect — Toon Theme (matches confessions / home design)
+   ========================================================================== */
+
+.cn-page {
+  min-height: 100dvh;
+  padding: 1rem 1rem 3rem;
+  box-sizing: border-box;
+  font-family: var(--ch-font-sans);
+  color: var(--toon-ink);
+  background:
+    radial-gradient(600px 280px at 90% 0%, rgba(53, 200, 242, 0.14), transparent 60%),
+    radial-gradient(500px 240px at 5% 30%, rgba(255, 92, 168, 0.1), transparent 60%),
+    radial-gradient(700px 320px at 50% 110%, rgba(47, 221, 148, 0.1), transparent 60%),
+    var(--toon-cream);
+}
+
+.cn-container {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* ---------- Hero Banner ---------- */
+.cn-hero {
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--toon-ink);
+  border-radius: var(--toon-radius);
+  background:
+    radial-gradient(1200px 400px at 85% -20%, rgba(53, 200, 242, 0.22), transparent 60%),
+    radial-gradient(800px 300px at 10% 120%, rgba(255, 92, 168, 0.18), transparent 60%),
+    linear-gradient(160deg, #eaf9ff, #fff7ea 60%, #f3f0ff);
+  box-shadow: var(--toon-shadow);
+  padding: 2.25rem 1.75rem 1.75rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.cn-hero::before {
+  content: '🤝';
+  position: absolute;
+  top: 14px;
+  right: 22px;
+  font-size: 1.6rem;
+  animation: toon-bob 3s ease-in-out infinite;
+}
+
+.cn-hero::after {
+  content: '✧';
+  position: absolute;
+  bottom: 12px;
+  left: 20px;
+  font-size: 1.1rem;
+  color: var(--toon-cyan);
+  animation: toon-sparkle 2.6s ease-in-out infinite;
+  animation-delay: -1.2s;
+}
+
+.cn-hero-glow {
+  position: absolute;
+  top: -60%;
+  right: -10%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(53, 200, 242, 0.3), transparent 65%);
+  pointer-events: none;
+}
+
+.cn-hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+}
+
+.cn-hero-kicker {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0a6b8a;
+  background: var(--toon-lemon);
+  border: 2px solid var(--toon-ink);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--toon-ink);
+  padding: 0.3rem 0.9rem;
+  margin: 0 0 0.7rem;
+  transform: rotate(-1.5deg);
+}
+
+.cn-hero-title {
+  font-family: var(--ch-font-display);
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--toon-ink);
+  margin: 0 0 0.6rem;
+}
+
+.cn-hero-title span {
+  background: linear-gradient(90deg, var(--toon-cyan), var(--toon-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cn-hero-sub {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #5a5370;
+  margin: 0 0 1.25rem;
+  font-family: var(--ch-font-cartoon);
+  max-width: 480px;
+}
+
+.cn-hero-stats {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 150px;
+  padding-left: 1.5rem;
+  border-left: 3px solid var(--toon-cyan);
+}
+
+.cn-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.cn-stat-value {
+  font-family: var(--ch-font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--toon-cyan);
+  text-shadow: 2px 2px 0 rgba(53, 200, 242, 0.18);
+}
+
+.cn-stat-label {
+  font-size: 0.78rem;
+  color: #5a5370;
+  margin-top: 0.1rem;
+  font-family: var(--ch-font-cartoon);
+}
+
+@media (max-width: 640px) {
+  .cn-hero {
+    flex-direction: column;
+    padding: 1.75rem 1.4rem;
+  }
+
+  .cn-hero-stats {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 0;
+    padding-left: 0;
+    padding-top: 1rem;
+    border-left: none;
+    border-top: 3px solid var(--toon-cyan);
+  }
+}
+
+/* ---------- Feature Grid ---------- */
+.cn-section-head {
+  margin-bottom: 1.25rem;
+}
+
+.cn-section-head h2 {
+  font-family: var(--ch-font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--toon-ink);
+  margin: 0 0 0.25rem;
+}
+
+.cn-section-head p {
+  font-size: 0.9rem;
+  color: #5a5370;
+  font-family: var(--ch-font-cartoon);
+  margin: 0;
+}
+
+.cn-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .cn-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cn-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.cn-card {
+  position: relative;
+  background: #ffffff;
+  border: 3px solid var(--toon-ink);
+  border-radius: var(--toon-radius-sm);
+  box-shadow: 3px 5px 0 var(--toon-ink);
+  padding: 1.4rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-decoration: none;
+  color: var(--toon-ink);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.cn-card:hover {
+  transform: translateY(-4px) rotate(-0.5deg);
+  box-shadow: 6px 8px 0 var(--toon-ink);
+}
+
+.cn-card-emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  font-size: 1.6rem;
+  background: var(--toon-cream);
+  border: 2.5px solid var(--toon-ink);
+  border-radius: 16px;
+  box-shadow: 2px 3px 0 var(--toon-ink);
+  margin-bottom: 0.9rem;
+}
+
+.cn-card-accent-violet .cn-card-emoji {
+  background: #f0ebff;
+}
+
+.cn-card-accent-pink .cn-card-emoji {
+  background: #ffe9f3;
+}
+
+.cn-card-accent-cyan .cn-card-emoji {
+  background: #e3f7fd;
+}
+
+.cn-card-accent-mint .cn-card-emoji {
+  background: #e2fbf0;
+}
+
+.cn-card-accent-lemon .cn-card-emoji {
+  background: #fff6d6;
+}
+
+.cn-card-accent-coral .cn-card-emoji {
+  background: #ffe9e9;
+}
+
+.cn-card h3 {
+  font-family: var(--ch-font-display);
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--toon-ink);
+  margin: 0 0 0.35rem;
+}
+
+.cn-card p {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #5a5370;
+  font-family: var(--ch-font-cartoon);
+  margin: 0;
+}
+
+.cn-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 2px dashed rgba(43, 35, 71, 0.2);
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--toon-violet);
+}
+
+.cn-card:hover .cn-card-arrow {
+  color: var(--toon-pink);
+}
