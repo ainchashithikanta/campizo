@@ -22,6 +22,16 @@ const FOOTER_LINKS = [
       { href: '/marketplace/upload', label: 'Post a Listing' },
       { href: '/academic-resources/upload', label: 'Upload Resource' }
     ]
+  },
+  {
+    heading: 'Legal',
+    links: [
+      { href: '/terms', label: 'Terms of Service' },
+      { href: '/privacy', label: 'Privacy Policy' },
+      { href: '/guidelines', label: 'Community Guidelines' },
+      { href: '/grievance', label: 'Grievance & Contact' },
+      { href: '/disclaimer', label: 'Disclaimer' }
+    ]
   }
 ];
 

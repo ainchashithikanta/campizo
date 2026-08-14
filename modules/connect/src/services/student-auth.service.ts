@@ -33,10 +33,17 @@ export interface StudentSession {
 }
 
 const TOKEN_TTL_SECONDS = 30 * 24 * 60 * 60; // 30 days
-const SECRET = process.env.JWT_SECRET || process.env.ANONYMOUS_TOKEN_SALT || 'campizo-student-auth-dev-secret-2026';
+
+function requireSecret(): string {
+  const secret = process.env.JWT_SECRET || process.env.ANONYMOUS_TOKEN_SALT;
+  if (!secret || secret.length < 32) {
+    throw new Error('JWT_SECRET (or ANONYMOUS_TOKEN_SALT) must be set to a 32+ character value');
+  }
+  return secret;
+}
 
 function sign(payload: string): string {
-  return createHmac('sha256', SECRET).update(payload).digest('base64url');
+  return createHmac('sha256', requireSecret()).update(payload).digest('base64url');
 }
 
 function publicUser(account: StudentAccount) {

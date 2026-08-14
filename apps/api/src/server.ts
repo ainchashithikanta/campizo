@@ -42,7 +42,10 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   const app = Fastify({
     logger: false, // Managed by @college-hub/logger
-    disableRequestLogging: true
+    disableRequestLogging: true,
+    // The deployment sits behind a proxy/LB (Render, Vercel, nginx). Trust the
+    // first hop so request.ip reflects the real client for rate limiting.
+    trustProxy: true
   });
 
   const eventBus = new InMemoryEventBus();

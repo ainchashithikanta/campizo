@@ -3,12 +3,13 @@
 import React, { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { sanitizeInternalPath } from '@web/lib/safe-redirect';
 import '@web/styles/admin.css';
 
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const from = searchParams.get('from') || '/admin/feature-flags';
+  const from = sanitizeInternalPath(searchParams.get('from'), '/admin/feature-flags');
 
   const [pin, setPin] = useState('');
   const [error, setError] = useState<string | null>(null);

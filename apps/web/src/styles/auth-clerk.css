@@ -129,6 +129,22 @@
   font-size: 0.8rem;
 }
 
+.ck-auth-consent {
+  margin: 0.9rem auto 0;
+  max-width: 400px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--ch-font-cartoon);
+  color: #5a5370;
+  line-height: 1.5;
+}
+
+.ck-auth-consent a {
+  color: var(--toon-violet);
+  font-weight: 800;
+  text-decoration: underline;
+}
+
 /* ---------- Clerk Card Wrapper ---------- */
 .ck-auth-card {
   border: 3px solid var(--toon-ink);

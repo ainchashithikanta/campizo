@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { COLLEGES, College } from '../../lib/colleges';
+import { sanitizeInternalPath } from '../../lib/safe-redirect';
 import '@web/styles/auth-clerk.css';
 
 export const dynamic = 'force-dynamic';
@@ -13,7 +14,7 @@ const COLLEGE_KEY = 'ch_college_id';
 function CollegeSelectionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get('next') || '/';
+  const next = sanitizeInternalPath(searchParams.get('next'), '/');
   const [selectedCollege, setSelectedCollege] = useState<College | null>(null);
 
   useEffect(() => {
@@ -27,7 +28,7 @@ function CollegeSelectionContent() {
   const handleSelect = (college: College) => {
     setSelectedCollege(college);
     localStorage.setItem(COLLEGE_KEY, college.id);
-    document.cookie = `ch_college_id=${college.id}; path=/; max-age=31536000; SameSite=Lax`;
+    document.cookie = `ch_college_id=${college.id}; path=/; max-age=31536000; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`;
     const url = `${next}?college=${college.id}`;
     router.push(url);
   };

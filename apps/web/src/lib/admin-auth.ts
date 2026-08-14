@@ -1,16 +1,15 @@
-const isProduction = process.env.NODE_ENV === 'production';
-
-const SECRET = process.env.ADMIN_SESSION_SECRET || (isProduction ? '' : 'campizo-admin-secret-2026-dev-only');
-const PIN = process.env.ADMIN_PIN || (isProduction ? '' : 'campizo-admin-2026-dev-only');
+const SECRET = process.env.ADMIN_SESSION_SECRET;
+const PIN = process.env.ADMIN_PIN;
 const COOKIE_NAME = 'campizo_admin_session';
 const SESSION_TTL_SECONDS = 24 * 60 * 60;
 
 /**
- * Fail-closed: in production the admin console refuses to run without
- * explicit ADMIN_SESSION_SECRET and ADMIN_PIN environment variables.
+ * Fail-closed: the admin console refuses to run unless ADMIN_SESSION_SECRET and
+ * ADMIN_PIN are explicitly set. No dev fallbacks exist — a missing config must
+ * surface as an operational error, never as a known credential.
  */
 export function isAdminAuthConfigured(): boolean {
-  return SECRET.length >= 16 && PIN.length >= 8;
+  return !!SECRET && SECRET.length >= 32 && !!PIN && PIN.length >= 12;
 }
 
 function toB64Url(input: Uint8Array): string {
@@ -80,10 +79,18 @@ export async function isSessionValid(rawCookie: string | undefined | null): Prom
   return verifyToken(parts[2], payload);
 }
 
+function timingSafeEqualString(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
 export function isPinValid(pin: string): boolean {
   if (!isAdminAuthConfigured()) return false;
-  return pin === PIN;
+  return timingSafeEqualString(pin, PIN as string);
 }
 
 export const ADMIN_COOKIE_NAME = COOKIE_NAME;
-export const ADMIN_PIN = PIN;

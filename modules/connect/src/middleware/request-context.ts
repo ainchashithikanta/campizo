@@ -54,11 +54,11 @@ export async function requestContextMiddleware(request: FastifyRequest, _reply: 
     }
   }
 
-  // Guest / legacy identity from headers
+  // Guest / legacy identity from headers. Roles are NEVER derived from the
+  // client-supplied x-roles header — a caller must not be able to grant
+  // itself SUPER_ADMIN. Role claims come only from verified tokens.
   const collegeId = (request.headers['x-college-id'] as string) || 'college-stanford-001';
   const userId = (request.headers['x-user-id'] as string) || 'usr_anonymous';
-  const rolesHeader = (request.headers['x-roles'] as string) || 'STUDENT';
-  const roles = rolesHeader.split(',').map((r) => r.trim());
   const gender = (request.headers['x-user-gender'] as string) || undefined;
 
   request.connectContext = {
@@ -66,7 +66,7 @@ export async function requestContextMiddleware(request: FastifyRequest, _reply: 
     traceId,
     collegeId,
     userId,
-    roles,
+    roles: ['GUEST'],
     gender,
     authenticated: false,
     idempotencyKey,

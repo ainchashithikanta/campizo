@@ -9,6 +9,10 @@ import {
   RECOMMENDED_ARGON2_OPTIONS
 } from '../src/index.js';
 
+// Test-only anonymous-token salt — the identity kernel fails closed in
+// production without an explicitly configured salt (no fallbacks).
+process.env.ANONYMOUS_TOKEN_SALT = 'auth-identity-tests-only-salt-32chars!';
+
 describe('Core Multi-Tenant Authentication & Identity Kernel (Argon2id & Enhanced Sessions)', () => {
   let authService: IdentityKernelService;
 
@@ -109,9 +113,10 @@ describe('Core Multi-Tenant Authentication & Identity Kernel (Argon2id & Enhance
   });
 
   it('should generate non-reversible blind HMAC anonymous tokens', () => {
-    const anonToken1 = generateAnonymousToken('usr-uuid-1', 'college-stanford-001');
-    const anonToken2 = generateAnonymousToken('usr-uuid-1', 'college-stanford-001');
-    const anonToken3 = generateAnonymousToken('usr-uuid-2', 'college-stanford-001');
+    const salt = 'test-anonymous-token-salt-32chars!';
+    const anonToken1 = generateAnonymousToken('usr-uuid-1', 'college-stanford-001', salt);
+    const anonToken2 = generateAnonymousToken('usr-uuid-1', 'college-stanford-001', salt);
+    const anonToken3 = generateAnonymousToken('usr-uuid-2', 'college-stanford-001', salt);
 
     expect(anonToken1).toBe(anonToken2);
     expect(anonToken1).not.toBe(anonToken3);

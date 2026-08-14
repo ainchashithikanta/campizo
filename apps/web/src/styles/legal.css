@@ -1,0 +1,91 @@
+.legal-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+  font-family: var(--ch-font-body, 'Nunito', system-ui, sans-serif);
+  color: var(--toon-ink, #2b2347);
+}
+
+.legal-kicker {
+  display: inline-block;
+  padding: 4px 14px;
+  border: 3px solid var(--toon-ink, #2b2347);
+  border-radius: 999px;
+  background: var(--toon-lemon, #ffd93d);
+  font-family: var(--ch-font-display, 'Baloo 2', cursive);
+  font-weight: 800;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  box-shadow: 0 3px 0 var(--toon-ink, #2b2347);
+  margin-bottom: 16px;
+}
+
+.legal-title {
+  font-family: var(--ch-font-display, 'Baloo 2', cursive);
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 8px;
+  color: var(--toon-ink, #2b2347);
+}
+
+.legal-updated {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #8a7f9f;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 3px solid var(--toon-ink, #2b2347);
+}
+
+.legal-section {
+  margin-bottom: 28px;
+}
+
+.legal-section h2 {
+  font-family: var(--ch-font-display, 'Baloo 2', cursive);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--toon-violet, #7c5cff);
+  margin: 0 0 10px;
+}
+
+.legal-section h3 {
+  font-family: var(--ch-font-display, 'Baloo 2', cursive);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 16px 0 6px;
+}
+
+.legal-section p,
+.legal-section li {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  margin: 0 0 10px;
+}
+
+.legal-section ul,
+.legal-section ol {
+  margin: 0 0 10px;
+  padding-left: 22px;
+}
+
+.legal-section li {
+  margin-bottom: 6px;
+}
+
+.legal-note {
+  border: 3px solid var(--toon-ink, #2b2347);
+  border-radius: 14px;
+  background: var(--toon-cream, #fff7ea);
+  box-shadow: 0 5px 0 var(--toon-ink, #2b2347);
+  padding: 16px 18px;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.legal-note strong {
+  font-family: var(--ch-font-display, 'Baloo 2', cursive);
+}

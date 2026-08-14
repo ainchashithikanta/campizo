@@ -26,19 +26,25 @@ CREATE POLICY "Authenticated insert access" ON storage.objects
   TO authenticated
   WITH CHECK (bucket_id IN ('avatars', 'marketplace', 'materials', 'documents', 'events', 'misc'));
 
--- 4. Owner / Authenticated Update Access
+-- 4. Owner-Scoped Authenticated Update Access
+--    Users may only update objects they uploaded (owner folder = their uid).
 DROP POLICY IF EXISTS "Authenticated update access" ON storage.objects;
 CREATE POLICY "Authenticated update access" ON storage.objects
   FOR UPDATE
   TO authenticated
-  USING (bucket_id IN ('avatars', 'marketplace', 'materials', 'documents', 'events', 'misc'));
+  USING (bucket_id IN ('avatars', 'marketplace', 'materials', 'documents', 'events', 'misc')
+    AND storage.foldername(name)[1] = auth.uid()::text)
+  WITH CHECK (bucket_id IN ('avatars', 'marketplace', 'materials', 'documents', 'events', 'misc')
+    AND storage.foldername(name)[1] = auth.uid()::text);
 
--- 5. Owner / Authenticated Delete Access
+-- 5. Owner-Scoped Authenticated Delete Access
+--    Users may only delete objects they uploaded (owner folder = their uid).
 DROP POLICY IF EXISTS "Authenticated delete access" ON storage.objects;
 CREATE POLICY "Authenticated delete access" ON storage.objects
   FOR DELETE
   TO authenticated
-  USING (bucket_id IN ('avatars', 'marketplace', 'materials', 'documents', 'events', 'misc'));
+  USING (bucket_id IN ('avatars', 'marketplace', 'materials', 'documents', 'events', 'misc')
+    AND storage.foldername(name)[1] = auth.uid()::text);
 
 -- 6. Service Role Full Access Override (For backend servers & worker microservices)
 DROP POLICY IF EXISTS "Service role storage bypass" ON storage.objects;

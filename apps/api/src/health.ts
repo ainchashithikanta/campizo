@@ -102,13 +102,23 @@ export class ApiHealthProbes {
 
     const overallOk = dbStatus === 'ok' && redisStatus === 'ok' && storageStatus.status === 'ok';
 
+    // Sanitize raw dependency error details in production — they may contain
+    // connection strings, hostnames or credentials that must not be exposed.
+    const isProd = process.env.NODE_ENV === 'production';
+    const dbError = dbHealth.error ? (isProd ? 'database dependency unhealthy' : dbHealth.error) : undefined;
+    const storageError = storageStatus.error
+      ? isProd
+        ? 'storage dependency unhealthy'
+        : storageStatus.error
+      : undefined;
+
     return {
       status: overallOk ? 'ok' : 'error',
       database: dbStatus,
-      ...(dbHealth.error ? { databaseError: dbHealth.error } : {}),
+      ...(dbError ? { databaseError: dbError } : {}),
       redis: redisStatus,
       storage: storageStatus.status,
-      ...(storageStatus.error ? { storageError: storageStatus.error } : {}),
+      ...(storageError ? { storageError } : {}),
       uptime: Math.floor(process.uptime()),
       version: process.env.CONFIG_VERSION || '1.0.0'
     };

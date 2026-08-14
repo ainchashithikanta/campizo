@@ -8,29 +8,53 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import Fastify from 'fastify';
 import { connectRoutesPlugin } from '../src/routes/connect.routes.js';
 import { clearIdempotencyCache } from '../src/middleware/idempotency.js';
+import { studentAuthService } from '../src/services/student-auth.service.js';
+
+// Test-only JWT secret — required because the auth service now fails closed
+// without an explicitly configured secret (no production fallbacks).
+process.env.JWT_SECRET = 'connect-tests-only-jwt-secret-32chars!';
 
 describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
   let app: ReturnType<typeof Fastify>;
+  let authToken: string;
 
   beforeEach(async () => {
     clearIdempotencyCache();
+    studentAuthService.reset();
     app = Fastify();
     await app.register(connectRoutesPlugin);
     await app.ready();
+
+    // Authenticate as a real student — identity must come from a verified
+    // token, never from client-supplied headers.
+    const reg = await app.inject({
+      method: 'POST',
+      url: '/connect/auth/register',
+      headers: { 'x-college-id': 'college_stanford_001' },
+      payload: {
+        email: 'student@example.com',
+        password: 'password123',
+        fullName: 'Test Student',
+        gender: 'MALE'
+      }
+    });
+    expect(reg.statusCode).toBe(201);
+    authToken = reg.json().data.token;
   });
+
+  function h(extra: Record<string, string> = {}) {
+    return { 'x-college-id': 'college_stanford_001', 'x-auth-token': authToken, ...extra };
+  }
 
   describe('1. Response Envelope & Tenant Request Context', () => {
     it('returns standardized ApiV1Response envelope with metadata', async () => {
       const res = await app.inject({
         method: 'GET',
         url: '/connect/profile',
-        headers: {
-          'x-college-id': 'college_stanford_001',
-          'x-user-id': 'usr_student_101',
-          'x-roles': 'STUDENT',
+        headers: h({
           'x-request-id': 'req_test_001',
           'x-trace-id': 'trace_test_001'
-        }
+        })
       });
 
       expect(res.statusCode).toBe(200);
@@ -120,7 +144,9 @@ describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
       expect(body.error.code).toBe('FORBIDDEN');
     });
 
-    it('allows access to moderation endpoint for MODERATOR role', async () => {
+    it('denies access to moderation endpoint when MODERATOR role is only supplied via header', async () => {
+      // Roles must never be derived from client-supplied headers — an attacker
+      // must not be able to grant themselves MODERATOR by setting x-roles.
       const res = await app.inject({
         method: 'POST',
         url: '/connect/moderation/action',
@@ -132,10 +158,10 @@ describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
         payload: { caseId: 'case_1', actionTaken: 'WARN' }
       });
 
-      expect(res.statusCode).toBe(200);
+      expect(res.statusCode).toBe(403);
       const body = res.json();
-      expect(body.success).toBe(true);
-      expect(body.data.status).toBe('ACTION_RECORDED');
+      expect(body.success).toBe(false);
+      expect(body.error.code).toBe('FORBIDDEN');
     });
   });
 
@@ -146,12 +172,7 @@ describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
       const firstRes = await app.inject({
         method: 'POST',
         url: '/connect/intents',
-        headers: {
-          'x-college-id': 'college_stanford_001',
-          'x-user-id': 'usr_student_101',
-          'x-roles': 'STUDENT',
-          'idempotency-key': idempotencyKey
-        },
+        headers: h({ 'idempotency-key': idempotencyKey }),
         payload: {
           intentType: 'STUDY_PARTNER',
           title: 'CS224N Pod Member Search',
@@ -167,12 +188,7 @@ describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
       const secondRes = await app.inject({
         method: 'POST',
         url: '/connect/intents',
-        headers: {
-          'x-college-id': 'college_stanford_001',
-          'x-user-id': 'usr_student_101',
-          'x-roles': 'STUDENT',
-          'idempotency-key': idempotencyKey
-        },
+        headers: h({ 'idempotency-key': idempotencyKey }),
         payload: {
           intentType: 'STUDY_PARTNER',
           title: 'CS224N Pod Member Search',
@@ -192,11 +208,7 @@ describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
       const createRes = await app.inject({
         method: 'POST',
         url: '/connect/intents',
-        headers: {
-          'x-college-id': 'college_stanford_001',
-          'x-user-id': 'usr_student_101',
-          'x-roles': 'STUDENT'
-        },
+        headers: h(),
         payload: {
           intentType: 'PROJECT_COLLABORATOR',
           title: 'TreeHacks AI Dev Partner'
@@ -210,11 +222,7 @@ describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
       const pauseRes = await app.inject({
         method: 'POST',
         url: `/connect/intents/${intentId}/pause`,
-        headers: {
-          'x-college-id': 'college_stanford_001',
-          'x-user-id': 'usr_student_101',
-          'x-roles': 'STUDENT'
-        },
+        headers: h(),
         payload: { version: 1 }
       });
       expect(pauseRes.statusCode).toBe(200);
@@ -224,11 +232,7 @@ describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
       const fulfillRes = await app.inject({
         method: 'POST',
         url: `/connect/intents/${intentId}/fulfill`,
-        headers: {
-          'x-college-id': 'college_stanford_001',
-          'x-user-id': 'usr_student_101',
-          'x-roles': 'STUDENT'
-        },
+        headers: h(),
         payload: { version: 2 }
       });
       expect(fulfillRes.statusCode).toBe(200);
@@ -238,11 +242,7 @@ describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
       const archiveRes = await app.inject({
         method: 'POST',
         url: `/connect/intents/${intentId}/archive`,
-        headers: {
-          'x-college-id': 'college_stanford_001',
-          'x-user-id': 'usr_student_101',
-          'x-roles': 'STUDENT'
-        },
+        headers: h(),
         payload: { version: 3 }
       });
       expect(archiveRes.statusCode).toBe(200);
@@ -255,11 +255,7 @@ describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
       const res = await app.inject({
         method: 'POST',
         url: '/connect/conversations',
-        headers: {
-          'x-college-id': 'college_stanford_001',
-          'x-user-id': 'usr_student_101',
-          'x-roles': 'STUDENT'
-        },
+        headers: h(),
         payload: {
           conversationType: 'DIRECT',
           contextType: '',
@@ -279,11 +275,7 @@ describe('Campus Connect REST API Integration Tests (MS-23.8.3)', () => {
       const res = await app.inject({
         method: 'GET',
         url: '/connect/recommendations',
-        headers: {
-          'x-college-id': 'college_stanford_001',
-          'x-user-id': 'usr_student_101',
-          'x-roles': 'STUDENT'
-        }
+        headers: h()
       });
 
       expect(res.statusCode).toBe(200);

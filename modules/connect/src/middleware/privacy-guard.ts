@@ -16,8 +16,10 @@ export async function privacyGuardMiddleware(request: FastifyRequest, _reply: Fa
     throw new ForbiddenApplicationError('College tenant isolation error: missing college context.');
   }
 
+  const allowTestBypass = process.env.NODE_ENV !== 'production';
+
   // Feature Flag Validation (Campus Connect Module Check)
-  const isModuleDisabled = (request.headers['x-test-feature-disabled'] as string) === 'true';
+  const isModuleDisabled = allowTestBypass && (request.headers['x-test-feature-disabled'] as string) === 'true';
   if (isModuleDisabled) {
     throw new FeatureDisabledApplicationError('campus-connect');
   }
@@ -29,13 +31,13 @@ export async function privacyGuardMiddleware(request: FastifyRequest, _reply: Fa
   if (targetUserId === currentUserId) return; // Self access permitted
 
   // Ghost Mode Check
-  const isTargetGhostMode = (request.headers['x-test-ghost-mode'] as string) === 'true';
+  const isTargetGhostMode = allowTestBypass && (request.headers['x-test-ghost-mode'] as string) === 'true';
   if (isTargetGhostMode) {
     throw new PrivacyApplicationError('Target student profile is hidden under Ghost Mode.');
   }
 
   // Block Relationship Check
-  const isBlocked = (request.headers['x-test-blocked'] as string) === 'true';
+  const isBlocked = allowTestBypass && (request.headers['x-test-blocked'] as string) === 'true';
   if (isBlocked) {
     throw new PrivacyApplicationError('Interaction is restricted due to a block relationship.');
   }

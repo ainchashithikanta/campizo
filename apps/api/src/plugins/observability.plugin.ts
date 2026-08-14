@@ -99,7 +99,21 @@ async function observabilityPluginFn(fastify: FastifyInstance): Promise<void> {
   });
 
   if (metricsEnabled) {
-    fastify.get('/metrics', async (_request, reply) => {
+    fastify.get('/metrics', async (request, reply) => {
+      const token = process.env.METRICS_TOKEN;
+      if (token) {
+        const auth = (request.headers['authorization'] as string) || '';
+        const provided = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+        if (!provided || provided !== token) {
+          reply.code(401);
+          return { error: 'Unauthorized' };
+        }
+      } else if (process.env.NODE_ENV === 'production') {
+        // Fail closed: /metrics must not be publicly exposed in production
+        // without an explicit METRICS_TOKEN.
+        reply.code(503);
+        return { error: 'Metrics endpoint is not configured' };
+      }
       reply.header('content-type', observability.registry.contentType);
       return await observability.registry.metrics();
     });

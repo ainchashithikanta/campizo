@@ -88,16 +88,14 @@ async function gatewayPipelinePluginFn(fastify: FastifyInstance, opts: PipelineO
   }
 
   // 4. Rate Limiting Plugin
-  //    Keyed on IP + tenant (both are non-spoofable in a proxied deploy) and
-  //    deliberately NOT on client-supplied x-user-id, which would let an
-  //    attacker fragment/ bypass limits by rotating that header.
+  //    Keyed on resolved client IP only (request.ip reflects the real client
+  //    once trustProxy is enabled). NOT keyed on the client-supplied
+  //    x-college-id header, which would let an attacker rotate the header to
+  //    get a fresh bucket, nor on x-user-id, which is equally forgeable.
   await fastify.register(rateLimit, {
     max: opts.rateLimitMaxRequests || 100,
     timeWindow: opts.rateLimitWindowMs || 60_000,
-    keyGenerator: (req) => {
-      const tenantId = (req.headers['x-college-id'] as string) || 'global';
-      return `${tenantId}:${req.ip}`;
-    }
+    keyGenerator: (req) => req.ip
   });
 
   // 5. Tenant Context Plugin (MS-08 Resolution)

@@ -21,7 +21,7 @@ export default function SignInPage() {
       if (c) {
         setCollege(c);
         localStorage.setItem(COLLEGE_KEY, c.id);
-        document.cookie = `ch_college_id=${c.id}; path=/; max-age=31536000; SameSite=Lax`;
+        document.cookie = `ch_college_id=${c.id}; path=/; max-age=31536000; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`;
       }
     } else {
       const stored = localStorage.getItem(COLLEGE_KEY);

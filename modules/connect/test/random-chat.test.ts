@@ -9,6 +9,10 @@ import { connectRoutesPlugin } from '../src/routes/connect.routes.js';
 import { studentAuthService } from '../src/services/student-auth.service.js';
 import { clearIdempotencyCache } from '../src/middleware/idempotency.js';
 
+// Test-only JWT secret — required because the auth service now fails closed
+// without an explicitly configured secret (no production fallbacks).
+process.env.JWT_SECRET = 'connect-tests-only-jwt-secret-32chars!';
+
 async function register(app: ReturnType<typeof Fastify>, gender: 'MALE' | 'FEMALE', name: string) {
   const email = `${name.toLowerCase().replace(/\s+/g, '')}@example.com`;
   const res = await app.inject({

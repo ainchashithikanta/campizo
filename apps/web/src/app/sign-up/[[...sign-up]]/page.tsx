@@ -21,7 +21,7 @@ export default function SignUpPage() {
       if (c) {
         setCollege(c);
         localStorage.setItem(COLLEGE_KEY, c.id);
-        document.cookie = `ch_college_id=${c.id}; path=/; max-age=31536000; SameSite=Lax`;
+        document.cookie = `ch_college_id=${c.id}; path=/; max-age=31536000; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`;
       }
     } else {
       const stored = localStorage.getItem(COLLEGE_KEY);
@@ -71,6 +71,10 @@ export default function SignUpPage() {
           <span className="ck-auth-chip">
             🔒 Official email required <code>@{college.emailDomain}</code>
           </span>
+          <p className="ck-auth-consent">
+            By continuing you agree to the <a href="/terms">Terms of Service</a> and{' '}
+            <a href="/privacy">Privacy Policy</a>, and confirm you are 18 years or older.
+          </p>
         </header>
 
         <div className="ck-auth-card">
