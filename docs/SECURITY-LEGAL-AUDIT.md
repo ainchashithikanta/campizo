@@ -67,8 +67,15 @@ The Supabase Postgres password (used in `DATABASE_URL`) was committed in earlier
 `apps/web/next.config.ts` had no `headers()` — no CSP, HSTS, X-Frame-Options, X-Content-Type-Options,
 Referrer-Policy.
 **Fix applied:** added strict headers incl. CSP (`default-src 'self'`, `frame-ancestors 'none'`),
-HSTS (`max-age=63072000`), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`,
-`X-Frame-Options: DENY`, `Permissions-Policy`.
+`X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`,
+`Permissions-Policy`.
+
+> **2026-08-14 follow-up:** HSTS (`max-age=63072000; includeSubDomains; preload`) and CSP
+> `upgrade-insecure-requests` were **removed** because NITK's campus gateway does SSL
+> inspection/transparent proxying: cached HSTS made the browser hard-block every gateway-intercepted
+> response, so campus users could no longer load the site at all. Re-enable HSTS (without `preload`,
+> `max-age=300`) once campus access is confirmed working, then step it up over weeks. Re-add
+> `upgrade-insecure-requests` only if no campus regressions.
 
 #### A2.2 Open redirect (FIXED)
 `apps/web/src/app/college/page.tsx:16,31` — `next` query param pushed into `router.push` unvalidated;
