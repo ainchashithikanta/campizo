@@ -26,6 +26,13 @@ const KNOWN_TENANTS_MAP: Record<string, TenantContextDto & { customDomain?: stri
     enabledModules: ['rate-my-professor', 'marketplace', 'confessions', 'auth'],
     tier: SubscriptionTier.PRO,
     customDomain: 'hub.mit.edu'
+  },
+  'college-nitk-003': {
+    collegeId: 'college-nitk-003',
+    collegeSlug: 'nitk',
+    enabledModules: ['rate-my-professor', 'marketplace', 'confessions', 'auth'],
+    tier: SubscriptionTier.PRO,
+    customDomain: 'hub.nitk.edu.in'
   }
 };
 

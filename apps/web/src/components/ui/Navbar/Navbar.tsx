@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
+import { UserButton } from '@clerk/nextjs';
 import styles from './Navbar.module.css';
 import { useTheme } from '@web/hooks/use-theme';
 import { useAuth } from '@web/components/auth/AuthContext';
@@ -129,16 +129,22 @@ export function Navbar() {
               <Link href="/admin" className={styles.themeToggle} aria-label="Admin" title="Admin">
                 🛡️
               </Link>
-              <SignInButton mode="modal">
-                <button type="button" className={styles.authButton} aria-label="Sign in" title="Sign in">
-                  Sign in
-                </button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button type="button" className={styles.authButton} aria-label="Sign up" title="Sign up">
-                  Sign up
-                </button>
-              </SignUpButton>
+              <Link
+                href="/college?next=sign-in"
+                className={styles.authButton}
+                aria-label="Sign in"
+                title="Sign in"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/college?next=sign-up"
+                className={styles.authButton}
+                aria-label="Sign up"
+                title="Sign up"
+              >
+                Sign up
+              </Link>
             </>
           )}
 
@@ -181,12 +187,10 @@ export function Navbar() {
                 <span>Log out</span>
               </button>
             ) : (
-              <SignUpButton mode="modal">
-                <button type="button" className={styles.mobileLink}>
-                  <span>🔐</span>
-                  <span>Sign up</span>
-                </button>
-              </SignUpButton>
+              <Link href="/college?next=sign-up" className={styles.mobileLink}>
+                <span>🔐</span>
+                <span>Sign up</span>
+              </Link>
             )}
           </div>
         )}

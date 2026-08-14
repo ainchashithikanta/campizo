@@ -22,9 +22,9 @@ export interface AuthSession {
   token: string;
 }
 
-const TOKEN_KEY = 'ch_auth_token';
-const USER_KEY = 'ch_user_profile';
-const COLLEGE_KEY = 'ch_college_id';
+export const TOKEN_KEY = 'ch_auth_token';
+export const USER_KEY = 'ch_user_profile';
+export const COLLEGE_KEY = 'ch_college_id';
 
 function readJson<T>(key: string): T | null {
   try {
