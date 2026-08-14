@@ -13,7 +13,6 @@ export default function SignUpPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [college, setCollege] = useState<College | null>(null);
-  const [showDomainError, setShowDomainError] = useState(false);
 
   useEffect(() => {
     const collegeParam = searchParams.get('college');
@@ -41,8 +40,7 @@ export default function SignUpPage() {
     }
   };
 
-  if (!college) {
-    return (
+  if (!college) {    return (
       <main className="ck-auth-page">
         <div className="ck-auth-wrap">
           <div className="ck-auth-empty">
@@ -86,12 +84,6 @@ export default function SignUpPage() {
             forceRedirectUrl="/college-verified"
             signInUrl={`/sign-in?college=${college.id}`}
           />
-
-          {showDomainError && college && (
-            <div className="mt-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-sm">
-              Please use your {college.shortName} email (@{college.emailDomain}) to sign up.
-            </div>
-          )}
         </div>
 
         <div className="ck-auth-stats">

@@ -326,3 +326,160 @@
   transform: translateY(1px);
   box-shadow: 1px 1px 0 var(--toon-ink);
 }
+
+/* ---------- College Selection Cards ---------- */
+.cl-college-list {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.cl-college-card {
+  background: #ffffff;
+  border: 3px solid var(--toon-ink);
+  border-radius: var(--toon-radius);
+  box-shadow: 3px 5px 0 var(--toon-ink);
+  padding: 1.25rem;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.cl-college-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 5px 7px 0 var(--toon-ink);
+  background: #fffbf2;
+}
+
+.cl-college-card-selected {
+  background: linear-gradient(160deg, #f3f0ff, #fff7ea);
+  box-shadow: 5px 7px 0 var(--toon-ink);
+}
+
+.cl-college-head {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.cl-college-emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  font-size: 1.7rem;
+  background: var(--toon-cream);
+  border: 2.5px solid var(--toon-ink);
+  border-radius: 16px;
+  box-shadow: 2px 3px 0 var(--toon-ink);
+  flex-shrink: 0;
+}
+
+.cl-college-name {
+  font-family: var(--ch-font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--toon-ink);
+  margin: 0 0 0.15rem;
+}
+
+.cl-college-desc {
+  font-size: 0.8rem;
+  color: #5a5370;
+  font-family: var(--ch-font-cartoon);
+  margin: 0;
+}
+
+.cl-college-domain {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  background: var(--toon-cream);
+  border: 2.5px solid var(--toon-ink);
+  border-radius: 14px;
+  box-shadow: 2px 2px 0 var(--toon-ink);
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.cl-college-domain-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #5a5370;
+  font-family: var(--ch-font-cartoon);
+}
+
+.cl-college-domain-code {
+  font-family: var(--ch-font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0d6b44;
+  background: rgba(47, 221, 148, 0.16);
+  border: 2px solid var(--toon-ink);
+  border-radius: 999px;
+  box-shadow: 1.5px 2px 0 var(--toon-ink);
+  padding: 0.2rem 0.7rem;
+}
+
+.cl-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.75rem 1.3rem;
+  border-radius: 999px;
+  font-family: var(--ch-font-cartoon);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--toon-cream);
+  color: var(--toon-ink);
+  border: 2.5px solid var(--toon-ink);
+  box-shadow: 3px 4px 0 var(--toon-ink);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.cl-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 5px 6px 0 var(--toon-ink);
+  background: var(--toon-lemon);
+}
+
+.cl-btn:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 var(--toon-ink);
+}
+
+.cl-btn-selected {
+  background: linear-gradient(90deg, var(--toon-violet), #9b7bff);
+  color: #ffffff;
+}
+
+.cl-btn-selected:hover {
+  background: linear-gradient(90deg, var(--toon-violet), #9b7bff);
+}
+
+.cl-footnote {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #5a5370;
+  font-family: var(--ch-font-cartoon);
+  margin: 0;
+}
+
+.cl-footnote code {
+  font-family: var(--ch-font-mono);
+  font-weight: 700;
+  color: var(--toon-violet);
+}
