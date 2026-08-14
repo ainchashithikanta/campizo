@@ -10,7 +10,7 @@ export default function SemesterDashboardPage({ params }: { params: { semesterId
   const [resources, setResources] = useState<AcademicResourceDTO[]>([
     {
       id: `res-sem-${semNum}-101`,
-      collegeId: 'college-stanford-001',
+      collegeId: 'college-nitk-003',
       departmentId: 'dept-cse-001',
       subjectId: 'subject-os-501',
       resourceTypeId: 'type-notes',
@@ -25,7 +25,7 @@ export default function SemesterDashboardPage({ params }: { params: { semesterId
     },
     {
       id: `res-sem-${semNum}-102`,
-      collegeId: 'college-stanford-001',
+      collegeId: 'college-nitk-003',
       departmentId: 'dept-cse-001',
       subjectId: 'subject-algo-502',
       resourceTypeId: 'type-pyq',

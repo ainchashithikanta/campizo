@@ -12,7 +12,7 @@ export default function SearchConfessionsPage() {
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const COLLEGE = 'college-stanford-001';
+  const COLLEGE = 'college-nitk-003';
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();

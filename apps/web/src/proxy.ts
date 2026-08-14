@@ -4,7 +4,9 @@ import { isSessionValid, ADMIN_COOKIE_NAME } from './lib/admin-auth';
 
 const ADMIN_PATHS = ['/admin'];
 
-export default clerkMiddleware(async (_auth, req) => {
+const PUBLIC_PATHS = ['/', '/college', '/college-verified', '/sign-in', '/sign-up'];
+
+export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
   const isAdminPath = ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
@@ -22,6 +24,18 @@ export default clerkMiddleware(async (_auth, req) => {
       url.searchParams.set('from', pathname);
       return NextResponse.redirect(url);
     }
+    return NextResponse.next();
+  }
+
+  const isPublicPath = PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+
+  const { userId } = await auth();
+
+  if (!isPublicPath && !userId) {
+    const url = req.nextUrl.clone();
+    url.pathname = '/college';
+    url.searchParams.set('next', 'sign-in');
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();

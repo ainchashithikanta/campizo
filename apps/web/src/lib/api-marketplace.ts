@@ -47,7 +47,7 @@ export interface ListingDetailResponse {
   } | null;
 }
 
-const DEFAULT_COLLEGE = 'college-stanford-001';
+const DEFAULT_COLLEGE = 'college-nitk-003';
 const DEFAULT_USER = 'user-student-101';
 
 export async function fetchMarketplaceHome(collegeId: string = DEFAULT_COLLEGE) {

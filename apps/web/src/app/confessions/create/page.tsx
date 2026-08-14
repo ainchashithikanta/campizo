@@ -9,7 +9,7 @@ import { CreateWizard } from '../../../components/confessions/ConfessionComponen
 
 export default function CreateConfessionPage() {
   const router = useRouter();
-  const COLLEGE = 'college-stanford-001';
+  const COLLEGE = 'college-nitk-003';
 
   const handleSubmit = async (title: string, content: string, categoryCode: string, isAnonymous: boolean) => {
     const res = await ConfessionsApiClient.createConfession(COLLEGE, {

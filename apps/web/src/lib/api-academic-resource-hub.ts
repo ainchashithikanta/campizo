@@ -58,7 +58,7 @@ export interface UploadSessionDTO {
 
 const DEFAULT_HEADERS = {
   'Content-Type': 'application/json',
-  'x-college-id': 'college-stanford-001',
+  'x-college-id': 'college-nitk-003',
   'x-user-id': 'user-student-101'
 };
 

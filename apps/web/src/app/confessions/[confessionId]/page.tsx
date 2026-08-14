@@ -23,7 +23,7 @@ export default function ConfessionDetailPage({ params }: { params: Promise<{ con
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const COLLEGE = 'college-stanford-001';
+  const COLLEGE = 'college-nitk-003';
 
   useEffect(() => {
     async function loadDetail() {

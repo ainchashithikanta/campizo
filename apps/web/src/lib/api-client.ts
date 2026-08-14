@@ -34,7 +34,7 @@ function buildHeaders(custom?: Record<string, string>): HeadersInit {
     const collegeId = localStorage.getItem('ch_college_id');
     const userId = localStorage.getItem('ch_user_id');
     const authToken = localStorage.getItem('ch_auth_token');
-    headers['x-college-id'] = collegeId || 'college-stanford-001';
+    headers['x-college-id'] = collegeId || 'college-nitk-003';
     if (userId) headers['x-user-id'] = userId;
     if (authToken) headers['x-auth-token'] = authToken;
   }

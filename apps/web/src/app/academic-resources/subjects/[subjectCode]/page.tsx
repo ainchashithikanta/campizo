@@ -9,7 +9,7 @@ export default function SubjectDashboardPage({ params }: { params: { subjectCode
   const [resources, setResources] = useState<AcademicResourceDTO[]>([
     {
       id: 'res-subj-101',
-      collegeId: 'college-stanford-001',
+      collegeId: 'college-nitk-003',
       departmentId: 'dept-cse-001',
       subjectId: params.subjectCode,
       resourceTypeId: 'type-notes',
@@ -24,7 +24,7 @@ export default function SubjectDashboardPage({ params }: { params: { subjectCode
     },
     {
       id: 'res-subj-102',
-      collegeId: 'college-stanford-001',
+      collegeId: 'college-nitk-003',
       departmentId: 'dept-cse-001',
       subjectId: params.subjectCode,
       resourceTypeId: 'type-pyq',

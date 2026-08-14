@@ -82,7 +82,7 @@ export async function register(input: {
 }): Promise<AuthSession> {
   const { user, token } = await apiPost<{ user: StudentUser; token: string }>('/api/connect/auth/register', {
     ...input,
-    collegeId: localStorage.getItem(COLLEGE_KEY) || 'college-stanford-001'
+    collegeId: localStorage.getItem(COLLEGE_KEY) || 'college-nitk-003'
   });
   const session: AuthSession = { token, user };
   setSession(session);

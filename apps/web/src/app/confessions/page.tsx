@@ -12,7 +12,7 @@ export default function ConfessionsFeedPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const COLLEGE = 'college-stanford-001';
+  const COLLEGE = 'college-nitk-003';
 
   useEffect(() => {
     async function loadFeed() {

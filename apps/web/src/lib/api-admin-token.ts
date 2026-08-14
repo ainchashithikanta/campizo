@@ -36,4 +36,4 @@ export function signAdminApiToken(secret: string): string {
   return `${headerPart}.${payloadPart}.${signature}`;
 }
 
-export const ADMIN_API_COLLEGE_ID = process.env.ADMIN_COLLEGE_ID || 'college-stanford-001';
+export const ADMIN_API_COLLEGE_ID = process.env.ADMIN_COLLEGE_ID || 'college-nitk-003';

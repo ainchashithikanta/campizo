@@ -15,24 +15,6 @@ export interface College {
 
 export const COLLEGES: College[] = [
   {
-    id: 'college-stanford-001',
-    name: 'Stanford University',
-    shortName: 'Stanford',
-    emailDomain: 'stanford.edu',
-    description: 'Palo Alto, California',
-    color: '#8C1515',
-    logo: '🌲'
-  },
-  {
-    id: 'college-mit-002',
-    name: 'Massachusetts Institute of Technology',
-    shortName: 'MIT',
-    emailDomain: 'mit.edu',
-    description: 'Cambridge, Massachusetts',
-    color: '#A31F34',
-    logo: '⚙️'
-  },
-  {
     id: 'college-nitk-003',
     name: 'National Institute of Technology Karnataka',
     shortName: 'NITK Surathkal',
