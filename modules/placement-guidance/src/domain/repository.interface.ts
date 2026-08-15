@@ -63,6 +63,11 @@ export interface IPlacementRepository {
   ): Promise<{ items: PlacementExperienceEntity[]; total: number; hasMore: boolean }>;
   incrementHelpfulCount(id: string, collegeId: string): Promise<PlacementExperienceEntity | null>;
   incrementReportCount(id: string, collegeId: string): Promise<PlacementExperienceEntity | null>;
+  updateExperienceStatus(
+    id: string,
+    collegeId: string,
+    status: 'APPROVED' | 'FLAGGED'
+  ): Promise<PlacementExperienceEntity | null>;
   softDeleteExperience(id: string, collegeId: string): Promise<boolean>;
 
   // Question Bank Operations
@@ -73,6 +78,8 @@ export interface IPlacementRepository {
   ): Promise<{ items: QuestionBankEntity[]; total: number; hasMore: boolean }>;
   incrementQuestionHelpfulCount(id: string, collegeId: string): Promise<QuestionBankEntity | null>;
   incrementQuestionReportCount(id: string, collegeId: string): Promise<QuestionBankEntity | null>;
+  resetQuestionReportCount(id: string, collegeId: string): Promise<QuestionBankEntity | null>;
+  softDeleteQuestion(id: string, collegeId: string): Promise<boolean>;
 
   // Community Q&A Operations
   createDiscussionThread(thread: DiscussionThreadEntity): Promise<DiscussionThreadEntity>;

@@ -19,6 +19,11 @@ export function randomChatTtlMs(): number {
   return Number(process.env.RANDOM_CHAT_TTL_MS ?? 15 * 60 * 1000);
 }
 
+/** Generates a unique moderation case id. */
+export function generateModerationCaseId(): string {
+  return `case_${Date.now()}_${randomBytes(4).toString('hex')}`;
+}
+
 export class EventPublisher {
   private publishedEvents: CampusConnectDomainEvent[] = [];
 
@@ -654,12 +659,13 @@ export class ConnectUseCases {
   }
 
   async reportUser(input: {
-    caseId: string;
+    caseId?: string;
     collegeId: string;
     reportedUserId: string;
     reporterUserId: string;
     reason: string;
   }): Promise<void> {
+    const caseId = input.caseId || generateModerationCaseId();
     this.eventPublisher.publish({
       eventId: `evt_${Date.now()}`,
       requestId: `req_${Date.now()}`,
@@ -667,8 +673,27 @@ export class ConnectUseCases {
       collegeId: input.collegeId,
       timestamp: new Date().toISOString(),
       eventType: 'ModerationCaseOpened',
-      payload: input
+      payload: {
+        caseId,
+        reportedUserId: input.reportedUserId,
+        reporterUserId: input.reporterUserId,
+        reason: input.reason
+      }
     });
+    await this.repoProvider.moderationCaseRepo.saveCase({
+      id: caseId,
+      collegeId: input.collegeId,
+      reportedUserId: input.reportedUserId,
+      reporterUserId: input.reporterUserId,
+      reasonCategory: input.reason,
+      severityLevel: 'LOW',
+      status: 'OPEN',
+      createdAt: new Date()
+    });
+  }
+
+  async getModerationQueue(input: { collegeId: string }): Promise<any[]> {
+    return this.repoProvider.moderationCaseRepo.listQueue(input.collegeId);
   }
 
   async recordModerationDecision(input: {
@@ -676,6 +701,7 @@ export class ConnectUseCases {
     collegeId: string;
     actionTaken: string;
     moderatorId: string;
+    reasonNote?: string | undefined;
   }): Promise<void> {
     this.eventPublisher.publish({
       eventId: `evt_${Date.now()}`,
@@ -685,6 +711,14 @@ export class ConnectUseCases {
       timestamp: new Date().toISOString(),
       eventType: 'ModerationDecisionRecorded',
       payload: input
+    });
+    await this.repoProvider.moderationCaseRepo.recordAction({
+      caseId: input.caseId,
+      collegeId: input.collegeId,
+      moderatorUserId: input.moderatorId,
+      action: input.actionTaken,
+      reasonNote: input.reasonNote ?? null,
+      createdAt: new Date()
     });
   }
 }

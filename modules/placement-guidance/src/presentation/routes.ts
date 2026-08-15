@@ -95,4 +95,12 @@ export async function placementRoutesPlugin(fastify: FastifyInstance, options?: 
   fastify.post('/placements/report', (req: FastifyRequest, reply: FastifyReply) =>
     controller.reportExperience(req, reply)
   );
+
+  // Moderation Endpoints
+  fastify.get('/placements/moderation/queue', (req: FastifyRequest, reply: FastifyReply) =>
+    controller.getModerationQueue(req, reply)
+  );
+  fastify.post('/placements/moderation/:type/:id/decision', (req: FastifyRequest, reply: FastifyReply) =>
+    controller.moderateItem(req, reply)
+  );
 }

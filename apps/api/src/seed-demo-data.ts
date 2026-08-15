@@ -7,6 +7,14 @@ import type {
   InMemoryVoteRepository,
   InMemoryAnonymousIdentityRepository
 } from '@college-hub/mod-confessions';
+import type { InMemoryMarketplaceListingRepository } from '@college-hub/mod-marketplace';
+import type { InMemoryAcademicResourceRepository } from '@college-hub/mod-academic-resource-hub';
+import type { InMemoryPlacementRepository } from '@college-hub/mod-placement-guidance';
+import type { InMemoryConnectRepositoryProvider } from '@college-hub/mod-connect';
+import { MarketplaceListingEntity } from '@college-hub/mod-marketplace';
+import { AcademicResourceEntity } from '@college-hub/mod-academic-resource-hub';
+import { PlacementExperienceEntity, QuestionBankEntity } from '@college-hub/mod-placement-guidance';
+import { ModerationCaseRecord } from '@college-hub/mod-connect';
 
 /**
  * Demo data seeder for the in-memory API.
@@ -26,10 +34,15 @@ export async function seedDemoData(options: {
   identityRepo: InMemoryAnonymousIdentityRepository;
   eventBus: EventBus;
   collegeId: string;
+  listingRepo: InMemoryMarketplaceListingRepository;
+  academicResourceRepo: InMemoryAcademicResourceRepository;
+  placementRepo: InMemoryPlacementRepository;
+  connectRepoProvider: InMemoryConnectRepositoryProvider;
 }): Promise<void> {
-  const { confessionRepo, modRepo, collegeId } = options;
+  const { confessionRepo, modRepo, collegeId, listingRepo, academicResourceRepo, placementRepo, connectRepoProvider } =
+    options;
 
-  // â”€â”€ Confessions (published + pending moderation) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Campus Confessions (published + pending moderation) ──
   const seedConfessions: Array<{
     title: string;
     content: string;
@@ -87,7 +100,7 @@ export async function seedDemoData(options: {
     saved.push({ id: entity.id });
   }
 
-  // â”€â”€ Moderation cases tied to the pending confessions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // Moderation cases tied to the pending confessions
   const pending = saved.slice(2);
   await modRepo.saveCase({
     collegeId,
@@ -104,5 +117,255 @@ export async function seedDemoData(options: {
     totalReports: 1
   });
 
-  logger.info(`[seed] seeded ${saved.length} confessions + 2 open moderation cases for ${collegeId}`);
+  // ── Marketplace: quarantined listings (auto-quarantined after 3 reports) ──
+  const marketplaceListings: MarketplaceListingEntity[] = [
+    {
+      id: 'listing-seed-001',
+      collegeId,
+      sellerUserId: 'usr-seed-seller-001',
+      categoryCode: 'ELECTRONICS',
+      title: 'Used MacBook Pro M1 - Great condition',
+      slug: 'used-macbook-pro-m1-great-condition',
+      description:
+        'MacBook Pro 13" M1, 8GB RAM, 256GB SSD. Battery health 92%. Includes charger. Minor cosmetic wear on bottom case. Asking ₹75,000.',
+      conditionCode: 'GOOD',
+      listingType: 'SALE',
+      priceInr: 75000,
+      isNegotiable: true,
+      pickupLocationName: 'Campus Library Entrance',
+      status: 'QUARANTINED',
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 'listing-seed-002',
+      collegeId,
+      sellerUserId: 'usr-seed-seller-002',
+      categoryCode: 'BOOKS',
+      title: 'Cracking the Coding Interview + LeetCode notes',
+      slug: 'cracking-coding-interview-leetcode-notes',
+      description:
+        'Cracking the Coding Interview 6th edition + my handwritten LeetCode notes (200+ problems). Perfect for placement prep. ₹800 negotiable.',
+      conditionCode: 'LIKE_NEW',
+      listingType: 'SALE',
+      priceInr: 800,
+      isNegotiable: true,
+      pickupLocationName: 'Hostel Block C Common Room',
+      status: 'QUARANTINED',
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 'listing-seed-003',
+      collegeId,
+      sellerUserId: 'usr-seed-seller-003',
+      categoryCode: 'FURNITURE',
+      title: 'Ergonomic office chair - barely used',
+      slug: 'ergonomic-office-chair-barely-used',
+      description:
+        'Herman Miller Aeron size B, graphite. Purchased last semester, moving out so selling. Excellent lumbar support. ₹18,000 firm.',
+      conditionCode: 'EXCELLENT',
+      listingType: 'SALE',
+      priceInr: 18000,
+      isNegotiable: false,
+      pickupLocationName: 'Faculty Housing Gate 2',
+      status: 'QUARANTINED',
+      createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
+      updatedAt: new Date(Date.now() - 5 * 60 * 60 * 1000)
+    }
+  ];
+  for (const l of marketplaceListings) {
+    await listingRepo.save(l);
+  }
+
+  // ── Academic Resources: PENDING/QUARANTINED resources ──
+  const academicResources: AcademicResourceEntity[] = [
+    {
+      id: 'res-seed-001',
+      collegeId,
+      departmentId: 'dept-cs-001',
+      subjectId: 'sub-cs-dsa',
+      resourceTypeId: 'rt-notes',
+      uploaderUserId: 'usr-seed-uploader-001',
+      title: 'DSA Complete Notes - Graphs & DP',
+      slug: 'dsa-complete-notes-graphs-dp',
+      description:
+        'Comprehensive notes covering all graph algorithms (BFS, DFS, Dijkstra, Bellman-Ford, MST) and dynamic programming patterns. Includes practice problems with solutions.',
+      academicYear: '2025-26',
+      semesterNumber: 3,
+      isAnonymous: true,
+      authorDisplayName: 'Senior CSE Student',
+      status: 'PENDING',
+      verificationStatus: 'UNVERIFIED',
+      currentVersionId: null,
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 'res-seed-002',
+      collegeId,
+      departmentId: 'dept-ec-001',
+      subjectId: 'sub-ec-signals',
+      resourceTypeId: 'rt-question-paper',
+      uploaderUserId: 'usr-seed-uploader-002',
+      title: 'Signals & Systems Midterm 2024 + Solutions',
+      slug: 'signals-systems-midterm-2024-solutions',
+      description:
+        'Full midterm paper from Autumn 2024 with step-by-step solutions. Covers Fourier series, Laplace transforms, convolution.',
+      academicYear: '2024-25',
+      semesterNumber: 5,
+      isAnonymous: false,
+      authorDisplayName: 'Ananya R.',
+      status: 'QUARANTINED',
+      verificationStatus: 'STUDENT_VERIFIED',
+      currentVersionId: null,
+      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      updatedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 'res-seed-003',
+      collegeId,
+      departmentId: 'dept-me-001',
+      subjectId: 'sub-me-thermo',
+      resourceTypeId: 'rt-lab-manual',
+      uploaderUserId: 'usr-seed-uploader-003',
+      title: 'Thermodynamics Lab Manual - All Experiments',
+      slug: 'thermodynamics-lab-manual-all-experiments',
+      description:
+        'Complete lab manual for ME201 Thermodynamics. Includes all 10 experiments with theory, procedure, observations table, and viva questions.',
+      academicYear: '2025-26',
+      semesterNumber: 3,
+      isAnonymous: true,
+      authorDisplayName: 'Mech Senior',
+      status: 'PENDING',
+      verificationStatus: 'UNVERIFIED',
+      currentVersionId: null,
+      createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
+      updatedAt: new Date(Date.now() - 6 * 60 * 60 * 1000)
+    }
+  ];
+  for (const r of academicResources) {
+    await academicResourceRepo.save(r);
+  }
+
+  // ── Placement: flagged experiences & questions (auto-flagged at 3 reports) ──
+  // First create experiences & questions, then increment reports to trigger FLAGGED
+  const seedExperience: PlacementExperienceEntity = {
+    id: 'exp-seed-001',
+    collegeId,
+    companyId: 'comp_google',
+    authorId: 'usr-seed-placement-001',
+    roleTitle: 'Software Engineer Intern',
+    jobType: 'INTERNSHIP',
+    branch: 'Computer Science',
+    cgpa: 3.9,
+    ctcOfferedLpa: 12.0,
+    stipendMonthly: null,
+    offerStatus: 'ACCEPTED',
+    difficultyRating: 4,
+    overallRating: 5,
+    summary:
+      'Great learning experience. Worked on internal tooling for the Search team. Mentor was very supportive. The OA was 2 LeetCode Mediums. Technical rounds focused on system design basics and behavioural.',
+    preparationTips:
+      'Focus on LeetCode Medium graphs/trees. Practice system design basics (load balancer, cache, DB sharding). Be ready to discuss your projects in depth.',
+    versionNumber: 1,
+    helpfulCount: 15,
+    reportsCount: 3,
+    isAnonymous: false,
+    status: 'FLAGGED',
+    companyName: 'Google',
+    companySlug: 'google',
+    createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+    updatedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000)
+  };
+  await placementRepo.createExperience({
+    id: seedExperience.id,
+    collegeId: seedExperience.collegeId,
+    companyId: seedExperience.companyId,
+    authorId: seedExperience.authorId,
+    roleTitle: seedExperience.roleTitle,
+    jobType: seedExperience.jobType,
+    branch: seedExperience.branch,
+    cgpa: seedExperience.cgpa,
+    summary: seedExperience.summary,
+    isAnonymous: seedExperience.isAnonymous
+  });
+  // Increment reports to 3 (auto-flags) - the created experience starts with reportsCount=0
+  await placementRepo.incrementReportCount(seedExperience.id, collegeId);
+  await placementRepo.incrementReportCount(seedExperience.id, collegeId);
+  await placementRepo.incrementReportCount(seedExperience.id, collegeId);
+
+  const seedQuestion: QuestionBankEntity = {
+    id: 'qb-seed-001',
+    collegeId,
+    companyId: 'comp_microsoft',
+    companyName: 'Microsoft',
+    roleTitle: 'SWE Intern',
+    questionText: 'Design a URL shortener like bit.ly. Handle custom aliases, analytics, and expiration.',
+    topic: 'System Design',
+    difficulty: 'MEDIUM',
+    roundType: 'SYSTEM_DESIGN',
+    jobType: 'INTERNSHIP',
+    branch: 'Computer Science',
+    batchYear: 2025,
+    frequencyCount: 8,
+    helpfulCount: 22,
+    reportsCount: 3,
+    status: 'FLAGGED',
+    authorId: 'usr-seed-placement-002',
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  };
+  await placementRepo.createQuestion(seedQuestion);
+  await placementRepo.incrementQuestionReportCount(seedQuestion.id, collegeId);
+  await placementRepo.incrementQuestionReportCount(seedQuestion.id, collegeId);
+  await placementRepo.incrementQuestionReportCount(seedQuestion.id, collegeId);
+
+  // ── Connect: open moderation cases ──
+  const now = new Date();
+  const connectCases: ModerationCaseRecord[] = [
+    {
+      id: 'case-seed-001',
+      collegeId,
+      reportedUserId: 'usr-reported-001',
+      reporterUserId: 'usr-reporter-001',
+      reasonCategory: 'HARASSMENT',
+      severityLevel: 'HIGH',
+      status: 'OPEN',
+      actions: [],
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      updatedAt: now
+    },
+    {
+      id: 'case-seed-002',
+      collegeId,
+      reportedUserId: 'usr-reported-002',
+      reporterUserId: 'usr-reporter-002',
+      reasonCategory: 'SPAM',
+      severityLevel: 'LOW',
+      status: 'OPEN',
+      actions: [],
+      createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
+      updatedAt: now
+    },
+    {
+      id: 'case-seed-003',
+      collegeId,
+      reportedUserId: 'usr-reported-003',
+      reporterUserId: 'usr-reporter-003',
+      reasonCategory: 'INAPPROPRIATE_CONTENT',
+      severityLevel: 'MEDIUM',
+      status: 'OPEN',
+      actions: [],
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      updatedAt: now
+    }
+  ];
+  for (const c of connectCases) {
+    await connectRepoProvider.moderationCaseRepo.saveCase(c);
+  }
+
+  logger.info(
+    `[seed] seeded ${saved.length} confessions + 2 open mod cases + ${marketplaceListings.length} quarantined listings + ${academicResources.length} academic resources + 1 flagged experience + 1 flagged question + ${connectCases.length} connect mod cases for ${collegeId}`
+  );
 }

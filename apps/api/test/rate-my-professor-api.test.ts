@@ -382,7 +382,7 @@ describe('Rate My Professor — Production Fastify REST API Integration (MS-18.8
       method: 'GET',
       url: '/api/v1/admin/departments',
       headers: {
-        'authorization': `Bearer ${adminToken}`,
+        authorization: `Bearer ${adminToken}`,
         'x-college-id': 'college-stanford-001'
       }
     });
@@ -406,7 +406,7 @@ describe('Rate My Professor — Production Fastify REST API Integration (MS-18.8
       method: 'GET',
       url: '/api/v1/admin/professors?departmentId=dept-cs-001',
       headers: {
-        'authorization': `Bearer ${adminToken}`,
+        authorization: `Bearer ${adminToken}`,
         'x-college-id': 'college-stanford-001'
       }
     });
@@ -429,7 +429,7 @@ describe('Rate My Professor — Production Fastify REST API Integration (MS-18.8
       method: 'POST',
       url: '/api/v1/admin/professors',
       headers: {
-        'authorization': `Bearer ${adminToken}`,
+        authorization: `Bearer ${adminToken}`,
         'x-college-id': 'college-stanford-001'
       },
       payload: {
@@ -460,7 +460,7 @@ describe('Rate My Professor — Production Fastify REST API Integration (MS-18.8
       method: 'PATCH',
       url: '/api/v1/admin/professors/prof-101',
       headers: {
-        'authorization': `Bearer ${adminToken}`,
+        authorization: `Bearer ${adminToken}`,
         'x-college-id': 'college-stanford-001'
       },
       payload: {
@@ -487,7 +487,7 @@ describe('Rate My Professor — Production Fastify REST API Integration (MS-18.8
       method: 'DELETE',
       url: '/api/v1/admin/professors/prof-101',
       headers: {
-        'authorization': `Bearer ${adminToken}`,
+        authorization: `Bearer ${adminToken}`,
         'x-college-id': 'college-stanford-001'
       }
     });

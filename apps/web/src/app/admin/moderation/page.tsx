@@ -20,11 +20,39 @@ const MODERATION_MODULES = [
     accent: 'red'
   },
   {
+    href: '/admin/moderation/marketplace',
+    icon: '🏷️',
+    title: 'Marketplace Moderation',
+    desc: 'Blind moderation queue for marketplace listings (auto-quarantined after 3 reports): restore, hide, delete.',
+    accent: 'green'
+  },
+  {
+    href: '/admin/moderation/resources',
+    icon: '📚',
+    title: 'Academic Resources Moderation',
+    desc: 'Queue for study resources (pending or auto-quarantined after 3 reports): approve, hide, reject.',
+    accent: 'violet'
+  },
+  {
+    href: '/admin/moderation/placement',
+    icon: '💼',
+    title: 'Placement Moderation',
+    desc: 'Queue for flagged placement experiences and interview questions: approve, flag, delete.',
+    accent: 'red'
+  },
+  {
+    href: '/admin/moderation/connect',
+    icon: '🤝',
+    title: 'Campus Connect Moderation',
+    desc: 'Moderation cases from user reports on Campus Connect: warn, suspend, ban, dismiss.',
+    accent: 'blue'
+  },
+  {
     href: '/admin/professors',
     icon: '👩‍🏫',
     title: 'Professor Management',
     desc: 'NITK faculty directory: search, add, edit, and remove professors department-wise.',
-    accent: 'blue'
+    accent: 'green'
   }
 ];
 

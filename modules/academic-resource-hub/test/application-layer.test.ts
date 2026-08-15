@@ -21,9 +21,12 @@ import {
   RecordDownloadUseCase,
   GetResourceDetailQuery,
   SearchResourcesQuery,
+  GetModerationQueueQuery,
+  ModerateResourceUseCase,
   DuplicateHashError,
   SelfVoteError,
   CollectionLimitExceededError,
+  ResourceNotFoundError,
   AcademicResourceEvents
 } from '../src/index.js';
 
@@ -265,6 +268,110 @@ describe('Academic Resource Hub Application Layer Suite', () => {
 
       expect(searchResults.length).toBe(1);
       expect(searchResults[0].title).toContain('Final');
+    });
+  });
+
+  describe('Moderation Queue & ModerateResourceUseCase', () => {
+    async function createResource(title: string, slug: string, sha256Hash: string): Promise<{ id: string }> {
+      const createUC = new CreateAcademicResourceUseCase(resourceRepo, versionRepo, storageRepo, statsRepo, eventBus);
+      return await createUC.execute({
+        collegeId: 'college-stanford-001',
+        departmentId: 'dept-cse-001',
+        subjectId: 'subject-os-501',
+        resourceTypeId: 'type-notes-001',
+        uploaderUserId: 'user-student-101',
+        title,
+        slug,
+        academicYear: '2023-24',
+        semesterNumber: 5,
+        fileSizeBytes: 1 * 1024 * 1024,
+        mimeType: 'application/pdf',
+        sha256Hash,
+        fileName: 'Notes.pdf',
+        storageKey: 's3/path/Notes.pdf'
+      });
+    }
+
+    it('should include PENDING and QUARANTINED resources in the moderation queue', async () => {
+      const quarantined = await createResource('Quarantined OS Notes', 'quarantined-os-notes', 'hash-mod-queue-1');
+      const pending = await createResource('Pending OS Notes', 'pending-os-notes', 'hash-mod-queue-2');
+      const approved = await createResource('Approved OS Notes', 'approved-os-notes', 'hash-mod-queue-3');
+
+      await resourceRepo.save({ ...quarantined, status: 'QUARANTINED' });
+      await resourceRepo.save({ ...pending, status: 'PENDING' });
+
+      const queueQuery = new GetModerationQueueQuery(resourceRepo);
+      const queue = await queueQuery.execute({ collegeId: 'college-stanford-001' });
+
+      expect(queue.map((r) => r.id)).toEqual(expect.arrayContaining([quarantined.id, pending.id]));
+      expect(queue.map((r) => r.id)).not.toContain(approved.id);
+    });
+
+    it('should approve a quarantined resource via ModerateResourceUseCase and remove it from the queue', async () => {
+      const resource = await createResource('Quarantined Approval Test', 'quarantined-approval', 'hash-mod-approve-1');
+      await resourceRepo.save({ ...resource, status: 'QUARANTINED' });
+
+      const moderateUC = new ModerateResourceUseCase(resourceRepo, eventBus);
+      const moderated = await moderateUC.execute({
+        resourceId: resource.id,
+        collegeId: 'college-stanford-001',
+        moderatorUserId: 'moderator-admin-1',
+        action: 'APPROVE',
+        reasonNote: 'Content verified by moderator.'
+      });
+
+      expect(moderated.status).toBe('APPROVED');
+
+      const queueQuery = new GetModerationQueueQuery(resourceRepo);
+      const queue = await queueQuery.execute({ collegeId: 'college-stanford-001' });
+      expect(queue.map((r) => r.id)).not.toContain(resource.id);
+
+      const moderatedEvent = eventBus.publishedEvents.find((e) => e.eventType === AcademicResourceEvents.MODERATED);
+      expect(moderatedEvent).toBeDefined();
+      expect(moderatedEvent?.payload.action).toBe('APPROVE');
+      expect(moderatedEvent?.payload.moderatorUserId).toBe('moderator-admin-1');
+    });
+
+    it('should hide (QUARANTINED) and delete (REJECTED) resources via moderation decisions', async () => {
+      const hidden = await createResource('Hidden OS Notes', 'hidden-os-notes', 'hash-mod-hide-1');
+      const deleted = await createResource('Deleted OS Notes', 'deleted-os-notes', 'hash-mod-delete-1');
+      await resourceRepo.save({ ...hidden, status: 'PENDING' });
+      await resourceRepo.save({ ...deleted, status: 'QUARANTINED' });
+
+      const moderateUC = new ModerateResourceUseCase(resourceRepo, eventBus);
+
+      const hiddenResult = await moderateUC.execute({
+        resourceId: hidden.id,
+        collegeId: 'college-stanford-001',
+        moderatorUserId: 'moderator-admin-1',
+        action: 'HIDE'
+      });
+      expect(hiddenResult.status).toBe('QUARANTINED');
+
+      const deletedResult = await moderateUC.execute({
+        resourceId: deleted.id,
+        collegeId: 'college-stanford-001',
+        moderatorUserId: 'moderator-admin-1',
+        action: 'DELETE'
+      });
+      expect(deletedResult.status).toBe('REJECTED');
+
+      const queueQuery = new GetModerationQueueQuery(resourceRepo);
+      const queue = await queueQuery.execute({ collegeId: 'college-stanford-001' });
+      expect(queue.map((r) => r.id)).not.toContain(deleted.id);
+    });
+
+    it('should throw ResourceNotFoundError when moderating a missing resource', async () => {
+      const moderateUC = new ModerateResourceUseCase(resourceRepo, eventBus);
+
+      await expect(
+        moderateUC.execute({
+          resourceId: 'res-does-not-exist',
+          collegeId: 'college-stanford-001',
+          moderatorUserId: 'moderator-admin-1',
+          action: 'APPROVE'
+        })
+      ).rejects.toThrow(ResourceNotFoundError);
     });
   });
 });

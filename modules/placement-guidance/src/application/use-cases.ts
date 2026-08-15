@@ -165,6 +165,7 @@ export class PlacementUseCases {
       frequencyCount: 1,
       helpfulCount: 0,
       reportsCount: 0,
+      status: 'ACTIVE',
       authorId: data.authorId,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -415,5 +416,51 @@ export class PlacementUseCases {
 
   async reportExperience(id: string, collegeId: string): Promise<PlacementExperienceEntity | null> {
     return this.repo.incrementReportCount(id, collegeId);
+  }
+
+  // Moderation Use Cases
+  async getModerationQueue(
+    collegeId: string
+  ): Promise<{ experiences: PlacementExperienceEntity[]; questions: QuestionBankEntity[] }> {
+    const [experiencesRes, questionsRes] = await Promise.all([
+      this.repo.findExperiences({ collegeId, status: 'FLAGGED', limit: 50 }),
+      this.repo.findQuestions({ collegeId, status: 'FLAGGED', limit: 50 })
+    ]);
+    return { experiences: experiencesRes.items, questions: questionsRes.items };
+  }
+
+  async moderateExperience(cmd: {
+    id: string;
+    collegeId: string;
+    action: 'APPROVE' | 'FLAG' | 'DELETE';
+  }): Promise<{ id: string; status: 'APPROVED' | 'PENDING' | 'FLAGGED' | 'DELETED' } | null> {
+    if (cmd.action === 'DELETE') {
+      const deleted = await this.repo.softDeleteExperience(cmd.id, cmd.collegeId);
+      return deleted ? { id: cmd.id, status: 'DELETED' } : null;
+    }
+    const updated = await this.repo.updateExperienceStatus(
+      cmd.id,
+      cmd.collegeId,
+      cmd.action === 'APPROVE' ? 'APPROVED' : 'FLAGGED'
+    );
+    if (!updated) return null;
+    return { id: updated.id, status: updated.status };
+  }
+
+  async moderateQuestion(cmd: {
+    id: string;
+    collegeId: string;
+    action: 'APPROVE' | 'FLAG' | 'DELETE';
+  }): Promise<{ id: string; status: 'ACTIVE' | 'FLAGGED' | 'DELETED' } | null> {
+    if (cmd.action === 'DELETE') {
+      const deleted = await this.repo.softDeleteQuestion(cmd.id, cmd.collegeId);
+      return deleted ? { id: cmd.id, status: 'DELETED' } : null;
+    }
+    const updated =
+      cmd.action === 'APPROVE'
+        ? await this.repo.resetQuestionReportCount(cmd.id, cmd.collegeId)
+        : await this.repo.incrementQuestionReportCount(cmd.id, cmd.collegeId);
+    if (!updated) return null;
+    return { id: updated.id, status: updated.status };
   }
 }

@@ -88,6 +88,7 @@ export interface AcademicResourceRepository {
   findById(id: string, collegeId: string): Promise<AcademicResourceEntity | null>;
   findBySlug(slug: string, collegeId: string): Promise<AcademicResourceEntity | null>;
   findBySubject(subjectId: string, collegeId: string): Promise<AcademicResourceEntity[]>;
+  listForModeration(collegeId: string): Promise<AcademicResourceEntity[]>;
   save(resource: AcademicResourceEntity): Promise<AcademicResourceEntity>;
   delete(id: string, collegeId: string): Promise<boolean>;
 }

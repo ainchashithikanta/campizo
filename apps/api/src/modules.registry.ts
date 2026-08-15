@@ -14,7 +14,7 @@ import {
   InMemoryVoteRepository,
   InMemoryIdempotencyStore
 } from '@college-hub/mod-confessions';
-import { connectRoutesPlugin } from '@college-hub/mod-connect';
+import { connectRoutesPlugin, InMemoryConnectRepositoryProvider } from '@college-hub/mod-connect';
 import {
   registerMarketplaceRoutes,
   MarketplaceUseCases,
@@ -52,6 +52,8 @@ import {
   RemoveResourceFromCollectionUseCase,
   SearchResourcesQuery,
   GetResourceDetailQuery,
+  GetModerationQueueQuery,
+  ModerateResourceUseCase,
   GetStudyCollectionQuery,
   GetContributorProfileQuery,
   InMemoryAcademicResourceRepository,
@@ -62,7 +64,11 @@ import {
   InMemoryStorageMetadataRepository
 } from '@college-hub/mod-academic-resource-hub';
 import { notificationRoutesPlugin } from '@college-hub/mod-notifications';
-import { placementRoutesPlugin } from '@college-hub/mod-placement-guidance';
+import {
+  placementRoutesPlugin,
+  PlacementUseCases,
+  InMemoryPlacementRepository
+} from '@college-hub/mod-placement-guidance';
 
 export interface FeatureModuleRepositories {
   confessionRepo: InMemoryConfessionRepository;
@@ -70,6 +76,10 @@ export interface FeatureModuleRepositories {
   modRepo: InMemoryModerationRepository;
   identityRepo: InMemoryAnonymousIdentityRepository;
   voteRepo: InMemoryVoteRepository;
+  listingRepo: InMemoryMarketplaceListingRepository;
+  academicResourceRepo: InMemoryAcademicResourceRepository;
+  placementRepo: InMemoryPlacementRepository;
+  connectRepoProvider: InMemoryConnectRepositoryProvider;
 }
 
 export async function registerFeatureModules(
@@ -102,7 +112,8 @@ export async function registerFeatureModules(
   await app.register(confessionRoutes, { useCases: confessionUseCases, queries: confessionQueries, idempotencyStore });
 
   // ── Connect (MS-01) ─────────────────────────────────────────────────
-  await app.register(connectRoutesPlugin);
+  const connectRepoProvider = new InMemoryConnectRepositoryProvider();
+  await app.register(connectRoutesPlugin, { repoProvider: connectRepoProvider });
 
   // ── Marketplace (MS-02) ─────────────────────────────────────────────
   const listingRepo = new InMemoryMarketplaceListingRepository();
@@ -177,18 +188,32 @@ export async function registerFeatureModules(
     recordDownloadUC: new RecordDownloadUseCase(academicStatsRepo, eventBus),
     recordViewUC: new RecordViewUseCase(academicStatsRepo, eventBus),
     searchResourcesQuery: new SearchResourcesQuery(academicResourceRepo),
-    getResourceDetailQuery: new GetResourceDetailQuery(academicResourceRepo, academicStatsRepo)
+    getResourceDetailQuery: new GetResourceDetailQuery(academicResourceRepo, academicStatsRepo),
+    getModerationQueueQuery: new GetModerationQueueQuery(academicResourceRepo),
+    moderateResourceUC: new ModerateResourceUseCase(academicResourceRepo, eventBus)
   });
 
   // ── Notifications (MS-40) ───────────────────────────────────────────
   await app.register(notificationRoutesPlugin);
 
   // ── Placement Guidance (MS-03) ──────────────────────────────────────
-  await app.register(placementRoutesPlugin);
+  const placementRepo = new InMemoryPlacementRepository();
+  const placementUseCases = new PlacementUseCases(placementRepo);
+  await app.register(placementRoutesPlugin, { useCases: placementUseCases });
 
   logger.info(
     'All feature modules registered: confessions, connect, marketplace, academic-resources, notifications, placement-guidance'
   );
 
-  return { confessionRepo, commentRepo, modRepo, identityRepo, voteRepo };
+  return {
+    confessionRepo,
+    commentRepo,
+    modRepo,
+    identityRepo,
+    voteRepo,
+    listingRepo,
+    academicResourceRepo,
+    placementRepo,
+    connectRepoProvider
+  };
 }

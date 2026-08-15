@@ -47,6 +47,11 @@ export const ReportSchema = z.object({
   details: z.string().max(1000).optional()
 });
 
+export const ListingModerationDecisionSchema = z.object({
+  action: z.enum(['RESTORE', 'HIDE', 'DELETE']),
+  reasonNote: z.string().max(500).optional()
+});
+
 export const UploadSessionSchema = z.object({
   fileName: z.string().min(1).max(256),
   fileSizeBytes: z.number().min(1).max(20971520), // 20 MB max

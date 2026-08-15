@@ -340,6 +340,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
       frequencyCount: 14,
       helpfulCount: 28,
       reportsCount: 0,
+      status: 'ACTIVE',
       authorId: 'usr_senior_01',
       createdAt: new Date(),
       updatedAt: new Date()
@@ -571,6 +572,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
 
     if (params.companySlug) list = list.filter((e) => e.companySlug === params.companySlug);
     if (params.jobType) list = list.filter((e) => e.jobType === params.jobType);
+    if (params.status) list = list.filter((e) => e.status === params.status);
     if (params.query) {
       const q = params.query.toLowerCase();
       list = list.filter(
@@ -606,6 +608,18 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
     return exp;
   }
 
+  async updateExperienceStatus(
+    id: string,
+    collegeId: string,
+    status: 'APPROVED' | 'FLAGGED'
+  ): Promise<PlacementExperienceEntity | null> {
+    const exp = await this.findExperienceById(id, collegeId);
+    if (!exp) return null;
+    exp.status = status;
+    this.experiences.set(`${collegeId}:${id}`, exp);
+    return exp;
+  }
+
   async softDeleteExperience(id: string, collegeId: string): Promise<boolean> {
     const exp = await this.findExperienceById(id, collegeId);
     if (!exp) return false;
@@ -635,6 +649,7 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
     if (params.topic) list = list.filter((q) => q.topic.toLowerCase() === params.topic!.toLowerCase());
     if (params.difficulty) list = list.filter((q) => q.difficulty === params.difficulty);
     if (params.jobType) list = list.filter((q) => q.jobType === params.jobType);
+    if (params.status) list = list.filter((q) => q.status === params.status);
     if (params.query) {
       const qTerm = params.query.toLowerCase();
       list = list.filter(
@@ -665,8 +680,26 @@ export class InMemoryPlacementRepository implements IPlacementRepository {
     const q = await this.findQuestionById(id, collegeId);
     if (!q) return null;
     q.reportsCount += 1;
+    if (q.reportsCount >= 3) q.status = 'FLAGGED';
     this.questionsBank.set(`${collegeId}:${id}`, q);
     return q;
+  }
+
+  async resetQuestionReportCount(id: string, collegeId: string): Promise<QuestionBankEntity | null> {
+    const q = await this.findQuestionById(id, collegeId);
+    if (!q) return null;
+    q.reportsCount = 0;
+    q.status = 'ACTIVE';
+    this.questionsBank.set(`${collegeId}:${id}`, q);
+    return q;
+  }
+
+  async softDeleteQuestion(id: string, collegeId: string): Promise<boolean> {
+    const q = await this.findQuestionById(id, collegeId);
+    if (!q) return false;
+    q.deletedAt = new Date();
+    this.questionsBank.set(`${collegeId}:${id}`, q);
+    return true;
   }
 
   async createDiscussionThread(thread: DiscussionThreadEntity): Promise<DiscussionThreadEntity> {

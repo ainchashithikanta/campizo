@@ -1,10 +1,13 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import type { TenantContext } from '@college-hub/types';
+import { resolveApiIdentity, isModerator } from '@college-hub/security';
 import {
   ResourceSearchQuerySchema,
   ResourceCreateSchema,
   ResourceVersionCreateSchema,
   VoteSchema,
-  ReportSchema
+  ReportSchema,
+  ModerationDecisionSchema
 } from '../validators/academic-resource.validators.js';
 import type {
   CreateAcademicResourceUseCase,
@@ -20,9 +23,20 @@ import type {
   RecordDownloadUseCase,
   RecordViewUseCase,
   SearchResourcesQuery,
-  GetResourceDetailQuery
+  GetResourceDetailQuery,
+  GetModerationQueueQuery,
+  ModerateResourceUseCase
 } from '../index.js';
 import { handleHttpError } from '../errors/http-error-handler.js';
+
+type ResolvedIdentity =
+  | { error: string }
+  | {
+      userId: string;
+      collegeId: string;
+      roles: string[];
+      isAuthenticated: boolean;
+    };
 
 export interface ResourceControllerDependencies {
   createResourceUC: CreateAcademicResourceUseCase;
@@ -39,9 +53,39 @@ export interface ResourceControllerDependencies {
   recordViewUC: RecordViewUseCase;
   searchResourcesQuery: SearchResourcesQuery;
   getResourceDetailQuery: GetResourceDetailQuery;
+  getModerationQueueQuery: GetModerationQueueQuery;
+  moderateResourceUC: ModerateResourceUseCase;
 }
 
 export function registerResourceRoutes(app: FastifyInstance, deps: ResourceControllerDependencies): void {
+  const resolveIdentity = (request: FastifyRequest): ResolvedIdentity => {
+    const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+    const resolution = resolveApiIdentity({
+      authorizationHeader: request.headers['authorization'] as string | undefined,
+      collegeIdHeader: (request.headers['x-college-id'] as string) || tenantContext.collegeId,
+      userIdHeader: request.headers['x-user-id'] as string | undefined
+    });
+
+    if (resolution.status === 'invalid_token' || resolution.status === 'config_error') {
+      return { error: resolution.message };
+    }
+
+    const identity = resolution.identity;
+    return {
+      userId: identity.userId,
+      collegeId: (identity.collegeId || tenantContext.collegeId) as string,
+      roles: identity.roles,
+      isAuthenticated: identity.isAuthenticated
+    };
+  };
+
+  const denyModeration = (reply: FastifyReply) => {
+    reply.status(403).send({
+      success: false,
+      error: { code: 'MODERATION_ACCESS_DENIED', message: 'Moderation privileges required to access this endpoint.' }
+    });
+  };
+
   // 1. List & Search Resources
   app.get('/api/v1/resources', async (request: FastifyRequest, reply: FastifyReply) => {
     const collegeId = (request.headers['x-college-id'] as string) || 'default-college';
@@ -458,6 +502,85 @@ export function registerResourceRoutes(app: FastifyInstance, deps: ResourceContr
         return reply.send({
           success: true,
           data: { status: 'VIEW_RECORDED' },
+          meta: { requestId: request.headers['x-request-id'] || 'unknown', timestamp: new Date().toISOString() }
+        });
+      } catch (err: any) {
+        return handleHttpError(err, request, reply);
+      }
+    }
+  );
+
+  // 21. Moderation Queue (ADMIN / MODERATOR only — blind identity)
+  app.get('/api/v1/resources/moderation/queue', async (request: FastifyRequest, reply: FastifyReply) => {
+    const identity = resolveIdentity(request);
+
+    if ('error' in identity) {
+      return reply.status(401).send({
+        success: false,
+        error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+      });
+    }
+
+    if (!isModerator(identity as any)) {
+      return denyModeration(reply);
+    }
+
+    const queue = await deps.getModerationQueueQuery.execute({ collegeId: identity.collegeId });
+
+    // Blind moderation — strip all author identity fields before returning.
+    const blindQueue = queue.map((r) => ({
+      ...r,
+      uploaderUserId: 'BLIND'
+    }));
+
+    return reply.send({
+      success: true,
+      data: blindQueue,
+      meta: { requestId: request.headers['x-request-id'] || 'unknown', timestamp: new Date().toISOString() }
+    });
+  });
+
+  // 22. Moderation Decision (ADMIN / MODERATOR only)
+  app.post(
+    '/api/v1/resources/moderation/:resourceId/decision',
+    { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } },
+    async (request: FastifyRequest<{ Params: { resourceId: string } }>, reply: FastifyReply) => {
+      const identity = resolveIdentity(request);
+
+      if ('error' in identity) {
+        return reply.status(401).send({
+          success: false,
+          error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+        });
+      }
+
+      if (!isModerator(identity as any)) {
+        return denyModeration(reply);
+      }
+
+      const parsed = ModerationDecisionSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          success: false,
+          error: { code: 'INVALID_INPUT', message: parsed.error.message }
+        });
+      }
+
+      try {
+        const resource = await deps.moderateResourceUC.execute({
+          resourceId: request.params.resourceId,
+          collegeId: identity.collegeId,
+          moderatorUserId: identity.userId,
+          action: parsed.data.action,
+          ...(parsed.data.reasonNote !== undefined ? { reasonNote: parsed.data.reasonNote } : {})
+        });
+        return reply.send({
+          success: true,
+          data: {
+            resourceId: resource.id,
+            status: resource.status,
+            action: parsed.data.action
+          },
           meta: { requestId: request.headers['x-request-id'] || 'unknown', timestamp: new Date().toISOString() }
         });
       } catch (err: any) {

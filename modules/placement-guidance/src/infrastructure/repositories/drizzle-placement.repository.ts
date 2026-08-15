@@ -193,6 +193,9 @@ export class DrizzlePlacementRepository implements IPlacementRepository {
     if (params.jobType) {
       conditions.push(eq(placementExperiences.jobType, params.jobType));
     }
+    if (params.status) {
+      conditions.push(eq(placementExperiences.status, params.status));
+    }
 
     const page = params.page || 1;
     const limit = params.limit || 10;
@@ -225,8 +228,31 @@ export class DrizzlePlacementRepository implements IPlacementRepository {
   async incrementReportCount(id: string, collegeId: string): Promise<PlacementExperienceEntity | null> {
     const rows = await this.db
       .update(placementExperiences)
-      .set({ reportsCount: sql`${placementExperiences.reportsCount} + 1` })
+      .set({
+        reportsCount: sql`${placementExperiences.reportsCount} + 1`,
+        status: sql`CASE WHEN ${placementExperiences.reportsCount} + 1 >= 3 THEN 'FLAGGED' ELSE ${placementExperiences.status} END`
+      })
       .where(and(eq(placementExperiences.id, id), eq(placementExperiences.collegeId, collegeId)))
+      .returning();
+    if (!rows || rows.length === 0) return null;
+    return rows[0] as PlacementExperienceEntity;
+  }
+
+  async updateExperienceStatus(
+    id: string,
+    collegeId: string,
+    status: 'APPROVED' | 'FLAGGED'
+  ): Promise<PlacementExperienceEntity | null> {
+    const rows = await this.db
+      .update(placementExperiences)
+      .set({ status })
+      .where(
+        and(
+          eq(placementExperiences.id, id),
+          eq(placementExperiences.collegeId, collegeId),
+          isNull(placementExperiences.deletedAt)
+        )
+      )
       .returning();
     if (!rows || rows.length === 0) return null;
     return rows[0] as PlacementExperienceEntity;
@@ -286,6 +312,7 @@ export class DrizzlePlacementRepository implements IPlacementRepository {
 
     if (params.difficulty) conditions.push(eq(placementQuestions.difficulty, params.difficulty));
     if (params.jobType) conditions.push(eq(placementQuestions.jobType, params.jobType));
+    if (params.status) conditions.push(eq(placementQuestions.status, params.status));
 
     const page = params.page || 1;
     const limit = params.limit || 10;
@@ -314,11 +341,33 @@ export class DrizzlePlacementRepository implements IPlacementRepository {
   async incrementQuestionReportCount(id: string, collegeId: string): Promise<QuestionBankEntity | null> {
     const rows = await this.db
       .update(placementQuestions)
-      .set({ reportsCount: sql`${placementQuestions.reportsCount} + 1` })
+      .set({
+        reportsCount: sql`${placementQuestions.reportsCount} + 1`,
+        status: sql`CASE WHEN ${placementQuestions.reportsCount} + 1 >= 3 THEN 'FLAGGED' ELSE ${placementQuestions.status} END`
+      })
       .where(and(eq(placementQuestions.id, id), eq(placementQuestions.collegeId, collegeId)))
       .returning();
     if (!rows || rows.length === 0) return null;
     return rows[0] as QuestionBankEntity;
+  }
+
+  async resetQuestionReportCount(id: string, collegeId: string): Promise<QuestionBankEntity | null> {
+    const rows = await this.db
+      .update(placementQuestions)
+      .set({ reportsCount: 0, status: 'ACTIVE' })
+      .where(and(eq(placementQuestions.id, id), eq(placementQuestions.collegeId, collegeId)))
+      .returning();
+    if (!rows || rows.length === 0) return null;
+    return rows[0] as QuestionBankEntity;
+  }
+
+  async softDeleteQuestion(id: string, collegeId: string): Promise<boolean> {
+    const rows = await this.db
+      .update(placementQuestions)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(placementQuestions.id, id), eq(placementQuestions.collegeId, collegeId)))
+      .returning();
+    return rows.length > 0;
   }
 
   // Community Q&A Operations

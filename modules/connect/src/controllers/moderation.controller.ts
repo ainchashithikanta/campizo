@@ -23,6 +23,13 @@ export class ModerationController {
     reply.status(201).send(formatApiV1Success({ caseId, status: 'OPEN' }, request));
   }
 
+  async getQueue(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const queue = await this.useCases.getModerationQueue({
+      collegeId: request.connectContext.collegeId
+    });
+    reply.send(formatApiV1Success({ queue }, request));
+  }
+
   async recordModerationAction(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const body = request.body as any;
     await this.useCases.recordModerationDecision({

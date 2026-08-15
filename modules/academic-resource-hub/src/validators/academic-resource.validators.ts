@@ -83,6 +83,11 @@ export const ReportSchema = z.object({
   details: z.string().optional()
 });
 
+export const ModerationDecisionSchema = z.object({
+  action: z.enum(['APPROVE', 'HIDE', 'DELETE']),
+  reasonNote: z.string().max(500).optional()
+});
+
 export const UploadSessionCreateSchema = z.object({
   fileName: z.string().min(1).max(256),
   fileSizeBytes: z

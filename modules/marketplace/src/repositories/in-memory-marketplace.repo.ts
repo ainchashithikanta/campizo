@@ -49,6 +49,16 @@ export class InMemoryMarketplaceListingRepository implements MarketplaceListingR
     return results;
   }
 
+  async listModerationQueue(collegeId: string): Promise<MarketplaceListingEntity[]> {
+    const results: MarketplaceListingEntity[] = [];
+    for (const item of this.listings.values()) {
+      if (item.collegeId === collegeId && !item.deletedAt && item.status === 'QUARANTINED') {
+        results.push({ ...item });
+      }
+    }
+    return results;
+  }
+
   async save(listing: MarketplaceListingEntity): Promise<MarketplaceListingEntity> {
     this.listings.set(listing.id, { ...listing });
     return { ...listing };

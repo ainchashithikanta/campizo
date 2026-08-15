@@ -5,7 +5,8 @@ import {
   ConversationRepository,
   ReservationRepository,
   BookmarkRepository,
-  OfferRepository
+  OfferRepository,
+  MarketplaceListingEntity
 } from '../domain/repository.interface.js';
 
 export interface SearchListingsFilter {
@@ -59,6 +60,10 @@ export class MarketplaceQueries {
       items: paginated,
       meta: { page, limit, totalItems, totalPages: Math.ceil(totalItems / limit) || 1 }
     };
+  }
+
+  async getModerationQueue(collegeId: string): Promise<MarketplaceListingEntity[]> {
+    return this.listingRepo.listModerationQueue(collegeId);
   }
 
   async getListingDetail(id: string, collegeId: string, currentUserId?: string) {

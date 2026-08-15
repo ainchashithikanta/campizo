@@ -55,7 +55,7 @@ export const placementExperiences = pgTable(
     helpfulCount: integer('helpful_count').notNull().default(0),
     reportsCount: integer('reports_count').notNull().default(0),
     isAnonymous: boolean('is_anonymous').notNull().default(false),
-    status: text('status').notNull().default('APPROVED'),
+    status: text('status').notNull().default('APPROVED'), // 'APPROVED' | 'PENDING' | 'FLAGGED'
     vectorEmbedding: jsonb('vector_embedding'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -87,6 +87,7 @@ export const placementQuestions = pgTable(
     frequencyCount: integer('frequency_count').notNull().default(1),
     helpfulCount: integer('helpful_count').notNull().default(0),
     reportsCount: integer('reports_count').notNull().default(0),
+    status: text('status').notNull().default('ACTIVE'), // 'ACTIVE' | 'FLAGGED'
     authorId: text('author_id').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

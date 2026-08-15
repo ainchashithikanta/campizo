@@ -16,6 +16,7 @@
     "@college-hub/database": "workspace:*",
     "@college-hub/logger": "workspace:*",
     "@college-hub/observability": "workspace:^",
+    "@college-hub/security": "workspace:*",
     "@college-hub/types": "workspace:*",
     "drizzle-orm": "^0.31.2",
     "fastify": "^4.28.1",

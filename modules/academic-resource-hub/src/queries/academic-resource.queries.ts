@@ -25,6 +25,14 @@ export class SearchResourcesQuery {
   }
 }
 
+export class GetModerationQueueQuery {
+  constructor(private resourceRepo: AcademicResourceRepository) {}
+
+  public async execute(params: { collegeId: string }): Promise<AcademicResourceEntity[]> {
+    return this.resourceRepo.listForModeration(params.collegeId);
+  }
+}
+
 export class GetSubjectDashboardQuery {
   constructor(private resourceRepo: AcademicResourceRepository) {}
 

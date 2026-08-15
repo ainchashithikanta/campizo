@@ -1,4 +1,4 @@
-import { eq, and, isNull, desc } from 'drizzle-orm';
+import { eq, and, isNull, desc, inArray } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import {
   academicResources,
@@ -68,6 +68,22 @@ export class DrizzleAcademicResourceRepository implements AcademicResourceReposi
           eq(academicResources.subjectId, subjectId),
           eq(academicResources.collegeId, collegeId),
           eq(academicResources.status, 'APPROVED'),
+          isNull(academicResources.deletedAt)
+        )
+      )
+      .orderBy(desc(academicResources.createdAt));
+
+    return rows as AcademicResourceEntity[];
+  }
+
+  public async listForModeration(collegeId: string): Promise<AcademicResourceEntity[]> {
+    const rows = await this.db
+      .select()
+      .from(academicResources)
+      .where(
+        and(
+          eq(academicResources.collegeId, collegeId),
+          inArray(academicResources.status, ['PENDING', 'QUARANTINED']),
           isNull(academicResources.deletedAt)
         )
       )

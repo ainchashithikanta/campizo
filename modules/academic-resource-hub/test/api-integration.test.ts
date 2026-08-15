@@ -28,6 +28,8 @@ import {
   GetResourceDetailQuery,
   GetStudyCollectionQuery,
   GetContributorProfileQuery,
+  GetModerationQueueQuery,
+  ModerateResourceUseCase,
   registerResourceRoutes,
   registerCollectionRoutes,
   registerContributorRoutes,
@@ -92,6 +94,8 @@ describe('Academic Resource Hub API Integration Suite', () => {
 
     const searchResourcesQuery = new SearchResourcesQuery(resourceRepo);
     const getResourceDetailQuery = new GetResourceDetailQuery(resourceRepo, statsRepo);
+    const getModerationQueueQuery = new GetModerationQueueQuery(resourceRepo);
+    const moderateResourceUC = new ModerateResourceUseCase(resourceRepo, eventBus);
     const getCollectionQuery = new GetStudyCollectionQuery(collectionRepo);
     const getContributorProfileQuery = new GetContributorProfileQuery(contributorRepo);
 
@@ -109,7 +113,9 @@ describe('Academic Resource Hub API Integration Suite', () => {
       recordDownloadUC,
       recordViewUC,
       searchResourcesQuery,
-      getResourceDetailQuery
+      getResourceDetailQuery,
+      getModerationQueueQuery,
+      moderateResourceUC
     });
 
     registerCollectionRoutes(app, {

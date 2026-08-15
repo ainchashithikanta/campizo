@@ -417,7 +417,65 @@ export class MarketplaceUseCases {
     });
   }
 
-  // 9. Complete Reservation & Mark Sold
+  // 9. Moderate Listing (Admin Moderation Decision)
+  // RESTORE -> PUBLISHED (legal per invariants.ts: QUARANTINED/ARCHIVED/EXPIRED/RESERVED/DRAFT -> PUBLISHED)
+  // HIDE    -> QUARANTINED (legal per invariants.ts: PUBLISHED -> QUARANTINED; HIDE on an already-quarantined listing is a no-op)
+  // DELETE  -> DELETED (legal per invariants.ts: every non-terminal status -> DELETED)
+  async moderateListing(input: {
+    listingId: string;
+    collegeId: string;
+    moderatorUserId: string;
+    action: 'RESTORE' | 'HIDE' | 'DELETE';
+    reasonNote?: string | undefined;
+  }): Promise<MarketplaceListingEntity> {
+    const listing = await this.listingRepo.findById(input.listingId, input.collegeId);
+    if (!listing) throw new ListingUnavailableError(`Listing [${input.listingId}] not found.`);
+
+    if (input.action === 'RESTORE') {
+      assertValidStateTransition(listing.status, 'PUBLISHED');
+      listing.status = 'PUBLISHED';
+    } else if (input.action === 'HIDE') {
+      if (listing.status !== 'QUARANTINED') {
+        assertValidStateTransition(listing.status, 'QUARANTINED');
+        listing.status = 'QUARANTINED';
+      }
+    } else {
+      assertValidStateTransition(listing.status, 'DELETED');
+      listing.status = 'DELETED';
+      listing.deletedAt = new Date();
+    }
+
+    listing.updatedAt = new Date();
+    const saved = await this.listingRepo.save(listing);
+
+    const eventName =
+      input.action === 'RESTORE'
+        ? MarketplaceEvents.LISTING_PUBLISHED
+        : input.action === 'HIDE'
+          ? MarketplaceEvents.LISTING_ARCHIVED
+          : MarketplaceEvents.LISTING_DELETED;
+
+    await this.eventBus.publish(eventName, {
+      listingId: saved.id,
+      sellerUserId: saved.sellerUserId,
+      title: saved.title,
+      priceInr: saved.priceInr
+    });
+
+    await this.auditRepo.saveLog({
+      id: `audit-${Date.now()}`,
+      collegeId: input.collegeId,
+      aggregateId: saved.id,
+      aggregateType: 'MarketplaceListing',
+      action: `MODERATION_${input.action}`,
+      actorUserId: input.moderatorUserId,
+      payloadJson: JSON.stringify({ action: input.action, reasonNote: input.reasonNote ?? null })
+    });
+
+    return saved;
+  }
+
+  // 10. Complete Reservation & Mark Sold
   async completeReservation(
     reservationId: string,
     collegeId: string,

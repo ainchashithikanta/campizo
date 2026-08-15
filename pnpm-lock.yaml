@@ -231,6 +231,9 @@ importers:
       '@college-hub/logger':
         specifier: workspace:*
         version: link:../../packages/logger
+      '@college-hub/security':
+        specifier: workspace:*
+        version: link:../../packages/security
       '@college-hub/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -331,6 +334,9 @@ importers:
       '@college-hub/observability':
         specifier: workspace:^
         version: link:../../packages/observability
+      '@college-hub/security':
+        specifier: workspace:*
+        version: link:../../packages/security
       '@college-hub/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -393,6 +399,9 @@ importers:
       '@college-hub/observability':
         specifier: workspace:^
         version: link:../../packages/observability
+      '@college-hub/security':
+        specifier: workspace:*
+        version: link:../../packages/security
       '@college-hub/types':
         specifier: workspace:*
         version: link:../../packages/types

@@ -94,3 +94,8 @@ export const CreateReplySchema = z.object({
 export const VoteSchema = z.object({
   direction: z.enum(['UPVOTE', 'DOWNVOTE'])
 });
+
+export const ModerationDecisionSchema = z.object({
+  action: z.enum(['APPROVE', 'FLAG', 'DELETE']),
+  reasonNote: z.string().max(500).optional()
+});

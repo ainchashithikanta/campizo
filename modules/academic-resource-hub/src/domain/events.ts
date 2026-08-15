@@ -13,6 +13,7 @@ export const AcademicResourceEvents = {
   VIEWED: 'ResourceViewed',
   VOTE_ADDED: 'ResourceVoteAdded',
   REPORTED: 'ResourceReported',
+  MODERATED: 'AcademicResourceModerated',
   BOOKMARKED: 'ResourceBookmarked',
   COLLECTION_CREATED: 'StudyCollectionCreated',
   COLLECTION_UPDATED: 'StudyCollectionUpdated',
@@ -71,6 +72,13 @@ export interface ResourceReportedPayload {
   totalReportCount: number;
 }
 
+export interface AcademicResourceModeratedPayload {
+  resourceId: string;
+  moderatorUserId: string;
+  action: 'APPROVE' | 'HIDE' | 'DELETE';
+  reasonNote?: string;
+}
+
 export interface StudyCollectionCreatedPayload {
   collectionId: string;
   ownerUserId: string;
@@ -89,5 +97,6 @@ export type ResourceVersionCreatedEvent = BaseDomainEvent<ResourceVersionCreated
 export type ResourceDownloadedEvent = BaseDomainEvent<ResourceDownloadedPayload>;
 export type ResourceVoteAddedEvent = BaseDomainEvent<ResourceVoteAddedPayload>;
 export type ResourceReportedEvent = BaseDomainEvent<ResourceReportedPayload>;
+export type AcademicResourceModeratedEvent = BaseDomainEvent<AcademicResourceModeratedPayload>;
 export type StudyCollectionCreatedEvent = BaseDomainEvent<StudyCollectionCreatedPayload>;
 export type StatisticsUpdatedEvent = BaseDomainEvent<StatisticsUpdatedPayload>;

@@ -386,7 +386,9 @@ export class RateMyProfessorModule implements PlatformModule {
       await reviewRepo.save(r);
     }
 
-    logger.info(`[seed] seeded ${NITK_DEPARTMENTS.length} departments + ${professors.length} professors + 3 pending reviews for ${collegeId}`);
+    logger.info(
+      `[seed] seeded ${NITK_DEPARTMENTS.length} departments + ${professors.length} professors + 3 pending reviews for ${collegeId}`
+    );
   }
 }
 

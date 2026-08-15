@@ -117,6 +117,7 @@ export interface MarketplaceListingRepository {
   findById(id: string, collegeId: string): Promise<MarketplaceListingEntity | null>;
   findBySlug(slug: string, collegeId: string): Promise<MarketplaceListingEntity | null>;
   findByCategory(categoryCode: string, collegeId: string): Promise<MarketplaceListingEntity[]>;
+  listModerationQueue(collegeId: string): Promise<MarketplaceListingEntity[]>;
   save(listing: MarketplaceListingEntity): Promise<MarketplaceListingEntity>;
   saveMedia(media: ListingMediaEntity): Promise<ListingMediaEntity>;
   findMediaByListing(listingId: string): Promise<ListingMediaEntity[]>;

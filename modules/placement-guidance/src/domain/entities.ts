@@ -36,6 +36,7 @@ export interface QuestionBankEntity {
   frequencyCount: number;
   helpfulCount: number;
   reportsCount: number;
+  status: 'ACTIVE' | 'FLAGGED';
   authorId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -52,6 +53,7 @@ export interface QuestionFilterParams {
   branch?: string | undefined;
   batchYear?: number | undefined;
   query?: string | undefined;
+  status?: 'ACTIVE' | 'FLAGGED' | undefined;
   page?: number | undefined;
   limit?: number | undefined;
 }
@@ -248,6 +250,7 @@ export interface PlacementFilterParams {
   difficulty?: number | undefined;
   topic?: string | undefined;
   query?: string | undefined;
+  status?: 'APPROVED' | 'PENDING' | 'FLAGGED' | undefined;
   page?: number | undefined;
   limit?: number | undefined;
 }

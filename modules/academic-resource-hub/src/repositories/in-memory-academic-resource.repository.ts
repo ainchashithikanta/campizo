@@ -34,6 +34,12 @@ export class InMemoryAcademicResourceRepository implements AcademicResourceRepos
     );
   }
 
+  public async listForModeration(collegeId: string): Promise<AcademicResourceEntity[]> {
+    return Array.from(this.resources.values()).filter(
+      (r) => r.collegeId === collegeId && (r.status === 'PENDING' || r.status === 'QUARANTINED')
+    );
+  }
+
   public async save(resource: AcademicResourceEntity): Promise<AcademicResourceEntity> {
     this.resources.set(resource.id, { ...resource });
     return { ...resource };

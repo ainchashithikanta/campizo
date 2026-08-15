@@ -242,6 +242,87 @@ export class InMemoryPrivacySettingsRepository {
   }
 }
 
+export interface ModerationActionRecord {
+  caseId: string;
+  collegeId: string;
+  moderatorUserId: string;
+  action: string;
+  reasonNote: string | null;
+  createdAt: Date;
+}
+
+export interface ModerationCaseRecord {
+  id: string;
+  collegeId: string;
+  reportedUserId: string;
+  reporterUserId: string;
+  reasonCategory: string;
+  severityLevel: string;
+  status: string;
+  actions: ModerationActionRecord[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export class InMemoryModerationCaseRepository {
+  private cases = new Map<string, ModerationCaseRecord>();
+
+  async saveCase(caseRecord: Omit<ModerationCaseRecord, 'actions' | 'updatedAt'>): Promise<void> {
+    this.cases.set(caseRecord.id, {
+      ...caseRecord,
+      actions: [],
+      updatedAt: caseRecord.createdAt
+    });
+  }
+
+  async listQueue(collegeId: string): Promise<ModerationCaseRecord[]> {
+    const res: ModerationCaseRecord[] = [];
+    const insertionOrder = new Map<string, number>();
+    let idx = 0;
+    for (const c of this.cases.values()) {
+      if (c.collegeId === collegeId && c.status !== 'CLOSED') {
+        insertionOrder.set(c.id, idx++);
+        res.push({ ...c, actions: [...c.actions] });
+      }
+    }
+    return res.sort((a, b) => {
+      const timeDiff = new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (timeDiff !== 0) return timeDiff;
+      return (insertionOrder.get(b.id) ?? 0) - (insertionOrder.get(a.id) ?? 0);
+    });
+  }
+
+  async findCaseById(caseId: string, collegeId: string): Promise<ModerationCaseRecord | null> {
+    const c = this.cases.get(caseId);
+    return c && c.collegeId === collegeId ? { ...c, actions: [...c.actions] } : null;
+  }
+
+  async recordAction(input: {
+    caseId: string;
+    collegeId: string;
+    moderatorUserId: string;
+    action: string;
+    reasonNote: string | null;
+    createdAt: Date;
+  }): Promise<ModerationCaseRecord | null> {
+    const existing = this.cases.get(input.caseId);
+    if (!existing || existing.collegeId !== input.collegeId) return null;
+
+    existing.actions.push({
+      caseId: input.caseId,
+      collegeId: input.collegeId,
+      moderatorUserId: input.moderatorUserId,
+      action: input.action,
+      reasonNote: input.reasonNote,
+      createdAt: input.createdAt
+    });
+    existing.status = 'CLOSED';
+    existing.updatedAt = input.createdAt;
+
+    return { ...existing, actions: [...existing.actions] };
+  }
+}
+
 export class InMemoryConnectRepositoryProvider {
   public profileRepo = new InMemoryStudentProfileRepository();
   public intentRepo = new InMemoryStudentIntentRepository();
@@ -251,6 +332,7 @@ export class InMemoryConnectRepositoryProvider {
   public messageRepo = new InMemoryMessageRepository();
   public recommendationRepo = new InMemoryRecommendationSnapshotRepository();
   public privacyRepo = new InMemoryPrivacySettingsRepository();
+  public moderationCaseRepo = new InMemoryModerationCaseRepository();
   /** FIFO waiting room for random chats (only opposite genders are matched). */
   public randomQueue: Array<{ userId: string; collegeId: string; gender: string; joinedAt: string }> = [];
 

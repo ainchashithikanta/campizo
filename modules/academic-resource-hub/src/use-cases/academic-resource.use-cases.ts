@@ -680,3 +680,51 @@ export class UpdateContributorReputationUseCase {
     return saved;
   }
 }
+
+/**
+ * 18. Moderate Academic Resource Use-Case
+ */
+export type AcademicResourceModerationAction = 'APPROVE' | 'HIDE' | 'DELETE';
+
+export class ModerateResourceUseCase {
+  constructor(
+    private resourceRepo: AcademicResourceRepository,
+    private eventBus: EventBus
+  ) {}
+
+  public async execute(params: {
+    resourceId: string;
+    collegeId: string;
+    moderatorUserId: string;
+    action: AcademicResourceModerationAction;
+    reasonNote?: string;
+  }): Promise<AcademicResourceEntity> {
+    const resource = await this.resourceRepo.findById(params.resourceId, params.collegeId);
+    if (!resource) throw new ResourceNotFoundError(`Resource [${params.resourceId}] not found.`);
+
+    const statusByAction: Record<AcademicResourceModerationAction, AcademicResourceEntity['status']> = {
+      APPROVE: 'APPROVED',
+      HIDE: 'QUARANTINED',
+      DELETE: 'REJECTED'
+    };
+
+    resource.status = statusByAction[params.action];
+    const updated = await this.resourceRepo.save(resource);
+
+    await this.eventBus.publish(AcademicResourceEvents.MODERATED, {
+      eventId: `evt-${Date.now()}`,
+      eventType: AcademicResourceEvents.MODERATED,
+      aggregateId: params.resourceId,
+      collegeId: params.collegeId,
+      timestamp: new Date().toISOString(),
+      payload: {
+        resourceId: params.resourceId,
+        moderatorUserId: params.moderatorUserId,
+        action: params.action,
+        ...(params.reasonNote !== undefined ? { reasonNote: params.reasonNote } : {})
+      }
+    });
+
+    return updated;
+  }
+}

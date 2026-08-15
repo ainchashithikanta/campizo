@@ -308,11 +308,7 @@ export default function AdminProfessorsPage() {
             className="adx-input"
             style={{ flex: 1, minWidth: '220px' }}
           />
-          <select
-            value={departmentFilter}
-            onChange={(e) => setDepartmentFilter(e.target.value)}
-            className="adx-input"
-          >
+          <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)} className="adx-input">
             <option value="">All departments</option>
             {departments.map((d) => (
               <option key={d.id} value={d.id}>
@@ -340,9 +336,7 @@ export default function AdminProfessorsPage() {
                   <div>
                     <h3 style={{ margin: 0 }}>
                       {p.fullName}{' '}
-                      <span className="adx-card-kicker">
-                        {p.status === 'ACTIVE' ? '🟢 ACTIVE' : `🔴 ${p.status}`}
-                      </span>
+                      <span className="adx-card-kicker">{p.status === 'ACTIVE' ? '🟢 ACTIVE' : `🔴 ${p.status}`}</span>
                     </h3>
                     <p style={{ margin: '0.25rem 0', color: 'var(--adx-text-dim, #888)' }}>
                       {p.designation} · {dept ? dept.name : p.departmentId} · <code>{p.slug}</code>

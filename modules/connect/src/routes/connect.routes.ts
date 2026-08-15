@@ -31,9 +31,13 @@ import { ConnectUseCases, StudentIntentService, EventPublisher } from '../use-ca
 import { ConnectQueryService } from '../queries/connect.queries.js';
 import { InMemoryConnectRepositoryProvider } from '../repositories/in-memory-connect.repository.js';
 
-export async function connectRoutesPlugin(fastify: FastifyInstance, _opts: FastifyPluginOptions): Promise<void> {
+export interface ConnectRoutesOptions extends FastifyPluginOptions {
+  repoProvider?: InMemoryConnectRepositoryProvider;
+}
+
+export async function connectRoutesPlugin(fastify: FastifyInstance, opts: ConnectRoutesOptions): Promise<void> {
   // Wire up default in-memory infrastructure if not supplied via options/decorations
-  const repoProvider = new InMemoryConnectRepositoryProvider();
+  const repoProvider = opts.repoProvider ?? new InMemoryConnectRepositoryProvider();
   const eventPublisher = new EventPublisher();
   const intentService = new StudentIntentService(repoProvider, eventPublisher);
   const useCases = new ConnectUseCases(repoProvider, eventPublisher, intentService);
@@ -247,6 +251,11 @@ export async function connectRoutesPlugin(fastify: FastifyInstance, _opts: Fasti
     '/connect/report',
     { preHandler: [rbacMiddleware(studentRoles)] },
     moderationCtrl.reportUser.bind(moderationCtrl)
+  );
+  fastify.get(
+    '/connect/moderation/queue',
+    { preHandler: [rbacMiddleware(modRoles)] },
+    moderationCtrl.getQueue.bind(moderationCtrl)
   );
   fastify.post(
     '/connect/moderation/action',

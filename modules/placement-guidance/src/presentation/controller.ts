@@ -3,6 +3,7 @@
  */
 
 import type { FastifyRequest, FastifyReply } from 'fastify';
+import { resolveApiIdentity, isModerator } from '@college-hub/security';
 import { PlacementUseCases } from '../application/use-cases.js';
 import {
   SubmitExperienceSchema,
@@ -11,11 +12,34 @@ import {
   QuestionFilterQuerySchema,
   CreateDiscussionSchema,
   CreateReplySchema,
-  VoteSchema
+  VoteSchema,
+  ModerationDecisionSchema
 } from './validators.js';
+
+type ResolvedIdentity =
+  { error: string } | { userId: string; collegeId: string; roles: string[]; isAuthenticated: boolean };
 
 export class PlacementController {
   constructor(private readonly useCases: PlacementUseCases) {}
+
+  private resolveIdentity(req: FastifyRequest): ResolvedIdentity {
+    const resolution = resolveApiIdentity({
+      authorizationHeader: req.headers['authorization'] as string | undefined,
+      collegeIdHeader: req.headers['x-college-id'] as string | undefined,
+      userIdHeader: req.headers['x-user-id'] as string | undefined
+    });
+
+    if (resolution.status === 'invalid_token' || resolution.status === 'config_error') {
+      return { error: resolution.message };
+    }
+
+    return {
+      userId: resolution.identity.userId,
+      collegeId: resolution.identity.collegeId || 'college-stanford-001',
+      roles: resolution.identity.roles,
+      isAuthenticated: resolution.identity.isAuthenticated
+    };
+  }
 
   async submitExperience(req: FastifyRequest, reply: FastifyReply): Promise<void> {
     const collegeId = (req.headers['x-college-id'] as string) || 'college-stanford-001';
@@ -280,5 +304,89 @@ export class PlacementController {
     reply
       .status(200)
       .send({ success: true, data: result, metadata: { timestamp: new Date().toISOString(), collegeId } });
+  }
+
+  // Moderation Endpoints
+  async getModerationQueue(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const identity = this.resolveIdentity(req);
+    if ('error' in identity) {
+      reply.status(401).send({ success: false, error: { code: 'INVALID_JWT', message: identity.error } });
+      return;
+    }
+    if (!isModerator(identity)) {
+      reply.status(403).send({
+        success: false,
+        error: { code: 'MODERATION_ACCESS_DENIED', message: 'Moderation privileges required to access this endpoint.' }
+      });
+      return;
+    }
+
+    const queue = await this.useCases.getModerationQueue(identity.collegeId);
+    reply.status(200).send({
+      success: true,
+      data: {
+        experiences: queue.experiences.map((e) => ({ ...e, authorId: 'BLIND' })),
+        questions: queue.questions.map((q) => ({ ...q, authorId: 'BLIND' }))
+      },
+      metadata: { timestamp: new Date().toISOString(), collegeId: identity.collegeId }
+    });
+  }
+
+  async moderateItem(req: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const identity = this.resolveIdentity(req);
+    if ('error' in identity) {
+      reply.status(401).send({ success: false, error: { code: 'INVALID_JWT', message: identity.error } });
+      return;
+    }
+    if (!isModerator(identity)) {
+      reply.status(403).send({
+        success: false,
+        error: { code: 'MODERATION_ACCESS_DENIED', message: 'Moderation privileges required to access this endpoint.' }
+      });
+      return;
+    }
+
+    const { type, id } = req.params as { type: string; id: string };
+    if (type !== 'experiences' && type !== 'questions') {
+      reply.status(400).send({
+        success: false,
+        error: { code: 'INVALID_INPUT', message: `Unsupported moderation type '${type}'` }
+      });
+      return;
+    }
+
+    const parsed = ModerationDecisionSchema.safeParse(req.body);
+    if (!parsed.success) {
+      reply.status(400).send({ success: false, error: { code: 'INVALID_INPUT', message: parsed.error.message } });
+      return;
+    }
+
+    const result =
+      type === 'experiences'
+        ? await this.useCases.moderateExperience({ id, collegeId: identity.collegeId, action: parsed.data.action })
+        : await this.useCases.moderateQuestion({ id, collegeId: identity.collegeId, action: parsed.data.action });
+
+    if (!result) {
+      reply.status(404).send({
+        success: false,
+        error: {
+          code: type === 'experiences' ? 'EXPERIENCE_NOT_FOUND' : 'QUESTION_NOT_FOUND',
+          message: type === 'experiences' ? `Placement experience '${id}' not found` : `Question '${id}' not found`
+        }
+      });
+      return;
+    }
+
+    reply.status(200).send({
+      success: true,
+      data: {
+        id: result.id,
+        type,
+        status: result.status,
+        action: parsed.data.action,
+        ...(parsed.data.reasonNote !== undefined ? { reasonNote: parsed.data.reasonNote } : {})
+      },
+      metadata: { timestamp: new Date().toISOString(), collegeId: identity.collegeId }
+    });
   }
 }
