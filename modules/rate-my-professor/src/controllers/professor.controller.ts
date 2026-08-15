@@ -241,6 +241,66 @@ export function registerProfessorRoutes(
     });
   });
 
+  // Public — List Departments with professor counts & average ratings
+  app.get('/api/v1/departments', async (request: FastifyRequest, reply: FastifyReply) => {
+    const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+    const collegeId = tenantContext.collegeId;
+
+    if (!useCases.listDepartments) {
+      return reply.status(404).send({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Departments are not available on this server.' }
+      });
+    }
+
+    const departments = await useCases.listDepartments.execute({ collegeId });
+    const professors = useCases.searchProfessors
+      ? await useCases.searchProfessors.execute({ collegeId })
+      : [];
+    const statsMap = new Map<string, { bayesianRating: number; totalReviewsCount: number }>();
+    if (useCases.getStats) {
+      await Promise.all(
+        professors.map(async (prof) => {
+          const s = await useCases.getStats!.execute({ professorId: prof.id, collegeId: prof.collegeId });
+          statsMap.set(prof.id, { bayesianRating: s.bayesianRating, totalReviewsCount: s.totalReviewsCount });
+        })
+      );
+    }
+
+    // Aggregate per department
+    const deptStats = new Map<string, { count: number; ratingSum: number; reviewSum: number }>();
+    for (const prof of professors) {
+      const st = statsMap.get(prof.id);
+      if (!st) continue;
+      const curr = deptStats.get(prof.departmentId) ?? { count: 0, ratingSum: 0, reviewSum: 0 };
+      curr.count += 1;
+      curr.ratingSum += st.bayesianRating;
+      curr.reviewSum += st.totalReviewsCount;
+      deptStats.set(prof.departmentId, curr);
+    }
+
+    const enriched = departments.map((d) => {
+      const ds = deptStats.get(d.id);
+      return {
+        id: d.id,
+        name: d.name,
+        shortName: d.shortName,
+        professorCount: ds?.count ?? 0,
+        averageBayesianRating: ds ? Math.round((ds.ratingSum / ds.count) * 100) / 100 : 0,
+        totalReviews: ds?.reviewSum ?? 0
+      };
+    });
+
+    return reply.send({
+      success: true,
+      data: enriched,
+      meta: {
+        requestId: request.headers['x-request-id'] || 'unknown',
+        timestamp: new Date().toISOString()
+      }
+    });
+  });
+
   // 2. Get Professor Profile
   app.get(
     '/api/v1/professors/:slug',

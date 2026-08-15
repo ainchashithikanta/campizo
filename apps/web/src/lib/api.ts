@@ -14,10 +14,18 @@ import type {
   VoteRequest,
   ReportRequest,
   FacultyResponseRequest,
-  SearchParams
+  SearchParams,
+  DepartmentSummaryDto
 } from './types';
 
 const BASE = '/api/v1/professors';
+const DEPT_BASE = '/api/v1/departments';
+
+/* ---------- Department Endpoints ---------- */
+
+export function searchDepartments(signal?: AbortSignal) {
+  return apiGet<DepartmentSummaryDto[]>(`${DEPT_BASE}`, signal);
+}
 
 /* ---------- Professor Endpoints ---------- */
 

@@ -51,7 +51,7 @@ export class InMemoryConfessionRepository implements ConfessionRepository {
       content: data.content,
       authorThreadPseudonym: data.authorThreadPseudonym || 'Curious Panda #402',
       isAnonymous: data.isAnonymous !== false,
-      status: data.status || 'PUBLISHED',
+      status: data.status || 'PENDING_APPROVAL',
       upvotesCount: data.upvotesCount || 0,
       commentsCount: data.commentsCount || 0,
       reportsCount: data.reportsCount || 0,

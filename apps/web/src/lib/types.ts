@@ -5,6 +5,15 @@
 
 /* ---------- Professor DTOs ---------- */
 
+export interface DepartmentSummaryDto {
+  id: string;
+  name: string;
+  shortName: string;
+  professorCount: number;
+  averageBayesianRating: number;
+  totalReviews: number;
+}
+
 export interface ProfessorSummaryDto {
   id: string;
   slug: string;

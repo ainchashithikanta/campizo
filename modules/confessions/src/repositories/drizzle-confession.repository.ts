@@ -74,7 +74,7 @@ export class DrizzleConfessionRepository implements ConfessionRepository {
         content: data.content,
         authorThreadPseudonym: data.authorThreadPseudonym || 'Curious Panda #402',
         isAnonymous: data.isAnonymous !== false,
-        status: data.status || 'PUBLISHED'
+        status: data.status || 'PENDING_APPROVAL'
       })
       .returning();
 

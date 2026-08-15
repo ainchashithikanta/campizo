@@ -81,7 +81,7 @@ export class ConfessionUseCases {
       content: params.content,
       authorThreadPseudonym: pseudonym,
       isAnonymous,
-      status: 'PUBLISHED'
+      status: 'PENDING_APPROVAL'
     });
 
     await this.eventPublisher.publish('ConfessionPublished', {
@@ -254,7 +254,7 @@ export class ConfessionUseCases {
     collegeId: string;
     caseId: string;
     moderatorUserId: string;
-    action: 'RESTORE' | 'HIDE' | 'DELETE' | 'ESCALATE';
+    action: 'APPROVE' | 'RESTORE' | 'HIDE' | 'DELETE' | 'ESCALATE';
     reasonNote?: string;
   }): Promise<void> {
     const modCase = await this.modRepo.findCaseById(params.caseId, params.collegeId);
@@ -268,10 +268,12 @@ export class ConfessionUseCases {
       ...(params.reasonNote ? { reasonNote: params.reasonNote } : {})
     });
 
-    if (params.action === 'RESTORE') {
+    if (params.action === 'APPROVE' || params.action === 'RESTORE') {
       await this.confessionRepo.updateStatus(modCase.confessionId, params.collegeId, 'PUBLISHED');
     } else if (params.action === 'DELETE') {
       await this.confessionRepo.updateStatus(modCase.confessionId, params.collegeId, 'DELETED');
+    } else if (params.action === 'HIDE') {
+      await this.confessionRepo.updateStatus(modCase.confessionId, params.collegeId, 'QUARANTINED');
     }
 
     await this.eventPublisher.publish('ModerationDecisionRecorded', {

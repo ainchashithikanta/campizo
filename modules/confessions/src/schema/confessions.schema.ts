@@ -35,7 +35,7 @@ export const confessions = pgTable(
     content: text('content').notNull(),
     authorThreadPseudonym: varchar('author_thread_pseudonym', { length: 64 }).notNull(),
     isAnonymous: boolean('is_anonymous').notNull().default(true),
-    status: varchar('status', { length: 32 }).notNull().default('PUBLISHED'), // DRAFT, PUBLISHED, QUARANTINED, ARCHIVED, DELETED
+    status: varchar('status', { length: 32 }).notNull().default('PENDING_APPROVAL'), // DRAFT, PENDING_APPROVAL, PUBLISHED, QUARANTINED, ARCHIVED, DELETED
     upvotesCount: integer('upvotes_count').notNull().default(0),
     commentsCount: integer('comments_count').notNull().default(0),
     reportsCount: integer('reports_count').notNull().default(0),

@@ -11,7 +11,8 @@ import type {
   ProfessorSummaryDto,
   ProfessorProfileDto,
   ProfessorStatisticsDto,
-  ReviewDto
+  ReviewDto,
+  DepartmentSummaryDto
 } from '@web/lib/types';
 import * as api from '@web/lib/api';
 
@@ -138,6 +139,10 @@ export function useProfessorStats(slug: string) {
 
 export function useProfessorReviews(slug: string, page = 1) {
   return useApiQuery<ReviewDto[]>((signal) => api.getProfessorReviews(slug, page, 20, signal), [slug, page]);
+}
+
+export function useDepartments() {
+  return useApiQuery<DepartmentSummaryDto[]>((signal) => api.searchDepartments(signal), []);
 }
 
 /* ---------- Debounce Hook ---------- */

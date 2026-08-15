@@ -7,7 +7,7 @@ export interface ConfessionEntity {
   content: string;
   authorThreadPseudonym: string;
   isAnonymous: boolean;
-  status: 'DRAFT' | 'PUBLISHED' | 'QUARANTINED' | 'ARCHIVED' | 'DELETED';
+  status: 'DRAFT' | 'PENDING_APPROVAL' | 'PUBLISHED' | 'QUARANTINED' | 'ARCHIVED' | 'DELETED';
   upvotesCount: number;
   commentsCount: number;
   reportsCount: number;

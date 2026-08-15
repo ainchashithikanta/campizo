@@ -22,7 +22,7 @@ export const reportConfessionSchema = z.object({
 });
 
 export const moderationDecisionSchema = z.object({
-  action: z.enum(['RESTORE', 'HIDE', 'DELETE', 'ESCALATE']),
+  action: z.enum(['APPROVE', 'RESTORE', 'HIDE', 'DELETE', 'ESCALATE']),
   reasonNote: z.string().max(500).optional()
 });
 

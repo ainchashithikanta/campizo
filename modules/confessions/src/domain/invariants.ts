@@ -44,8 +44,9 @@ export function assertCommentDepth(currentDepth: number, maxDepth: number = 8): 
 
 export function assertValidStateTransition(fromState: string, toState: string): void {
   const allowedTransitions: Record<string, string[]> = {
-    DRAFT: ['PUBLISHED', 'DELETED'],
-    PUBLISHED: ['QUARANTINED', 'ARCHIVED', 'DELETED'],
+DRAFT: ['PENDING_APPROVAL', 'PUBLISHED', 'DELETED'],
+  PENDING_APPROVAL: ['PUBLISHED', 'QUARANTINED', 'DELETED'],
+  PUBLISHED: ['QUARANTINED', 'ARCHIVED', 'DELETED'],
     QUARANTINED: ['PUBLISHED', 'ARCHIVED', 'DELETED'],
     ARCHIVED: ['PUBLISHED', 'DELETED'],
     DELETED: []

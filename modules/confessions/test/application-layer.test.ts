@@ -79,7 +79,7 @@ describe('Campus Confessions Application Services & CQRS Suite', () => {
     });
 
     expect(confession.id).toBeDefined();
-    expect(confession.status).toBe('PUBLISHED');
+    expect(confession.status).toBe('PENDING_APPROVAL');
     expect(publishedEvents.length).toBe(1);
     expect(publishedEvents[0]?.eventType).toBe('ConfessionPublished');
   });
