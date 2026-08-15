@@ -17,6 +17,10 @@ import {
   UpdateFacultyResponseUseCase,
   ModerateReviewUseCase,
   GetReviewModerationQueueUseCase,
+  ListDepartmentsUseCase,
+  AdminCreateProfessorUseCase,
+  AdminUpdateProfessorUseCase,
+  AdminDeleteProfessorUseCase,
   EntityNotFoundError,
   DuplicateReviewError,
   EditWindowExpiredError,
@@ -82,6 +86,41 @@ export const ReportSchema = z.object({
   details: z.string().optional()
 });
 
+export const AdminListProfessorsQuerySchema = z.object({
+  query: z.string().optional(),
+  departmentId: z.string().optional()
+});
+
+export const AdminCreateProfessorSchema = z.object({
+  departmentId: z.string().min(1),
+  fullName: z.string().min(2).max(200),
+  slug: z
+    .string()
+    .min(2)
+    .max(100)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be lowercase, hyphenated alphanumerics.'),
+  designation: z.string().min(2).max(100),
+  biography: z.string().max(2000).optional(),
+  officialEmail: z.string().email().optional()
+});
+
+export const AdminUpdateProfessorSchema = z
+  .object({
+    departmentId: z.string().min(1).optional(),
+    fullName: z.string().min(2).max(200).optional(),
+    slug: z
+      .string()
+      .min(2)
+      .max(100)
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be lowercase, hyphenated alphanumerics.')
+      .optional(),
+    designation: z.string().min(2).max(100).optional(),
+    status: z.string().min(2).max(30).optional(),
+    biography: z.string().max(2000).optional(),
+    officialEmail: z.string().email().optional()
+  })
+  .refine((v) => Object.keys(v).length > 0, { message: 'At least one field must be provided.' });
+
 export const FacultyResponseSchema = z.object({
   responseText: z.string().min(10).max(1000)
 });
@@ -103,6 +142,10 @@ export function registerProfessorRoutes(
     updateFacultyResponse?: UpdateFacultyResponseUseCase;
     getModerationQueue?: GetReviewModerationQueueUseCase;
     moderateReview?: ModerateReviewUseCase;
+    listDepartments?: ListDepartmentsUseCase;
+    adminCreateProfessor?: AdminCreateProfessorUseCase;
+    adminUpdateProfessor?: AdminUpdateProfessorUseCase;
+    adminDeleteProfessor?: AdminDeleteProfessorUseCase;
   }
 ): void {
   const resolveIdentity = (request: FastifyRequest): ResolvedIdentity => {
@@ -808,6 +851,264 @@ export function registerProfessorRoutes(
           return reply.status(404).send({
             success: false,
             error: { code: err.code, message: err.message, requestId: request.headers['x-request-id'] }
+          });
+        }
+        throw err;
+      }
+    }
+  );
+
+  // 15. Admin — List Departments (ADMIN / MODERATOR only)
+  app.get('/api/v1/admin/departments', async (request: FastifyRequest, reply: FastifyReply) => {
+    const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+    const identity = resolveIdentity(request);
+
+    if ('error' in identity) {
+      return reply.status(401).send({
+        success: false,
+        error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+      });
+    }
+
+    if (!isModerator(identity as any)) {
+      return denyModeration(reply);
+    }
+
+    if (!useCases.listDepartments) {
+      return reply.status(404).send({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Departments are not available on this server.' }
+      });
+    }
+
+    const departments = await useCases.listDepartments.execute({ collegeId: tenantContext.collegeId });
+    return reply.send({
+      success: true,
+      data: departments,
+      meta: {
+        requestId: request.headers['x-request-id'] || 'unknown',
+        timestamp: new Date().toISOString()
+      }
+    });
+  });
+
+  // 16. Admin — List Professors (ADMIN / MODERATOR only; includes non-ACTIVE)
+  app.get('/api/v1/admin/professors', async (request: FastifyRequest, reply: FastifyReply) => {
+    const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+    const identity = resolveIdentity(request);
+
+    if ('error' in identity) {
+      return reply.status(401).send({
+        success: false,
+        error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+      });
+    }
+
+    if (!isModerator(identity as any)) {
+      return denyModeration(reply);
+    }
+
+    const queryResult = AdminListProfessorsQuerySchema.safeParse(request.query);
+    if (!queryResult.success) {
+      return reply.status(400).send({
+        success: false,
+        error: { code: 'INVALID_QUERY_PARAMS', message: queryResult.error.message }
+      });
+    }
+
+    const professors = await useCases.searchProfessors.execute({
+      collegeId: tenantContext.collegeId,
+      ...(queryResult.data.query !== undefined ? { query: queryResult.data.query } : {}),
+      ...(queryResult.data.departmentId !== undefined ? { departmentId: queryResult.data.departmentId } : {})
+    });
+
+    return reply.send({
+      success: true,
+      data: professors,
+      meta: {
+        requestId: request.headers['x-request-id'] || 'unknown',
+        timestamp: new Date().toISOString()
+      }
+    });
+  });
+
+  // 17. Admin — Create Professor (ADMIN / MODERATOR only)
+  app.post(
+    '/api/v1/admin/professors',
+    { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+      const identity = resolveIdentity(request);
+
+      if ('error' in identity) {
+        return reply.status(401).send({
+          success: false,
+          error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+        });
+      }
+
+      if (!isModerator(identity as any)) {
+        return denyModeration(reply);
+      }
+
+      if (!useCases.adminCreateProfessor) {
+        return reply.status(404).send({
+          success: false,
+          error: { code: 'NOT_FOUND', message: 'Professor management is not available on this server.' }
+        });
+      }
+
+      const bodyResult = AdminCreateProfessorSchema.safeParse(request.body);
+      if (!bodyResult.success) {
+        return reply.status(400).send({
+          success: false,
+          error: { code: 'INVALID_INPUT', message: bodyResult.error.message }
+        });
+      }
+
+      try {
+        const professor = await useCases.adminCreateProfessor.execute({
+          collegeId: tenantContext.collegeId,
+          departmentId: bodyResult.data.departmentId,
+          fullName: bodyResult.data.fullName,
+          slug: bodyResult.data.slug,
+          designation: bodyResult.data.designation,
+          ...(bodyResult.data.biography !== undefined ? { biography: bodyResult.data.biography } : {}),
+          ...(bodyResult.data.officialEmail !== undefined ? { officialEmail: bodyResult.data.officialEmail } : {})
+        });
+
+        return reply.status(201).send({
+          success: true,
+          data: professor,
+          meta: {
+            requestId: request.headers['x-request-id'] || 'unknown',
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (err: any) {
+        if (err instanceof EntityNotFoundError) {
+          return reply.status(409).send({
+            success: false,
+            error: { code: 'DUPLICATE_SLUG', message: err.message, requestId: request.headers['x-request-id'] }
+          });
+        }
+        throw err;
+      }
+    }
+  );
+
+  // 18. Admin — Update Professor (ADMIN / MODERATOR only)
+  app.patch(
+    '/api/v1/admin/professors/:id',
+    { config: { rateLimit: { max: 60, timeWindow: '1 minute' } } },
+    async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+      const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+      const identity = resolveIdentity(request);
+
+      if ('error' in identity) {
+        return reply.status(401).send({
+          success: false,
+          error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+        });
+      }
+
+      if (!isModerator(identity as any)) {
+        return denyModeration(reply);
+      }
+
+      if (!useCases.adminUpdateProfessor) {
+        return reply.status(404).send({
+          success: false,
+          error: { code: 'NOT_FOUND', message: 'Professor management is not available on this server.' }
+        });
+      }
+
+      const bodyResult = AdminUpdateProfessorSchema.safeParse(request.body);
+      if (!bodyResult.success) {
+        return reply.status(400).send({
+          success: false,
+          error: { code: 'INVALID_INPUT', message: bodyResult.error.message }
+        });
+      }
+
+      try {
+        const professor = await useCases.adminUpdateProfessor.execute({
+          id: request.params.id,
+          collegeId: tenantContext.collegeId,
+          ...(bodyResult.data.departmentId !== undefined ? { departmentId: bodyResult.data.departmentId } : {}),
+          ...(bodyResult.data.fullName !== undefined ? { fullName: bodyResult.data.fullName } : {}),
+          ...(bodyResult.data.slug !== undefined ? { slug: bodyResult.data.slug } : {}),
+          ...(bodyResult.data.designation !== undefined ? { designation: bodyResult.data.designation } : {}),
+          ...(bodyResult.data.status !== undefined ? { status: bodyResult.data.status } : {}),
+          ...(bodyResult.data.biography !== undefined ? { biography: bodyResult.data.biography } : {}),
+          ...(bodyResult.data.officialEmail !== undefined ? { officialEmail: bodyResult.data.officialEmail } : {})
+        });
+
+        return reply.send({
+          success: true,
+          data: professor,
+          meta: {
+            requestId: request.headers['x-request-id'] || 'unknown',
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (err: any) {
+        if (err instanceof EntityNotFoundError) {
+          return reply.status(404).send({
+            success: false,
+            error: { code: 'ENTITY_NOT_FOUND', message: err.message, requestId: request.headers['x-request-id'] }
+          });
+        }
+        throw err;
+      }
+    }
+  );
+
+  // 19. Admin — Delete Professor (soft delete; ADMIN / MODERATOR only)
+  app.delete(
+    '/api/v1/admin/professors/:id',
+    { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } },
+    async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+      const tenantContext: TenantContext = (request as any).tenantContext || { collegeId: 'default-college' };
+      const identity = resolveIdentity(request);
+
+      if ('error' in identity) {
+        return reply.status(401).send({
+          success: false,
+          error: { code: 'INVALID_JWT', message: identity.error, requestId: request.headers['x-request-id'] }
+        });
+      }
+
+      if (!isModerator(identity as any)) {
+        return denyModeration(reply);
+      }
+
+      if (!useCases.adminDeleteProfessor) {
+        return reply.status(404).send({
+          success: false,
+          error: { code: 'NOT_FOUND', message: 'Professor management is not available on this server.' }
+        });
+      }
+
+      try {
+        await useCases.adminDeleteProfessor.execute({
+          id: request.params.id,
+          collegeId: tenantContext.collegeId
+        });
+
+        return reply.send({
+          success: true,
+          data: { id: request.params.id, status: 'DELETED' },
+          meta: {
+            requestId: request.headers['x-request-id'] || 'unknown',
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (err: any) {
+        if (err instanceof EntityNotFoundError) {
+          return reply.status(404).send({
+            success: false,
+            error: { code: 'ENTITY_NOT_FOUND', message: err.message, requestId: request.headers['x-request-id'] }
           });
         }
         throw err;

@@ -18,6 +18,13 @@ const MODERATION_MODULES = [
     title: 'Professor Review Moderation',
     desc: 'Queue for professor reviews flagged by the risk scanner: approve, hide, reject, or restore.',
     accent: 'red'
+  },
+  {
+    href: '/admin/professors',
+    icon: '👩‍🏫',
+    title: 'Professor Management',
+    desc: 'NITK faculty directory: search, add, edit, and remove professors department-wise.',
+    accent: 'blue'
   }
 ];
 

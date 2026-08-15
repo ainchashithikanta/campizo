@@ -14,6 +14,13 @@ const ADMIN_MODULES = [
     accent: 'green'
   },
   {
+    href: '/admin/professors',
+    icon: '👩‍🏫',
+    title: 'Professor Management',
+    desc: 'NITK faculty directory: search, add, edit, and remove professors department-wise.',
+    accent: 'blue'
+  },
+  {
     href: '/admin/feature-flags',
     icon: '🚩',
     title: 'Feature Flags Console',

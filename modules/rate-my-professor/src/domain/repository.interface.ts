@@ -1,3 +1,10 @@
+export interface DepartmentEntity {
+  id: string;
+  collegeId: string;
+  name: string;
+  shortName: string;
+}
+
 export interface ProfessorEntity {
   id: string;
   collegeId: string;
@@ -8,6 +15,7 @@ export interface ProfessorEntity {
   status: string;
   biography?: string | undefined;
   photoUrl?: string | undefined;
+  officialEmail?: string | undefined;
 }
 
 export interface ReviewEntity {
@@ -45,7 +53,15 @@ export interface ProfessorStatisticsEntity {
 export interface ProfessorRepository {
   findById(id: string, collegeId: string): Promise<ProfessorEntity | null>;
   findBySlug(slug: string, collegeId: string): Promise<ProfessorEntity | null>;
+  search(collegeId: string, query?: string, departmentId?: string): Promise<ProfessorEntity[]>;
   save(professor: ProfessorEntity): Promise<ProfessorEntity>;
+  delete(id: string, collegeId: string): Promise<boolean>;
+}
+
+export interface DepartmentRepository {
+  list(collegeId: string): Promise<DepartmentEntity[]>;
+  findById(id: string, collegeId: string): Promise<DepartmentEntity | null>;
+  save(department: DepartmentEntity): Promise<DepartmentEntity>;
 }
 
 export interface ReviewRepository {

@@ -52,20 +52,19 @@ export class DrizzleProfessorRepository implements ProfessorRepository {
     };
   }
 
-  public async search(collegeId: string, query?: string): Promise<ProfessorEntity[]> {
-    let baseQuery = this.db
-      .select()
-      .from(professors)
-      .where(and(eq(professors.collegeId, collegeId)));
-
+  public async search(collegeId: string, query?: string, departmentId?: string): Promise<ProfessorEntity[]> {
+    const conditions = [eq(professors.collegeId, collegeId)];
     if (query) {
-      baseQuery = this.db
-        .select()
-        .from(professors)
-        .where(and(eq(professors.collegeId, collegeId), ilike(professors.fullName, `%${query}%`)));
+      conditions.push(ilike(professors.fullName, `%${query}%`));
+    }
+    if (departmentId) {
+      conditions.push(eq(professors.departmentId, departmentId));
     }
 
-    const rows = await baseQuery;
+    const rows = await this.db
+      .select()
+      .from(professors)
+      .where(and(...conditions));
     return rows.map((row) => ({
       id: row.id,
       collegeId: row.collegeId,
@@ -77,6 +76,11 @@ export class DrizzleProfessorRepository implements ProfessorRepository {
       biography: row.biography ?? undefined,
       photoUrl: row.photoUrl ?? undefined
     }));
+  }
+
+  public async delete(id: string, collegeId: string): Promise<boolean> {
+    const result = await this.db.delete(professors).where(and(eq(professors.id, id), eq(professors.collegeId, collegeId)));
+    return (result?.rowCount ?? 0) > 0;
   }
 
   public async save(professor: ProfessorEntity): Promise<ProfessorEntity> {

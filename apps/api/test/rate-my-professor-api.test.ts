@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/server.js';
+import { signJwt } from '@college-hub/security';
 
 // Test-only secrets — the security kernel refuses to run without them
 // (fail-closed: no fallbacks). These are never used in production.
@@ -358,5 +359,142 @@ describe('Rate My Professor — Production Fastify REST API Integration (MS-18.8
     });
 
     expect(res1.statusCode).toBe(201);
+  });
+
+  it('GET /api/v1/admin/departments — should reject unauthenticated guests (403)', async () => {
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/v1/admin/departments',
+      headers: { 'x-college-id': 'college-stanford-001' }
+    });
+
+    expect(res.statusCode).toBe(403);
+  });
+
+  it('GET /api/v1/admin/departments — should list departments for authenticated moderator', async () => {
+    const adminToken = signJwt({
+      sub: 'admin-console-test',
+      collegeId: 'college-stanford-001',
+      roles: ['ADMIN', 'MODERATOR', 'SUPER_ADMIN']
+    });
+
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/v1/admin/departments',
+      headers: {
+        'authorization': `Bearer ${adminToken}`,
+        'x-college-id': 'college-stanford-001'
+      }
+    });
+
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.payload);
+    expect(body.success).toBe(true);
+    expect(Array.isArray(body.data)).toBe(true);
+    expect(body.data.length).toBeGreaterThan(0);
+    expect(body.data[0].shortName).toBeDefined();
+  });
+
+  it('GET /api/v1/admin/professors — should list professors with department filter for moderator', async () => {
+    const adminToken = signJwt({
+      sub: 'admin-console-test',
+      collegeId: 'college-stanford-001',
+      roles: ['ADMIN', 'MODERATOR', 'SUPER_ADMIN']
+    });
+
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/v1/admin/professors?departmentId=dept-cs-001',
+      headers: {
+        'authorization': `Bearer ${adminToken}`,
+        'x-college-id': 'college-stanford-001'
+      }
+    });
+
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.payload);
+    expect(body.success).toBe(true);
+    expect(Array.isArray(body.data)).toBe(true);
+    expect(body.data[0].departmentId).toBe('dept-cs-001');
+  });
+
+  it('POST /api/v1/admin/professors — should create a professor for moderator', async () => {
+    const adminToken = signJwt({
+      sub: 'admin-console-test',
+      collegeId: 'college-stanford-001',
+      roles: ['ADMIN', 'MODERATOR', 'SUPER_ADMIN']
+    });
+
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/v1/admin/professors',
+      headers: {
+        'authorization': `Bearer ${adminToken}`,
+        'x-college-id': 'college-stanford-001'
+      },
+      payload: {
+        departmentId: 'dept-cs-001',
+        fullName: 'Dr. Test Professor',
+        slug: 'dr-test-professor',
+        designation: 'Assistant Professor',
+        biography: 'Test biography for admin-created professor.',
+        officialEmail: 'test.professor@example.com'
+      }
+    });
+
+    expect(res.statusCode).toBe(201);
+    const body = JSON.parse(res.payload);
+    expect(body.success).toBe(true);
+    expect(body.data.fullName).toBe('Dr. Test Professor');
+    expect(body.data.status).toBe('ACTIVE');
+  });
+
+  it('PATCH /api/v1/admin/professors/:id — should update a professor for moderator', async () => {
+    const adminToken = signJwt({
+      sub: 'admin-console-test',
+      collegeId: 'college-stanford-001',
+      roles: ['ADMIN', 'MODERATOR', 'SUPER_ADMIN']
+    });
+
+    const res = await app.inject({
+      method: 'PATCH',
+      url: '/api/v1/admin/professors/prof-101',
+      headers: {
+        'authorization': `Bearer ${adminToken}`,
+        'x-college-id': 'college-stanford-001'
+      },
+      payload: {
+        designation: 'Emeritus Professor',
+        officialEmail: 'turing@example.edu'
+      }
+    });
+
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.payload);
+    expect(body.success).toBe(true);
+    expect(body.data.designation).toBe('Emeritus Professor');
+    expect(body.data.officialEmail).toBe('turing@example.edu');
+  });
+
+  it('DELETE /api/v1/admin/professors/:id — should soft-delete a professor for moderator', async () => {
+    const adminToken = signJwt({
+      sub: 'admin-console-test',
+      collegeId: 'college-stanford-001',
+      roles: ['ADMIN', 'MODERATOR', 'SUPER_ADMIN']
+    });
+
+    const res = await app.inject({
+      method: 'DELETE',
+      url: '/api/v1/admin/professors/prof-101',
+      headers: {
+        'authorization': `Bearer ${adminToken}`,
+        'x-college-id': 'college-stanford-001'
+      }
+    });
+
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.payload);
+    expect(body.success).toBe(true);
+    expect(body.data.status).toBe('DELETED');
   });
 });

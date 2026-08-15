@@ -16,14 +16,21 @@ import {
   UpdateFacultyResponseUseCase,
   ModerateReviewUseCase,
   GetReviewModerationQueueUseCase,
+  ListDepartmentsUseCase,
+  AdminCreateProfessorUseCase,
+  AdminUpdateProfessorUseCase,
+  AdminDeleteProfessorUseCase,
   ProfessorRepository,
   ReviewRepository,
   ProfessorStatisticsRepository,
+  DepartmentRepository,
   ProfessorEntity,
   ReviewEntity,
-  ProfessorStatisticsEntity
+  ProfessorStatisticsEntity,
+  DepartmentEntity
 } from './index.js';
 import { registerProfessorRoutes } from './controllers/professor.controller.js';
+import { NITK_DEPARTMENTS, NITK_PROFESSORS } from './data/nitk-faculty.js';
 import { StatsEngineWorker } from './workers/stats-engine.worker.js';
 import { SearchIndexerWorker } from './workers/search-indexer.worker.js';
 import { CacheInvalidationWorker } from './workers/cache-invalidation.worker.js';
@@ -35,6 +42,7 @@ export * from './domain/events.js';
 export * from './domain/invariants.js';
 export * from './domain/repository.interface.js';
 export * from './errors/application-errors.js';
+export * from './data/nitk-faculty.js';
 export * from './repositories/drizzle-professors.repository.js';
 export * from './repositories/drizzle-reviews.repository.js';
 export * from './repositories/drizzle-statistics.repository.js';
@@ -78,17 +86,52 @@ class InMemoryProfessorRepo implements ProfessorRepository {
     return null;
   }
 
-  public async search(collegeId: string, query?: string): Promise<ProfessorEntity[]> {
+  public async search(collegeId: string, query?: string, departmentId?: string): Promise<ProfessorEntity[]> {
     const list = Array.from(this.profs.values()).filter((p) => p.collegeId === collegeId);
-    if (query) {
-      return list.filter((p) => p.fullName.toLowerCase().includes(query.toLowerCase()));
-    }
-    return list;
+    return list.filter(
+      (p) =>
+        (!query || p.fullName.toLowerCase().includes(query.toLowerCase())) &&
+        (!departmentId || p.departmentId === departmentId)
+    );
   }
 
   public async save(professor: ProfessorEntity): Promise<ProfessorEntity> {
     this.profs.set(professor.id, professor);
     return professor;
+  }
+
+  public async delete(id: string, collegeId: string): Promise<boolean> {
+    const p = this.profs.get(id);
+    if (!p || p.collegeId !== collegeId) return false;
+    this.profs.delete(id);
+    return true;
+  }
+}
+
+class InMemoryDepartmentRepo implements DepartmentRepository {
+  private departments = new Map<string, DepartmentEntity>();
+
+  constructor() {
+    this.departments.set('dept-cs-001', {
+      id: 'dept-cs-001',
+      collegeId: 'college-stanford-001',
+      name: 'Computer Science & Engineering',
+      shortName: 'CSE'
+    });
+  }
+
+  public async list(collegeId: string): Promise<DepartmentEntity[]> {
+    return Array.from(this.departments.values()).filter((d) => d.collegeId === collegeId);
+  }
+
+  public async findById(id: string, collegeId: string): Promise<DepartmentEntity | null> {
+    const d = this.departments.get(id);
+    return d && d.collegeId === collegeId ? d : null;
+  }
+
+  public async save(department: DepartmentEntity): Promise<DepartmentEntity> {
+    this.departments.set(department.id, department);
+    return department;
   }
 }
 
@@ -185,13 +228,16 @@ export class RateMyProfessorModule implements PlatformModule {
 
   private profRepo: InMemoryProfessorRepo | null = null;
   private reviewRepo: InMemoryReviewRepo | null = null;
+  private departmentRepo: InMemoryDepartmentRepo | null = null;
 
   public initialize(app: FastifyInstance, eventBus: EventBus): void {
     const profRepo = new InMemoryProfessorRepo();
     const reviewRepo = new InMemoryReviewRepo();
     const statsRepo = new InMemoryStatsRepo();
+    const departmentRepo = new InMemoryDepartmentRepo();
     this.profRepo = profRepo;
     this.reviewRepo = reviewRepo;
+    this.departmentRepo = departmentRepo;
 
     const searchProfessors = new SearchProfessorsUseCase(profRepo);
     const getProfile = new GetProfessorProfileUseCase(profRepo);
@@ -207,6 +253,10 @@ export class RateMyProfessorModule implements PlatformModule {
     const updateFacultyResponse = new UpdateFacultyResponseUseCase(eventBus);
     const getModerationQueue = new GetReviewModerationQueueUseCase(reviewRepo);
     const moderateReview = new ModerateReviewUseCase(reviewRepo, eventBus);
+    const listDepartments = new ListDepartmentsUseCase(departmentRepo);
+    const adminCreateProfessor = new AdminCreateProfessorUseCase(profRepo);
+    const adminUpdateProfessor = new AdminUpdateProfessorUseCase(profRepo);
+    const adminDeleteProfessor = new AdminDeleteProfessorUseCase(profRepo);
 
     registerProfessorRoutes(app, {
       searchProfessors,
@@ -222,7 +272,11 @@ export class RateMyProfessorModule implements PlatformModule {
       addFacultyResponse,
       updateFacultyResponse,
       getModerationQueue,
-      moderateReview
+      moderateReview,
+      listDepartments,
+      adminCreateProfessor,
+      adminUpdateProfessor,
+      adminDeleteProfessor
     });
 
     const statsWorker = new StatsEngineWorker(reviewRepo, statsRepo, eventBus);
@@ -257,40 +311,22 @@ export class RateMyProfessorModule implements PlatformModule {
   public async seedDemoData(collegeId: string): Promise<void> {
     const profRepo = this.profRepo;
     const reviewRepo = this.reviewRepo;
-    if (!profRepo || !reviewRepo) return;
+    const departmentRepo = this.departmentRepo;
+    if (!profRepo || !reviewRepo || !departmentRepo) return;
 
-    const professors: ProfessorEntity[] = [
-      {
-        id: 'prof-nitk-cs-1',
-        collegeId,
-        departmentId: 'dept-cs-001',
-        fullName: 'Dr. Meera Krishnan',
-        slug: 'dr-meera-krishnan',
-        designation: 'Associate Professor',
-        status: 'ACTIVE',
-        biography: 'Algorithms and complexity theory. Known for the clearest lecture notes in the department.'
-      },
-      {
-        id: 'prof-nitk-cs-2',
-        collegeId,
-        departmentId: 'dept-cs-001',
-        fullName: 'Prof. Raghunath Shetty',
-        slug: 'prof-raghunath-shetty',
-        designation: 'Assistant Professor',
-        status: 'ACTIVE',
-        biography: 'Operating systems and computer architecture. Loves a good whiteboard diagram.'
-      },
-      {
-        id: 'prof-nitk-ec-1',
-        collegeId,
-        departmentId: 'dept-ec-001',
-        fullName: 'Dr. Anitha Rao',
-        slug: 'dr-anitha-rao',
-        designation: 'Professor',
-        status: 'ACTIVE',
-        biography: 'VLSI design and embedded systems. Runs the flagship research lab on campus.'
-      }
-    ];
+    for (const d of NITK_DEPARTMENTS) {
+      await departmentRepo.save({ id: d.id, collegeId, name: d.name, shortName: d.shortName });
+    }
+
+    const professors: ProfessorEntity[] = NITK_PROFESSORS.map((f, i) => ({
+      id: `prof-nitk-${i + 1}`,
+      collegeId,
+      departmentId: f.departmentId,
+      fullName: f.fullName,
+      slug: f.slug,
+      designation: f.designation,
+      status: 'ACTIVE'
+    }));
     for (const p of professors) {
       await profRepo.save(p);
     }
@@ -300,7 +336,7 @@ export class RateMyProfessorModule implements PlatformModule {
       {
         id: 'rev-nitk-101',
         collegeId,
-        professorId: 'prof-nitk-cs-1',
+        professorId: 'prof-nitk-1',
         courseAssignmentId: 'assign-cs-algo-01',
         authorUserId: 'user-seed-101',
         authorAnonymousToken: 'anon-seed-101',
@@ -316,7 +352,7 @@ export class RateMyProfessorModule implements PlatformModule {
       {
         id: 'rev-nitk-102',
         collegeId,
-        professorId: 'prof-nitk-cs-2',
+        professorId: 'prof-nitk-2',
         courseAssignmentId: 'assign-cs-os-01',
         authorUserId: 'user-seed-102',
         authorAnonymousToken: 'anon-seed-102',
@@ -332,13 +368,13 @@ export class RateMyProfessorModule implements PlatformModule {
       {
         id: 'rev-nitk-103',
         collegeId,
-        professorId: 'prof-nitk-ec-1',
+        professorId: 'prof-nitk-22',
         courseAssignmentId: 'assign-ec-vlsi-01',
         authorUserId: 'user-seed-103',
         authorAnonymousToken: 'anon-seed-103',
         isAnonymous: true,
         reviewText:
-          'Dr. Rao is the reason I switched into the VLSI track. Deep subject knowledge and she remembers every student by name. Projects are heavy but you learn everything.',
+          'Professor Bhat is the reason I switched into the VLSI track. Deep subject knowledge and he remembers every student by name. Projects are heavy but you learn everything.',
         overallRating: 5,
         moderationStatus: 'PENDING_MODERATION',
         helpfulCount: 21,
@@ -350,7 +386,7 @@ export class RateMyProfessorModule implements PlatformModule {
       await reviewRepo.save(r);
     }
 
-    logger.info(`[seed] seeded 3 professors + 3 pending reviews for ${collegeId}`);
+    logger.info(`[seed] seeded ${NITK_DEPARTMENTS.length} departments + ${professors.length} professors + 3 pending reviews for ${collegeId}`);
   }
 }
 

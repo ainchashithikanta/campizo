@@ -314,6 +314,10 @@
   background: rgba(47, 221, 148, 0.2);
 }
 
+.adx-card-blue .adx-card-icon {
+  background: rgba(96, 165, 250, 0.2);
+}
+
 .adx-back {
   display: inline-block;
   font-family: var(--ch-font-cartoon);
@@ -406,4 +410,32 @@
   color: #94a3b8;
   text-align: center;
   font-family: var(--ch-font-cartoon);
+}
+
+.adx-input {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.9rem;
+  color: var(--toon-ink, #1e1b2e);
+  background: #ffffff;
+  border: 2px solid #d6d2e4;
+  border-radius: 8px;
+  outline: none;
+  font-family: var(--ch-font-cartoon, inherit);
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.adx-input:focus {
+  border-color: var(--toon-violet, #6d28d9);
+}
+
+label.adx-input-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #5a5370;
+  font-family: var(--ch-font-cartoon, inherit);
 }
