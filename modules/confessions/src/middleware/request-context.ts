@@ -34,7 +34,12 @@ export async function tenantMiddleware(req: FastifyRequest, reply: FastifyReply)
 
   const collegeId =
     resolution.status === 'ok' && resolution.identity.isAuthenticated
-      ? resolution.identity.collegeId || headerCollegeId
+      ? // Admin-console tokens scope collegeId to '*' (cross-tenant). Honor the
+        // explicit x-college-id header in that case so admin actions target the
+        // intended tenant instead of an empty wildcard queue.
+        resolution.identity.collegeId === '*'
+        ? headerCollegeId
+        : resolution.identity.collegeId || headerCollegeId
       : headerCollegeId;
 
   if (!collegeId || collegeId.trim().length === 0) {
@@ -99,7 +104,11 @@ export async function authMiddleware(req: FastifyRequest, reply: FastifyReply): 
 
   req.ctx = {
     userId: identity.userId,
-    collegeId: (identity.collegeId || headerCollegeId || 'unknown') as string,
+    collegeId:
+      // Admin-console tokens scope collegeId to '*' (cross-tenant). Honor the
+      // explicit x-college-id header in that case so admin actions target the
+      // intended tenant instead of an empty wildcard queue.
+      identity.collegeId === '*' ? headerCollegeId || 'unknown' : identity.collegeId || headerCollegeId || 'unknown',
     requestId,
     roles: identity.roles,
     isAuthenticated: identity.isAuthenticated,
