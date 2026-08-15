@@ -40,9 +40,13 @@ export async function registerMarketplaceRoutes(
     }
 
     const identity = resolution.identity;
+    const headerCollegeId = (request.headers['x-college-id'] as string) || tenantContext.collegeId;
     return {
       userId: identity.userId,
-      collegeId: (identity.collegeId || tenantContext.collegeId) as string,
+      // Admin-console tokens scope collegeId to '*' (cross-tenant). Honor the
+      // explicit x-college-id header in that case so admin actions target the
+      // intended tenant instead of an empty wildcard queue.
+      collegeId: identity.collegeId === '*' ? headerCollegeId : identity.collegeId || headerCollegeId,
       roles: identity.roles,
       isAuthenticated: identity.isAuthenticated
     };
