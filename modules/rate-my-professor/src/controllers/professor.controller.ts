@@ -161,9 +161,13 @@ export function registerProfessorRoutes(
     }
 
     const identity = resolution.identity;
+    const headerCollegeId = (request.headers['x-college-id'] as string) || tenantContext.collegeId;
     return {
       userId: identity.userId,
-      collegeId: (identity.collegeId || tenantContext.collegeId) as string,
+      // Admin-console tokens scope collegeId to '*' (cross-tenant). Honor the
+      // explicit x-college-id header in that case so admin actions target the
+      // intended tenant instead of an empty wildcard queue.
+      collegeId: identity.collegeId === '*' ? headerCollegeId : identity.collegeId || headerCollegeId,
       roles: identity.roles,
       isAuthenticated: identity.isAuthenticated,
       anonymousToken: generateAnonymousToken(identity.userId, tenantContext.collegeId),
@@ -196,9 +200,40 @@ export function registerProfessorRoutes(
       ...(queryResult.data.dept !== undefined ? { departmentId: queryResult.data.dept } : {})
     });
 
+    // Enrich each professor with rating statistics and department name so the
+    // public directory page receives ProfessorSummaryDto-compatible payloads
+    // (the raw ProfessorEntity does not carry stats or department shortName).
+    const departments = useCases.listDepartments
+      ? await useCases.listDepartments.execute({ collegeId: tenantContext.collegeId })
+      : [];
+    const deptMap = new Map<string, { name: string; shortName: string }>();
+    for (const d of departments) deptMap.set(d.id, { name: d.name, shortName: d.shortName });
+
+    const enriched = await Promise.all(
+      professorsList.map(async (prof) => {
+        const dept = deptMap.get(prof.departmentId);
+        const stats = useCases.getStats
+          ? await useCases.getStats.execute({ professorId: prof.id, collegeId: prof.collegeId })
+          : { bayesianRating: 0, totalReviewsCount: 0, recommendationPercentage: 0, topTags: [] };
+        return {
+          id: prof.id,
+          slug: prof.slug,
+          fullName: prof.fullName,
+          designation: prof.designation,
+          departmentName: dept?.name ?? '',
+          departmentCode: dept?.shortName ?? '',
+          photoUrl: prof.photoUrl ?? null,
+          bayesianRating: stats.bayesianRating,
+          totalReviewsCount: stats.totalReviewsCount,
+          recommendationPercentage: stats.recommendationPercentage,
+          topTags: (stats as any).topTags ?? []
+        };
+      })
+    );
+
     return reply.send({
       success: true,
-      data: professorsList,
+      data: enriched,
       meta: {
         requestId: request.headers['x-request-id'] || 'unknown',
         timestamp: new Date().toISOString()
