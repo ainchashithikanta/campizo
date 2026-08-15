@@ -35,7 +35,13 @@ export class PlacementController {
 
     return {
       userId: resolution.identity.userId,
-      collegeId: resolution.identity.collegeId || 'college-stanford-001',
+      // Admin-console tokens scope collegeId to '*' (cross-tenant). Honor the
+      // explicit x-college-id header in that case so admin actions target the
+      // intended tenant instead of an empty wildcard queue.
+      collegeId:
+        resolution.identity.collegeId === '*'
+          ? (req.headers['x-college-id'] as string) || 'college-stanford-001'
+          : resolution.identity.collegeId || (req.headers['x-college-id'] as string) || 'college-stanford-001',
       roles: resolution.identity.roles,
       isAuthenticated: resolution.identity.isAuthenticated
     };

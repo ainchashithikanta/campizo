@@ -278,6 +278,12 @@ importers:
 
   modules/connect:
     dependencies:
+      '@college-hub/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@college-hub/security':
+        specifier: workspace:*
+        version: link:../../packages/security
       drizzle-orm:
         specifier: 0.38.4
         version: 0.38.4(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)(@types/pg@8.20.3)(@types/react@19.2.18)(pg@8.22.0)(react@19.2.4)
