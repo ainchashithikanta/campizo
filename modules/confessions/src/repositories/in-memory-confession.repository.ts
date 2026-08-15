@@ -175,13 +175,19 @@ export class InMemoryModerationRepository implements ModerationRepository {
     return entity;
   }
 
-  async recordAction(_action: {
+  async recordAction(action: {
     collegeId: string;
     caseId: string;
     moderatorUserId: string;
     action: string;
     reasonNote?: string;
-  }): Promise<void> {}
+  }): Promise<void> {
+    const item = this.casesMap.get(action.caseId);
+    if (!item || item.collegeId !== action.collegeId) return;
+
+    item.status = 'CLOSED';
+    item.updatedAt = new Date();
+  }
 
   async listQueue(collegeId: string): Promise<ModerationCaseEntity[]> {
     return Array.from(this.casesMap.values())

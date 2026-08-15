@@ -235,6 +235,11 @@ describe('Campus Confessions Application Services & CQRS Suite', () => {
 
     const restored = await confessionRepo.findById(confession.id, COLLEGE);
     expect(restored?.status).toBe('PUBLISHED');
+
+    const closedCase = await modRepo.findCaseById(modCase.id, COLLEGE);
+    expect(closedCase?.status).toBe('CLOSED');
+    const queue = await modRepo.listQueue(COLLEGE);
+    expect(queue.some((c) => c.id === modCase.id)).toBe(false);
   });
 
   it('should fetch composite confession detail read model in 1 request via CQRS queries', async () => {
