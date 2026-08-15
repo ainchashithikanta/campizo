@@ -224,3 +224,18 @@ Rotation order: rotate → update env stores (Vercel/Render/Helm) → restart se
 See `docs/SECURITY-ROADMAP.md` — includes: JWT enforcement across modules (79 header-trust sites),
 IDOR participant checks, real upload pipeline with MIME/size enforcement, e2e test credential hygiene,
 helm secret injection, `pnpm audit` in CI.
+
+### Completed in the demo-data / admin-console pass (2026-08-15)
+
+- **In-memory moderation no-op fixed** — `InMemoryModerationRepository.recordAction` was a no-op, so
+  admin moderation decisions were acknowledged but never persisted (case stayed `OPEN`). It now closes
+  the case (`CLOSED`) so decided cases leave the queue. Covered by an extended application-layer test.
+- **Admin wildcard-tenant scope** — admin-console JWTs carry `collegeId: '*'`; the confessions
+  `tenantMiddleware`/`authMiddleware` now honor the explicit `x-college-id` header when the token scope
+  is `*`, so admin actions target the intended college instead of an empty wildcard queue.
+- **Demo data seeding** — API seeds demo confessions (incl. 2 quarantined), 2 open moderation cases, 3
+  professors and 3 pending reviews for `college-nitk-003` when `SEED_DEMO_DATA=true` (Vercel env set).
+  Note: the API currently runs entirely in-memory repositories, so all data resets on redeploy —
+  Supabase persistence remains the real fix (blocked on current DB password, see PART C).
+- **API test env fix** — `apps/api/test/rate-my-professor-api.test.ts` now sets test-only
+  `JWT_SECRET`/`ANONYMOUS_TOKEN_SALT` (fail-closed kernel requires them); full suite green (185 tests).
