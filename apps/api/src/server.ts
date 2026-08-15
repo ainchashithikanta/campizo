@@ -78,12 +78,24 @@ export async function buildApp(): Promise<FastifyInstance> {
   }
 
   // Register Canonical Feature Modules
-  moduleRegistry.register(new RateMyProfessorModule());
+  const rateMyProfessorModule = new RateMyProfessorModule();
+  moduleRegistry.register(rateMyProfessorModule);
   await moduleRegistry.initializeAll(app, eventBus);
 
   // Register all feature module REST APIs (confessions, connect, marketplace,
   // academic-resources, notifications, placement-guidance)
-  await registerFeatureModules(app, eventBus);
+  const seededCollegeId = process.env.SEED_DEMO_COLLEGE_ID ?? 'college-nitk-003';
+  const featureModules = await registerFeatureModules(app, eventBus, seededCollegeId);
+
+  // Demo data seeding (SEED_DEMO_DATA=true): populates the in-memory repos so
+  // the admin consoles (moderation queues, professor reviews, confessions,
+  // marketplace, error tracking) have real actionable content on every boot.
+  if (process.env.SEED_DEMO_DATA === 'true') {
+    const { seedDemoData } = await import('./seed-demo-data.js');
+    await seedDemoData({ ...featureModules, eventBus, collegeId: seededCollegeId });
+    await rateMyProfessorModule.seedDemoData(seededCollegeId);
+    logger.info(`[seed] demo data enabled for college ${seededCollegeId}`);
+  }
 
   // Root route (200) so the service root is browsable
   app.get('/', async () => ({

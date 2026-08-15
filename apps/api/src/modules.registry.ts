@@ -64,7 +64,19 @@ import {
 import { notificationRoutesPlugin } from '@college-hub/mod-notifications';
 import { placementRoutesPlugin } from '@college-hub/mod-placement-guidance';
 
-export async function registerFeatureModules(app: FastifyInstance, eventBus: EventBus): Promise<void> {
+export interface FeatureModuleRepositories {
+  confessionRepo: InMemoryConfessionRepository;
+  commentRepo: InMemoryCommentRepository;
+  modRepo: InMemoryModerationRepository;
+  identityRepo: InMemoryAnonymousIdentityRepository;
+  voteRepo: InMemoryVoteRepository;
+}
+
+export async function registerFeatureModules(
+  app: FastifyInstance,
+  eventBus: EventBus,
+  _collegeId = 'college-nitk-003'
+): Promise<FeatureModuleRepositories> {
   // ── Campus Confessions (MS-40) ──────────────────────────────────────
   const confessionRepo = new InMemoryConfessionRepository();
   const commentRepo = new InMemoryCommentRepository();
@@ -177,4 +189,6 @@ export async function registerFeatureModules(app: FastifyInstance, eventBus: Eve
   logger.info(
     'All feature modules registered: confessions, connect, marketplace, academic-resources, notifications, placement-guidance'
   );
+
+  return { confessionRepo, commentRepo, modRepo, identityRepo, voteRepo };
 }

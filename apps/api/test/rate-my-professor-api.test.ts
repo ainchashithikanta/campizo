@@ -2,6 +2,11 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/server.js';
 
+// Test-only secrets — the security kernel refuses to run without them
+// (fail-closed: no fallbacks). These are never used in production.
+process.env.JWT_SECRET = 'rate-my-professor-tests-only-jwt-secret-32+';
+process.env.ANONYMOUS_TOKEN_SALT = 'rate-my-professor-tests-only-anon-salt-32+';
+
 describe('Rate My Professor — Production Fastify REST API Integration (MS-18.8.3)', () => {
   let app: FastifyInstance;
 

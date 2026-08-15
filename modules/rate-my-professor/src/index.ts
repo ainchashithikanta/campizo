@@ -183,10 +183,15 @@ export class RateMyProfessorModule implements PlatformModule {
     permissions: ['professors:read', 'professors:write']
   };
 
+  private profRepo: InMemoryProfessorRepo | null = null;
+  private reviewRepo: InMemoryReviewRepo | null = null;
+
   public initialize(app: FastifyInstance, eventBus: EventBus): void {
     const profRepo = new InMemoryProfessorRepo();
     const reviewRepo = new InMemoryReviewRepo();
     const statsRepo = new InMemoryStatsRepo();
+    this.profRepo = profRepo;
+    this.reviewRepo = reviewRepo;
 
     const searchProfessors = new SearchProfessorsUseCase(profRepo);
     const getProfile = new GetProfessorProfileUseCase(profRepo);
@@ -242,6 +247,110 @@ export class RateMyProfessorModule implements PlatformModule {
       healthy: true,
       details: { module: this.manifest.id }
     };
+  }
+
+  /**
+   * Seeds demo professors and pending-moderation reviews so the admin
+   * moderation console has actionable cases. Only called when the API
+   * starts with SEED_DEMO_DATA=true. Never seeds secrets or real data.
+   */
+  public async seedDemoData(collegeId: string): Promise<void> {
+    const profRepo = this.profRepo;
+    const reviewRepo = this.reviewRepo;
+    if (!profRepo || !reviewRepo) return;
+
+    const professors: ProfessorEntity[] = [
+      {
+        id: 'prof-nitk-cs-1',
+        collegeId,
+        departmentId: 'dept-cs-001',
+        fullName: 'Dr. Meera Krishnan',
+        slug: 'dr-meera-krishnan',
+        designation: 'Associate Professor',
+        status: 'ACTIVE',
+        biography: 'Algorithms and complexity theory. Known for the clearest lecture notes in the department.'
+      },
+      {
+        id: 'prof-nitk-cs-2',
+        collegeId,
+        departmentId: 'dept-cs-001',
+        fullName: 'Prof. Raghunath Shetty',
+        slug: 'prof-raghunath-shetty',
+        designation: 'Assistant Professor',
+        status: 'ACTIVE',
+        biography: 'Operating systems and computer architecture. Loves a good whiteboard diagram.'
+      },
+      {
+        id: 'prof-nitk-ec-1',
+        collegeId,
+        departmentId: 'dept-ec-001',
+        fullName: 'Dr. Anitha Rao',
+        slug: 'dr-anitha-rao',
+        designation: 'Professor',
+        status: 'ACTIVE',
+        biography: 'VLSI design and embedded systems. Runs the flagship research lab on campus.'
+      }
+    ];
+    for (const p of professors) {
+      await profRepo.save(p);
+    }
+
+    const now = Date.now();
+    const pendingReviews: ReviewEntity[] = [
+      {
+        id: 'rev-nitk-101',
+        collegeId,
+        professorId: 'prof-nitk-cs-1',
+        courseAssignmentId: 'assign-cs-algo-01',
+        authorUserId: 'user-seed-101',
+        authorAnonymousToken: 'anon-seed-101',
+        isAnonymous: true,
+        reviewText:
+          'Brilliant teacher, but the weekly problem sets are brutal. The grading rubric for the midterm was opaque — hoping the final is kinder. Lectures are worth attending.',
+        overallRating: 4,
+        moderationStatus: 'PENDING_MODERATION',
+        helpfulCount: 12,
+        unhelpfulCount: 2,
+        createdAt: new Date(now - 3 * 60 * 60 * 1000)
+      },
+      {
+        id: 'rev-nitk-102',
+        collegeId,
+        professorId: 'prof-nitk-cs-2',
+        courseAssignmentId: 'assign-cs-os-01',
+        authorUserId: 'user-seed-102',
+        authorAnonymousToken: 'anon-seed-102',
+        isAnonymous: true,
+        reviewText:
+          'The labs are genuinely fun but the OS concepts exam went way beyond what was covered in class. Felt unfair. Friendly professor though, office hours are actually helpful.',
+        overallRating: 3,
+        moderationStatus: 'PENDING_MODERATION',
+        helpfulCount: 8,
+        unhelpfulCount: 4,
+        createdAt: new Date(now - 26 * 60 * 60 * 1000)
+      },
+      {
+        id: 'rev-nitk-103',
+        collegeId,
+        professorId: 'prof-nitk-ec-1',
+        courseAssignmentId: 'assign-ec-vlsi-01',
+        authorUserId: 'user-seed-103',
+        authorAnonymousToken: 'anon-seed-103',
+        isAnonymous: true,
+        reviewText:
+          'Dr. Rao is the reason I switched into the VLSI track. Deep subject knowledge and she remembers every student by name. Projects are heavy but you learn everything.',
+        overallRating: 5,
+        moderationStatus: 'PENDING_MODERATION',
+        helpfulCount: 21,
+        unhelpfulCount: 1,
+        createdAt: new Date(now - 2 * 60 * 60 * 1000)
+      }
+    ];
+    for (const r of pendingReviews) {
+      await reviewRepo.save(r);
+    }
+
+    logger.info(`[seed] seeded 3 professors + 3 pending reviews for ${collegeId}`);
   }
 }
 
