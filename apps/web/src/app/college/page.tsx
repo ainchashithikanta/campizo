@@ -14,7 +14,8 @@ const COLLEGE_KEY = 'ch_college_id';
 function CollegeSelectionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = sanitizeInternalPath(searchParams.get('next'), '/');
+  const rawNext = searchParams.get('next');
+  const next = sanitizeInternalPath(rawNext ? (rawNext.startsWith('/') ? rawNext : `/${rawNext}`) : null, '/');
   const [selectedCollege, setSelectedCollege] = useState<College | null>(null);
 
   useEffect(() => {

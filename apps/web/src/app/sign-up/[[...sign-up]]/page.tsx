@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { SignUp } from '@clerk/nextjs';
+import { SignUp, useUser, useClerk } from '@clerk/nextjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCollegeById, College } from '@/lib/colleges';
 import { COLLEGE_KEY } from '@/lib/auth';
@@ -12,6 +12,8 @@ export const dynamic = 'force-dynamic';
 export default function SignUpPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
   const [college, setCollege] = useState<College | null>(null);
 
   useEffect(() => {
@@ -40,6 +42,35 @@ export default function SignUpPage() {
     }
   };
 
+  if (isLoaded && isSignedIn) {
+    return (
+      <main className="ck-auth-page">
+        <div className="ck-auth-wrap">
+          <div className="ck-auth-empty">
+            <span className="ck-auth-empty-emoji" aria-hidden="true">👋</span>
+            <h2>You&apos;re already signed in</h2>
+            <p>
+              Signed in as <strong>{user?.primaryEmailAddress?.emailAddress ?? 'a Campizo user'}</strong>. No need to
+              create another account.
+            </p>
+            <div className="space-y-3">
+              <a href="/college-verified" className="ck-btn" style={{ width: '100%', justifyContent: 'center' }}>
+                Continue →
+              </a>
+              <button
+                onClick={() => void signOut({ redirectUrl: `/college?next=/sign-up` })}
+                className="cl-btn"
+                style={{ width: '100%', background: 'linear-gradient(90deg, var(--toon-coral), #ff8f8f)', color: '#fff' }}
+              >
+                Sign out and use another account
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   if (!college) {    return (
       <main className="ck-auth-page">
         <div className="ck-auth-wrap">
@@ -47,7 +78,7 @@ export default function SignUpPage() {
             <span className="ck-auth-empty-emoji" aria-hidden="true">🎓</span>
             <h2>Select your college first</h2>
             <p>Please choose your institution before signing up.</p>
-            <a href="/college?next=sign-up" className="ck-btn">
+            <a href="/college?next=/sign-up" className="ck-btn">
               Choose College →
             </a>
           </div>

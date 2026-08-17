@@ -27,7 +27,7 @@ export default function CollegeVerifiedPage() {
     }
 
     if (!isSignedIn) {
-      router.push('/college?next=sign-in');
+      router.push('/college?next=/sign-in');
       return;
     }
 
@@ -48,7 +48,7 @@ export default function CollegeVerifiedPage() {
   }, [isLoaded, isSignedIn, user, router, college]);
 
   const handleSignOutAndRetry = async () => {
-    await signOut({ redirectUrl: `/college?next=sign-in` });
+    await signOut({ redirectUrl: `/college?next=/sign-in` });
   };
 
   if (checking) {
@@ -72,7 +72,7 @@ export default function CollegeVerifiedPage() {
             <span className="ck-auth-empty-emoji" aria-hidden="true">🎓</span>
             <h2>No college selected</h2>
             <p>Please select your institution to continue.</p>
-            <a href="/college?next=sign-in" className="ck-btn">
+            <a href="/college?next=/sign-in" className="ck-btn">
               Choose College →
             </a>
           </div>
@@ -98,7 +98,7 @@ export default function CollegeVerifiedPage() {
               <button onClick={handleSignOutAndRetry} className="cl-btn" style={{ width: '100%', background: 'linear-gradient(90deg, var(--toon-coral), #ff8f8f)', color: '#fff' }}>
                 Sign out and choose correct college
               </button>
-              <a href="/college?next=sign-in" className="ck-btn" style={{ width: '100%', justifyContent: 'center' }}>
+              <a href="/college?next=/sign-in" className="ck-btn" style={{ width: '100%', justifyContent: 'center' }}>
                 Change college selection
               </a>
             </div>

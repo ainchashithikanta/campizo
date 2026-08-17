@@ -130,7 +130,7 @@ export function Navbar() {
                 🛡️
               </Link>
               <Link
-                href="/college?next=sign-in"
+                href="/college?next=/sign-in"
                 className={styles.authButton}
                 aria-label="Sign in"
                 title="Sign in"
@@ -138,7 +138,7 @@ export function Navbar() {
                 Sign in
               </Link>
               <Link
-                href="/college?next=sign-up"
+                href="/college?next=/sign-up"
                 className={styles.authButton}
                 aria-label="Sign up"
                 title="Sign up"
@@ -187,7 +187,7 @@ export function Navbar() {
                 <span>Log out</span>
               </button>
             ) : (
-              <Link href="/college?next=sign-up" className={styles.mobileLink}>
+              <Link href="/college?next=/sign-up" className={styles.mobileLink}>
                 <span>🔐</span>
                 <span>Sign up</span>
               </Link>
